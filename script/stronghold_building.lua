@@ -199,7 +199,8 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
             Text = "@color:180,180,180 Burgfräulein wählen @color:255,255,255 ";
 
             if Logic.GetEntityType(GUI.GetSelectedEntity()) == Entities.PB_Headquarters1 then
-                Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 ";
+                Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                       "Festung";
             else
                 Text = Text .. " @cr Die bessere Hälfte Eures Burgherren. Sie "..
                        "gewährt Euch extra Beliebtheit und Ehre, solange sie lebt.";

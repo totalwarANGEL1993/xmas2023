@@ -60,7 +60,7 @@ Stronghold.Config.Hero = {
                           "Aktive Fähigkeit: @cr Kann Pfeile auf feindliche Truppen regnen lassen.",
         },
         [Entities.PU_Hero11]             = {
-            Description = "Passive Fähigkeit: @cr Die maximale Beliebtheit wird auf 200 erhöht."..
+            Description = "Passive Fähigkeit: @cr Die maximale Beliebtheit wird auf 300 erhöht."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann Shuriken auf feindliche Truppen schleudern.",
         },
@@ -283,7 +283,7 @@ function Stronghold:EnergyProductionBonus(_PlayerID)
         local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(LordID));
         if TypeName and string.find(TypeName, "^PU_Hero1[abc]+$") then
             local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
-            local Bonus = math.floor(Amount / 4);
+            local Bonus = math.ceil(Amount * 0.18);
             if Bonus > 0 then
                 Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.WeatherEnergy, Bonus);
             end
@@ -297,7 +297,7 @@ function Stronghold:FaithProductionBonus(_PlayerID)
         local LordID = GetID(self.Players[_PlayerID].LordScriptName);
         if Logic.GetEntityType(LordID) == Entities.PU_Hero6 then
             local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
-            local Bonus = math.floor(Amount / 4);
+            local Bonus = math.ceil(Amount * 0.24);
             if Bonus > 0 then
                 Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Bonus);
             end
@@ -308,19 +308,19 @@ end
 -- Passive Ability: Increase of attraction
 function Stronghold:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    if self.Players[_PlayerID] then
-        local SopuseID = GetID(self.Players[_PlayerID].SpouseScriptName);
-        if Logic.GetEntityType(SopuseID) == Entities.PU_Hero11 then
-            Value = 200;
-        end
-    end
+    -- Do nothing
     return Value;
 end
 
 -- Passive Ability: Increase of reputation
 function Stronghold:ApplyMaxReputationPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    -- Do nothing
+    if self.Players[_PlayerID] then
+        local SopuseID = GetID(self.Players[_PlayerID].SpouseScriptName);
+        if Logic.GetEntityType(SopuseID) == Entities.PU_Hero11 then
+            Value = 300;
+        end
+    end
     return Value;
 end
 
@@ -349,10 +349,12 @@ function Stronghold:ApplyHonorBonusPassiveAbility(_PlayerID, _Income)
     if self.Players[_PlayerID] then
         local LordID = GetID(self.Players[_PlayerID].LordScriptName);
         if Logic.GetEntityType(LordID) == Entities.PU_Hero3 then
+            local Factor = 1.0;
             local Alchemists = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Alchemist);
             local Engineers = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
             local Scholars = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scholar);
-            Income = (Income * (1 + ((Scholars+Engineers+Alchemists)/50)));
+            Factor = (Scholars+Engineers+Alchemists) + 0.15;
+            Income = Income * Factor;
         end
     end
     return Income;

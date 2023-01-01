@@ -8,7 +8,7 @@
 Stronghold = Stronghold or {};
 
 Stronghold.Config.Income = {
-    MaxReputation = 150,
+    MaxReputation = 200,
     TaxPerWorker = 5,
     TaxEffect = {
         [1] = {Honor = 4, Reputation = 10,},

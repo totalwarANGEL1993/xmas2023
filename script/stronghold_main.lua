@@ -109,7 +109,7 @@ function Stronghold:AddPlayer(_PlayerID)
         UpkeepMoney = 0,
 
         Reputation = 100,
-        ReputationLimit = 150,
+        ReputationLimit = 200,
         IncomeReputation = 0,
 
         Honor = 0,
@@ -216,7 +216,7 @@ function Stronghold:OverrideAttraction()
             AttractionLimit = AttractionLimit + (Outposts * OutpostAttraction);
         end
         -- Lord bonus
-        AttractionLimit = Stronghold:ApplyMaxReputationPassiveAbility(_PlayerID, AttractionLimit);
+        AttractionLimit = Stronghold:ApplyMaxAttractionPassiveAbility(_PlayerID, AttractionLimit);
 
         return AttractionLimit;
 	end
@@ -360,7 +360,7 @@ function Stronghold:GetPlayerReputationLimit(_PlayerID)
     if self.Players[_PlayerID] then
         return self.Players[_PlayerID].ReputationLimit;
     end
-    return 150;
+    return 200;
 end
 
 function Stronghold:GetPlayerReputation(_PlayerID)

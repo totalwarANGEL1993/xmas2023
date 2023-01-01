@@ -5,7 +5,7 @@ ALLGEMEINES
 
 - Die Burg des Spielers ist immer unverwundbar
 - Ehre als neuer Rohstoff
-- Maximale Motivation ist 150%
+- Maximale Motivation ist 200%
 - Eroberte Provinzen produzieren Ehre (+25)
 - Ziergebäude produzieren Ehre (+1) und Beliebtheit (+1 .. 4)
   (Limit: 10)
@@ -62,7 +62,7 @@ Mary:
 - Aktiv: Moral senken
 
 Yuki:
-- Passiv: Maximale Motivation ist 200%
+- Passiv: Maximale Motivation ist 300%
 - Aktiv: Shuriken (max. 6, läd sehr schnell auf)
 
 --------------------------------------------------------------------------------
