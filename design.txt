@@ -1,0 +1,89 @@
+Diese Multiplayer Map ist eine Implementierung von Stronghold 2. Das Ziel ist
+es, das Spiel so weit wie möglich in Siedler nachzubauen.
+
+ALLGEMEINES
+
+- Die Burg des Spielers ist immer unverwundbar
+- Ehre als neuer Rohstoff
+- Maximale Motivation ist 150%
+- Eroberte Provinzen produzieren Ehre (+25)
+- Ziergebäude produzieren Ehre (+1) und Beliebtheit (+1 .. 4)
+  (Limit: 10)
+
+
+
+BURGHERR
+
+- Der Burgherr muss besiegt werden, damit ein Spieler verliert.
+- Der Burgherr hat 10000 HP, +0 Heilung, 75 Schaden und 20 Rüstung.
+- Burgherren haben passive Fähigkeiten, die besondere Technologien freischalten,
+  Rohstoffe produzieren usw.
+- Der Burgherr wird am Anfang des Spiels gewählt.
+
+Dario:
+- Passiv: Produziert Wetterenergie für jeden Ingeneur in der Siedlung
+- Aktiv: Feinde verjagen (läd sehr schnell auf)
+
+Pilgrim:
+- Passiv: Minen erwirtschaften jedes Mal 1 Rohstoff mehr
+- Aktiv: Bombe legen
+
+Salim:
+- Passiv: Erhält mehr Ehre für Wissenschaftler in der Siedlung
+- Aktiv: Wiederbeleben (Battalione auffüllen, die nicht kämpfen)
+
+Erec:
+- Passiv: Soldaten verlangen 10% weniger Sold
+- Aktiv: Wirbelschlag (läd schnell auf)
+
+Helias:
+- Passiv: Produziert Glauben für jeden Priester in der Siedlung
+- Aktiv: Einheiten segnen
+
+Kerberos:
+- Passiv: Motivationsstrafe wird um 20% verringert
+- Aktiv: Angriffskraft senken (läd schnell auf)
+
+
+
+BURGFRÄULEIN
+
+- Wird in der Festung rekrutiert
+- Gibt +4 Beliebtheit +4 Ehre wenn am Leben
+- Man kann nur ein Burgfräulein haben
+- Das Burgfräulein hat 2000 HP, +5 Heilung, 22 Schaden und 5 Rüstung.
+
+Ari:
+- Passiv: Arbeiter bezahlen 10% mehr Steuern
+- Aktiv: Pfeilhagel (max. 6, läd sehr schnell auf)
+
+Mary:
+- Passiv: Kundschafter und Diebe sind kostenlos
+- Aktiv: Moral senken
+
+Yuki:
+- Passiv: Maximale Motivation ist 200%
+- Aktiv: Shuriken (max. 6, läd sehr schnell auf)
+
+--------------------------------------------------------------------------------
+
+Motivation
+
+- CEntity.SetMotivation(_ID, _Value)
+  Motivation eines Siedlers setzen (1.00 = 100%)
+- CUtil.AddToPlayersMotivationHardcap(_PlayerID, _Value)
+  Motivationsgrenze des Spielers ändern (1.00 = 100%)
+- CUtil.GetPlayersMotivationHardcap(_PlayerID)
+  Motivationsgrenze des Spielers ermitteln (1.00 = 100%);
+
+Steuern
+
+GameCallback_PaydayPayed = function(_player,_amount)
+    return _amount
+end
+
+Projektile
+
+- CUtil.CreateProjectile(_Effect, _SX, _SY, _TX, _TY, _Dmg, _AoE, _TargetID, _ID, _PlayerID)
+  (Effekte wie z.B. GGL_Effects.FXKalaArrow)
+  Erzeugt ein Projektil, das einen echten Angriff macht.
