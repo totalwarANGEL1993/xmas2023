@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+ <NameKey></NameKey>
+ <DescKey></DescKey>
+ <Name>WT2023 - Testmap</Name>
+ <Desc>Testmap for the WT2023.</Desc>
+ <SizeX>257</SizeX>
+ <SizeY>257</SizeY>
+ <MPFlag>false</MPFlag>
+ <MPPlayerCount>1</MPPlayerCount>
+ <MPGameOptionFlagSet>3</MPGameOptionFlagSet>
+ <MiniMapTextureName>data\graphics\Textures\GUI\MapPics\externalmap</MiniMapTextureName>
+ <Key>2</Key>
+ <GUID>
+  <Data>b27f8bdb-0d0a-4003-be70-2c440a8bcde5</Data>
+ </GUID>
+</root>
