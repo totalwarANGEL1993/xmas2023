@@ -44,11 +44,23 @@ Stronghold.Config.Upkeep = {
 -- Serf
 
 function Stronghold:PrintSerfConstructionTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    -- Get default text
     local Text = XGUIEng.GetStringTableText(_KeyNormal);
+    local CostString = "";
+    local ShortCutToolTip = "";
+    local Type = Logic.GetBuildingTypeByUpgradeCategory(_UpgradeCategory, _PlayerID);
     if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
         Text = XGUIEng.GetStringTableText(_KeyDisabled);
+    else
+        Logic.FillBuildingCostsTable(Type, InterfaceGlobals.CostTable);
+        CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
+        if _ShortCut then
+            ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
+                ": [" .. XGUIEng.GetStringTableText(_ShortCut) .. "]"
+        end
     end
 
+    -- Alter text
     local EffectText = "";
     if _UpgradeCategory == UpgradeCategories.Beautification04 then
         local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification04];
@@ -158,15 +170,6 @@ function Stronghold:PrintSerfConstructionTooltip(_PlayerID, _UpgradeCategory, _K
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
-    elseif _UpgradeCategory == UpgradeCategories.Monastery then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Monastery1];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
     elseif _UpgradeCategory == UpgradeCategories.Tavern then
         local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Tavern1];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
@@ -180,11 +183,45 @@ function Stronghold:PrintSerfConstructionTooltip(_PlayerID, _UpgradeCategory, _K
         return false;
     end
 
-    if _Technology and Logic.GetTechnologyState(_PlayerID, _Technology) == 0 then
+    -- Base building limit
+    local LimitReached = false;
+    local Limit = Stronghold.Config.Income.Buildings[Type].Limit;
+    if Limit and Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit then
+        LimitReached = true;
+    end
+    if LimitReached or (_Technology and Logic.GetTechnologyState(_PlayerID, _Technology) == 0) then
         Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        CostString = "";
+        ShortCutToolTip = "";
         EffectText = "";
     end
+
+    -- Set text
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text.. " " ..EffectText);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
     return true;
+end
+
+function Stronghold:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technology)
+    local TechnologyName = KeyOf(_Technology, Technologies);
+
+    -- Beautification limit
+    if string.find(TechnologyName, "^B_Beautification") then
+        local TechState = Logic.GetTechnologyState(_PlayerID, _Technology);
+        if TechState == 2 or TechState == 3 or TechState == 4 then
+            local Type = Entities["P" ..TechnologyName];
+            local Limit = Stronghold.Config.Income.Buildings[Type].Limit;
+            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit then
+                XGUIEng.DisableButton(_Button, 1);
+            else
+                XGUIEng.DisableButton(_Button, 0);
+            end
+        else
+            XGUIEng.DisableButton(_Button, 1);
+        end
+        return true;
+    end
+    return false;
 end
 

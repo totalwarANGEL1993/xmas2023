@@ -42,11 +42,14 @@ function Stronghold:Init()
     self:OverrideFindViewUpdate();
     self:OverrideTooltipGenericMain();
     self:OverrideTooltipConstructionMain();
+    self:OverrideUpdateConstructionMain();
     self:OverwriteCommonCallbacks();
 
     self:CreateHeadquartersButtonHandlers();
+    self:CreateMonasteryButtonHandlers();
     self:OverrideBuyHeroWindow();
     self:OverrdeHeadquarterButtons();
+    self:OverrdeMonasteryButtons();
 end
 
 function Stronghold:OnSaveGameLoaded()
@@ -386,6 +389,13 @@ end
 
 function Stronghold:OnSelectionMenuChanged(_EntityID)
     self:OnHeadquarterSelected(_EntityID);
+
+    GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01)
+    GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02)
+    for i= 3, 12 do
+        local Num = (i < 10 and "0" ..i) or i;
+        GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);
+    end
 end
 
 function Stronghold:OverwriteCommonCallbacks()
@@ -472,5 +482,49 @@ function Stronghold:OverrideTooltipConstructionMain()
             GUITooltip_ConstructBuilding_Orig_StrongholdMain(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end
     end
+end
+
+function Stronghold:OverrideUpdateConstructionMain()
+    GUIUpdate_BuildingButtons_Orig_StrongholdMain = GUITooltip_ConstructBuilding;
+    GUIUpdate_BuildingButtons = function(_Button, _Technology)
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold.Players[PlayerID] then
+            return GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
+        end
+        GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
+
+        local Updated = false;
+        if not Updated then
+            Updated = Stronghold:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
+        end
+    end
+
+    GUIUpdate_UpgradeButtons_Orig_StrongholdMain = GUIUpdate_UpgradeButtons;
+    GUIUpdate_UpgradeButtons = function(_Button, _Technology)
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold.Players[PlayerID] then
+            return GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
+        end
+        GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
+
+        local Updated = false;
+        if not Updated then
+            Updated = Stronghold:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
+        end
+    end
+
+    function Stronghold_Trigger_EntityCreated_UpdateSerfMenu()
+        local EntityID = Event.GetEntityID();
+        local PlayerID = Logic.EntityGetPlayer(EntityID);
+        if Logic.IsBuilding(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
+            Stronghold:OnSelectionMenuChanged(EntityID);
+        end
+    end
+    Trigger.RequestTrigger(
+        Events.LOGIC_EVENT_ENTITY_CREATED,
+        nil,
+        "Stronghold_Trigger_EntityCreated_UpdateSerfMenu",
+        1
+    )
 end
 

@@ -179,7 +179,8 @@
         "StartSimpleHiResJob",
         "CUtil",
         "CEntity",
-        "GameCallback_Stronghold_OnPayday"
+        "GameCallback_Stronghold_OnPayday",
+        "InterfaceGlobals"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

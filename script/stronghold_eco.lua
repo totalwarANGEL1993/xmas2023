@@ -20,28 +20,24 @@ Stronghold.Config.Income = {
     Buildings = {
         [Entities.CB_Bastille1] = {Honor = 15, Reputation = 5,},
         ---
-        [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
-        [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
-        [Entities.PB_Beautification09] = {Honor = 1, Reputation = 1,},
+        [Entities.PB_Beautification04] = {Limit = 4, Honor = 1, Reputation = 1,},
+        [Entities.PB_Beautification06] = {Limit = 4, Honor = 1, Reputation = 1,},
+        [Entities.PB_Beautification09] = {Limit = 4, Honor = 1, Reputation = 1,},
         ---
-        [Entities.PB_Beautification01] = {Honor = 1, Reputation = 2,},
-        [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
-        [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
+        [Entities.PB_Beautification01] = {Limit = 3, Honor = 1, Reputation = 2,},
+        [Entities.PB_Beautification02] = {Limit = 3, Honor = 1, Reputation = 2,},
+        [Entities.PB_Beautification12] = {Limit = 3, Honor = 1, Reputation = 2,},
         ---
-        [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
-        [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
-        [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
+        [Entities.PB_Beautification05] = {Limit = 2, Honor = 1, Reputation = 3,},
+        [Entities.PB_Beautification07] = {Limit = 2, Honor = 1, Reputation = 3,},
+        [Entities.PB_Beautification08] = {Limit = 2, Honor = 1, Reputation = 3,},
         ---
-        [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
-        [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
-        [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
+        [Entities.PB_Beautification03] = {Limit = 1, Honor = 1, Reputation = 4,},
+        [Entities.PB_Beautification10] = {Limit = 1, Honor = 1, Reputation = 4,},
+        [Entities.PB_Beautification11] = {Limit = 1, Honor = 1, Reputation = 4,},
         ---
-        [Entities.PB_Monastery1] = {Honor = 0, Reputation = 4,},
-        [Entities.PB_Monastery2] = {Honor = 0, Reputation = 6,},
-        [Entities.PB_Monastery3] = {Honor = 0, Reputation = 8,},
-        ---
-        [Entities.PB_Tavern1] = {Honor = 0, Reputation = 2,},
-        [Entities.PB_Tavern2] = {Honor = 0, Reputation = 5,},
+        [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
+        [Entities.PB_Tavern2] = {Honor = 0, Reputation = 6,},
         ---
         [Entities.PB_Farm2] = {Honor = 1, Reputation = 0,},
         [Entities.PB_Farm3] = {Honor = 2, Reputation = 0,},
@@ -175,8 +171,9 @@ function Stronghold:CalculateHonorIncome(_PlayerID)
         for k, v in pairs(self.Config.Income.Buildings) do
             local Buildings = self:GetCompletedEntitiesOfType(_PlayerID, k);
             for i= table.getn(Buildings), 1, -1 do
-                if Logic.GetBuildingWorkPlaceLimit(Buildings[i]) > 0 then
-                    if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) == 0 then
+                local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
+                if WorkplaceLimit then
+                    if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) < WorkplaceLimit then
                         table.remove(Buildings, i);
                     end
                 end
