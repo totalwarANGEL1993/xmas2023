@@ -220,11 +220,11 @@ end
 function Stronghold:CalculateMoneyUpkeep(_PlayerID)
     if self.Players[_PlayerID] then
         local Upkeep = 0;
-        for k, v in pairs(self.Config.Upkeep.Units) do
+        for k, v in pairs(self.Config.Units) do
             local Military = GetCompletedEntitiesOfType(_PlayerID, k);
             local TypeUpkeep = 0;
             for i= 1, table.getn(Military) do
-                local UnitUpkeep = v.Gold;
+                local UnitUpkeep = v.Upkeep;
                 local SoldiersMax = Logic.LeaderGetMaxNumberOfSoldiers(Military[i]);
                 local SoldiersCur = Logic.LeaderGetNumberOfSoldiers(Military[i]);
                 if SoldiersMax > 0 then

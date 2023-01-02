@@ -22,10 +22,10 @@ Stronghold.Config.Hero = {
         [Entities.PU_Hero3]              = {
             Description = "Passive Fähigkeit: @cr Erhält mehr Ehre für jeden Alchemisten, Gelehrten und Ingeneur."..
                           " @cr @cr "..
-                          "Aktive Fähigkeit: @cr Kann Bataillone auffüllen, wenn diese nicht kämpfen.",
+                          "Aktive Fähigkeit: @cr Kann Soldatengruppen wieder auffüllen, wenn diese nicht kämpfen.",
         },
         [Entities.PU_Hero4]              = {
-            Description = "Passive Fähigkeit: @cr Der Sold für alle Einheitentypen wird um 15% verringert."..
+            Description = "Passive Fähigkeit: @cr Soldaten werden mit maximaler Erfahrung rekrutiert."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
         },
@@ -50,7 +50,7 @@ Stronghold.Config.Hero = {
                           "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden senken.",
         },
         [Entities.CU_Barbarian_Hero]     = {
-            Description = "Passive Fähigkeit: @cr Alle Tavernen produzieren +3 zusätzliche Beliebtheit."..
+            Description = "Passive Fähigkeit: @cr Alle Tavernen produzieren 3 zusätzliche Beliebtheit."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Ruft Wölfe herbei, die Ehre erzeugen, wenn sie Feinde töten.",
         },
@@ -538,9 +538,6 @@ end
 -- This function is called for each unit type individually.
 function Stronghold:ApplyUpkeepDiscountPassiveAbility(_PlayerID, _Type, _Upkeep)
     local Upkeep = _Upkeep;
-    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-        Upkeep = Upkeep * 0.85;
-    end
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
         if _Type == Entities.PU_Scout or _Type == Entities.PU_Thief then
             Upkeep = 0;

@@ -5,6 +5,27 @@
 -- -------------------------------------------------------------------------- --
 -- Tooltip
 
+function Stronghold:HasPlayerEnoughResourcesFeedback(_Costs)
+    local PlayerID = GUI.GetPlayerID();
+    if not self.Players[PlayerID] then
+        return InterfaceTool_HasPlayerEnoughResources_Feedback(_Costs) == 1;
+    end
+
+    local CanBuy = true;
+	local Honor = self.Players[PlayerID].Honor;
+    if _Costs[ResourceType.Honor] ~= nil and _Costs[ResourceType.Honor] - Honor > 0 then
+		CanBuy = false;
+        Sound.PlayQueuedFeedbackSound(Sounds.VoicesMentor_INFO_NotEnough);
+        Message = string.format("%d Ehre muss noch erlangt werden.", _Costs[ResourceType.Honor] - Honor);
+		GUI.AddNote(Message);
+	end
+    CanBuy = CanBuy and InterfaceTool_HasPlayerEnoughResources_Feedback(_Costs) == 1;
+    return CanBuy == true;
+end
+function HasPlayerEnoughResourcesFeedback(_Costs)
+    Stronghold:HasPlayerEnoughResourcesFeedback(_Costs);
+end
+
 function Stronghold:FormatCostString(_PlayerID, _Costs)
     local CostString = "";
     if not self.Players[_PlayerID] then
@@ -99,6 +120,32 @@ end
 
 function GetHonor(_PlayerID)
     return Stronghold:GetPlayerHonor(_PlayerID);
+end
+
+function CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
+    local Costs = {};
+    if _Honor ~= nil and _Honor > 0 then
+        Costs[ResourceType.Honor] = _Honor;
+    end
+    if _Gold ~= nil and _Gold > 0 then
+        Costs[ResourceType.Gold] = _Gold;
+    end
+    if _Clay ~= nil and _Clay > 0 then
+        Costs[ResourceType.Clay] = _Clay;
+    end
+    if _Wood ~= nil and _Wood > 0 then
+        Costs[ResourceType.Wood] = _Wood;
+    end
+    if _Stone ~= nil and _Stone > 0 then
+        Costs[ResourceType.Stone] = _Stone;
+    end
+    if _Iron ~= nil and _Iron > 0 then
+        Costs[ResourceType.Iron] = _Iron;
+    end
+    if _Sulfur ~= nil and _Sulfur > 0 then
+        Costs[ResourceType.Sulfur] = _Sulfur;
+    end
+    return Costs
 end
 
 function Stronghold:HasEnoughResources(_PlayerID, _Costs)

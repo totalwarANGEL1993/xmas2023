@@ -363,8 +363,8 @@ end
 -- The real payday is deactivated. If the payday callback is present the payday
 -- is implemented using it. If not we use the good old fashioned way.
 function Stronghold:StartPlayerPaydayUpdater()
-    -- In multiplayer
-    if GameCallback_PaydayPayed then
+    -- On community server
+    if CNetwork then
         GameCallback_PaydayPayed = function(_player, _amount)
             Stronghold.OnPlayerPayday(_player);
             return 0;
@@ -629,6 +629,10 @@ function Stronghold:OverrideUpdateConstructionMain()
         end
         if not Updated then
             GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
+            -- Buy lock (is released when :BuyUnit is called)
+            if Stronghold.Players[PlayerID].BuyUnitLock then
+                XGUIEng.DisableButton(_Button, 1);
+            end
         end
     end
 

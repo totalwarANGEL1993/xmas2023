@@ -68,6 +68,7 @@ function Stronghold:CreateHeadquartersButtonHandlers()
         ChangeTax = 1,
         BuyLord = 2,
         BuySpouse = 3,
+        BuySerf = 4,
     };
 
     function Stronghold_ButtonCallback_Headquarters(_PlayerID, _Action, ...)
@@ -79,6 +80,9 @@ function Stronghold:CreateHeadquartersButtonHandlers()
         end
         if _Action == Stronghold.Shared.Button.Headquarters.BuySpouse then
             Stronghold:BuyHeroCreateSpouse(_PlayerID, arg[1]);
+        end
+        if _Action == Stronghold.Shared.Button.Headquarters.BuySerf then
+            Stronghold:BuyUnit(_PlayerID, arg[1], arg[2], arg[3]);
         end
     end
     if CNetwork then
@@ -131,6 +135,36 @@ function Stronghold:OverrdeHeadquarterButtons()
         else
             GUIAction_ToggleMenu_Orig_StrongholdBuilding(_Menu, _State);
         end
+    end
+
+    GUIAction_BuySerf_Orig_StrongholdBuilding = GUIAction_BuySerf;
+    GUIAction_BuySerf = function()
+        local PlayerID = GUI.GetPlayerID();
+        if not self.Players[PlayerID] then
+            return GUIAction_BuySerf_Orig_StrongholdBuilding();
+        end
+        -- Check costs
+        local Costs = Stronghold.Config.Units[Entities.PU_Serf].Costs;
+        if HasPlayerEnoughResourcesFeedback(Costs) == 0 then
+            return;
+        end
+        -- Check attraction
+        if Logic.GetPlayerAttractionUsage(PlayerID) >= Logic.GetPlayerAttractionLimit(PlayerID) then
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesSerf_SERF_No_rnd_01);
+            Message("Ihr habt keinen Platz für weitere Leibeigene!");
+            return;
+        end
+        -- Set buy lock
+        Stronghold.Players[PlayerID].BuyUnitLock = true;
+        -- Send call
+        Sync.Call(
+            "Stronghold_ButtonCallback_Headquarters",
+            PlayerID,
+            Stronghold.Shared.Button.Headquarters.BuySerf,
+            Entities.PU_Serf,
+            GetID(Stronghold.Players[PlayerID].HQScriptName),
+            false
+        );
     end
 
     GUIAction_CallMilitia = function()

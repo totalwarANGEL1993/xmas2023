@@ -4,41 +4,168 @@
 
 Stronghold = Stronghold or {};
 
-Stronghold.Config.Upkeep = {
-    Units = {
-        [Entities.PU_LeaderPoleArm1] = {Gold = 10},
-        [Entities.PU_LeaderPoleArm2] = {Gold = 15},
-        [Entities.PU_LeaderPoleArm3] = {Gold = 35},
-        [Entities.PU_LeaderPoleArm4] = {Gold = 45},
-        ---
-        [Entities.PU_LeaderSword1] = {Gold = 20},
-        [Entities.PU_LeaderSword2] = {Gold = 30},
-        [Entities.PU_LeaderSword3] = {Gold = 60},
-        [Entities.PU_LeaderSword4] = {Gold = 70},
-        ---
-        [Entities.PU_LeaderBow1] = {Gold = 10},
-        [Entities.PU_LeaderBow2] = {Gold = 15},
-        [Entities.PU_LeaderBow3] = {Gold = 50},
-        [Entities.PU_LeaderBow4] = {Gold = 60},
-        ---
-        [Entities.PV_Cannon1] = {Gold = 10},
-        [Entities.PV_Cannon2] = {Gold = 30},
-        [Entities.PV_Cannon3] = {Gold = 90},
-        [Entities.PV_Cannon4] = {Gold = 90},
-        ---
-        [Entities.PU_LeaderCavalry1] = {Gold = 30},
-        [Entities.PU_LeaderCavalry2] = {Gold = 50},
-        ---
-        [Entities.PU_LeaderHeavyCavalry1] = {Gold = 50},
-        [Entities.PU_LeaderHeavyCavalry2] = {Gold = 60},
-        ---
-        [Entities.PU_LeaderRifle1] = {Gold = 40},
-        [Entities.PU_LeaderRifle2] = {Gold = 90},
-        ---
-        [Entities.PU_Scout] = {Gold = 5},
-        [Entities.PU_Thief] = {Gold = 25},
+Stronghold.Config.Units = {
+    [Entities.PU_LeaderPoleArm1] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 10,
+    },
+    [Entities.PU_LeaderPoleArm2] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 15,
+    },
+    [Entities.PU_LeaderPoleArm3] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 35
+    },
+    [Entities.PU_LeaderPoleArm4] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 45
+    },
+    ---
+    [Entities.PU_LeaderSword1] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 20,
+    },
+    [Entities.PU_LeaderSword2] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 30,
+    },
+    [Entities.PU_LeaderSword3] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 60,
+    },
+    [Entities.PU_LeaderSword4] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 70,
+    },
+    ---
+    [Entities.PU_LeaderBow1] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 10,
+    },
+    [Entities.PU_LeaderBow2] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 15,
+    },
+    [Entities.PU_LeaderBow3] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 50,
+    },
+    [Entities.PU_LeaderBow4] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 60,
+    },
+    ---
+    [Entities.PV_Cannon1] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 10,
+    },
+    [Entities.PV_Cannon2] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 30,
+    },
+    [Entities.PV_Cannon3] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 90,
+    },
+    [Entities.PV_Cannon4] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 90,
+    },
+    ---
+    [Entities.PU_LeaderCavalry1] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 30,
+    },
+    [Entities.PU_LeaderCavalry2] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 50,
+    },
+    ---
+    [Entities.PU_LeaderHeavyCavalry1] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 50,
+    },
+    [Entities.PU_LeaderHeavyCavalry2] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 60,
+    },
+    ---
+    [Entities.PU_LeaderRifle1] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 40,
+    },
+    [Entities.PU_LeaderRifle2] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 90,
+    },
+    ---
+    [Entities.PU_Scout] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 5,
+    },
+    [Entities.PU_Thief] = {
+        Costs = {0, 10, 0, 0, 0, 0, 0},
+        Upkeep = 25,
+    },
+    ---
+    [Entities.PU_Serf] = {
+        Costs = {0, 50, 0, 0, 0, 0, 0},
+        Upkeep = 0,
     },
 }
+
+-- -------------------------------------------------------------------------- --
+-- Buy Unit
+
+function Stronghold:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
+    if self.Players[_PlayerID] and self.Config.Units[_Type] then
+        local Position = self:GetBarracksDoorPosition(_BarracksID);
+        local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
+
+        -- Passive ability: experienced troops
+        local Experience = 0;
+        if IsLeader and self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
+            Experience = 3;
+        end
+        -- Create unit
+        local Costs = CreateCostTable(unpack(self.Config.Units[_Type].Costs));
+        RemoveResourcesFromPlayer(_PlayerID, Costs);
+        local ID = AI.Entity_CreateFormation(_PlayerID, _Type, 0, 0, Position.X, Position.Y, 0, 0, Experience, 0);
+        if ID ~= 0 then
+            if Logic.IsEntityInCategory(_BarracksID, EntityCategories.Headquarters) == 1 then
+                Position = self.Players[_PlayerID].CampPos;
+            end
+            Logic.MoveSettler(ID, Position.X, Position.Y);
+            if IsLeader and _AutoFill then
+                local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
+                for i= 1, MaxSoldiers do
+                    RemoveResourcesFromPlayer(_PlayerID, Costs);
+                end
+                Tools.CreateSoldiersForLeader(ID, MaxSoldiers);
+            end
+        end
+        -- Release lock
+        self.Players[_PlayerID].BuyUnitLock = nil;
+    end
+end
+
+function Stronghold:GetBarracksDoorPosition(_BarracksID)
+    local PlayerID = Logic.EntityGetPlayer(_BarracksID);
+    local Position = self.Players[PlayerID].DoorPos;
+
+    local BarracksType = Logic.GetEntityType(_BarracksID);
+    if BarracksType == Entities.PB_Barracks1 or BarracksType == Entities.PB_Barracks2 then
+        Position = GetCirclePosition(_BarracksID, 900, 90);
+    elseif BarracksType == Entities.PB_Archery1 or BarracksType == Entities.PB_Archery2 then
+        Position = GetCirclePosition(_BarracksID, 800, 90);
+    elseif BarracksType == Entities.PB_Stable1 or BarracksType == Entities.PB_Stable2 then
+        Position = GetCirclePosition(_BarracksID, 1000, 90);
+    elseif BarracksType == Entities.PB_Foundry1 or BarracksType == Entities.PB_Foundry2 then
+        Position = GetCirclePosition(_BarracksID, 800, 180);
+    end
+    return Position;
+end
 
 -- -------------------------------------------------------------------------- --
 -- Serf
@@ -183,7 +310,7 @@ function Stronghold:PrintSerfConstructionTooltip(_PlayerID, _UpgradeCategory, _K
         return false;
     end
 
-    -- Base building limit
+    -- Beautification limit
     local LimitReached = false;
     local Limit = Stronghold.Config.Income.Buildings[Type].Limit;
     if Limit and Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit then
