@@ -108,7 +108,7 @@ function Stronghold:CalculateReputationIncrease(_PlayerID)
         if WorkerCount > 0 then
             -- Buildings
             for k, v in pairs(self.Config.Income.Buildings) do
-                local Buildings = self:GetCompletedEntitiesOfType(_PlayerID, k);
+                local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
                 for i= table.getn(Buildings), 1, -1 do
                     if Logic.GetBuildingWorkPlaceLimit(Buildings[i]) > 0 then
                         if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) == 0 then
@@ -116,7 +116,9 @@ function Stronghold:CalculateReputationIncrease(_PlayerID)
                         end
                     end
                 end
-                Income = Income + (table.getn(Buildings) * v.Reputation);
+                Income = Income + self:ApplyReputationBuildingBonusPassiveAbility(
+                    _PlayerID, k, table.getn(Buildings), v.Reputation
+                );
             end
             -- Tax
             local TaxtHeight = self.Players[_PlayerID].TaxHeight;
@@ -124,8 +126,6 @@ function Stronghold:CalculateReputationIncrease(_PlayerID)
                 local TaxEffect = Stronghold.Config.Income.TaxEffect;
                 Income = Income + TaxEffect[TaxtHeight].Reputation;
             end
-            -- Hero
-            Income = self:ApplyReputationIncreasePassiveAbility(_PlayerID, Income);
         end
         return math.floor(Income + 0.5);
     end
@@ -137,22 +137,35 @@ end
 -- provide a farm or house are negative factors.
 function Stronghold:CalculateReputationDecrease(_PlayerID)
     if self.Players[_PlayerID] then
-        local TaxEffect = Stronghold.Config.Income.TaxEffect;
         local Decrease = 0;
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         if WorkerCount > 0 then
-            local TaxPenalty = 0;
-            local TaxtHeight = self.Players[_PlayerID].TaxHeight;
-            if TaxtHeight > 1 then
-                TaxPenalty = TaxEffect[TaxtHeight].Reputation * -1
-                TaxPenalty = TaxPenalty * (1 + (WorkerCount/100));
-            end
-            local NoFood = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID)/3;
-            local NoSleep = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID)/3;
+            local TaxPenalty = self:CalculateReputationTaxPenaltyAmount(
+                _PlayerID,
+                self.Players[_PlayerID].TaxHeight,
+                WorkerCount
+            );
+            local NoFood = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID) * 0.25;
+            local NoSleep = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID) * 0.25;
             Decrease = TaxPenalty + NoFood + NoSleep;
             Decrease = self:ApplyReputationDecreasePassiveAbility(_PlayerID, Decrease);
         end
         return math.floor(Decrease + 0.5);
+    end
+    return 0;
+end
+
+function Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, _TaxtHeight, _WorkerCount)
+    if self.Players[_PlayerID] then
+        local Penalty = 0;
+        if _TaxtHeight > 1 then
+            local TaxEffect = Stronghold.Config.Income.TaxEffect;
+            Penalty = TaxEffect[_TaxtHeight].Reputation * -1
+            for i= 1, _WorkerCount do
+                Penalty = Penalty * 1.05;
+            end
+        end
+        return math.floor(Penalty + 0.5);
     end
     return 0;
 end
@@ -169,7 +182,7 @@ function Stronghold:CalculateHonorIncome(_PlayerID)
 
         -- Buildings
         for k, v in pairs(self.Config.Income.Buildings) do
-            local Buildings = self:GetCompletedEntitiesOfType(_PlayerID, k);
+            local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
             for i= table.getn(Buildings), 1, -1 do
                 local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
                 if WorkplaceLimit then
@@ -208,7 +221,7 @@ function Stronghold:CalculateMoneyUpkeep(_PlayerID)
     if self.Players[_PlayerID] then
         local Upkeep = 0;
         for k, v in pairs(self.Config.Upkeep.Units) do
-            local Military = self:GetCompletedEntitiesOfType(_PlayerID, k);
+            local Military = GetCompletedEntitiesOfType(_PlayerID, k);
             local TypeUpkeep = 0;
             for i= 1, table.getn(Military) do
                 local UnitUpkeep = v.Gold;

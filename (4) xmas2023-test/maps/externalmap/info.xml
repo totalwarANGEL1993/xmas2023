@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
- <NameKey></NameKey>
- <DescKey></DescKey>
+ <NameKey>MapDescription/Peaceful_Land_name</NameKey>
+ <DescKey>MapDescription/Peaceful_Land_desc</DescKey>
  <Name>WT2023 - Testmap</Name>
  <Desc>Testmap for the WT2023.</Desc>
  <SizeX>257</SizeX>
@@ -12,6 +12,6 @@
  <MiniMapTextureName>data\graphics\Textures\GUI\MapPics\externalmap</MiniMapTextureName>
  <Key>2</Key>
  <GUID>
-  <Data>b27f8bdb-0d0a-4003-be70-2c440a8bcde5</Data>
+  <Data>28cfb839-d036-485c-918d-45e0915ab6a5</Data>
  </GUID>
 </root>

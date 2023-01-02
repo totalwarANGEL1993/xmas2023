@@ -109,5 +109,35 @@
    <AmbientSoundType></AmbientSoundType>
    <Scale>1.000000e+000</Scale>
   </Entity>
+  <Entity classname="EGL::CGLEEntityCreator" classid="0x0753286d">
+   <Type>XD_ClayPit1</Type>
+   <Position>
+    <X>8.325000e+003</X>
+    <Y>2.195000e+004</Y>
+   </Position>
+   <Orientation>0.000000e+000</Orientation>
+   <Flags>0</Flags>
+   <PlayerID>0</PlayerID>
+   <Health>-1</Health>
+   <Name></Name>
+   <ScriptCommandLine></ScriptCommandLine>
+   <AmbientSoundType></AmbientSoundType>
+   <Scale>0.000000e+000</Scale>
+  </Entity>
+  <Entity classname="EGL::CGLEEntityCreator" classid="0x0753286d">
+   <Type>XD_Clay1</Type>
+   <Position>
+    <X>4.447012e+003</X>
+    <Y>2.107991e+004</Y>
+   </Position>
+   <Orientation>0.000000e+000</Orientation>
+   <Flags>0</Flags>
+   <PlayerID>0</PlayerID>
+   <Health>-1</Health>
+   <Name></Name>
+   <ScriptCommandLine></ScriptCommandLine>
+   <AmbientSoundType></AmbientSoundType>
+   <Scale>1.000000e+000</Scale>
+  </Entity>
  </Entities>
 </root>

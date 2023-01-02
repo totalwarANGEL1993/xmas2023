@@ -180,7 +180,9 @@
         "CUtil",
         "CEntity",
         "GameCallback_Stronghold_OnPayday",
-        "InterfaceGlobals"
+        "InterfaceGlobals",
+        "SetEntityName",
+        "DARKMOORMUSIC"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

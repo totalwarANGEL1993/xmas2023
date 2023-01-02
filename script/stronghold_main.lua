@@ -28,13 +28,17 @@ Stronghold = {
     },
 }
 
+-- Starts the script
 function Stronghold:Init()
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
     self:InitTradeBalancer();
-    self:StartPlayerValuesUpdater();
     self:StartPlayerPaydayUpdater();
+    self:StartEntityCreatedTrigger();
+    self:StartEntityHurtTrigger();
+    self:StartOnEveryTurnTrigger();
+    self:OverrideGainedResourceCallback();
 
     self:OverrideAttraction();
     self:OverridePaydayClockTooltip();
@@ -52,15 +56,19 @@ function Stronghold:Init()
     self:OverrdeMonasteryButtons();
 end
 
+-- Restore game state after load
 function Stronghold:OnSaveGameLoaded()
     ResourceType.Honor = 20;
     self:OverrideAttraction();
     for k,v in pairs(self.Players) do
-        self:BuyHeroConfigureLord(k);
-        self:BuyHeroConfigureSpouse(k);
+        self:HeadquartersConfigureBuilding(k);
+        self:ConfigurePlayersLord(k);
+        self:ConfigurePlayersSpouse(k);
     end
 end
 
+-- Add player
+-- This function adds a new player.
 function Stronghold:AddPlayer(_PlayerID)
     local LordName = "LordP" .._PlayerID;
     local SpouseName = "SpouseP" .._PlayerID;
@@ -82,13 +90,6 @@ function Stronghold:AddPlayer(_PlayerID)
     CampPos.X = x; CampPos.Y = y; CampPos.Z = z;
     DestroyEntity(ID);
 
-    -- Create dummy lord
-    local LordOrientation = Logic.GetEntityOrientation(GetID(HQName)) -180;
-    ID = Logic.CreateEntity(Entities.PU_Hero1, DoorPos.X, DoorPos.Y, LordOrientation, _PlayerID);
-    Logic.SetEntitySelectableFlag(ID, 0);
-    Logic.SetEntityName(ID, LordName);
-    self:BuyHeroConfigureLord(_PlayerID);
-
     -- Create serfs
     for i= 1, 6 do
         local SerfPos = GetCirclePosition(CampPosName, 250, 60 * i);
@@ -101,6 +102,10 @@ function Stronghold:AddPlayer(_PlayerID)
 
     -- Create player data
     self.Players[_PlayerID] = {
+        InvulnerabilityInfoShown = false,
+        VulnerabilityInfoShown = true,
+        AttackMemory = {},
+
         LordScriptName = LordName,
         SpouseScriptName = SpouseName,
         HQScriptName = HQName,
@@ -121,40 +126,19 @@ function Stronghold:AddPlayer(_PlayerID)
         TaxHeight = 3,
         Rank = 1,
     };
+
+    self:HeadquartersConfigureBuilding(_PlayerID);
 end
 
 -- -------------------------------------------------------------------------- --
--- Defeat Condition
+-- Trigger
 
-function Stronghold:PlayerDefeatCondition(_PlayerID)
-    if not self.Players[_PlayerID] then
-        return;
-    end
-
-    -- Invulnerable HQ
-    if IsExisting(self.Players[_PlayerID].HQScriptName) then
-        MakeInvulnerable(self.Players[_PlayerID].HQScriptName);
-    end
-    -- Check health of the lord
-    if IsExisting(self.Players[_PlayerID].LordScriptName) then
-        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
-        if Logic.PlayerGetGameState(_PlayerID) == 1 then
-            if Logic.GetEntityHealth(LordID) == 0 then
-                Logic.PlayerSetGameStateToLost(_PlayerID);
-            end
-        end
-    end
-end
-
--- TODO: Self Destruct?
-
--- -------------------------------------------------------------------------- --
--- Update Values
-
-function Stronghold:StartPlayerValuesUpdater()
-    function Stronghold_Trigger_UpdateIncomeAndUpkeep()
+function Stronghold:StartOnEveryTurnTrigger()
+    function Stronghold_Trigger_OnEveryTurn()
+        ---@diagnostic disable-next-line: undefined-field
         local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), 10);
         if PlayerID > 0 and PlayerID < 9 then
+            Stronghold:EntityAttackedController(PlayerID);
             Stronghold:PlayerDefeatCondition(PlayerID);
             Stronghold:CreateWorkersForPlayer(PlayerID);
             Stronghold:UpdateIncomeAndUpkeep(PlayerID);
@@ -162,12 +146,141 @@ function Stronghold:StartPlayerValuesUpdater()
             Stronghold:FaithProductionBonus(PlayerID);
         end
     end
-    StartSimpleHiResJob("Stronghold_Trigger_UpdateIncomeAndUpkeep");
+
+    Trigger.RequestTrigger(
+        Events.LOGIC_EVENT_EVERY_TURN,
+        nil,
+        "Stronghold_Trigger_OnEveryTurn",
+        1
+    );
+end
+
+function Stronghold:StartEntityCreatedTrigger()
+    function Stronghold_Trigger_EntityCreated()
+        local EntityID = Event.GetEntityID();
+        local PlayerID = Logic.EntityGetPlayer(EntityID);
+
+        -- Beautification limit
+        if Logic.IsBuilding(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
+            Stronghold:OnSelectionMenuChanged(EntityID);
+        end
+        -- Pets
+        if Logic.IsSettler(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
+            Stronghold:ConfigurePlayersHeroPet(EntityID);
+        end
+    end
+
+    Trigger.RequestTrigger(
+        Events.LOGIC_EVENT_ENTITY_CREATED,
+        nil,
+        "Stronghold_Trigger_EntityCreated",
+        1
+    );
+end
+
+function Stronghold:StartEntityHurtTrigger()
+    function Stronghold_Trigger_OnEntityHurt()
+        local Attacker = Event.GetEntityID1();
+        local AttackerPlayer = Logic.EntityGetPlayer(Attacker);
+        local Attacked = Event.GetEntityID2();
+        local AttackedPlayer = Logic.EntityGetPlayer(Attacked);
+        if Attacker and Attacked then
+            if Logic.GetEntityHealth(Attacked) > 0 then
+                if Stronghold.Players[AttackedPlayer] then
+                    Stronghold.Players[AttackedPlayer].AttackMemory[Attacked] = {4, Attacker};
+                end
+            end
+        end
+    end
+
+    Trigger.RequestTrigger(
+        Events.LOGIC_EVENT_ENTITY_HURT_ENTITY,
+        nil,
+        "Stronghold_Trigger_OnEntityHurt",
+        1
+    );
+end
+
+function Stronghold:OverrideGainedResourceCallback()
+    GameCallback_GainedResources_Orig_StrongholdMain = GameCallback_GainedResources;
+    GameCallback_GainedResources = function(_PlayerID, _ResourceType, _Amount)
+        GameCallback_GainedResources_Orig_StrongholdMain(_PlayerID, _ResourceType, _Amount);
+        if Stronghold.Players[_PlayerID] then
+            Stronghold:ResourceProductionBonus(_PlayerID, _ResourceType, _Amount);
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Defeat Condition
+
+-- The player is defeated when the headquarter is destroyed. This is not so
+-- much like Stronghold but having 1 super strong hero as the main target
+-- might be a bit risky.
+function Stronghold:PlayerDefeatCondition(_PlayerID)
+    if not self.Players[_PlayerID] then
+        return;
+    end
+
+    -- Check lord
+    local HeroAlive = false;
+    if IsEntityValid(self.Players[_PlayerID].LordScriptName) then
+        HeroAlive = true;
+    end
+
+    if HeroAlive then
+        self.Players[_PlayerID].VulnerabilityInfoShown = false;
+        if IsExisting(self.Players[_PlayerID].HQScriptName) then
+            MakeInvulnerable(self.Players[_PlayerID].HQScriptName);
+        end
+        if not self.Players[_PlayerID].InvulnerabilityInfoShown then
+            self.Players[_PlayerID].InvulnerabilityInfoShown = true;
+            Sound.PlayGUISound(Sounds.Misc_so_signalhorn, 70);
+
+            local PlayerName = UserTool_GetPlayerName(_PlayerID);
+            local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
+            Message(
+                "@color:180,180,180 Das Haupthaus von " ..PlayerColor.. " "..
+                PlayerName.. " @color:180,180,180 ist nun geschützt!"
+            );
+        end
+    else
+        self.Players[_PlayerID].InvulnerabilityInfoShown = false;
+        if IsExisting(self.Players[_PlayerID].HQScriptName) then
+            MakeVulnerable(self.Players[_PlayerID].HQScriptName);
+        end
+        if not self.Players[_PlayerID].VulnerabilityInfoShown then
+            self.Players[_PlayerID].VulnerabilityInfoShown = true;
+            Sound.PlayGUISound(Sounds.Misc_so_signalhorn, 70);
+
+            local PlayerName = UserTool_GetPlayerName(_PlayerID);
+            local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
+            Message(
+                "@color:180,180,180 Das Haupthaus von " ..PlayerColor.. " "..
+                PlayerName.. " @color:180,180,180 ist nun verwundbar!"
+            );
+        end
+    end
+
+    -- Check HQ
+    if not IsExisting(self.Players[_PlayerID].HQScriptName) then
+        if Logic.PlayerGetGameState(_PlayerID) == 1 then
+            Logic.PlayerSetGameStateToLost(_PlayerID);
+
+            local PlayerName = UserTool_GetPlayerName(_PlayerID);
+            local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
+            Message(PlayerColor.. " " ..PlayerName.. " @color:180,180,180 wurde besiegt!");
+        end
+    end
 end
 
 -- -------------------------------------------------------------------------- --
 -- Workers
 
+-- Worker Spawner
+-- Because the attraction limit only affects serfs, workers and agents and I
+-- don't feel like changing the properties of every entity type they must be
+-- spawned this way.
 function Stronghold:CreateWorkersForPlayer(_PlayerID)
     if self.Players[_PlayerID] then
         local DoCreate = true;
@@ -175,14 +288,15 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
         if Logic.GetAverageMotivation(_PlayerID) > LeaveMotivation then
             if Logic.GetPlayerAttractionUsage(_PlayerID) < Logic.GetPlayerAttractionLimit(_PlayerID) then
                 local Index = self.Players[_PlayerID].LastBuildingWorkerCreatedIndex or 1;
-                local Buildings = self:GetAllWorkplaces(_PlayerID);
+                local Buildings = GetAllWorkplaces(_PlayerID);
                 if Buildings[Index] then
                     if DoCreate then
                         local PlacesLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[Index]);
                         local PlacesUsed = Logic.GetBuildingWorkPlaceUsage(Buildings[Index]);
                         if PlacesUsed < PlacesLimit then
                             local Type = Logic.GetWorkerTypeByBuilding(Buildings[Index]);
-                            CreateEntity(1, Type, self.Players[_PlayerID].DoorPos);
+                            local Position = self.Players[_PlayerID].DoorPos;
+                            Logic.CreateEntity(Type, Position.X, Position.Y, 0, _PlayerID);
                             DoCreate = false;
                         end
                     end
@@ -195,8 +309,12 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
     end
 end
 
+-- Overwrite attraction
+-- The attraction limit is based on the headquarters. To make my life easier
+-- I just overwrite the logics.
 function Stronghold:OverrideAttraction()
     GetPlayerAttractionLimit_Orig_StrongholdEco = Logic.GetPlayerAttractionLimit
+    ---@diagnostic disable-next-line: duplicate-set-field
 	Logic.GetPlayerAttractionLimit = function(_PlayerID)
 		if not Stronghold.Players[_PlayerID] then
             return GetPlayerAttractionUsage_Orig_StrongholdEco(_PlayerID);
@@ -218,13 +336,14 @@ function Stronghold:OverrideAttraction()
             local OutpostAttraction = Stronghold.Config.OutpostAttraction;
             AttractionLimit = AttractionLimit + (Outposts * OutpostAttraction);
         end
-        -- Lord bonus
+        -- Hero bonus
         AttractionLimit = Stronghold:ApplyMaxAttractionPassiveAbility(_PlayerID, AttractionLimit);
 
-        return AttractionLimit;
+        return math.floor(AttractionLimit + 0.5);
 	end
 
 	GetPlayerAttractionUsage_Orig_StrongholdEco = Logic.GetPlayerAttractionUsage
+    ---@diagnostic disable-next-line: duplicate-set-field
 	Logic.GetPlayerAttractionUsage = function(_PlayerID)
 		if not Stronghold.Players[_PlayerID] then
             return GetPlayerAttractionUsage_Orig_StrongholdEco(_PlayerID);
@@ -240,6 +359,9 @@ end
 -- -------------------------------------------------------------------------- --
 -- Payday
 
+-- Payday updater
+-- The real payday is deactivated. If the payday callback is present the payday
+-- is implemented using it. If not we use the good old fashioned way.
 function Stronghold:StartPlayerPaydayUpdater()
     -- In multiplayer
     if GameCallback_PaydayPayed then
@@ -278,6 +400,8 @@ function Stronghold:StartPlayerPaydayUpdater()
     StartSimpleHiResJob("Stronghold_Trigger_OnPayday");
 end
 
+-- Payday controller
+-- Applies everything that is happening on the payday.
 function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
     if self.Players[_PlayerID] then
         -- Fix money for payday (only singleplayr)
@@ -376,7 +500,7 @@ end
 function Stronghold:UpdateMotivationOfWorkers(_PlayerID, _Amount)
     if self.Players[_PlayerID] then
         if _Amount > 0 and _Amount < self.Players[_PlayerID].ReputationLimit then
-            local WorkerList = self:GetAllWorker(_PlayerID);
+            local WorkerList = GetAllWorker(_PlayerID);
             for i= 1, table.getn(WorkerList) do
                 CEntity.SetMotivation(WorkerList[i], _Amount / 100);
             end
@@ -387,6 +511,8 @@ end
 -- -------------------------------------------------------------------------- --
 -- UI Update
 
+-- Menu update
+-- This calls all updates of the selection menu when selection has changed.
 function Stronghold:OnSelectionMenuChanged(_EntityID)
     self:OnHeadquarterSelected(_EntityID);
 
@@ -409,12 +535,14 @@ function Stronghold:OverwriteCommonCallbacks()
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		GameCallback_OnBuildingConstructionComplete_Orig_Stronghold(_EntityID, _PlayerID);
         Stronghold:OnSelectionMenuChanged(_EntityID);
+        Stronghold:HeadquartersConfigureBuilding(_PlayerID);
 	end
 
 	GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
 		GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold(_EntityIDOld, _EntityIDNew);
         Stronghold:OnSelectionMenuChanged(_EntityIDNew);
+        Stronghold:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
 	end
 
 	GameCallback_OnTechnologyResearched_Orig_Stronghold = GameCallback_OnTechnologyResearched;
@@ -442,6 +570,7 @@ function Stronghold:OverwriteCommonCallbacks()
 	end
 end
 
+-- Tooptip Generic Override
 function Stronghold:OverrideTooltipGenericMain()
     GUITooltip_Generic_Orig_StrongholdMain = GUITooltip_Generic;
     GUITooltip_Generic = function(_Key)
@@ -466,6 +595,7 @@ function Stronghold:OverrideTooltipGenericMain()
     end
 end
 
+-- Tooptip Construction Override
 function Stronghold:OverrideTooltipConstructionMain()
     GUITooltip_ConstructBuilding_Orig_StrongholdMain = GUITooltip_ConstructBuilding;
     GUITooltip_ConstructBuilding = function(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
@@ -484,18 +614,21 @@ function Stronghold:OverrideTooltipConstructionMain()
     end
 end
 
+-- Update Construction Override
 function Stronghold:OverrideUpdateConstructionMain()
-    GUIUpdate_BuildingButtons_Orig_StrongholdMain = GUITooltip_ConstructBuilding;
+    GUIUpdate_BuildingButtons_Orig_StrongholdMain = GUIUpdate_BuildingButtons;
     GUIUpdate_BuildingButtons = function(_Button, _Technology)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold.Players[PlayerID] then
             return GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
         end
-        GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
 
         local Updated = false;
         if not Updated then
             Updated = Stronghold:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
+        end
+        if not Updated then
+            GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
         end
     end
 
@@ -505,26 +638,14 @@ function Stronghold:OverrideUpdateConstructionMain()
         if not Stronghold.Players[PlayerID] then
             return GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
         end
-        GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
 
         local Updated = false;
         if not Updated then
             Updated = Stronghold:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
         end
-    end
-
-    function Stronghold_Trigger_EntityCreated_UpdateSerfMenu()
-        local EntityID = Event.GetEntityID();
-        local PlayerID = Logic.EntityGetPlayer(EntityID);
-        if Logic.IsBuilding(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
-            Stronghold:OnSelectionMenuChanged(EntityID);
+        if not Updated then
+            GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
         end
     end
-    Trigger.RequestTrigger(
-        Events.LOGIC_EVENT_ENTITY_CREATED,
-        nil,
-        "Stronghold_Trigger_EntityCreated_UpdateSerfMenu",
-        1
-    )
 end
 

@@ -8,20 +8,6 @@ Stronghold = Stronghold or {};
 -- Select Hero
 
 Stronghold.Config.Hero = {
-    LordTypes = {
-        [Entities.PU_Hero1c]             = true,
-        [Entities.PU_Hero2]              = true,
-        [Entities.PU_Hero3]              = true,
-        [Entities.PU_Hero4]              = true,
-        [Entities.PU_Hero6]              = true,
-        [Entities.CU_BlackKnight]        = true,
-    },
-    SpouseTypes = {
-        [Entities.PU_Hero5]              = true,
-        [Entities.PU_Hero11]             = true,
-        [Entities.CU_Mary_de_Mortfichet] = true,
-    },
-
     HeroSkills = {
         [Entities.PU_Hero1c]             = {
             Description = "Passive Fähigkeit: @cr Für jeden Ingeneur wird zusätzliche Wetterenergie produziert."..
@@ -39,62 +25,111 @@ Stronghold.Config.Hero = {
                           "Aktive Fähigkeit: @cr Kann Bataillone auffüllen, wenn diese nicht kämpfen.",
         },
         [Entities.PU_Hero4]              = {
-            Description = "Passive Fähigkeit: @cr Der Sold für alle Einheitentypen wird um 10% verringert."..
+            Description = "Passive Fähigkeit: @cr Der Sold für alle Einheitentypen wird um 15% verringert."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
+        },
+        [Entities.PU_Hero5]              = {
+            Description = "Passive Fähigkeit: @cr Die Steuereinnahmen werden um 15% erhöht."..
+                          " @cr @cr "..
+                          "Aktive Fähigkeit: @cr Kann Pfeile auf feindliche Truppen regnen lassen.",
         },
         [Entities.PU_Hero6]              = {
             Description = "Passive Fähigkeit: @cr Für jeden Priester wird zusätzlicher Glauben produziert."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann die Rüstung von verbündeten Einheiten verbessern.",
         },
-        [Entities.CU_BlackKnight]        = {
-            Description = "Passive Fähigkeit: @cr Der Malus auf die Beliebtheit wird um 20% verringert."..
-                          " @cr @cr "..
-                          "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden senken.",
-        },
-        ---
-        [Entities.PU_Hero5]              = {
-            Description = "Passive Fähigkeit: @cr Die Steuereinnahmen werden um 10% erhöht."..
-                          " @cr @cr "..
-                          "Aktive Fähigkeit: @cr Kann Pfeile auf feindliche Truppen regnen lassen.",
-        },
-        [Entities.PU_Hero11]             = {
-            Description = "Passive Fähigkeit: @cr Die maximale Beliebtheit wird auf 300 erhöht."..
-                          " @cr @cr "..
-                          "Aktive Fähigkeit: @cr Kann Shuriken auf feindliche Truppen schleudern.",
-        },
         [Entities.CU_Mary_de_Mortfichet] = {
             Description = "Passive Fähigkeit: @cr Kundschafter und Diebe verlangen keinen Sold."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
         },
+        [Entities.CU_BlackKnight]        = {
+            Description = "Passive Fähigkeit: @cr Der Malus auf die Beliebtheit wird um 30% verringert."..
+                          " @cr @cr "..
+                          "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden senken.",
+        },
+        [Entities.CU_Barbarian_Hero]     = {
+            Description = "Passive Fähigkeit: @cr Alle Tavernen produzieren +3 zusätzliche Beliebtheit."..
+                          " @cr @cr "..
+                          "Aktive Fähigkeit: @cr Ruft Wölfe herbei, die Ehre erzeugen, wenn sie Feinde töten.",
+        },
+        [Entities.PU_Hero10]             = {
+            Description = "Passive Fähigkeit: @cr Scharfschützen verlangen 10% weniger Sold."..
+                          " @cr @cr "..
+                          "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
+        },
+        [Entities.PU_Hero11]             = {
+            Description = "Passive Fähigkeit: @cr Die maximale Beliebtheit wird auf 300 erhöht."..
+                          " @cr @cr "..
+                          "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
+        },
+        [Entities.CU_Evil_Queen] = {
+            Description = "Passive Fähigkeit: @cr Das Bevölkerungslimit wird um 10% erhöht."..
+                          " @cr @cr "..
+                          "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
+        },
     },
 
-    LordStats = {
-        Health = 10000,
-        Armor = 10,
-        Damage = 48,
-        Healing = 0,
-    },
-    SpouseStats = {
-        Health = 2000,
-        Armor = 5,
-        Damage = 22,
-        Healing = 5,
-    },
+    ---
 
     TypeToBuyHeroButton = {
         [Entities.PU_Hero1c]             = "BuyHeroWindowBuyHero1",
         [Entities.PU_Hero2]              = "BuyHeroWindowBuyHero5",
         [Entities.PU_Hero3]              = "BuyHeroWindowBuyHero4",
         [Entities.PU_Hero4]              = "BuyHeroWindowBuyHero3",
-        [Entities.PU_Hero6]              = "BuyHeroWindowBuyHero6",
-        [Entities.CU_BlackKnight]        = "BuyHeroWindowBuyHero8",
-        ---
         [Entities.PU_Hero5]              = "BuyHeroWindowBuyHero2",
-        [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
+        [Entities.PU_Hero6]              = "BuyHeroWindowBuyHero6",
         [Entities.CU_Mary_de_Mortfichet] = "BuyHeroWindowBuyHero7",
+        [Entities.CU_BlackKnight]        = "BuyHeroWindowBuyHero8",
+        [Entities.CU_Barbarian_Hero]     = "BuyHeroWindowBuyHero9",
+        [Entities.PU_Hero10]             = "BuyHeroWindowBuyHero10",
+        [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
+        [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
+    },
+
+    ---
+
+    LordStats = {
+        Health = 3000,
+        Armor = 10,
+        Damage = 50,
+        Healing = 25,
+    },
+    SpouseStats = {
+        Health = 1500,
+        Armor = 6,
+        Damage = 35,
+        Healing = 15,
+    },
+    PetStats = {
+        [Entities.CU_Barbarian_Hero_wolf] = {
+            Owner = Entities.CU_Barbarian_Hero,
+            Health = 1000, Armor = 4, Damage = 22, Healing = 15
+        },
+        [Entities.PU_Hero5_Outlaw] = {
+            Owner = Entities.CU_Barbarian_Hero,
+            Health = 650, Armor = 5, Damage = 16, Healing = 15
+        },
+    },
+
+    ---
+
+    LordTypes = {
+        [Entities.PU_Hero2]              = true,
+        [Entities.PU_Hero3]              = true,
+        [Entities.PU_Hero4]              = true,
+        [Entities.PU_Hero6]              = true,
+        [Entities.PU_Hero10]             = true,
+        [Entities.CU_BlackKnight]        = true,
+        [Entities.CU_Barbarian_Hero]     = true,
+    },
+    SpouseTypes = {
+        [Entities.PU_Hero1c]             = true,
+        [Entities.PU_Hero5]              = true,
+        [Entities.PU_Hero11]             = true,
+        [Entities.CU_Mary_de_Mortfichet] = true,
+        [Entities.CU_Evil_Queen]         = true,
     },
 }
 
@@ -224,15 +259,25 @@ end
 function Stronghold:BuyHeroCreateLord(_PlayerID, _Type)
     if self.Players[_PlayerID] then
         self.Players[_PlayerID].LordChosen = true;
-        ReplaceEntity(self.Players[_PlayerID].LordScriptName, _Type);
-        self:BuyHeroConfigureLord(_PlayerID);
+        local Position = self.Players[_PlayerID].DoorPos;
+        ID = Logic.CreateEntity(_Type, Position.X, Position.Y, 0, _PlayerID);
+        Logic.SetEntityName(ID, self.Players[_PlayerID].LordScriptName);
+        Position = self.Players[_PlayerID].CampPos;
+        Logic.MoveSettler(ID, Position.X, Position.Y);
+        self:ConfigurePlayersLord(_PlayerID);
+
+        local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
+        local TypeName = Logic.GetEntityTypeName(_Type);
+        local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
+        Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Burgherr gewählt!");
+
         if _PlayerID == GUI.GetPlayerID() then
             GameCallback_GUI_SelectionChanged();
         end
     end
 end
 
-function Stronghold:BuyHeroConfigureLord(_PlayerID, _Type)
+function Stronghold:ConfigurePlayersLord(_PlayerID)
     if self.Players[_PlayerID] then
         local ID = GetID(self.Players[_PlayerID].LordScriptName);
         if ID > 0 then
@@ -240,7 +285,9 @@ function Stronghold:BuyHeroConfigureLord(_PlayerID, _Type)
             CEntity.SetDamage(ID, self.Config.Hero.LordStats.Damage);
             CEntity.SetHealingPoints(ID, self.Config.Hero.LordStats.Healing);
             CEntity.SetMaxHealth(ID, self.Config.Hero.LordStats.Health);
-            Logic.HealEntity(ID, self.Config.Hero.LordStats.Health);
+            if Logic.GetEntityHealth(ID) > 0 then
+                Logic.HealEntity(ID, self.Config.Hero.LordStats.Health);
+            end
         end
     end
 end
@@ -253,14 +300,20 @@ function Stronghold:BuyHeroCreateSpouse(_PlayerID, _Type)
         Logic.SetEntityName(ID, self.Players[_PlayerID].SpouseScriptName);
         Position = self.Players[_PlayerID].CampPos;
         Logic.MoveSettler(ID, Position.X, Position.Y);
-        self:BuyHeroConfigureSpouse(_PlayerID);
+        self:ConfigurePlayersSpouse(_PlayerID);
+
+        local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
+        local TypeName = Logic.GetEntityTypeName(_Type);
+        local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
+        Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Burgfräulein gewählt!");
+
         if _PlayerID == GUI.GetPlayerID() then
             GameCallback_GUI_SelectionChanged();
         end
     end
 end
 
-function Stronghold:BuyHeroConfigureSpouse(_PlayerID)
+function Stronghold:ConfigurePlayersSpouse(_PlayerID)
     if self.Players[_PlayerID] then
         local ID = GetID(self.Players[_PlayerID].SpouseScriptName);
         if ID > 0 then
@@ -268,7 +321,78 @@ function Stronghold:BuyHeroConfigureSpouse(_PlayerID)
             CEntity.SetDamage(ID, self.Config.Hero.SpouseStats.Damage);
             CEntity.SetHealingPoints(ID, self.Config.Hero.SpouseStats.Healing);
             CEntity.SetMaxHealth(ID, self.Config.Hero.SpouseStats.Health);
-            Logic.HealEntity(ID, self.Config.Hero.SpouseStats.Health);
+            if Logic.GetEntityHealth(ID) > 0 then
+                Logic.HealEntity(ID, self.Config.Hero.SpouseStats.Health);
+            end
+        end
+    end
+end
+
+function Stronghold:ConfigurePlayersHeroPet(_EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    local Type = Logic.GetEntityType(_EntityID);
+    if self.Config.Hero.PetStats[Type] then
+        if Stronghold:HasValidHeroOfType(PlayerID, self.Config.Hero.PetStats[Type].Owner) then
+            CEntity.SetArmor(_EntityID, self.Config.Hero.PetStats[Type].Armor);
+            CEntity.SetDamage(_EntityID, self.Config.Hero.PetStats[Type].Damage);
+            CEntity.SetHealingPoints(_EntityID, self.Config.Hero.PetStats[Type].Healing);
+            CEntity.SetMaxHealth(_EntityID, self.Config.Hero.PetStats[Type].Health);
+            Logic.HealEntity(_EntityID, self.Config.Hero.PetStats[Type].Health);
+        end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Trigger
+
+function Stronghold:EntityAttackedController(_PlayerID)
+    if self.Players[_PlayerID] then
+        for k,v in pairs(self.Players[_PlayerID].AttackMemory) do
+            -- Count down and remove
+            self.Players[_PlayerID].AttackMemory[k][1] = v[1] -1;
+            if self.Players[_PlayerID].AttackMemory[k][1] <= 0 then
+                self.Players[_PlayerID].AttackMemory[k] = nil;
+            end
+
+            -- Hati und Skalli
+            if Logic.GetEntityType(v[2]) == Entities.CU_Barbarian_Hero_wolf then
+                if Logic.GetEntityHealth(k) == 0 then
+                    self.Players[_PlayerID].AttackMemory[k] = nil;
+                    local WolfPlayerID = Logic.EntityGetPlayer(v[2]);
+                    AddHonor(WolfPlayerID, 1);
+                end
+            end
+
+            -- Teleport to HQ
+            if Logic.IsHero(k) == 1 then
+                if Logic.GetEntityHealth(k) == 0 then
+                    self.Players[_PlayerID].AttackMemory[k] = nil;
+                    local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
+                    local HeroType = Logic.GetEntityType(k);
+                    local x,y,z = Logic.EntityGetPos(k);
+
+                    -- Place hero
+                    Logic.CreateEffect(GGL_Effects.FXDieHero, x, y, _PlayerID);
+                    local ID = SetPosition(k, self.Players[_PlayerID].DoorPos);
+                    Logic.HurtEntity(ID, Logic.GetEntityHealth(ID));
+                    -- Handle lord
+                    if self.Config.Hero.LordTypes[HeroType] then
+                        self:ConfigurePlayersLord(_PlayerID);
+                    end
+                    -- Handle spouse
+                    if self.Config.Hero.SpouseTypes[HeroType] then
+                        self:ConfigurePlayersSpouse(_PlayerID);
+                    end
+                    -- Send message
+                    local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(k));
+                    local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
+                    Message(PlayerColor.. " " ..Name.. " @color:255,255,255 muss sich in die Burg zurückziehen!");
+                end
+            end
+
+            if not IsExisting(k) then
+                self.Players[_PlayerID].AttackMemory[k] = nil;
+            end
         end
     end
 end
@@ -276,30 +400,67 @@ end
 -- -------------------------------------------------------------------------- --
 -- Passive Abilities
 
+function Stronghold:HasValidHeroOfType(_PlayerID, _Type)
+    if self.Players[_PlayerID] then
+        -- Check lord
+        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
+        if IsEntityValid(LordID) then
+            local HeroType = Logic.GetEntityType(LordID);
+            local TypeName = Logic.GetEntityTypeName(HeroType);
+            if type(_Type) == "string" and TypeName and string.find(TypeName, _Type) then
+                return true;
+            elseif type(_Type) == "number" and HeroType == _Type then
+                return true;
+            end
+        end
+        -- Check spouse
+        local SpouseID = GetID(self.Players[_PlayerID].SpouseScriptName);
+        if IsEntityValid(SpouseID) then
+            local HeroType = Logic.GetEntityType(SpouseID);
+            local TypeName = Logic.GetEntityTypeName(HeroType);
+            if type(_Type) == "string" and TypeName and string.find(TypeName, _Type) then
+                return true;
+            elseif type(_Type) == "number" and HeroType == _Type then
+                return true;
+            end
+        end
+    end
+    -- No hero found
+    return false;
+end
+
 -- Passive Ability: Weather energy production bonus
 function Stronghold:EnergyProductionBonus(_PlayerID)
-    if self.Players[_PlayerID] then
-        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
-        local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(LordID));
-        if TypeName and string.find(TypeName, "^PU_Hero1[abc]+$") then
-            local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
-            local Bonus = math.ceil(Amount * 0.18);
-            if Bonus > 0 then
-                Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.WeatherEnergy, Bonus);
-            end
+    if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
+        local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
+        if Amount > 0 then
+            Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.WeatherEnergy, Amount * 2);
         end
     end
 end
 
 -- Passive Ability: Faith production bonus
 function Stronghold:FaithProductionBonus(_PlayerID)
-    if self.Players[_PlayerID] then
-        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
-        if Logic.GetEntityType(LordID) == Entities.PU_Hero6 then
-            local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
-            local Bonus = math.ceil(Amount * 0.24);
-            if Bonus > 0 then
-                Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Bonus);
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
+        local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
+        if Amount > 0 then
+            Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount * 2);
+        end
+    end
+end
+
+-- Passive Ability: Resource production bonus
+-- (Callback is only called for main resource types)
+function Stronghold:ResourceProductionBonus(_PlayerID, _Type, _Amount)
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero2) then
+        if _Amount >= 4 then
+            if _Type == ResourceType.SulfurRaw
+            or _Type == ResourceType.ClayRaw
+            or _Type == ResourceType.WoodRaw
+            or _Type == ResourceType.StoneRaw
+            or _Type == ResourceType.IronRaw then
+                -- TODO: Maybe use the non-raw here?
+                Logic.AddToPlayersGlobalResource(_PlayerID, _Type, 1);
             end
         end
     end
@@ -308,18 +469,17 @@ end
 -- Passive Ability: Increase of attraction
 function Stronghold:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    -- Do nothing
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
+        Value = Value * 1.1;
+    end
     return Value;
 end
 
 -- Passive Ability: Increase of reputation
 function Stronghold:ApplyMaxReputationPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    if self.Players[_PlayerID] then
-        local SopuseID = GetID(self.Players[_PlayerID].SpouseScriptName);
-        if Logic.GetEntityType(SopuseID) == Entities.PU_Hero11 then
-            Value = 300;
-        end
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero11) then
+        Value = 300;
     end
     return Value;
 end
@@ -327,18 +487,26 @@ end
 -- Passive Ability: Increase of reputation
 function Stronghold:ApplyReputationIncreasePassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    -- Do nothing
+    -- do nothing
+    return Value;
+end
+
+-- Passive Ability: Increase of reputation
+function Stronghold:ApplyReputationBuildingBonusPassiveAbility(_PlayerID, _Type, _Amount, _Value)
+    local Value = _Value * _Amount;
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Barbarian_Hero) then
+        if _Type == Entities.PB_Tavern1 or _Type == Entities.PB_Tavern2 then
+            Value = Value + (3 * _Amount);
+        end
+    end
     return Value;
 end
 
 -- Passive Ability: Decrease of reputation
 function Stronghold:ApplyReputationDecreasePassiveAbility(_PlayerID, _Decrease)
     local Decrease = _Decrease;
-    if self.Players[_PlayerID] then
-        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
-        if Logic.GetEntityType(LordID) == Entities.CU_BlackKnight then
-            Decrease = (Decrease * 0.8);
-        end
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
+        Decrease = Decrease * 0.7;
     end
     return Decrease;
 end
@@ -346,16 +514,13 @@ end
 -- Passive Ability: Honor increase bonus
 function Stronghold:ApplyHonorBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
-    if self.Players[_PlayerID] then
-        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
-        if Logic.GetEntityType(LordID) == Entities.PU_Hero3 then
-            local Factor = 1.0;
-            local Alchemists = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Alchemist);
-            local Engineers = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
-            local Scholars = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scholar);
-            Factor = (Scholars+Engineers+Alchemists) + 0.15;
-            Income = Income * Factor;
-        end
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
+        local Factor = 1.0;
+        local Alchemists = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Alchemist);
+        local Engineers = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
+        local Scholars = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scholar);
+        Factor = (Scholars+Engineers+Alchemists) + 0.15;
+        Income = Income * Factor;
     end
     return Income;
 end
@@ -363,11 +528,8 @@ end
 -- Passive Ability: Tax income bonus
 function Stronghold:ApplyIncomeBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
-    if self.Players[_PlayerID] then
-        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
-        if Logic.GetEntityType(LordID) == Entities.PU_Hero5 then
-            Income = (Income * 1.1) + 0.5;
-        end
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
+        Income = Income * 1.15;
     end
     return Income;
 end
@@ -376,14 +538,17 @@ end
 -- This function is called for each unit type individually.
 function Stronghold:ApplyUpkeepDiscountPassiveAbility(_PlayerID, _Type, _Upkeep)
     local Upkeep = _Upkeep;
-    if self.Players[_PlayerID] and Upkeep > 0 then
-        local LordID = GetID(self.Players[_PlayerID].LordScriptName);
-        if Logic.GetEntityType(LordID) == Entities.PU_Hero4 then
-            Upkeep = (Upkeep * 0.9) + 0.5;
-        elseif Logic.GetEntityType(LordID) == Entities.CU_Mary_de_Mortfichet then
-            if _Type == Entities.PU_Scout or _Type == Entities.PU_Thief then
-                Upkeep = 0;
-            end
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
+        Upkeep = Upkeep * 0.85;
+    end
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
+        if _Type == Entities.PU_Scout or _Type == Entities.PU_Thief then
+            Upkeep = 0;
+        end
+    end
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero10) then
+        if _Type == Entities.PU_LeaderRifle1 or _Type == Entities.PU_LeaderRifle2 then
+            Upkeep = Upkeep * 0.9;
         end
     end
     return Upkeep;

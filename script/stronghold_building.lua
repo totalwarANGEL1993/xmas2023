@@ -7,6 +7,10 @@
 Stronghold = Stronghold or {};
 
 Stronghold.Config.Building = {
+    Headquarters = {
+        Stats = {Health = {5000, 7500, 10000}, Armor = {8, 12, 16}},
+    },
+
     Monastery = {
         [BlessCategories.Construction] = {
             Text = "Eure Priester leuten die Glocke zum Gebet.",
@@ -38,6 +42,24 @@ Stronghold.Config.Building = {
 
 -- -------------------------------------------------------------------------- --
 -- Headquarters
+
+function Stronghold:HeadquartersConfigureBuilding(_PlayerID)
+    if self.Players[_PlayerID] then
+        local ID = GetID(self.Players[_PlayerID].HQScriptName);
+        if ID > 0 then
+            local Index = 1;
+            if Logic.GetEntityType(ID) == Entities.PB_Headquarters2 then
+                Index = 2;
+            end
+            if Logic.GetEntityType(ID) == Entities.PB_Headquarters3 then
+                Index = 3;
+            end
+            CEntity.SetArmor(ID, self.Config.Building.Headquarters.Stats.Armor[Index]);
+            CEntity.SetMaxHealth(ID, self.Config.Building.Headquarters.Stats.Health[Index]);
+            Logic.HealEntity(ID, self.Config.Building.Headquarters.Stats.Health[Index]);
+        end
+    end
+end
 
 function Stronghold:CreateHeadquartersButtonHandlers()
     Stronghold.Shared.Button = Stronghold.Shared.Button or {};
@@ -157,14 +179,14 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
     local Text = XGUIEng.GetStringTableText(_Key);
     local EffectText = "";
 
-    if _Key == "MenuHeadquarter/SetVeryLowTaxes" then
+    if _Key == "MenuHeadquarter/SetVeryLowTaxes" then        
         Text = "@color:180,180,180 Keine Steuer @color:255,255,255 @cr "..
                "Keine Steuern. Aber wie wollt Ihr zu Talern kommen?"
 
         local Effects = Stronghold.Config.Income.TaxEffect[1];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         if Effects.Reputation ~= 0 then
-            EffectText = EffectText.. ((Effects.Reputation > 0 and "+") or "") ..Effects.Reputation.. " Beliebtheit ";
+            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
         end
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
@@ -173,11 +195,11 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
         Text = "@color:180,180,180 Niedrige Steuer @color:255,255,255 @cr "..
                "Ihr seid großzügig und entlastet Eure Untertanen.";
 
+        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
+        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 2, WorkerCount);
         local Effects = Stronghold.Config.Income.TaxEffect[2];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation ~= 0 then
-            EffectText = EffectText.. ((Effects.Reputation > 0 and "+") or "") ..Effects.Reputation.. " Beliebtheit ";
-        end
+        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -185,11 +207,11 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
         Text = "@color:180,180,180 Faire Steuer @color:255,255,255 @cr "..
                "Ihr verlangt die übliche Steuer von Eurem Volk.";
 
+        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
+        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 3, WorkerCount);
         local Effects = Stronghold.Config.Income.TaxEffect[3];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation ~= 0 then
-            EffectText = EffectText.. ((Effects.Reputation > 0 and "+") or "") ..Effects.Reputation.. " Beliebtheit ";
-        end
+        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -197,11 +219,11 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
         Text = "@color:180,180,180 Hohe Steuer @color:255,255,255 @cr "..
                "Ihr dreht an der Steuerschraube. Wenn das mal gut geht...";
 
+        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
+        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 4, WorkerCount);
         local Effects = Stronghold.Config.Income.TaxEffect[4];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation ~= 0 then
-            EffectText = EffectText.. ((Effects.Reputation > 0 and "+") or "") ..Effects.Reputation.. " Beliebtheit ";
-        end
+        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -209,11 +231,11 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
         Text = "@color:180,180,180 Grausame Steuer @color:255,255,255 @cr "..
                "Ihr zieht Euren Untertanen das letzte Hemd aus!";
 
+        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
+        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 5, WorkerCount);
         local Effects = Stronghold.Config.Income.TaxEffect[5];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation ~= 0 then
-            EffectText = EffectText.. ((Effects.Reputation > 0 and "+") or "") ..Effects.Reputation.. " Beliebtheit ";
-        end
+        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -221,8 +243,7 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
         if Logic.IsEntityInCategory(GUI.GetSelectedEntity(), EntityCategories.Headquarters) == 1 then
             Text = "@color:180,180,180 Burgherren wählen @color:255,255,255 "..
                    "@cr Wählt euren Burgherren aus. Jeder Burgherr verfügt "..
-                   "über starke Fähigkeiten. Sein Wohlergehen entscheidet "..
-                   "über Gedeih oder Verderb Eurer Burg!";
+                   "über starke Fähigkeiten.";
         end
     elseif _Key == "MenuHeadquarter/BackToWork" then
         if Logic.IsEntityInCategory(GUI.GetSelectedEntity(), EntityCategories.Headquarters) == 1 then

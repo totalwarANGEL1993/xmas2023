@@ -207,7 +207,7 @@ function Stronghold:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technolog
     local TechnologyName = KeyOf(_Technology, Technologies);
 
     -- Beautification limit
-    if string.find(TechnologyName, "^B_Beautification") then
+    if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
         local TechState = Logic.GetTechnologyState(_PlayerID, _Technology);
         if TechState == 2 or TechState == 3 or TechState == 4 then
             local Type = Entities["P" ..TechnologyName];

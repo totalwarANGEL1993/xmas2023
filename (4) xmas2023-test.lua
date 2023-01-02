@@ -31,6 +31,7 @@ EMS_CustomMapConfig = {
         Script.Load(Path.. "stronghold_building.lua");
         Script.Load(Path.. "stronghold_unit.lua");
         Script.Load(Path.. "stronghold_hero.lua");
+        Script.Load(Path.. "stronghold_ai.lua");
 
         AddPeriodicSummer(60);
         SetupNormalWeatherGfxSet();
@@ -54,6 +55,23 @@ EMS_CustomMapConfig = {
     -- * Called when the peacetime counter reaches zero
     -- ********************************************************************************************
     Callback_OnPeacetimeEnded = function()
+        -- All players are enemies by default
+        for i= 1, 4 do
+            for j= 1, 4 do
+                if i ~= j then
+                    Logic.SetShareExplorationWithPlayerFlag(i, j, 0);
+                    SetHostile(i, j);
+                end
+            end
+        end
+        -- If 2vs2 was selected then player 1 and 2 und player 3 and 4
+        -- are teaming up
+        if Game_Mode == "2vs2" then
+            Logic.SetShareExplorationWithPlayerFlag(Player_Teams[1][1], Player_Teams[1][2], 1);
+            SetFriendly(Player_Teams[1][1], Player_Teams[1][2]);
+            Logic.SetShareExplorationWithPlayerFlag(Player_Teams[2][1], Player_Teams[2][2], 1);
+            SetFriendly(Player_Teams[2][1], Player_Teams[2][2]);
+        end
     end,
 
     -- ********************************************************************************************
@@ -77,9 +95,13 @@ EMS_CustomMapConfig = {
     -- * _gamemode contains the index of the selected option according to the GameModes table
     -- ********************************************************************************************
     GameMode = 1,
-    GameModes = {"2vs2", "Battle Royale"},
+    GameModes = {"2vs2", "kingsmaker"},
     Callback_GameModeSelected = function(_gamemode)
-        if _gamemode == "Battle Royale" then
+        Game_Mode = _gamemode;
+        if _gamemode == "2vs2" then
+            Player_Teams = {[1] = {1, 2}, [2] = {3, 4}};
+        end
+        if _gamemode == "kingsmaker" then
             Player_Teams = {[1] = {1}, [2] = {2}, [3] = {3}, [4] = {4}};
         end
     end,
@@ -182,12 +204,12 @@ EMS_CustomMapConfig = {
     -- * 1 = Watchtowers
     -- * 2 = Balistatowers
     -- * 3 = Cannontowers
-    TowerLevel = 0, -- 0-3
+    TowerLevel = 3, -- 0-3
 
     -- * TowerLimit
     -- * 0  = no tower limit
     -- * >0 = towers are limited to the number given
-    TowerLimit = 5,
+    TowerLimit = 0,
 
     -- * WeatherChangeLockTimer
     -- * Minutes for how long the weather can't be changed directly again after a weatherchange happened
@@ -200,9 +222,7 @@ EMS_CustomMapConfig = {
     -- * Fixes the DestrBuild bug
     AntiBug    = 1,
 
-    -- * HQRush
-    -- * If set to true, Headquarters are invulernerable as long the player still has village centers
-    HQRush     = 1,
+    -- * BlessLimit
     BlessLimit = 2,
 
     -- ********************************************************************************************
@@ -210,6 +230,8 @@ EMS_CustomMapConfig = {
     -- HAS NO EFFECT IN THIS MAP!
     -- 
     -- ********************************************************************************************
+
+    HQRush     = 0,
 
     Heroes = {0,0,0,0},
 

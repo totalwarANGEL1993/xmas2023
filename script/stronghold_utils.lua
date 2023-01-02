@@ -234,7 +234,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- Entities
 
-function Stronghold:IsEntityValid(_Entity)
+function IsEntityValid(_Entity)
     local ID = GetID(_Entity);
     if IsExisting(ID) then
         if Logic.GetEntityHealth(ID) > 0 then
@@ -250,9 +250,9 @@ function Stronghold:IsEntityValid(_Entity)
     return false;
 end
 
-function Stronghold:GetAllWorker(_PlayerID, _EntityType)
+function GetAllWorker(_PlayerID, _EntityType)
     _EntityType = _EntityType or 0;
-    local PlayerEntities = self:GetEntitiesOfType(_PlayerID, _EntityType);
+    local PlayerEntities = GetEntitiesOfType(_PlayerID, _EntityType);
     for i= table.getn(PlayerEntities), 1, -1 do
         if Logic.IsWorker(PlayerEntities[i]) == 0 then
             table.remove(PlayerEntities, i);
@@ -261,9 +261,9 @@ function Stronghold:GetAllWorker(_PlayerID, _EntityType)
     return PlayerEntities;
 end
 
-function Stronghold:GetAllWorkplaces(_PlayerID, _EntityType)
+function GetAllWorkplaces(_PlayerID, _EntityType)
     _EntityType = _EntityType or 0;
-    local PlayerEntities = self:GetCompletedEntitiesOfType(_PlayerID, _EntityType);
+    local PlayerEntities = GetCompletedEntitiesOfType(_PlayerID, _EntityType);
     for i= table.getn(PlayerEntities), 1, -1 do
         if Logic.GetBuildingWorkPlaceLimit(PlayerEntities[i]) == 0 then
             table.remove(PlayerEntities, i);
@@ -272,8 +272,8 @@ function Stronghold:GetAllWorkplaces(_PlayerID, _EntityType)
     return PlayerEntities;
 end
 
-function Stronghold:GetCompletedEntitiesOfType(_PlayerID, _EntityType)
-    local PlayerEntities = self:GetEntitiesOfType(_PlayerID, _EntityType);
+function GetCompletedEntitiesOfType(_PlayerID, _EntityType)
+    local PlayerEntities = GetEntitiesOfType(_PlayerID, _EntityType);
     for i= table.getn(PlayerEntities), 1, -1 do
         -- Remove buildings if construction is incomplete or no workers.
         if Logic.IsBuilding(PlayerEntities[i]) == 1 then
@@ -292,7 +292,7 @@ function Stronghold:GetCompletedEntitiesOfType(_PlayerID, _EntityType)
     return PlayerEntities;
 end
 
-function Stronghold:GetEntitiesOfType(_PlayerID, _EntityType)
+function GetEntitiesOfType(_PlayerID, _EntityType)
     local PlayerEntities = {}
     if _EntityType ~= 0 then
         local n,eID = Logic.GetPlayerEntities(_PlayerID, _EntityType, 1);
