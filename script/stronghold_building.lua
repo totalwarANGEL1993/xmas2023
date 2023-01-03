@@ -154,7 +154,10 @@ function Stronghold:OverrdeHeadquarterButtons()
             Message("Ihr habt keinen Platz für weitere Leibeigene!");
             return;
         end
-        -- Set buy lock
+        -- Buy lock
+        if Stronghold.Players[PlayerID].BuyUnitLock then
+            return;
+        end
         Stronghold.Players[PlayerID].BuyUnitLock = true;
         -- Send call
         Sync.Call(
