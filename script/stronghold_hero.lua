@@ -515,12 +515,10 @@ end
 function Stronghold:ApplyHonorBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
-        local Factor = 1.0;
         local Alchemists = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Alchemist);
         local Engineers = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
         local Scholars = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scholar);
-        Factor = (Scholars+Engineers+Alchemists) + 0.15;
-        Income = Income * Factor;
+        Income = Income + ((Scholars+Engineers+Alchemists) * 0.15);
     end
     return Income;
 end

@@ -182,7 +182,8 @@
         "GameCallback_Stronghold_OnPayday",
         "InterfaceGlobals",
         "SetEntityName",
-        "DARKMOORMUSIC"
+        "DARKMOORMUSIC",
+        "CMod"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

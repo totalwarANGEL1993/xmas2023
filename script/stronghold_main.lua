@@ -10,6 +10,7 @@ Stronghold = {
     Outposts = {},
     Config = {
         AttractionLimit = {[1] = 100, [2] = 200, [3] = 300},
+        HonorLimit = 9000,
         OutpostAttraction = 25,
         Text = {
             Ranks = {
@@ -31,8 +32,9 @@ Stronghold = {
 function Stronghold:Init()
     CMod.PushArchive(Framework.GetCurrentMapName() .. ".s5x");
     XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
+    XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
-
+    XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
@@ -42,6 +44,7 @@ function Stronghold:Init()
     self:StartEntityHurtTrigger();
     self:StartOnEveryTurnTrigger();
     self:OverrideGainedResourceCallback();
+    self:SetEntityTypesAttractionUsage();
 
     self:OverrideAttraction();
     self:OverridePaydayClockTooltip();
@@ -50,10 +53,15 @@ function Stronghold:Init()
     self:OverrideTooltipGenericMain();
     self:OverrideTooltipConstructionMain();
     self:OverrideUpdateConstructionMain();
+    self:OverrideActionResearchTechnologyMain();
+    self:OverrideTooltipUpgradeSettlersMain();
     self:OverwriteCommonCallbacks();
 
     self:CreateHeadquartersButtonHandlers();
     self:CreateMonasteryButtonHandlers();
+    self:CreateBarracksButtonHandlers();
+    self:CreateArcheryButtonHandlers();
+    self:CreateStableButtonHandlers();
     self:OverrideBuyHeroWindow();
     self:OverrdeHeadquarterButtons();
     self:OverrdeMonasteryButtons();
@@ -63,10 +71,14 @@ end
 function Stronghold:OnSaveGameLoaded()
     CMod.PushArchive(Framework.GetCurrentMapName() .. ".s5x");
     XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
+    XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
+    XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
 
     ResourceType.Honor = 20;
+
     self:OverrideAttraction();
+    self:SetEntityTypesAttractionUsage();
     for k,v in pairs(self.Players) do
         self:HeadquartersConfigureBuilding(k);
         self:ConfigurePlayersLord(k);
@@ -105,7 +117,8 @@ function Stronghold:AddPlayer(_PlayerID)
     end
 
     -- Deactivate normal upkeep
-    Logic.SetPlayerPaysLeaderFlag(_PlayerID, 0);
+    -- (Does not work. Payday clock does not start for soldiers)
+    -- Logic.SetPlayerPaysLeaderFlag(_PlayerID, 0);
 
     -- Create player data
     self.Players[_PlayerID] = {
@@ -363,6 +376,13 @@ function Stronghold:OverrideAttraction()
 	end
 end
 
+function Stronghold:SetEntityTypesAttractionUsage()
+    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon1, 0);
+    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon2, 0);
+    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon3, 0);
+    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon4, 0);
+end
+
 -- -------------------------------------------------------------------------- --
 -- Payday
 
@@ -418,6 +438,7 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
                 AddGold(_PlayerID, -1 * TaxAmount);
             end
         end
+        AddGold(_PlayerID, Logic.GetNumberOfLeader(_PlayerID) * 20, 0, 0, 0, 0, 0);
         Tools.GiveResouces(_PlayerID, self.Players[_PlayerID].IncomeMoney, 0, 0, 0, 0, 0);
         AddGold(_PlayerID, -self.Players[_PlayerID].UpkeepMoney);
 
@@ -449,8 +470,8 @@ end
 function Stronghold:AddPlayerHonor(_PlayerID, _Amount)
     if self.Players[_PlayerID] then
         self.Players[_PlayerID].Honor = self.Players[_PlayerID].Honor + _Amount;
-        if self.Players[_PlayerID].Honor > 9000 then
-            self.Players[_PlayerID].Honor = 9000;
+        if self.Players[_PlayerID].Honor > self.Config.HonorLimit then
+            self.Players[_PlayerID].Honor = self.Config.HonorLimit;
         end
         if self.Players[_PlayerID].Honor < 0 then
             self.Players[_PlayerID].Honor = 0;
@@ -525,6 +546,10 @@ end
 -- This calls all updates of the selection menu when selection has changed.
 function Stronghold:OnSelectionMenuChanged(_EntityID)
     self:OnHeadquarterSelected(_EntityID);
+    self:OnBarracksSelected(_EntityID);
+    self:OnArcherySelected(_EntityID);
+    self:OnStableSelected(_EntityID);
+    self:OnFoundrySelected(_EntityID);
 
     GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01)
     GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02)
@@ -544,33 +569,33 @@ function Stronghold:OverwriteCommonCallbacks()
 	GameCallback_OnBuildingConstructionComplete_Orig_Stronghold = GameCallback_OnBuildingConstructionComplete;
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		GameCallback_OnBuildingConstructionComplete_Orig_Stronghold(_EntityID, _PlayerID);
-        Stronghold:OnSelectionMenuChanged(_EntityID);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
         Stronghold:HeadquartersConfigureBuilding(_PlayerID);
 	end
 
 	GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
 		GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold(_EntityIDOld, _EntityIDNew);
-        Stronghold:OnSelectionMenuChanged(_EntityIDNew);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
         Stronghold:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
 	end
 
 	GameCallback_OnTechnologyResearched_Orig_Stronghold = GameCallback_OnTechnologyResearched;
 	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
 		GameCallback_OnTechnologyResearched_Orig_Stronghold(_PlayerID, _Technology, _EntityID);
-        Stronghold:OnSelectionMenuChanged(_EntityID);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
 	end
 
     GameCallback_OnCannonConstructionComplete_Orig_Stronghold = GameCallback_OnCannonConstructionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
         GameCallback_OnCannonConstructionComplete_Orig_Stronghold(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(_BuildingID);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
     end
 
     GameCallback_OnTransactionComplete_Orig_Stronghold = GameCallback_OnTransactionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
         GameCallback_OnTransactionComplete_Orig_Stronghold(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(_BuildingID);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
     end
 
 	Mission_OnSaveGameLoaded_Orig_Stronghold = Mission_OnSaveGameLoaded;
@@ -659,6 +684,48 @@ function Stronghold:OverrideUpdateConstructionMain()
         end
         if not Updated then
             GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
+        end
+    end
+end
+
+-- Action research technology Override
+function Stronghold:OverrideActionResearchTechnologyMain()
+    GUIAction_ReserachTechnology_Orig_StrongholdMain = GUIAction_ReserachTechnology;
+    GUIAction_ReserachTechnology = function(_Technology)
+        if Stronghold:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
+            return;
+        end
+        if Stronghold:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
+            return;
+        end
+        if Stronghold:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
+            return;
+        end
+        GUIAction_ReserachTechnology_Orig_StrongholdMain(_Technology);
+    end
+end
+
+-- Tooptip Upgrade Settlers Override
+function Stronghold:OverrideTooltipUpgradeSettlersMain()
+    GUITooltip_ResearchTechnologies_Orig_StrongholdMain = GUITooltip_ResearchTechnologies;
+    GUITooltip_ResearchTechnologies = function(_Technology, _TextKey, _ShortCut)
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold.Players[PlayerID] then
+            return GUITooltip_ResearchTechnologies_Orig_StrongholdMain(_Technology, _TextKey, _ShortCut);
+        end
+
+        local TooltipSet = false;
+        if not TooltipSet then
+            TooltipSet = Stronghold:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+        end
+        if not TooltipSet then
+            TooltipSet = Stronghold:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+        end
+        if not TooltipSet then
+            TooltipSet = Stronghold:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+        end
+        if not TooltipSet then
+            GUITooltip_ResearchTechnologies_Orig_StrongholdMain(_Technology, _TextKey, _ShortCut);
         end
     end
 end

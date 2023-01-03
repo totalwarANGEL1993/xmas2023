@@ -3,7 +3,7 @@
 -- 
 
 -- -------------------------------------------------------------------------- --
--- Tooltip
+-- UI Tools
 
 function Stronghold:HasPlayerEnoughResourcesFeedback(_Costs)
     local PlayerID = GUI.GetPlayerID();

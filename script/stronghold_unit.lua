@@ -7,110 +7,160 @@ Stronghold = Stronghold or {};
 Stronghold.Config.Units = {
     [Entities.PU_LeaderPoleArm1] = {
         Costs = {0, 40, 0, 24, 0, 0, 0},
-        Upkeep = 10,
+        Allowed = true,
+        Rank = 1,
+        Upkeep = 15,
     },
     [Entities.PU_LeaderPoleArm2] = {
         Costs = {6, 20, 0, 45, 0, 0, 0},
-        Upkeep = 15,
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 20,
     },
     [Entities.PU_LeaderPoleArm3] = {
         Costs = {10, 65, 0, 35, 0, 10, 0},
-        Upkeep = 35
+        Allowed = true,
+        Rank = 3,
+        Upkeep = 70
     },
     [Entities.PU_LeaderPoleArm4] = {
         Costs = {15, 40, 0, 35, 0, 25, 0},
-        Upkeep = 45
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 80
     },
     ---
     [Entities.PU_LeaderSword1] = {
         Costs = {6, 25, 0, 0, 0, 40, 0},
-        Upkeep = 20,
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 25,
     },
     [Entities.PU_LeaderSword2] = {
         Costs = {10, 30, 0, 0, 0, 40, 0},
-        Upkeep = 30,
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 40,
     },
     [Entities.PU_LeaderSword3] = {
         Costs = {20, 70, 0, 0, 0, 45, 0},
-        Upkeep = 60,
+        Allowed = true,
+        Rank = 5,
+        Upkeep = 100,
     },
     [Entities.PU_LeaderSword4] = {
-        Costs = {25, 80, 0, 0, 0, 55, 0},
-        Upkeep = 70,
+        Costs = {30, 80, 0, 0, 0, 55, 0},
+        Allowed = true,
+        Rank = 8,
+        Upkeep = 120,
     },
     ---
     [Entities.PU_LeaderBow1] = {
         Costs = {2, 50, 0, 36, 0, 0, 0},
-        Upkeep = 10,
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 25,
     },
     [Entities.PU_LeaderBow2] = {
         Costs = {6, 56, 0, 44, 0, 0, 0},
-        Upkeep = 15,
+        Allowed = true,
+        Rank = 2,
+        Upkeep = 30,
     },
     [Entities.PU_LeaderBow3] = {
         Costs = {12, 72, 0, 30, 0, 22, 0},
-        Upkeep = 50,
+        Allowed = true,
+        Rank = 4,
+        Upkeep = 80,
     },
     [Entities.PU_LeaderBow4] = {
         Costs = {15, 10, 0, 0, 0, 0, 0},
-        Upkeep = 60,
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 90,
     },
     ---
     [Entities.PV_Cannon1] = {
         Costs = {8, 150, 0, 10, 0, 50, 90},
-        Upkeep = 10,
+        Allowed = true,
+        Rank = 5,
+        Upkeep = 30,
     },
     [Entities.PV_Cannon2] = {
         Costs = {15, 10, 0, 20, 0, 0, 130},
-        Upkeep = 30,
+        Allowed = true,
+        Rank = 5,
+        Upkeep = 50,
     },
     [Entities.PV_Cannon3] = {
         Costs = {25, 300, 30, 0, 0, 100, 120},
-        Upkeep = 90,
+        Allowed = true,
+        Rank = 8,
+        Upkeep = 100,
     },
     [Entities.PV_Cannon4] = {
         Costs = {30, 300, 40, 0, 0, 180, 180},
-        Upkeep = 90,
+        Allowed = true,
+        Rank = 8,
+        Upkeep = 120,
     },
     ---
     [Entities.PU_LeaderCavalry1] = {
-        Costs = {10, 70, 0, 30, 0, 0, 0},
-        Upkeep = 30,
+        Costs = {6, 70, 0, 30, 0, 0, 0},
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 40,
     },
     [Entities.PU_LeaderCavalry2] = {
-        Costs = {20, 100, 0, 40, 0, 0, 0},
-        Upkeep = 50,
+        Costs = {10, 100, 0, 40, 0, 0, 0},
+        Allowed = true,
+        Rank = 4,
+        Upkeep = 70,
     },
     ---
     [Entities.PU_LeaderHeavyCavalry1] = {
         Costs = {28, 145, 0, 0, 0, 55, 0},
-        Upkeep = 50,
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 120,
     },
     [Entities.PU_LeaderHeavyCavalry2] = {
-        Costs = {35, 165, 0, 0, 0, 65, 0},
-        Upkeep = 60,
+        Costs = {40, 165, 0, 0, 0, 65, 0},
+        Allowed = true,
+        Rank = 9,
+        Upkeep = 150,
     },
     ---
     [Entities.PU_LeaderRifle1] = {
         Costs = {20, 90, 0, 10, 0, 0, 40},
-        Upkeep = 40,
+        Allowed = true,
+        Rank = 6,
+        Upkeep = 70,
     },
     [Entities.PU_LeaderRifle2] = {
-        Costs = {35, 105, 0, 20, 0, 0, 60},
-        Upkeep = 90,
+        Costs = {30, 105, 0, 20, 0, 0, 60},
+        Allowed = true,
+        Rank = 9,
+        Upkeep = 100,
     },
     ---
     [Entities.PU_Scout] = {
         Costs = {0, 100, 0, 0, 0, 50, 0},
+        Allowed = true,
+        Rank = 1,
         Upkeep = 5,
     },
     [Entities.PU_Thief] = {
         Costs = {30, 300, 0, 0, 0, 100, 0},
-        Upkeep = 25,
+        Allowed = true,
+        Rank = 4,
+        Upkeep = 50,
     },
     ---
     [Entities.PU_Serf] = {
         Costs = {0, 50, 0, 0, 0, 0, 0},
+        Allowed = true,
+        Rank = 1,
         Upkeep = 0,
     },
 }
@@ -187,11 +237,11 @@ function Stronghold:GetBarracksDoorPosition(_BarracksID)
 
     local BarracksType = Logic.GetEntityType(_BarracksID);
     if BarracksType == Entities.PB_Barracks1 or BarracksType == Entities.PB_Barracks2 then
-        Position = GetCirclePosition(_BarracksID, 900, 90);
+        Position = GetCirclePosition(_BarracksID, 900, 180);
     elseif BarracksType == Entities.PB_Archery1 or BarracksType == Entities.PB_Archery2 then
-        Position = GetCirclePosition(_BarracksID, 800, 90);
+        Position = GetCirclePosition(_BarracksID, 800, 180);
     elseif BarracksType == Entities.PB_Stable1 or BarracksType == Entities.PB_Stable2 then
-        Position = GetCirclePosition(_BarracksID, 1000, 90);
+        Position = GetCirclePosition(_BarracksID, 1000, 180);
     elseif BarracksType == Entities.PB_Foundry1 or BarracksType == Entities.PB_Foundry2 then
         Position = GetCirclePosition(_BarracksID, 800, 180);
     end
@@ -363,6 +413,12 @@ end
 
 function Stronghold:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technology)
     local TechnologyName = KeyOf(_Technology, Technologies);
+
+    -- No village centers
+    if _Technology == Technologies.B_Village then
+        XGUIEng.ShowWidget(_Button, 0);
+        return true;
+    end
 
     -- Beautification limit
     if TechnologyName and string.find(TechnologyName, "^B_Beautification") then

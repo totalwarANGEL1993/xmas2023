@@ -289,6 +289,7 @@ function Stronghold:HonorMenu()
 
     local Rank = "Abschaum";
     local Honor = 0;
+    local MaxHonor = self.Config.HonorLimit;
     if self.Players[PlayerID] then
         local CurrentRank = self.Players[PlayerID].Rank;
         Rank = self.Config.Text.Ranks[CurrentRank] or Rank;
@@ -307,7 +308,7 @@ function Stronghold:HonorMenu()
 	XGUIEng.SetText(
         "GCWindowWelcome",
         " @color:0,0,0,0 ___ @color:255,255,255 " ..Rank.. " @cr "..
-        " @color:0,0,0,0 ___ @color:255,255,255 " ..Honor.."/9000"
+        " @color:0,0,0,0 ___ @color:255,255,255 " ..Honor.."/" ..MaxHonor
     );
 end
 
