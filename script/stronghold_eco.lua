@@ -279,7 +279,36 @@ function Stronghold:OverrideFindViewUpdate()
         XGUIEng.ShowWidget("FindScout", 1);
 		XGUIEng.ShowWidget("FindThief", 1);
         XGUIEng.ShowWidget("Find_IdleSerf", 1);
+
+        Stronghold:HonorMenu();
 	end
+end
+
+function Stronghold:HonorMenu()
+    local PlayerID = GUI.GetPlayerID()
+
+    local Rank = "Abschaum";
+    local Honor = 0;
+    if self.Players[PlayerID] then
+        local CurrentRank = self.Players[PlayerID].Rank;
+        Rank = self.Config.Text.Ranks[CurrentRank] or Rank;
+        Honor = self.Players[PlayerID].Honor;
+    end
+
+    local ScreenSize = {GUI.GetScreenSize()}
+    local YOffset = 4 * (ScreenSize[2]/768);
+	XGUIEng.ShowWidget("GCWindow", 1);
+	XGUIEng.ShowAllSubWidgets("GCWindow", 0);
+	XGUIEng.ShowWidget("GCWindowNew", 1);
+	XGUIEng.ShowAllSubWidgets("GCWindowNew", 0);
+    XGUIEng.ShowWidget("GCWindowWelcome", 1);
+	XGUIEng.SetWidgetPositionAndSize("GCWindow", ScreenSize[1], YOffset, 160, 45);
+	XGUIEng.SetWidgetPositionAndSize("GCWindowWelcome", 3, 5, 160, 0);
+	XGUIEng.SetText(
+        "GCWindowWelcome",
+        " @color:0,0,0,0 ___ @color:255,255,255 " ..Rank.. " @cr "..
+        " @color:0,0,0,0 ___ @color:255,255,255 " ..Honor.."/9000"
+    );
 end
 
 function Stronghold:OverridePaydayClockTooltip()

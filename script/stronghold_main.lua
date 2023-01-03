@@ -11,25 +11,28 @@ Stronghold = {
     Config = {
         AttractionLimit = {[1] = 100, [2] = 200, [3] = 300},
         OutpostAttraction = 25,
-    },
-
-    Text = {
-        Ranks = {
-            [1] = "Edelmann",
-            [2] = "Ritter",
-            [3] = "Edler Ritter",
-            [4] = "Reichsritter",
-            [5] = "Streiter des Königs",
-            [6] = "Fürst",
-            [7] = "Baron",
-            [8] = "Graf",
-            [9] = "Herzog",
-        }
+        Text = {
+            Ranks = {
+                [1] = "Edelmann",
+                [2] = "Landvogt",
+                [3] = "Ritter",
+                [4] = "Edler Ritter",
+                [5] = "Fürst",
+                [6] = "Baron",
+                [7] = "Graf",
+                [8] = "Herzog",
+                [9] = "Erzherzog",
+            }
+        },
     },
 }
 
 -- Starts the script
 function Stronghold:Init()
+    CMod.PushArchive(Framework.GetCurrentMapName() .. ".s5x");
+    XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
+    XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
+
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
@@ -58,6 +61,10 @@ end
 
 -- Restore game state after load
 function Stronghold:OnSaveGameLoaded()
+    CMod.PushArchive(Framework.GetCurrentMapName() .. ".s5x");
+    XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
+    XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
+
     ResourceType.Honor = 20;
     self:OverrideAttraction();
     for k,v in pairs(self.Players) do
@@ -442,6 +449,9 @@ end
 function Stronghold:AddPlayerHonor(_PlayerID, _Amount)
     if self.Players[_PlayerID] then
         self.Players[_PlayerID].Honor = self.Players[_PlayerID].Honor + _Amount;
+        if self.Players[_PlayerID].Honor > 9000 then
+            self.Players[_PlayerID].Honor = 9000;
+        end
         if self.Players[_PlayerID].Honor < 0 then
             self.Players[_PlayerID].Honor = 0;
         end

@@ -116,6 +116,7 @@ Stronghold.Config.Hero = {
     ---
 
     LordTypes = {
+        [Entities.PU_Hero1c]             = true,
         [Entities.PU_Hero2]              = true,
         [Entities.PU_Hero3]              = true,
         [Entities.PU_Hero4]              = true,
@@ -125,7 +126,6 @@ Stronghold.Config.Hero = {
         [Entities.CU_Barbarian_Hero]     = true,
     },
     SpouseTypes = {
-        [Entities.PU_Hero1c]             = true,
         [Entities.PU_Hero5]              = true,
         [Entities.PU_Hero11]             = true,
         [Entities.CU_Mary_de_Mortfichet] = true,
@@ -173,7 +173,7 @@ function Stronghold:OpenBuyHeroWindowForSpouseSelection(_PlayerID)
     end
 end
 
-function Stronghold:OverrideBuyHeroWindow(_PlayerID)
+function Stronghold:OverrideBuyHeroWindow()
     BuyHeroWindow_UpdateInfoLine_Orig_StrongholdHero = BuyHeroWindow_UpdateInfoLine;
     BuyHeroWindow_UpdateInfoLine = function()
         local PlayerID = GUI.GetPlayerID();
@@ -183,8 +183,8 @@ function Stronghold:OverrideBuyHeroWindow(_PlayerID)
 
         local ScreenX, ScreenY = GUI.GetScreenSize();
         local MouseX, MouseY = GUI.GetMousePosition();
-        MouseX = MouseX * (ScreenX/1024);
-        MouseY = MouseY * (ScreenY/768);
+        MouseX = MouseX * (1024/ScreenX);
+        MouseY = MouseY * (768/ScreenY);
 
         local RowX, RowY = 160, 278;
         local ButtonW, ButtonH = 90, 135;
