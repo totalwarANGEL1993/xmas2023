@@ -323,21 +323,21 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
             -- Barracks high tier discount
             if k == Entities.PU_LeaderPoleArm3 or k == Entities.PU_LeaderPoleArm4
             or k == Entities.PU_LeaderSword3 or k == Entities.PU_LeaderSword4 then
-                TypeUpkeep = Stronghold:ApplyUpkeepDiscountBarracks(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountBarracks(_PlayerID, TypeUpkeep);
             end
             -- Archery high tier discount
             if Logic.IsEntityTypeInCategory(k, EntityCategories.Rifle) == 1
             or k == Entities.PU_LeaderBow3 or k == Entities.PU_LeaderBow4 then
-                TypeUpkeep = Stronghold:ApplyUpkeepDiscountArchery(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountArchery(_PlayerID, TypeUpkeep);
             end
             -- Stables high tier discount
             if Logic.IsEntityTypeInCategory(k, EntityCategories.CavalryHeavy) == 1
             or Logic.IsEntityTypeInCategory(k, EntityCategories.CavalryLight) == 1 then
-                TypeUpkeep = Stronghold:ApplyUpkeepDiscountStable(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountStable(_PlayerID, TypeUpkeep);
             end
             -- Foundry high tier discount
             if k == Entities.PV_Cannon3 or k == Entities.PV_Cannon4 then
-                TypeUpkeep = Stronghold:ApplyUpkeepDiscountFoundry(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountFoundry(_PlayerID, TypeUpkeep);
             end
             -- External
             TypeUpkeep = GameCallback_Calculate_PaydayUpkeep(_PlayerID, k, TypeUpkeep)

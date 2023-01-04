@@ -40,6 +40,7 @@ function Stronghold:Init()
 
     self.Economy:Install();
     self.Limitation:Install();
+    self.Building:Install();
 
     self:StartPlayerPaydayUpdater();
     self:StartEntityCreatedTrigger();
@@ -57,14 +58,7 @@ function Stronghold:Init()
     self:OverwriteCommonCallbacks();
     self:OverrideCalculationCallbacks();
 
-    self:CreateHeadquartersButtonHandlers();
-    self:CreateMonasteryButtonHandlers();
-    self:CreateBarracksButtonHandlers();
-    self:CreateArcheryButtonHandlers();
-    self:CreateStableButtonHandlers();
     self:OverrideBuyHeroWindow();
-    self:OverrdeHeadquarterButtons();
-    self:OverrdeMonasteryButtons();
 end
 
 -- Restore game state after load
@@ -77,10 +71,12 @@ function Stronghold:OnSaveGameLoaded()
 
     ResourceType.Honor = 20;
 
+    self.Building:OnSaveGameLoaded();
+    self.Limitation:OnSaveGameLoaded();
+
     self:OverrideAttraction();
     self:SetEntityTypesAttractionUsage();
     for k,v in pairs(self.Players) do
-        self:HeadquartersConfigureBuilding(k);
         self:ConfigurePlayersLord(k);
         self:ConfigurePlayersSpouse(k);
     end
@@ -142,7 +138,7 @@ function Stronghold:AddPlayer(_PlayerID)
         Rank = 1,
     };
 
-    self:HeadquartersConfigureBuilding(_PlayerID);
+    self.Building:HeadquartersConfigureBuilding(_PlayerID);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -544,11 +540,11 @@ end
 -- Menu update
 -- This calls all updates of the selection menu when selection has changed.
 function Stronghold:OnSelectionMenuChanged(_EntityID)
-    self:OnHeadquarterSelected(_EntityID);
-    self:OnBarracksSelected(_EntityID);
-    self:OnArcherySelected(_EntityID);
-    self:OnStableSelected(_EntityID);
-    self:OnFoundrySelected(_EntityID);
+    self.Building:OnHeadquarterSelected(_EntityID);
+    self.Building:OnBarracksSelected(_EntityID);
+    self.Building:OnArcherySelected(_EntityID);
+    self.Building:OnStableSelected(_EntityID);
+    self.Building:OnFoundrySelected(_EntityID);
 
     GUIUpdate_BuildingButtons("Build_Barracks", Technologies.B_Barracks);
     GUIUpdate_BuildingButtons("Build_Archery", Technologies.B_Archery);
@@ -572,14 +568,14 @@ function Stronghold:OverwriteCommonCallbacks()
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		GameCallback_OnBuildingConstructionComplete_Orig_Stronghold(_EntityID, _PlayerID);
         Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
-        Stronghold:HeadquartersConfigureBuilding(_PlayerID);
+        Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
 	end
 
 	GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
 		GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold(_EntityIDOld, _EntityIDNew);
         Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
-        Stronghold:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
+        Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
 	end
 
 	GameCallback_OnTechnologyResearched_Orig_Stronghold = GameCallback_OnTechnologyResearched;
@@ -624,7 +620,7 @@ function Stronghold:OverrideTooltipGenericMain()
             TooltipSet = Stronghold.Economy:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
         end
         if not TooltipSet then
-            TooltipSet = Stronghold:PrintHeadquartersTaxButtonsTooltip(PlayerID, _Key);
+            TooltipSet = Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, _Key);
         end
         if not TooltipSet then
             GUITooltip_Generic_Orig_StrongholdMain(_Key);
@@ -694,13 +690,13 @@ end
 function Stronghold:OverrideActionResearchTechnologyMain()
     GUIAction_ReserachTechnology_Orig_StrongholdMain = GUIAction_ReserachTechnology;
     GUIAction_ReserachTechnology = function(_Technology)
-        if Stronghold:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
+        if Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
             return;
         end
-        if Stronghold:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
+        if Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
             return;
         end
-        if Stronghold:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
+        if Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
             return;
         end
         GUIAction_ReserachTechnology_Orig_StrongholdMain(_Technology);
@@ -718,13 +714,13 @@ function Stronghold:OverrideTooltipUpgradeSettlersMain()
 
         local TooltipSet = false;
         if not TooltipSet then
-            TooltipSet = Stronghold:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+            TooltipSet = Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
         end
         if not TooltipSet then
-            TooltipSet = Stronghold:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+            TooltipSet = Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
         end
         if not TooltipSet then
-            TooltipSet = Stronghold:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+            TooltipSet = Stronghold.Building:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
         end
         if not TooltipSet then
             GUITooltip_ResearchTechnologies_Orig_StrongholdMain(_Technology, _TextKey, _ShortCut);

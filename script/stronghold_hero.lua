@@ -91,25 +91,25 @@ Stronghold.Config.Hero = {
     ---
 
     LordStats = {
-        Health = 3000,
-        Armor = 10,
-        Damage = 50,
-        Healing = 25,
+        Health = 10000,
+        Armor = 8,
+        Damage = 16,
+        Healing = 1,
     },
     SpouseStats = {
-        Health = 1500,
-        Armor = 6,
-        Damage = 35,
-        Healing = 15,
+        Health = 1000,
+        Armor = 3,
+        Damage = 16,
+        Healing = 10,
     },
     PetStats = {
         [Entities.CU_Barbarian_Hero_wolf] = {
             Owner = Entities.CU_Barbarian_Hero,
-            Health = 1000, Armor = 4, Damage = 22, Healing = 15,
+            Health = 800, Armor = 1, Damage = 35, Healing = 5,
         },
         [Entities.PU_Hero5_Outlaw] = {
             Owner = Entities.CU_Barbarian_Hero,
-            Health = 650, Armor = 5, Damage = 16, Healing = 15
+            Health = 330, Armor = 3, Damage = 16, Healing = 5
         },
     },
 
@@ -233,14 +233,14 @@ function Stronghold:OverrideBuyHeroWindow()
             Sync.Call(
                 "Stronghold_ButtonCallback_Headquarters",
                 PlayerID,
-                Stronghold.Shared.Button.Headquarters.BuyLord,
+                Stronghold.Building.SyncEvents.Headquarters.BuyLord,
                 _Type
             );
         else
             Sync.Call(
                 "Stronghold_ButtonCallback_Headquarters",
                 PlayerID,
-                Stronghold.Shared.Button.Headquarters.BuySpouse,
+                Stronghold.Building.SyncEvents.Headquarters.BuySpouse,
                 _Type
             );
         end
@@ -376,6 +376,10 @@ function Stronghold:EntityAttackedController(_PlayerID)
                     local HeroType = Logic.GetEntityType(k);
                     local x,y,z = Logic.EntityGetPos(k);
 
+                    -- Send message
+                    local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(k));
+                    local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
+                    Message(PlayerColor.. " " ..Name.. " @color:255,255,255 muss sich in die Burg zurückziehen!");
                     -- Place hero
                     Logic.CreateEffect(GGL_Effects.FXDieHero, x, y, _PlayerID);
                     local ID = SetPosition(k, self.Players[_PlayerID].DoorPos);
@@ -388,10 +392,6 @@ function Stronghold:EntityAttackedController(_PlayerID)
                     if self.Config.Hero.SpouseTypes[HeroType] then
                         self:ConfigurePlayersSpouse(_PlayerID);
                     end
-                    -- Send message
-                    local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(k));
-                    local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
-                    Message(PlayerColor.. " " ..Name.. " @color:255,255,255 muss sich in die Burg zurückziehen!");
                 end
             end
 
