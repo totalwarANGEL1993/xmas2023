@@ -321,9 +321,8 @@ function Stronghold:ApplyUpkeepDiscountBarracks(_PlayerID, _Upkeep)
     local Upkeep = _Upkeep;
     if self.Players[_PlayerID] and Upkeep > 0 then
         local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
-        for i= 1, Barracks do
-            if i > 10 then break; end
-            Upkeep = Upkeep * 0.95;
+        if Barracks > 0 then
+            Upkeep = Upkeep * 0.85;
         end
     end
     return Upkeep;
@@ -584,9 +583,8 @@ function Stronghold:ApplyUpkeepDiscountArchery(_PlayerID, _Upkeep)
     local Upkeep = _Upkeep;
     if self.Players[_PlayerID] and Upkeep > 0 then
         local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Archery2);
-        for i= 1, Barracks do
-            if i > 10 then break; end
-            Upkeep = Upkeep * 0.95;
+        if Barracks > 0 then
+            Upkeep = Upkeep * 0.85;
         end
     end
     return Upkeep;
@@ -841,9 +839,8 @@ function Stronghold:ApplyUpkeepDiscountStable(_PlayerID, _Upkeep)
     local Upkeep = _Upkeep;
     if self.Players[_PlayerID] and Upkeep > 0 then
         local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Stable2);
-        for i= 1, Barracks do
-            if i > 10 then break; end
-            Upkeep = Upkeep * 0.95;
+        if Barracks > 0 then
+            Upkeep = Upkeep * 0.85;
         end
     end
     return Upkeep;
@@ -1021,9 +1018,8 @@ function Stronghold:ApplyUpkeepDiscountFoundry(_PlayerID, _Upkeep)
     local Upkeep = _Upkeep;
     if self.Players[_PlayerID] and Upkeep > 0 then
         local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Foundry2);
-        for i= 1, Barracks do
-            if i > 10 then break; end
-            Upkeep = Upkeep * 0.95;
+        if Barracks > 0 then
+            Upkeep = Upkeep * 0.85;
         end
     end
     return Upkeep;

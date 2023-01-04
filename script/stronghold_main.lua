@@ -551,8 +551,11 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
     self:OnStableSelected(_EntityID);
     self:OnFoundrySelected(_EntityID);
 
-    GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01)
-    GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02)
+    GUIUpdate_BuildingButtons("Build_Barracks", Technologies.B_Barracks);
+    GUIUpdate_BuildingButtons("Build_Archery", Technologies.B_Archery);
+    GUIUpdate_BuildingButtons("Build_Stables", Technologies.B_Stables);
+    GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01);
+    GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02);
     for i= 3, 12 do
         local Num = (i < 10 and "0" ..i) or i;
         GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);

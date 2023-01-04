@@ -387,16 +387,39 @@ function Stronghold:PrintSerfConstructionTooltip(_PlayerID, _UpgradeCategory, _K
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
+    elseif _UpgradeCategory == UpgradeCategories.Barracks then
+    elseif _UpgradeCategory == UpgradeCategories.Archery then
+    elseif _UpgradeCategory == UpgradeCategories.Stables then
     else
         return false;
     end
 
     -- Beautification limit
     local LimitReached = false;
-    local Limit = Stronghold.Config.Income.Buildings[Type].Limit;
+    local Limit;
+    if Stronghold.Config.Income.Buildings[Type] then
+        Limit = Stronghold.Config.Income.Buildings[Type].Limit;
+    end
     if Limit and Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit then
         LimitReached = true;
     end
+    -- Military limit
+    if Type == Entities.PB_Barracks1 then
+        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
+        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
+        LimitReached = LimitReached or BuildingT1+BuildingT2 > 0;
+    end
+    if Type == Entities.PB_Archery1 then
+        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
+        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
+        LimitReached = LimitReached or BuildingT1+BuildingT2 > 0;
+    end
+    if Type == Entities.PB_Stable1 then
+        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
+        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
+        LimitReached = LimitReached or BuildingT1+BuildingT2 > 0;
+    end
+
     if LimitReached or (_Technology and Logic.GetTechnologyState(_PlayerID, _Technology) == 0) then
         Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         CostString = "";
@@ -420,22 +443,49 @@ function Stronghold:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technolog
         return true;
     end
 
+    local LimitReached = false;
+
+    -- Military building limit
+    if _Technology == Technologies.B_Barracks then
+        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
+        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
+        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, BuildingT1+BuildingT2 > 0);
+        return true;
+    end
+    if _Technology == Technologies.B_Archery then
+        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Archery1);
+        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Archery2);
+        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, BuildingT1+BuildingT2 > 0);
+        return true;
+    end
+    if _Technology == Technologies.B_Stables then
+        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Stable1);
+        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Stable2);
+        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, BuildingT1+BuildingT2 > 0);
+        return true;
+    end
+
     -- Beautification limit
     if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
-        local TechState = Logic.GetTechnologyState(_PlayerID, _Technology);
-        if TechState == 2 or TechState == 3 or TechState == 4 then
-            local Type = Entities["P" ..TechnologyName];
-            local Limit = Stronghold.Config.Income.Buildings[Type].Limit;
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit then
-                XGUIEng.DisableButton(_Button, 1);
-            else
-                XGUIEng.DisableButton(_Button, 0);
-            end
-        else
-            XGUIEng.DisableButton(_Button, 1);
-        end
+        local Type = Entities["P" ..TechnologyName];
+        local Limit = Stronghold.Config.Income.Buildings[Type].Limit;
+        LimitReached = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit;
+        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, LimitReached);
         return true;
     end
     return false;
+end
+
+function Stronghold:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, _Disable)
+    local TechState = Logic.GetTechnologyState(_PlayerID, _Technology);
+    if TechState == 2 or TechState == 3 or TechState == 4 then
+        if _Disable then
+            XGUIEng.DisableButton(_Button, 1);
+        else
+            XGUIEng.DisableButton(_Button, 0);
+        end
+    else
+        XGUIEng.DisableButton(_Button, 1);
+    end
 end
 
