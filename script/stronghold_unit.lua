@@ -179,9 +179,9 @@ function Stronghold:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
 
         -- Passive ability: experienced troops
         local Experience = 0;
-        if IsLeader and self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-            self:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
-            Experience = 5;
+        if IsLeader and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
+            Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+            Experience = 3;
         end
         -- Create unit
         RemoveResourcesFromPlayer(_PlayerID, Costs);

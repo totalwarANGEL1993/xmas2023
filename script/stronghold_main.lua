@@ -41,12 +41,12 @@ function Stronghold:Init()
     self.Economy:Install();
     self.Limitation:Install();
     self.Building:Install();
+    self.Hero:Install();
 
     self:StartPlayerPaydayUpdater();
     self:StartEntityCreatedTrigger();
     self:StartEntityHurtTrigger();
     self:StartOnEveryTurnTrigger();
-    self:OverrideGainedResourceCallback();
     self:SetEntityTypesAttractionUsage();
 
     self:OverrideAttraction();
@@ -56,9 +56,6 @@ function Stronghold:Init()
     self:OverrideActionResearchTechnologyMain();
     self:OverrideTooltipUpgradeSettlersMain();
     self:OverwriteCommonCallbacks();
-    self:OverrideCalculationCallbacks();
-
-    self:OverrideBuyHeroWindow();
 end
 
 -- Restore game state after load
@@ -73,13 +70,10 @@ function Stronghold:OnSaveGameLoaded()
 
     self.Building:OnSaveGameLoaded();
     self.Limitation:OnSaveGameLoaded();
+    self.Hero:OnSaveGameLoaded();
 
     self:OverrideAttraction();
     self:SetEntityTypesAttractionUsage();
-    for k,v in pairs(self.Players) do
-        self:ConfigurePlayersLord(k);
-        self:ConfigurePlayersSpouse(k);
-    end
 end
 
 -- Add player
@@ -149,11 +143,8 @@ function Stronghold:StartOnEveryTurnTrigger()
         ---@diagnostic disable-next-line: undefined-field
         local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), 10);
         if PlayerID > 0 and PlayerID < 9 then
-            Stronghold:EntityAttackedController(PlayerID);
             Stronghold:PlayerDefeatCondition(PlayerID);
             Stronghold:CreateWorkersForPlayer(PlayerID);
-            Stronghold:EnergyProductionBonus(PlayerID);
-            Stronghold:FaithProductionBonus(PlayerID);
         end
     end
 
@@ -173,10 +164,6 @@ function Stronghold:StartEntityCreatedTrigger()
         -- Beautification limit
         if Logic.IsBuilding(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
             Stronghold:OnSelectionMenuChanged(EntityID);
-        end
-        -- Pets
-        if Logic.IsSettler(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
-            Stronghold:ConfigurePlayersHeroPet(EntityID);
         end
     end
 
@@ -209,16 +196,6 @@ function Stronghold:StartEntityHurtTrigger()
         "Stronghold_Trigger_OnEntityHurt",
         1
     );
-end
-
-function Stronghold:OverrideGainedResourceCallback()
-    GameCallback_GainedResources_Orig_StrongholdMain = GameCallback_GainedResources;
-    GameCallback_GainedResources = function(_PlayerID, _ResourceType, _Amount)
-        GameCallback_GainedResources_Orig_StrongholdMain(_PlayerID, _ResourceType, _Amount);
-        if Stronghold.Players[_PlayerID] then
-            Stronghold:ResourceProductionBonus(_PlayerID, _ResourceType, _Amount);
-        end
-    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -347,7 +324,7 @@ function Stronghold:OverrideAttraction()
             AttractionLimit = AttractionLimit + (Outposts * OutpostAttraction);
         end
         -- Hero bonus
-        AttractionLimit = Stronghold:ApplyMaxAttractionPassiveAbility(_PlayerID, AttractionLimit);
+        AttractionLimit = Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, AttractionLimit);
 
         return math.floor(AttractionLimit + 0.5);
 	end
@@ -363,7 +340,7 @@ function Stronghold:OverrideAttraction()
         local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
         -- Mary makes scouts and thieves totally free of charge
-        if Stronghold:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
+        if Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
             ScoutCount = 0;
             ThiefCount = 0;
         end
