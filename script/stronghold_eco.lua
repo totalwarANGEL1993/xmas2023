@@ -2,56 +2,137 @@
 --- Economy Script
 ---
 --- This script implements all calculations reguarding tax, payment, honor
---- and reputation and all passive lord or spouse effects.
+--- and reputation and privides calculation callbacks for external changes.
+---
+--- Defined game callbacks:
+--- - <number> GameCallback_Calculate_ReputationIncrease(_PlayerID, _CurrentAmount)
+---   Allows to overwrite the reputation income.
+---
+--- - <number> GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, _Type, _TypeAmount, _CurrentAmount)
+---   Allows to overwrite the reputation income.
+---   
+--- - <number> GameCallback_Calculate_ReputationDecrease(_PlayerID, _CurrentAmount)
+---   Allows to overwrite the reputation malus.
+---   
+--- - <number> GameCallback_Calculate_HonorIncrease(_PlayerID, _CurrentAmount)
+---   Allows to overwrite the honor income.
+---   
+--- - <number> GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _CurrentAmount)
+---   Allows to overwrite the total money income.
+---   
+--- - <number> GameCallback_Calculate_TotalPaydayUpkeep(_PlayerID, _CurrentAmount)
+---   Allows to overwrite the total upkeep.
+---   
+--- - <number> GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _CurrentAmount)
+---   Allows to overwite the upkeep of a unit type.
 ---
 
 Stronghold = Stronghold or {};
 
-Stronghold.Config.Income = {
-    MaxReputation = 200,
-    TaxPerWorker = 5,
-    TaxEffect = {
-        [1] = {Honor = 4, Reputation = 10,},
-        [2] = {Honor = 2, Reputation = -2,},
-        [3] = {Honor = 1, Reputation = -4,},
-        [4] = {Honor = 0, Reputation = -8,},
-        [5] = {Honor = 0, Reputation = -16,},
-    },
-    Buildings = {
-        [Entities.CB_Bastille1] = {Honor = 15, Reputation = 5,},
-        ---
-        [Entities.PB_Beautification04] = {Limit = 4, Honor = 1, Reputation = 1,},
-        [Entities.PB_Beautification06] = {Limit = 4, Honor = 1, Reputation = 1,},
-        [Entities.PB_Beautification09] = {Limit = 4, Honor = 1, Reputation = 1,},
-        ---
-        [Entities.PB_Beautification01] = {Limit = 3, Honor = 1, Reputation = 2,},
-        [Entities.PB_Beautification02] = {Limit = 3, Honor = 1, Reputation = 2,},
-        [Entities.PB_Beautification12] = {Limit = 3, Honor = 1, Reputation = 2,},
-        ---
-        [Entities.PB_Beautification05] = {Limit = 2, Honor = 1, Reputation = 3,},
-        [Entities.PB_Beautification07] = {Limit = 2, Honor = 1, Reputation = 3,},
-        [Entities.PB_Beautification08] = {Limit = 2, Honor = 1, Reputation = 3,},
-        ---
-        [Entities.PB_Beautification03] = {Limit = 1, Honor = 1, Reputation = 4,},
-        [Entities.PB_Beautification10] = {Limit = 1, Honor = 1, Reputation = 4,},
-        [Entities.PB_Beautification11] = {Limit = 1, Honor = 1, Reputation = 4,},
-        ---
-        [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
-        [Entities.PB_Tavern2] = {Honor = 0, Reputation = 6,},
-        ---
-        [Entities.PB_Farm2] = {Honor = 1, Reputation = 0,},
-        [Entities.PB_Farm3] = {Honor = 2, Reputation = 0,},
-        ---
-        [Entities.PB_Residence2] = {Honor = 1, Reputation = 0,},
-        [Entities.PB_Residence3] = {Honor = 2, Reputation = 0,},
-    },
-    Spouse = {Honor = 5, Reputation = 5,},
-}
+Stronghold.Economy = {
+    Data = {},
+    Config = {
+        MaxReputation = 200,
+        TaxPerWorker = 5,
+        Income = {
+            TaxEffect = {
+                [1] = {Honor = 4, Reputation = 10,},
+                [2] = {Honor = 2, Reputation = -2,},
+                [3] = {Honor = 1, Reputation = -4,},
+                [4] = {Honor = 0, Reputation = -8,},
+                [5] = {Honor = 0, Reputation = -16,},
+            },
+            Buildings = {
+                [Entities.CB_Bastille1] = {Honor = 15, Reputation = 5,},
+                ---
+                [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
+                [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
+                [Entities.PB_Beautification09] = {Honor = 1, Reputation = 1,},
+                ---
+                [Entities.PB_Beautification01] = {Honor = 1, Reputation = 2,},
+                [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
+                [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
+                ---
+                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
+                ---
+                [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
+                ---
+                [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
+                [Entities.PB_Tavern2] = {Honor = 0, Reputation = 6,},
+                ---
+                [Entities.PB_Farm2] = {Honor = 2, Reputation = 0,},
+                [Entities.PB_Farm3] = {Honor = 3, Reputation = 0,},
+                ---
+                [Entities.PB_Residence2] = {Honor = 1, Reputation = 0,},
+                [Entities.PB_Residence3] = {Honor = 2, Reputation = 0,},
+            },
+            Spouse = {Honor = 5, Reputation = 5,},
+        }
+    }
+};
+
+function Stronghold.Economy:Install()
+    for i= 1, table.getn(Score.Player) do
+        self.Data[i] = {
+            IncomeMoney = 0;
+            UpkeepMoney = 0;
+            UpkeepDetails = {};
+            IncomeReputation = 0;
+            IncomeHonor = 0;
+        };
+    end
+
+    self:InitTradeBalancer();
+    self:StartTriggers();
+
+    self:OverrideFindViewUpdate();
+    self:OverrideTaxAndPayStatistics();
+    self:OverridePaydayClockTooltip();
+end
+
+-- -------------------------------------------------------------------------- --
+-- Game Callbacks
+
+function GameCallback_Calculate_ReputationMax(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_ReputationIncrease(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, _Type, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_ReputationDecrease(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_HonorIncrease(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_TotalPaydayUpkeep(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _Amount)
+    return _Amount
+end
 
 -- -------------------------------------------------------------------------- --
 -- Trade
 
-function Stronghold:InitTradeBalancer()
+function Stronghold.Economy:InitTradeBalancer()
     local EntityID = Event.GetEntityID();
     local SellTyp = Event.GetSellResource();
     local PurchaseTyp = Event.GetBuyResource();
@@ -74,11 +155,11 @@ end
 -- -------------------------------------------------------------------------- --
 -- Income & Upkeep
 
-function Stronghold:UpdateIncomeAndUpkeep(_PlayerID)
-    if self.Players[_PlayerID] then
-        local MaxReputation = self.Config.Income.MaxReputation;
-        MaxReputation = self:ApplyMaxReputationPassiveAbility(_PlayerID, MaxReputation);
-        self:SetPlayerReputationLimit(_PlayerID, MaxReputation);
+function Stronghold.Economy:UpdateIncomeAndUpkeep(_PlayerID)
+    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+        local MaxReputation = self.Config.MaxReputation;
+        MaxReputation = GameCallback_Calculate_ReputationMax(_PlayerID, MaxReputation);
+        Stronghold:SetPlayerReputationLimit(_PlayerID, MaxReputation);
 
         local Income = self:CalculateMoneyIncome(_PlayerID);
         local Upkeep = self:CalculateMoneyUpkeep(_PlayerID);
@@ -87,22 +168,22 @@ function Stronghold:UpdateIncomeAndUpkeep(_PlayerID)
         local Honor = self:CalculateHonorIncome(_PlayerID);
 
         -- Spouse
-        if Logic.GetEntityHealth(GetID(self.Players[_PlayerID].SpouseScriptName)) > 0 then
+        if Logic.GetEntityHealth(GetID(Stronghold.Players[_PlayerID].SpouseScriptName)) > 0 then
             ReputationPlus = ReputationPlus + self.Config.Income.Spouse.Reputation;
             Honor = Honor + self.Config.Income.Spouse.Honor;
         end
 
-        self.Players[_PlayerID].IncomeMoney = Income;
-        self.Players[_PlayerID].UpkeepMoney = Upkeep;
-        self.Players[_PlayerID].IncomeReputation = math.floor(ReputationPlus - ReputationMinus);
-        self.Players[_PlayerID].IncomeHonor = Honor;
+        self.Data[_PlayerID].IncomeMoney = Income;
+        self.Data[_PlayerID].UpkeepMoney = Upkeep;
+        self.Data[_PlayerID].IncomeReputation = math.floor(ReputationPlus - ReputationMinus);
+        self.Data[_PlayerID].IncomeHonor = Honor;
     end
 end
 
 -- Calculate reputation increase
 -- Reputation is produced by buildings and units.
-function Stronghold:CalculateReputationIncrease(_PlayerID)
-    if self.Players[_PlayerID] then
+function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
+    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
         local Income = 0;
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         if WorkerCount > 0 then
@@ -116,16 +197,16 @@ function Stronghold:CalculateReputationIncrease(_PlayerID)
                         end
                     end
                 end
-                Income = Income + self:ApplyReputationBuildingBonusPassiveAbility(
-                    _PlayerID, k, table.getn(Buildings), v.Reputation
-                );
+                Income = GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, k, table.getn(Buildings) * v.Reputation);
             end
             -- Tax
-            local TaxtHeight = self.Players[_PlayerID].TaxHeight;
+            local TaxtHeight = Stronghold.Players[_PlayerID].TaxHeight;
             if TaxtHeight == 1 then
-                local TaxEffect = Stronghold.Config.Income.TaxEffect;
+                local TaxEffect = self.Config.Income.TaxEffect;
                 Income = Income + TaxEffect[TaxtHeight].Reputation;
             end
+            -- External
+            Income = GameCallback_Calculate_ReputationIncrease(_PlayerID, Income);
         end
         return math.floor(Income + 0.5);
     end
@@ -135,31 +216,34 @@ end
 -- Calculate reputation decrease
 -- A fixed penalty for the tax hight and the amout of workers the player didn't
 -- provide a farm or house are negative factors.
-function Stronghold:CalculateReputationDecrease(_PlayerID)
-    if self.Players[_PlayerID] then
+function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
+    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
         local Decrease = 0;
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         if WorkerCount > 0 then
+            -- Tax
             local TaxPenalty = self:CalculateReputationTaxPenaltyAmount(
                 _PlayerID,
-                self.Players[_PlayerID].TaxHeight,
+                Stronghold.Players[_PlayerID].TaxHeight,
                 WorkerCount
             );
+            -- Provision
             local NoFood = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID) * 0.25;
             local NoSleep = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID) * 0.25;
             Decrease = TaxPenalty + NoFood + NoSleep;
-            Decrease = self:ApplyReputationDecreasePassiveAbility(_PlayerID, Decrease);
+            -- External
+            Decrease = GameCallback_Calculate_ReputationDecrease(_PlayerID, Decrease);
         end
         return math.floor(Decrease + 0.5);
     end
     return 0;
 end
 
-function Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, _TaxtHeight, _WorkerCount)
-    if self.Players[_PlayerID] then
+function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _TaxtHeight, _WorkerCount)
+    if self.Data[_PlayerID] then
         local Penalty = 0;
         if _TaxtHeight > 1 then
-            local TaxEffect = Stronghold.Config.Income.TaxEffect;
+            local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
             for i= 1, _WorkerCount do
                 Penalty = Penalty * 1.05;
@@ -172,30 +256,33 @@ end
 
 -- Calculate honor income
 -- Honor is influenced by tax, buildings and units.
-function Stronghold:CalculateHonorIncome(_PlayerID)
-    if self.Players[_PlayerID] then
+function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
+    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
         local Income = 0;
-        -- Tax
-        local TaxHight = self.Players[_PlayerID].TaxHeight;
-        local TaxBonus = self.Config.Income.TaxEffect[TaxHight].Honor;
-        Income = Income + TaxBonus;
+        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
+        if WorkerCount > 0 then
+            -- Tax
+            local TaxHight = Stronghold.Players[_PlayerID].TaxHeight;
+            local TaxBonus = self.Config.Income.TaxEffect[TaxHight].Honor;
+            Income = Income + TaxBonus;
 
-        -- Buildings
-        for k, v in pairs(self.Config.Income.Buildings) do
-            local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
-            for i= table.getn(Buildings), 1, -1 do
-                local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
-                if WorkplaceLimit then
-                    if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) < WorkplaceLimit then
-                        table.remove(Buildings, i);
+            -- Buildings
+            for k, v in pairs(self.Config.Income.Buildings) do
+                local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
+                for i= table.getn(Buildings), 1, -1 do
+                    local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
+                    if WorkplaceLimit then
+                        if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) < WorkplaceLimit then
+                            table.remove(Buildings, i);
+                        end
                     end
                 end
+                Income = Income + (table.getn(Buildings) * v.Honor);
             end
-            Income = Income + (table.getn(Buildings) * v.Honor);
-        end
 
-        -- Hero
-        Income = self:ApplyHonorBonusPassiveAbility(_PlayerID, Income);
+            -- External
+            Income = GameCallback_Calculate_HonorIncrease(_PlayerID, Income);
+        end
         return math.floor(Income + 0.5);
     end
     return 0;
@@ -203,12 +290,12 @@ end
 
 -- Calculate tax income
 -- The tax income is mostly unchanged. A worker pays 5 gold times the tax level.
-function Stronghold:CalculateMoneyIncome(_PlayerID)
-    if self.Players[_PlayerID] then
-        local TaxHeight = self.Players[_PlayerID].TaxHeight;
-        local PerWorker = Stronghold.Config.Income.TaxPerWorker;
+function Stronghold.Economy:CalculateMoneyIncome(_PlayerID)
+    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+        local TaxHeight = Stronghold.Players[_PlayerID].TaxHeight;
+        local PerWorker = self.Config.TaxPerWorker;
         local Income = (Logic.GetNumberOfAttractedWorker(1) * PerWorker) * (TaxHeight -1);
-        Income = self:ApplyIncomeBonusPassiveAbility(_PlayerID, Income);
+        Income = GameCallback_Calculate_TotalPaydayIncome(_PlayerID, Income);
         return math.floor(Income + 0.5);
     end
     return 0;
@@ -217,10 +304,10 @@ end
 -- Calculate unit upkeep
 -- The upkeep is not for the leader himself. Soldiers are also incluced in the
 -- calculation. The upkeep decreases if the group looses soldiers.
-function Stronghold:CalculateMoneyUpkeep(_PlayerID)
-    if self.Players[_PlayerID] then
+function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
+    if self.Data[_PlayerID] then
         local Upkeep = 0;
-        for k, v in pairs(self.Config.Units) do
+        for k, v in pairs(Stronghold.Config.Units) do
             local Military = GetCompletedEntitiesOfType(_PlayerID, k);
             local TypeUpkeep = 0;
             for i= 1, table.getn(Military) do
@@ -236,28 +323,30 @@ function Stronghold:CalculateMoneyUpkeep(_PlayerID)
             -- Barracks high tier discount
             if k == Entities.PU_LeaderPoleArm3 or k == Entities.PU_LeaderPoleArm4
             or k == Entities.PU_LeaderSword3 or k == Entities.PU_LeaderSword4 then
-                TypeUpkeep = self:ApplyUpkeepDiscountBarracks(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold:ApplyUpkeepDiscountBarracks(_PlayerID, TypeUpkeep);
             end
             -- Archery high tier discount
             if Logic.IsEntityTypeInCategory(k, EntityCategories.Rifle) == 1
             or k == Entities.PU_LeaderBow3 or k == Entities.PU_LeaderBow4 then
-                TypeUpkeep = self:ApplyUpkeepDiscountArchery(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold:ApplyUpkeepDiscountArchery(_PlayerID, TypeUpkeep);
             end
             -- Stables high tier discount
             if Logic.IsEntityTypeInCategory(k, EntityCategories.CavalryHeavy) == 1
             or Logic.IsEntityTypeInCategory(k, EntityCategories.CavalryLight) == 1 then
-                TypeUpkeep = self:ApplyUpkeepDiscountStable(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold:ApplyUpkeepDiscountStable(_PlayerID, TypeUpkeep);
             end
             -- Foundry high tier discount
             if k == Entities.PV_Cannon3 or k == Entities.PV_Cannon4 then
-                TypeUpkeep = self:ApplyUpkeepDiscountFoundry(_PlayerID, TypeUpkeep);
+                TypeUpkeep = Stronghold:ApplyUpkeepDiscountFoundry(_PlayerID, TypeUpkeep);
             end
-            -- Lord discount
-            TypeUpkeep = self:ApplyUpkeepDiscountPassiveAbility(_PlayerID, k, TypeUpkeep);
+            -- External
+            TypeUpkeep = GameCallback_Calculate_PaydayUpkeep(_PlayerID, k, TypeUpkeep)
 
-            self.Players[_PlayerID].UpkeepDetails[k] = TypeUpkeep;
+            self.Data[_PlayerID].UpkeepDetails[k] = TypeUpkeep;
             Upkeep = Upkeep + TypeUpkeep;
         end
+        -- External
+        Upkeep = GameCallback_Calculate_TotalPaydayUpkeep(_PlayerID, Upkeep);
         return math.floor(Upkeep + 0.5);
     end
     return 0;
@@ -266,7 +355,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- UI
 
-function Stronghold:OverrideFindViewUpdate()
+function Stronghold.Economy:OverrideFindViewUpdate()
     GUIUpdate_FindView = function()
         XGUIEng.ShowWidget("FindView", 1);
 		XGUIEng.ShowWidget("FindSpearmen", 1);
@@ -280,20 +369,20 @@ function Stronghold:OverrideFindViewUpdate()
 		XGUIEng.ShowWidget("FindThief", 1);
         XGUIEng.ShowWidget("Find_IdleSerf", 1);
 
-        Stronghold:HonorMenu();
+        Stronghold.Economy:HonorMenu();
 	end
 end
 
-function Stronghold:HonorMenu()
+function Stronghold.Economy:HonorMenu()
     local PlayerID = GUI.GetPlayerID()
 
     local Rank = "Abschaum";
     local Honor = 0;
-    local MaxHonor = self.Config.HonorLimit;
-    if self.Players[PlayerID] then
-        local CurrentRank = self.Players[PlayerID].Rank;
-        Rank = self.Config.Text.Ranks[CurrentRank] or Rank;
-        Honor = self.Players[PlayerID].Honor;
+    local MaxHonor = Stronghold.Config.HonorLimit;
+    if self.Data[PlayerID] and Stronghold.Players[PlayerID] then
+        local CurrentRank = Stronghold.Players[PlayerID].Rank;
+        Rank = Stronghold.Config.Text.Ranks[CurrentRank] or Rank;
+        Honor = Stronghold.Players[PlayerID].Honor;
     end
 
     local ScreenSize = {GUI.GetScreenSize()}
@@ -312,17 +401,17 @@ function Stronghold:HonorMenu()
     );
 end
 
-function Stronghold:OverridePaydayClockTooltip()
+function Stronghold.Economy:OverridePaydayClockTooltip()
     GUITooltip_Payday_Orig_StrongholdEco = GUITooltip_Payday
     GUITooltip_Payday = function()
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold.Economy.Data[PlayerID] then
             return GUITooltip_Payday_Orig_StrongholdEco();
         end
 
         local PaydayTime = math.floor((Logic.GetPlayerPaydayTimeLeft(1)/1000) + 0.5);
-        local Honor = Stronghold.Players[PlayerID].IncomeHonor;
-        local Reputation = Stronghold.Players[PlayerID].IncomeReputation;
+        local Honor = Stronghold.Economy.Data[PlayerID].IncomeHonor;
+        local Reputation = Stronghold.Economy.Data[PlayerID].IncomeReputation;
 
         local TextCol = " @color:255,255,255 ";
         local GreenCol = " @color:173,255,47 ";
@@ -347,16 +436,16 @@ function Stronghold:OverridePaydayClockTooltip()
     end
 end
 
-function Stronghold:OverrideTaxAndPayStatistics()
+function Stronghold.Economy:OverrideTaxAndPayStatistics()
     GUIUpdate_TaxPaydayIncome_Orig_StrongholdEco = GUIUpdate_TaxPaydayIncome;
     GUIUpdate_TaxPaydayIncome = function()
 		local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold.Economy.Data[PlayerID] then
             return GUIUpdate_TaxPaydayIncome_Orig_StrongholdEco();
         end
 
-        local Income = Stronghold.Players[PlayerID].IncomeMoney;
-        local Upkeep = Stronghold.Players[PlayerID].UpkeepMoney;
+        local Income = Stronghold.Economy.Data[PlayerID].IncomeMoney;
+        local Upkeep = Stronghold.Economy.Data[PlayerID].UpkeepMoney;
         if Income - Upkeep < 0 then
 			XGUIEng.SetText( "SumOfPayday", " @color:255,32,32 @ra "..(Income-Upkeep));
 			XGUIEng.SetText( "TaxSumOfPayday", " @color:255,32,32 @ra "..(Income-Upkeep));
@@ -369,29 +458,29 @@ function Stronghold:OverrideTaxAndPayStatistics()
     GUIUpdate_TaxSumOfTaxes_Orig_StrongholdEco = GUIUpdate_TaxSumOfTaxes;
 	GUIUpdate_TaxSumOfTaxes = function()
 		local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold.Economy.Data[PlayerID] then
             return GUIUpdate_TaxSumOfTaxes_Orig_StrongholdEco();
         end
 
-        local Income = Stronghold.Players[PlayerID].IncomeMoney;
+        local Income = Stronghold.Economy.Data[PlayerID].IncomeMoney;
         XGUIEng.SetText( "TaxWorkerSumOfTaxes", " @color:173,255,47 @ra " ..Income);
 	end
 
     GUIUpdate_TaxLeaderCosts_Orig_StrongholdEco = GUIUpdate_TaxLeaderCosts;
 	GUIUpdate_TaxLeaderCosts = function()
 		local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold.Economy.Data[PlayerID] then
             return GUIUpdate_TaxLeaderCosts_Orig_StrongholdEco();
         end
 
-        local Upkeep = Stronghold.Players[PlayerID].UpkeepMoney;
+        local Upkeep = Stronghold.Economy.Data[PlayerID].UpkeepMoney;
         XGUIEng.SetText( "TaxLeaderSumOfPay", " @color:255,32,32 @ra "..Upkeep);
 	end
 
     GUIUpdate_AverageMotivation_Orig_StrongholdEco = GUIUpdate_AverageMotivation;
     GUIUpdate_AverageMotivation = function()
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold.Economy.Data[PlayerID] or not Stronghold.Players[PlayerID] then
             return GUIUpdate_AverageMotivation_Orig_StrongholdEco();
         end
         local Reputation = Stronghold.Players[PlayerID].Reputation;
@@ -414,7 +503,7 @@ function Stronghold:OverrideTaxAndPayStatistics()
 	end
 end
 
-function Stronghold:PrintTooltipGenericForEcoGeneral(_PlayerID, _Key)
+function Stronghold.Economy:PrintTooltipGenericForEcoGeneral(_PlayerID, _Key)
     if _Key == "MenuHeadquarter/TaxWorker" then
         XGUIEng.SetText(
             gvGUI_WidgetID.TooltipBottomText,
@@ -469,50 +558,50 @@ function Stronghold:PrintTooltipGenericForEcoGeneral(_PlayerID, _Key)
     end
 end
 
-function Stronghold:PrintTooltipGenericForFindView(_PlayerID, _Key)
+function Stronghold.Economy:PrintTooltipGenericForFindView(_PlayerID, _Key)
     local Text = XGUIEng.GetStringTableText(_Key);
     local Upkeep = 0;
 
     if _Key == "MenuTop/Find_spear" then
-        local SpeerT1 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm1] or 0;
-        local SpeerT2 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm2] or 0;
-        local SpeerT3 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm3] or 0;
-        local SpeerT4 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm4] or 0;
+        local SpeerT1 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm1] or 0;
+        local SpeerT2 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm2] or 0;
+        local SpeerT3 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm3] or 0;
+        local SpeerT4 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderPoleArm4] or 0;
         Upkeep = SpeerT1+SpeerT2+SpeerT3+SpeerT4;
     elseif _Key == "MenuTop/Find_sword" then
-        local SwordT1 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword1] or 0;
-        local SwordT2 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword2] or 0;
-        local SwordT3 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword3] or 0;
-        local SwordT4 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword4] or 0;
+        local SwordT1 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword1] or 0;
+        local SwordT2 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword2] or 0;
+        local SwordT3 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword3] or 0;
+        local SwordT4 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderSword4] or 0;
         Upkeep = SwordT1+SwordT2+SwordT3+SwordT4;
     elseif _Key == "MenuTop/Find_bow" then
-        local BowT1 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow1] or 0;
-        local BowT2 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow2] or 0;
-        local BowT3 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow3] or 0;
-        local BowT4 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow4] or 0;
+        local BowT1 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow1] or 0;
+        local BowT2 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow2] or 0;
+        local BowT3 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow3] or 0;
+        local BowT4 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderBow4] or 0;
         Upkeep = BowT1+BowT2+BowT3+BowT4;
     elseif _Key == "MenuTop/Find_cannon" then
-        local CannonT1 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PV_Cannon1] or 0;
-        local CannonT2 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PV_Cannon2] or 0;
-        local CannonT3 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PV_Cannon3] or 0;
-        local CannonT4 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PV_Cannon4] or 0;
+        local CannonT1 = self.Data[_PlayerID].UpkeepDetails[Entities.PV_Cannon1] or 0;
+        local CannonT2 = self.Data[_PlayerID].UpkeepDetails[Entities.PV_Cannon2] or 0;
+        local CannonT3 = self.Data[_PlayerID].UpkeepDetails[Entities.PV_Cannon3] or 0;
+        local CannonT4 = self.Data[_PlayerID].UpkeepDetails[Entities.PV_Cannon4] or 0;
         Upkeep = CannonT1+CannonT2+CannonT3+CannonT4;
     elseif _Key == "MenuTop/Find_lightcavalry" then
-        local LCavT1 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderCavalry1] or 0;
-        local LcavT2 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderCavalry2] or 0;
+        local LCavT1 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderCavalry1] or 0;
+        local LcavT2 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderCavalry2] or 0;
         Upkeep = LCavT1+LcavT2;
     elseif _Key == "MenuTop/Find_heavycavalry" then
-        local SCavT1 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderHeavyCavalry1] or 0;
-        local ScavT2 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderHeavyCavalry2] or 0;
+        local SCavT1 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderHeavyCavalry1] or 0;
+        local ScavT2 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderHeavyCavalry2] or 0;
         Upkeep = SCavT1+ScavT2;
     elseif _Key == "AOMenuTop/Find_rifle" then
-        local RifleT1 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderRifle1] or 0;
-        local RifleT2 = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_LeaderRifle2] or 0;
+        local RifleT1 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderRifle1] or 0;
+        local RifleT2 = self.Data[_PlayerID].UpkeepDetails[Entities.PU_LeaderRifle2] or 0;
         Upkeep = RifleT1+RifleT2;
     elseif _Key == "AOMenuTop/Find_scout" then
-        Upkeep = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_Scout] or 0;
+        Upkeep = self.Data[_PlayerID].UpkeepDetails[Entities.PU_Scout] or 0;
     elseif _Key == "AOMenuTop/Find_Thief" then
-        Upkeep = Stronghold.Players[_PlayerID].UpkeepDetails[Entities.PU_Thief] or 0;
+        Upkeep = self.Data[_PlayerID].UpkeepDetails[Entities.PU_Thief] or 0;
     else
         return false;
     end
@@ -521,5 +610,25 @@ function Stronghold:PrintTooltipGenericForFindView(_PlayerID, _Key)
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
     return true;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Trigger
+
+function Stronghold.Economy:StartTriggers()
+    Trigger.RequestTrigger(
+        Events.LOGIC_EVENT_EVERY_TURN,
+        nil,
+        "Stronghold_Economy_Trigger_OnEveryTurn",
+        1
+    );
+end
+
+function Stronghold_Economy_Trigger_OnEveryTurn()
+    local Players = table.getn(Score.Player);
+    ---@diagnostic disable-next-line: undefined-field
+    local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), Players);
+
+    Stronghold.Economy:UpdateIncomeAndUpkeep(PlayerID);
 end
 

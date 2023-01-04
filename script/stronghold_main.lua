@@ -38,7 +38,9 @@ function Stronghold:Init()
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
-    self:InitTradeBalancer();
+    self.Economy:Install();
+    self.Limitation:Install();
+
     self:StartPlayerPaydayUpdater();
     self:StartEntityCreatedTrigger();
     self:StartEntityHurtTrigger();
@@ -47,15 +49,13 @@ function Stronghold:Init()
     self:SetEntityTypesAttractionUsage();
 
     self:OverrideAttraction();
-    self:OverridePaydayClockTooltip();
-    self:OverrideTaxAndPayStatistics();
-    self:OverrideFindViewUpdate();
     self:OverrideTooltipGenericMain();
     self:OverrideTooltipConstructionMain();
     self:OverrideUpdateConstructionMain();
     self:OverrideActionResearchTechnologyMain();
     self:OverrideTooltipUpgradeSettlersMain();
     self:OverwriteCommonCallbacks();
+    self:OverrideCalculationCallbacks();
 
     self:CreateHeadquartersButtonHandlers();
     self:CreateMonasteryButtonHandlers();
@@ -132,13 +132,8 @@ function Stronghold:AddPlayer(_PlayerID)
         DoorPos = DoorPos;
         CampPos = CampPos;
 
-        IncomeMoney = 0,
-        UpkeepDetails = {},
-        UpkeepMoney = 0,
-
-        Reputation = 100,
         ReputationLimit = 200,
-        IncomeReputation = 0,
+        Reputation = 100,
 
         Honor = 0,
         IncomeHonor = 0,
@@ -161,7 +156,6 @@ function Stronghold:StartOnEveryTurnTrigger()
             Stronghold:EntityAttackedController(PlayerID);
             Stronghold:PlayerDefeatCondition(PlayerID);
             Stronghold:CreateWorkersForPlayer(PlayerID);
-            Stronghold:UpdateIncomeAndUpkeep(PlayerID);
             Stronghold:EnergyProductionBonus(PlayerID);
             Stronghold:FaithProductionBonus(PlayerID);
         end
@@ -372,6 +366,11 @@ function Stronghold:OverrideAttraction()
         local SerfCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Serf);
         local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
+        -- Mary makes scouts and thieves totally free of charge
+        if Stronghold:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
+            ScoutCount = 0;
+            ThiefCount = 0;
+        end
         return WorkerCount + SerfCount + ScoutCount + (ThiefCount *5);
 	end
 end
@@ -404,7 +403,7 @@ function Stronghold:StartPlayerPaydayUpdater()
         Stronghold.Shared.PaydayTriggerFlag = Stronghold.Shared.PaydayTriggerFlag or {};
         Stronghold.Shared.PaydayOverFlag = Stronghold.Shared.PaydayOverFlag or {};
 
-        for i= 1, 8, 1 do
+        for i= 1, table.getn(Score.Player) do
             if Stronghold.Shared.PaydayTriggerFlag[i] == nil then
                 Stronghold.Shared.PaydayTriggerFlag[i] = false;
             end
@@ -439,12 +438,12 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
             end
         end
         AddGold(_PlayerID, Logic.GetNumberOfLeader(_PlayerID) * 20, 0, 0, 0, 0, 0);
-        Tools.GiveResouces(_PlayerID, self.Players[_PlayerID].IncomeMoney, 0, 0, 0, 0, 0);
-        AddGold(_PlayerID, -self.Players[_PlayerID].UpkeepMoney);
+        Tools.GiveResouces(_PlayerID, Stronghold.Economy.Data[_PlayerID].IncomeMoney, 0, 0, 0, 0, 0);
+        AddGold(_PlayerID, -Stronghold.Economy.Data[_PlayerID].UpkeepMoney);
 
         -- Reputation
         local OldReputation = self:GetPlayerReputation(_PlayerID);
-        local Reputation = self.Players[_PlayerID].IncomeReputation;
+        local Reputation = Stronghold.Economy.Data[_PlayerID].IncomeReputation;
         self:UpdateMotivationOfWorkers(_PlayerID, OldReputation + Reputation);
         self.Players[_PlayerID].Reputation = OldReputation + Reputation;
         if self.Players[_PlayerID].Reputation > self.Players[_PlayerID].ReputationLimit then
@@ -455,7 +454,7 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
         end
 
         -- Honor
-        local Honor = self.Players[_PlayerID].IncomeHonor;
+        local Honor = Stronghold.Economy.Data[_PlayerID].IncomeHonor;
         self:AddPlayerHonor(_PlayerID, Honor);
 
         if GameCallback_Stronghold_OnPayday then
@@ -619,10 +618,10 @@ function Stronghold:OverrideTooltipGenericMain()
 
         local TooltipSet = false;
         if not TooltipSet then
-            TooltipSet = Stronghold:PrintTooltipGenericForFindView(PlayerID, _Key);
+            TooltipSet = Stronghold.Economy:PrintTooltipGenericForFindView(PlayerID, _Key);
         end
         if not TooltipSet then
-            TooltipSet = Stronghold:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
+            TooltipSet = Stronghold.Economy:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
         end
         if not TooltipSet then
             TooltipSet = Stronghold:PrintHeadquartersTaxButtonsTooltip(PlayerID, _Key);

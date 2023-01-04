@@ -28,6 +28,7 @@ EMS_CustomMapConfig = {
         Script.Load(Path.. "stronghold_main.lua");
         Script.Load(Path.. "stronghold_utils.lua");
         Script.Load(Path.. "stronghold_eco.lua");
+        Script.Load(Path.. "stronghold_limitation.lua");
         Script.Load(Path.. "stronghold_building.lua");
         Script.Load(Path.. "stronghold_unit.lua");
         Script.Load(Path.. "stronghold_hero.lua");

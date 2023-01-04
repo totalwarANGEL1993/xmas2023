@@ -175,14 +175,15 @@ function Stronghold:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
         end
         local Position = self:GetBarracksDoorPosition(_BarracksID);
         local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
+        local Costs = CreateCostTable(unpack(self.Config.Units[_Type].Costs));
 
         -- Passive ability: experienced troops
         local Experience = 0;
         if IsLeader and self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-            Experience = 3;
+            self:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+            Experience = 5;
         end
         -- Create unit
-        local Costs = CreateCostTable(unpack(self.Config.Units[_Type].Costs));
         RemoveResourcesFromPlayer(_PlayerID, Costs);
         local ID = AI.Entity_CreateFormation(_PlayerID, _Type, 0, 0, Position.X, Position.Y, 0, 0, Experience, 0);
         if ID ~= 0 then
@@ -254,6 +255,10 @@ end
 function Stronghold:PrintSerfConstructionTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
     -- Get default text
     local Text = XGUIEng.GetStringTableText(_KeyNormal);
+    local LineBreakPos, LineBreakEnd = string.find(Text, " @cr ");
+    local TextHeadline = string.sub(Text, 1, LineBreakPos);
+    local TextBody = string.sub(Text, LineBreakEnd +1);
+
     local CostString = "";
     local ShortCutToolTip = "";
     local Type = Logic.GetBuildingTypeByUpgradeCategory(_UpgradeCategory, _PlayerID);
@@ -268,163 +273,35 @@ function Stronghold:PrintSerfConstructionTooltip(_PlayerID, _UpgradeCategory, _K
         end
     end
 
-    -- Alter text
+    -- Effect text
     local EffectText = "";
-    if _UpgradeCategory == UpgradeCategories.Beautification04 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification04];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+    local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
+    if UpgradeCategoryName and (string.find(UpgradeCategoryName, "Beautification"))
+    or _UpgradeCategory == UpgradeCategories.Tavern
+    or _UpgradeCategory == UpgradeCategories.Barracks
+    or _UpgradeCategory == UpgradeCategories.Archery
+    or _UpgradeCategory == UpgradeCategories.Stable then
+        local Effects = Stronghold.Economy.Config.Income.Buildings[Type];
+        if Effects then
+            if Effects.Reputation > 0 then
+                EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
+            end
+            if EffectText ~= "" then
+                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
+            end
         end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification06 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification06];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification09 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification09];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification01 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification01];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification02 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification02];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification12 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification12];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification05 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification05];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification07 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification07];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification08 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification08];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification03 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification03];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification10 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification10];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Beautification11 then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Beautification11];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Tavern then
-        local Effects = Stronghold.Config.Income.Buildings[Entities.PB_Tavern1];
-        EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        if Effects.Reputation > 0 then
-            EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-        end
-        if Effects.Honor > 0 then
-            EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Barracks then
-    elseif _UpgradeCategory == UpgradeCategories.Archery then
-    elseif _UpgradeCategory == UpgradeCategories.Stables then
     else
         return false;
     end
 
-    -- Beautification limit
-    local LimitReached = false;
-    local Limit;
-    if Stronghold.Config.Income.Buildings[Type] then
-        Limit = Stronghold.Config.Income.Buildings[Type].Limit;
-    end
-    if Limit and Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit then
-        LimitReached = true;
-    end
-    -- Military limit
-    if Type == Entities.PB_Barracks1 then
-        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
-        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
-        LimitReached = LimitReached or BuildingT1+BuildingT2 > 0;
-    end
-    if Type == Entities.PB_Archery1 then
-        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
-        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
-        LimitReached = LimitReached or BuildingT1+BuildingT2 > 0;
-    end
-    if Type == Entities.PB_Stable1 then
-        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
-        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
-        LimitReached = LimitReached or BuildingT1+BuildingT2 > 0;
-    end
-
-    if LimitReached or (_Technology and Logic.GetTechnologyState(_PlayerID, _Technology) == 0) then
-        Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-        CostString = "";
-        ShortCutToolTip = "";
-        EffectText = "";
+    -- Building limit
+    local BuildingMax = Stronghold.Limitation:GetTypeLimit(Type);
+    if BuildingMax > -1 then
+        local BuildingCount = Stronghold.Limitation:GetTypeUsage(_PlayerID, Type);
+        Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
     end
 
     -- Set text
@@ -445,47 +322,33 @@ function Stronghold:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technolog
 
     local LimitReached = false;
 
-    -- Military building limit
+    -- Recruiter buildings
     if _Technology == Technologies.B_Barracks then
-        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks1);
-        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
-        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, BuildingT1+BuildingT2 > 0);
-        return true;
+        local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Barracks1);
+        local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Barracks2);
+        LimitReached = Barracks1 or Barracks2;
     end
     if _Technology == Technologies.B_Archery then
-        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Archery1);
-        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Archery2);
-        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, BuildingT1+BuildingT2 > 0);
-        return true;
+        local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Archery1);
+        local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Archery2);
+        LimitReached = Barracks1 or Barracks2;
     end
     if _Technology == Technologies.B_Stables then
-        local BuildingT1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Stable1);
-        local BuildingT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Stable2);
-        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, BuildingT1+BuildingT2 > 0);
-        return true;
+        local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Stable1);
+        local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Stable2);
+        LimitReached = Barracks1 or Barracks2;
     end
 
-    -- Beautification limit
+    -- Beautification
     if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
         local Type = Entities["P" ..TechnologyName];
-        local Limit = Stronghold.Config.Income.Buildings[Type].Limit;
-        LimitReached = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Type) >= Limit;
-        self:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, LimitReached);
+        LimitReached = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Type);
+    end
+
+    if LimitReached then
+        XGUIEng.DisableButton(_Button, 1);
         return true;
     end
     return false;
-end
-
-function Stronghold:UpdateSerfConstructionButton(_PlayerID, _Button, _Technology, _Disable)
-    local TechState = Logic.GetTechnologyState(_PlayerID, _Technology);
-    if TechState == 2 or TechState == 3 or TechState == 4 then
-        if _Disable then
-            XGUIEng.DisableButton(_Button, 1);
-        else
-            XGUIEng.DisableButton(_Button, 0);
-        end
-    else
-        XGUIEng.DisableButton(_Button, 1);
-    end
 end
 

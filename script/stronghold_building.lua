@@ -20,22 +20,22 @@ Stronghold.Config.Building = {
         [BlessCategories.Research] = {
             Text = "Eure Priester vergeben die Sünden Eurer Arbeiter.",
             Reputation = 0,
-            Honor = 8,
+            Honor = 4,
         },
         [BlessCategories.Weapons] = {
             Text = "Eure Priester predigen Bibeltexte zu ihrer Gemeinde.",
-            Reputation = 0,
-            Honor = 16,
+            Reputation = 16,
+            Honor = 0,
         },
         [BlessCategories.Financial] = {
             Text = "Eure Priester rufen auf zur Kollekte.",
-            Reputation = 16,
+            Reputation = 8,
             Honor = 0,
         },
         [BlessCategories.Canonisation] = {
             Text = "Eure Priester sprechen Eure Taten heilig.",
             Reputation = 12,
-            Honor = 12,
+            Honor = 6,
         },
     }
 }
@@ -220,7 +220,7 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
         Text = "@color:180,180,180 Keine Steuer @color:255,255,255 @cr "..
                "Keine Steuern. Aber wie wollt Ihr zu Talern kommen?"
 
-        local Effects = Stronghold.Config.Income.TaxEffect[1];
+        local Effects = Stronghold.Economy.Config.Income.TaxEffect[1];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         if Effects.Reputation ~= 0 then
             EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
@@ -233,8 +233,8 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
                "Ihr seid großzügig und entlastet Eure Untertanen.";
 
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 2, WorkerCount);
-        local Effects = Stronghold.Config.Income.TaxEffect[2];
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 2, WorkerCount);
+        local Effects = Stronghold.Economy.Config.Income.TaxEffect[2];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
@@ -245,8 +245,8 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
                "Ihr verlangt die übliche Steuer von Eurem Volk.";
 
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 3, WorkerCount);
-        local Effects = Stronghold.Config.Income.TaxEffect[3];
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 3, WorkerCount);
+        local Effects = Stronghold.Economy.Config.Income.TaxEffect[3];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
@@ -257,8 +257,8 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
                "Ihr dreht an der Steuerschraube. Wenn das mal gut geht...";
 
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 4, WorkerCount);
-        local Effects = Stronghold.Config.Income.TaxEffect[4];
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 4, WorkerCount);
+        local Effects = Stronghold.Economy.Config.Income.TaxEffect[4];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
@@ -269,8 +269,8 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
                "Ihr zieht Euren Untertanen das letzte Hemd aus!";
 
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold:CalculateReputationTaxPenaltyAmount(_PlayerID, 5, WorkerCount);
-        local Effects = Stronghold.Config.Income.TaxEffect[5];
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 5, WorkerCount);
+        local Effects = Stronghold.Economy.Config.Income.TaxEffect[5];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
         if Effects.Honor > 0 then
@@ -294,7 +294,7 @@ function Stronghold:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
                        "gewährt Euch extra Beliebtheit und Ehre, solange sie lebt.";
             end
 
-            local Effects = Stronghold.Config.Income.Spouse;
+            local Effects = Stronghold.Economy.Config.Income.Spouse;
             EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
             if Effects.Reputation > 0 then
                 EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
@@ -384,6 +384,7 @@ function Stronghold:OnBarracksSettlerUpgradeTechnologyClicked(_Technology)
 
     if Action > 0 then
         local Costs = CreateCostTable(unpack(self.Config.Units[UnitType].Costs));
+        Costs = self:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if not HasPlayerEnoughResourcesFeedback(Costs) then
             self.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
@@ -488,7 +489,8 @@ function Stronghold:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Technology,
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 5; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -510,7 +512,8 @@ function Stronghold:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Technology,
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -532,7 +535,8 @@ function Stronghold:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Technology,
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -554,7 +558,8 @@ function Stronghold:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Technology,
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -646,6 +651,7 @@ function Stronghold:OnArcherySettlerUpgradeTechnologyClicked(_Technology)
 
     if Action > 0 then
         local Costs = CreateCostTable(unpack(self.Config.Units[UnitType].Costs));
+        Costs = self:ApplyUnitCostPassiveAbility(PlayerID, unpack(Costs));
         if not HasPlayerEnoughResourcesFeedback(Costs) then
             self.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
@@ -745,7 +751,8 @@ function Stronghold:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Technology, 
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 5; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -767,7 +774,8 @@ function Stronghold:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Technology, 
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -789,7 +797,8 @@ function Stronghold:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Technology, 
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 5; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -811,7 +820,8 @@ function Stronghold:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Technology, 
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -896,6 +906,7 @@ function Stronghold:OnStableSettlerUpgradeTechnologyClicked(_Technology)
 
     if Action > 0 then
         local Costs = CreateCostTable(unpack(self.Config.Units[UnitType].Costs));
+        Costs = self:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if not HasPlayerEnoughResourcesFeedback(Costs) then
             self.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
@@ -967,7 +978,8 @@ function Stronghold:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Technology, _
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 4; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then
@@ -989,7 +1001,8 @@ function Stronghold:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Technology, _
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 4; end
         end
-        CostsText = FormatCostString(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = self:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not self.Config.Units[Type].Allowed then

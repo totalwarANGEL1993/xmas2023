@@ -10,12 +10,12 @@ Stronghold = Stronghold or {};
 Stronghold.Config.Hero = {
     HeroSkills = {
         [Entities.PU_Hero1c]             = {
-            Description = "Passive Fähigkeit: @cr Für jeden Ingeneur wird zusätzliche Wetterenergie produziert."..
+            Description = "Passive Fähigkeit: @cr Für jeden Ingeneur auf der Burg wird zusätzliche Wetterenergie produziert."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann feindliche Einheiten verjagen (außer Nebelvolk).",
         },
         [Entities.PU_Hero2]              = {
-            Description = "Passive Fähigkeit: @cr Minen bauen pro Arbeitsschritt 1 Einheit Rohstoffe mehr ab."..
+            Description = "Passive Fähigkeit: @cr Jedes mal wenn eine Mine Rohstoffe abbaut, wird ein zusätzlicher veredelbarer Rohstoff erzeugt."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
         },
@@ -25,47 +25,47 @@ Stronghold.Config.Hero = {
                           "Aktive Fähigkeit: @cr Kann Soldatengruppen wieder auffüllen, wenn diese nicht kämpfen.",
         },
         [Entities.PU_Hero4]              = {
-            Description = "Passive Fähigkeit: @cr Soldaten werden mit maximaler Erfahrung rekrutiert."..
+            Description = "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, dadurch steigen allerdings ihre Kosten um 30%."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
         },
         [Entities.PU_Hero5]              = {
-            Description = "Passive Fähigkeit: @cr Die Steuereinnahmen werden um 15% erhöht."..
+            Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als mancher denkt. Die Steuereinnahmen werden um 15% erhöht."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann Pfeile auf feindliche Truppen regnen lassen.",
         },
         [Entities.PU_Hero6]              = {
-            Description = "Passive Fähigkeit: @cr Für jeden Priester wird zusätzlicher Glauben produziert."..
+            Description = "Passive Fähigkeit: @cr Für jeden Priester auf der Burg wird zusätzlicher Glauben produziert."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann die Rüstung von verbündeten Einheiten verbessern.",
         },
         [Entities.CU_Mary_de_Mortfichet] = {
-            Description = "Passive Fähigkeit: @cr Kundschafter und Diebe verlangen keinen Sold."..
+            Description = "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein und verlangen keinen Sold."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
         },
         [Entities.CU_BlackKnight]        = {
-            Description = "Passive Fähigkeit: @cr Der Malus auf die Beliebtheit wird um 30% verringert."..
+            Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Der Malus auf die Beliebtheit wird um 50% verringert."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden senken.",
         },
         [Entities.CU_Barbarian_Hero]     = {
-            Description = "Passive Fähigkeit: @cr Alle Tavernen produzieren 3 zusätzliche Beliebtheit."..
+            Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 50% zusätzliche Beliebtheit."..
                           " @cr @cr "..
-                          "Aktive Fähigkeit: @cr Ruft Wölfe herbei, die Ehre erzeugen, wenn sie Feinde töten.",
+                          "Aktive Fähigkeit: @cr Ruft die mächtigen Wölfe Hati und Skalli herbei, die Ehre erzeugen, wenn sie Feinde töten.",
         },
         [Entities.PU_Hero10]             = {
-            Description = "Passive Fähigkeit: @cr Scharfschützen verlangen 10% weniger Sold."..
+            Description = "Passive Fähigkeit: @cr Für diesen meisterlichen Schützen kämpfen Scharfschützen für 10% weniger Sold."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
         },
         [Entities.PU_Hero11]             = {
-            Description = "Passive Fähigkeit: @cr Die maximale Beliebtheit wird auf 300 erhöht."..
+            Description = "Passive Fähigkeit: @cr Jeder Arbeiter gibt alles für die Einheitspartei! Die maximale Beliebtheit wird auf 300 erhöht."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
         },
         [Entities.CU_Evil_Queen] = {
-            Description = "Passive Fähigkeit: @cr Das Bevölkerungslimit wird um 10% erhöht."..
+            Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate hebt Euer Bevölkerungslimit um 30% an."..
                           " @cr @cr "..
                           "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
         },
@@ -105,7 +105,7 @@ Stronghold.Config.Hero = {
     PetStats = {
         [Entities.CU_Barbarian_Hero_wolf] = {
             Owner = Entities.CU_Barbarian_Hero,
-            Health = 1000, Armor = 4, Damage = 22, Healing = 15
+            Health = 1000, Armor = 4, Damage = 22, Healing = 15,
         },
         [Entities.PU_Hero5_Outlaw] = {
             Owner = Entities.CU_Barbarian_Hero,
@@ -333,6 +333,11 @@ function Stronghold:ConfigurePlayersHeroPet(_EntityID)
     local Type = Logic.GetEntityType(_EntityID);
     if self.Config.Hero.PetStats[Type] then
         if Stronghold:HasValidHeroOfType(PlayerID, self.Config.Hero.PetStats[Type].Owner) then
+            -- Special treatment for Vargs wolves
+            if Type == Entities.CU_Barbarian_Hero_wolf then
+                Logic.SetSpeedFactor(_EntityID, 1.5);
+                SVLib.SetEntitySize(_EntityID, 1.5);
+            end
             CEntity.SetArmor(_EntityID, self.Config.Hero.PetStats[Type].Armor);
             CEntity.SetDamage(_EntityID, self.Config.Hero.PetStats[Type].Damage);
             CEntity.SetHealingPoints(_EntityID, self.Config.Hero.PetStats[Type].Healing);
@@ -400,6 +405,55 @@ end
 -- -------------------------------------------------------------------------- --
 -- Passive Abilities
 
+function Stronghold:OverrideCalculationCallbacks()
+    self.Orig_GameCallback_Calculate_ReputationMax = GameCallback_Calculate_ReputationMax;
+    GameCallback_Calculate_ReputationMax = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = self.Orig_GameCallback_Calculate_ReputationMax(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold:ApplyMaxReputationPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+    self.Orig_GameCallback_Calculate_ReputationIncrease = GameCallback_Calculate_ReputationIncrease;
+    GameCallback_Calculate_ReputationIncrease = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = self.Orig_GameCallback_Calculate_ReputationIncrease(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold:ApplyReputationIncreasePassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_ReputationDecrease = GameCallback_Calculate_ReputationDecrease;
+    GameCallback_Calculate_ReputationDecrease = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = self.Orig_GameCallback_Calculate_ReputationDecrease(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold:ApplyReputationDecreasePassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_HonorIncrease = GameCallback_Calculate_HonorIncrease;
+    GameCallback_Calculate_HonorIncrease = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = self.Orig_GameCallback_Calculate_HonorIncrease(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold:ApplyHonorBonusPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_TotalPaydayIncome = GameCallback_Calculate_TotalPaydayIncome;
+    GameCallback_Calculate_TotalPaydayIncome = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = self.Orig_GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold:ApplyIncomeBonusPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_TotalPaydayUpkeep = GameCallback_Calculate_TotalPaydayUpkeep;
+    GameCallback_Calculate_TotalPaydayUpkeep = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = self.Orig_GameCallback_Calculate_TotalPaydayUpkeep(_PlayerID, _CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_PaydayUpkeep = GameCallback_Calculate_PaydayUpkeep;
+    GameCallback_Calculate_PaydayUpkeep = function(_PlayerID, _UnitType, _CurrentAmount)
+        local CurrentAmount = self.Orig_GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _CurrentAmount);
+        Stronghold:ApplyUnitUpkeepDiscountPassiveAbility(_PlayerID, _UnitType, CurrentAmount)
+        return CurrentAmount;
+    end
+end
+
 function Stronghold:HasValidHeroOfType(_PlayerID, _Type)
     if self.Players[_PlayerID] then
         -- Check lord
@@ -466,11 +520,51 @@ function Stronghold:ResourceProductionBonus(_PlayerID, _Type, _Amount)
     end
 end
 
+-- Passive Ability: Increase of reputation
+function Stronghold:ApplyReputationBuildingBonusPassiveAbility(_PlayerID, _Type, _Amount)
+    local Value = _Amount;
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Barbarian_Hero) then
+        if _Type == Entities.PB_Tavern1 or _Type == Entities.PB_Tavern2 then
+            Value = Value * 1.5;
+        end
+    end
+    return Value;
+end
+
+-- Passive Ability: unit costs
+function Stronghold:ApplyUnitCostPassiveAbility(_PlayerID, _Costs)
+    local Costs = _Costs;
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
+        if Costs[ResourceType.Honor] then
+            Costs[ResourceType.Honor] = math.ceil(Costs[ResourceType.Honor] * 1.30);
+        end
+        if Costs[ResourceType.Gold] then
+            Costs[ResourceType.Gold] = math.ceil(Costs[ResourceType.Gold] * 1.30);
+        end
+        if Costs[ResourceType.Clay] then
+            Costs[ResourceType.Clay] = math.ceil(Costs[ResourceType.Clay] * 1.30);
+        end
+        if Costs[ResourceType.Wood] then
+            Costs[ResourceType.Wood] = math.ceil(Costs[ResourceType.Wood] * 1.30);
+        end
+        if Costs[ResourceType.Stone] then
+            Costs[ResourceType.Stone] = math.ceil(Costs[ResourceType.Stone] * 1.30);
+        end
+        if Costs[ResourceType.Iron] then
+            Costs[ResourceType.Iron] = math.ceil(Costs[ResourceType.Iron] * 1.30);
+        end
+        if Costs[ResourceType.Sulfur] then
+            Costs[ResourceType.Sulfur] = math.ceil(Costs[ResourceType.Sulfur] * 1.30);
+        end
+    end
+    return Costs;
+end
+
 -- Passive Ability: Increase of attraction
 function Stronghold:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        Value = Value * 1.1;
+        Value = Value * 1.3;
     end
     return Value;
 end
@@ -491,22 +585,11 @@ function Stronghold:ApplyReputationIncreasePassiveAbility(_PlayerID, _Value)
     return Value;
 end
 
--- Passive Ability: Increase of reputation
-function Stronghold:ApplyReputationBuildingBonusPassiveAbility(_PlayerID, _Type, _Amount, _Value)
-    local Value = _Value * _Amount;
-    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Barbarian_Hero) then
-        if _Type == Entities.PB_Tavern1 or _Type == Entities.PB_Tavern2 then
-            Value = Value + (3 * _Amount);
-        end
-    end
-    return Value;
-end
-
 -- Passive Ability: Decrease of reputation
 function Stronghold:ApplyReputationDecreasePassiveAbility(_PlayerID, _Decrease)
     local Decrease = _Decrease;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
-        Decrease = Decrease * 0.7;
+        Decrease = Decrease * 0.5;
     end
     return Decrease;
 end
@@ -533,8 +616,15 @@ function Stronghold:ApplyIncomeBonusPassiveAbility(_PlayerID, _Income)
 end
 
 -- Passive Ability: Upkeep discount
--- This function is called for each unit type individually.
 function Stronghold:ApplyUpkeepDiscountPassiveAbility(_PlayerID, _Type, _Upkeep)
+    local Upkeep = _Upkeep;
+    -- Do nothing
+    return Upkeep;
+end
+
+-- Passive Ability: Upkeep discount
+-- This function is called for each unit type individually.
+function Stronghold:ApplyUnitUpkeepDiscountPassiveAbility(_PlayerID, _Type, _Upkeep)
     local Upkeep = _Upkeep;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
         if _Type == Entities.PU_Scout or _Type == Entities.PU_Thief then
