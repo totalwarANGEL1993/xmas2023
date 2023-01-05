@@ -247,7 +247,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
             local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
             for i= 1, _WorkerCount do
-                Penalty = Penalty * 1.02;
+                Penalty = Penalty * 1.03;
             end
         end
         return math.floor(Penalty + 0.5);

@@ -110,7 +110,7 @@ function Stronghold:AddPlayer(_PlayerID)
 
     -- Create camp Pos
     local CampPos = GetCirclePosition(HQName, 1200, 180);
-    ID = Logic.CreateEntity(Entities.XD_LargeCampFire, CampPos.X, CampPos.Y, 0, 0);
+    ID = Logic.CreateEntity(Entities.XD_LargeCampFire, CampPos.X -5, CampPos.Y -5, 0, 0);
     Logic.SetEntityName(ID, CampName);
     ID = AI.Entity_CreateFormation(8, Entities.PU_Serf, nil, 0, CampPos.X, CampPos.Y, 0, 0, 0, 0);
     local x,y,z = Logic.EntityGetPos(ID);
