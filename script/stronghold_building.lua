@@ -425,7 +425,7 @@ function Stronghold.Building:OnBarracksSelected(_EntityID)
     if PlayerID ~= GUI.GetPlayerID() or not self.Data[PlayerID] then
         return;
     end
-    local Type = Logic.GetEntityType(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
     if Type ~= Entities.PB_Barracks1 and Type ~= Entities.PB_Barracks2 then
         return;
     end
@@ -690,7 +690,7 @@ function Stronghold.Building:OnArcherySelected(_EntityID)
     if PlayerID ~= GUI.GetPlayerID() or not self.Data[PlayerID] then
         return;
     end
-    local Type = Logic.GetEntityType(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
     if Type ~= Entities.PB_Archery1 and Type ~= Entities.PB_Archery2 then
         return;
     end
@@ -943,7 +943,7 @@ function Stronghold.Building:OnStableSelected(_EntityID)
     if PlayerID ~= GUI.GetPlayerID() or not self.Data[PlayerID] then
         return;
     end
-    local Type = Logic.GetEntityType(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
     if Type ~= Entities.PB_Stable1 and Type ~= Entities.PB_Stable2 then
         return;
     end
@@ -1062,7 +1062,7 @@ function Stronghold.Building:OnFoundrySelected(_EntityID)
     if PlayerID ~= GUI.GetPlayerID() or not self.Data[PlayerID] then
         return;
     end
-    local Type = Logic.GetEntityType(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
     if Type ~= Entities.PB_Foundry1 and Type ~= Entities.PB_Foundry2 then
         return;
     end

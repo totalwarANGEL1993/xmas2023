@@ -139,7 +139,7 @@ function Stronghold.Limitation:OnEntityCreated(_PlayerID, _EntityID)
     if self.Data[_PlayerID] then
         local Type = Logic.GetEntityType(_EntityID);
         self:AddToList("Current", Type, _PlayerID, _EntityID);
-        self:UpdateSelectionBuildingUpgradeButtons(_PlayerID);
+        self:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID);
         self:UpdateSelectionSerfConstrucButtons(_PlayerID);
     end
 end
@@ -149,7 +149,7 @@ function Stronghold.Limitation:OnEntityDestroyed(_PlayerID, _EntityID)
         local Type = Logic.GetEntityType(_EntityID);
         self:RemoveFromList("Potential", Type, _PlayerID, _EntityID);
         self:RemoveFromList("Current", Type, _PlayerID, _EntityID);
-        self:UpdateSelectionBuildingUpgradeButtons(_PlayerID);
+        self:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID);
         self:UpdateSelectionSerfConstrucButtons(_PlayerID);
     end
 end
@@ -160,8 +160,8 @@ function Stronghold.Limitation:OnUpgradeStarted(_PlayerID, _EntityID)
         self.Data[_PlayerID].UpgradeBuildingLock = false;
         self:AddToList("Potential", Type, _PlayerID, _EntityID);
         self:RemoveFromList("Current", Type, _PlayerID, _EntityID);
-        self:UpdateSelectionBuildingUpgradeButtons(_PlayerID);
-        self:UpdateSelectionSerfConstrucButtons(_PlayerID);
+        -- self:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID);
+        -- self:UpdateSelectionSerfConstrucButtons(_PlayerID);
     end
 end
 
@@ -170,7 +170,7 @@ function Stronghold.Limitation:OnUpgradeCanceled(_PlayerID, _EntityID)
         local Type = Logic.GetEntityType(_EntityID);
         self:RemoveFromList("Potential", Type, _PlayerID, _EntityID);
         self:AddToList("Current", Type, _PlayerID, _EntityID);
-        self:UpdateSelectionBuildingUpgradeButtons(_PlayerID);
+        self:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID);
         self:UpdateSelectionSerfConstrucButtons(_PlayerID);
     end
 end
@@ -218,7 +218,8 @@ end
 
 function Stronghold.Limitation:UpdateSelectionSerfConstrucButtons(_PlayerID)
     if GUI.GetPlayerID() == _PlayerID then
-        if Logic.GetEntityType(GUI.GetSelectedEntity()) == Entities.PU_Serf then
+        local SelectedID = GUI.GetSelectedEntity();
+        if Logic.GetEntityType(SelectedID) == Entities.PU_Serf then
             if XGUIEng.IsButtonHighLighted(gvGUI_WidgetID.ToSerfBeatificationMenu) == 0 then
                 GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01);
                 GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02);
@@ -227,16 +228,19 @@ function Stronghold.Limitation:UpdateSelectionSerfConstrucButtons(_PlayerID)
                     GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);
                 end
             else
-                GameCallback_GUI_SelectionChanged();
+                GUI.DeselectEntity(SelectedID);
+                GUI.SelectEntity(SelectedID);
             end
         end
     end
 end
 
-function Stronghold.Limitation:UpdateSelectionBuildingUpgradeButtons(_PlayerID)
+function Stronghold.Limitation:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID)
     if GUI.GetPlayerID() == _PlayerID then
-        if Logic.IsBuilding(GUI.GetSelectedEntity()) == 1 then
-            GameCallback_GUI_SelectionChanged();
+        local SelectedID = GUI.GetSelectedEntity();
+        if _EntityID == SelectedID and Logic.IsBuilding(SelectedID) == 1 then
+            GUI.DeselectEntity(SelectedID);
+            GUI.SelectEntity(SelectedID);
         end
     end
 end

@@ -163,7 +163,7 @@ function Stronghold:StartEntityCreatedTrigger()
 
         -- Beautification limit
         if Logic.IsBuilding(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
-            Stronghold:OnSelectionMenuChanged(EntityID);
+            Stronghold:OnSelectionMenuChanged(EntityID, GUI.GetSelectedEntity());
         end
     end
 
@@ -523,15 +523,15 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
     self.Building:OnStableSelected(_EntityID);
     self.Building:OnFoundrySelected(_EntityID);
 
-    GUIUpdate_BuildingButtons("Build_Barracks", Technologies.B_Barracks);
-    GUIUpdate_BuildingButtons("Build_Archery", Technologies.B_Archery);
-    GUIUpdate_BuildingButtons("Build_Stables", Technologies.B_Stables);
-    GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01);
-    GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02);
-    for i= 3, 12 do
-        local Num = (i < 10 and "0" ..i) or i;
-        GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);
-    end
+    -- GUIUpdate_BuildingButtons("Build_Barracks", Technologies.B_Barracks);
+    -- GUIUpdate_BuildingButtons("Build_Archery", Technologies.B_Archery);
+    -- GUIUpdate_BuildingButtons("Build_Stables", Technologies.B_Stables);
+    -- GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01);
+    -- GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02);
+    -- for i= 3, 12 do
+    --     local Num = (i < 10 and "0" ..i) or i;
+    --     GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);
+    -- end
 end
 
 function Stronghold:OverwriteCommonCallbacks()
@@ -544,33 +544,35 @@ function Stronghold:OverwriteCommonCallbacks()
 	GameCallback_OnBuildingConstructionComplete_Orig_Stronghold = GameCallback_OnBuildingConstructionComplete;
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		GameCallback_OnBuildingConstructionComplete_Orig_Stronghold(_EntityID, _PlayerID);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+        Stronghold:OnSelectionMenuChanged(_EntityID);
         Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
 	end
 
 	GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
 		GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold(_EntityIDOld, _EntityIDNew);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
-        Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
+        Stronghold:OnSelectionMenuChanged(_EntityIDNew);
+        if Logic.IsEntityInCategory(_EntityIDNew, EntityCategories.Headquarters) == 1 then
+            Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
+        end
 	end
 
 	GameCallback_OnTechnologyResearched_Orig_Stronghold = GameCallback_OnTechnologyResearched;
 	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
 		GameCallback_OnTechnologyResearched_Orig_Stronghold(_PlayerID, _Technology, _EntityID);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+        Stronghold:OnSelectionMenuChanged(_EntityID);
 	end
 
     GameCallback_OnCannonConstructionComplete_Orig_Stronghold = GameCallback_OnCannonConstructionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
         GameCallback_OnCannonConstructionComplete_Orig_Stronghold(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+        Stronghold:OnSelectionMenuChanged(_BuildingID);
     end
 
     GameCallback_OnTransactionComplete_Orig_Stronghold = GameCallback_OnTransactionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
         GameCallback_OnTransactionComplete_Orig_Stronghold(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+        Stronghold:OnSelectionMenuChanged(_BuildingID);
     end
 
 	Mission_OnSaveGameLoaded_Orig_Stronghold = Mission_OnSaveGameLoaded;
