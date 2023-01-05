@@ -152,7 +152,7 @@ function Stronghold.Hero:OnSaveGameLoaded()
 end
 
 function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
-    if not self.Data[_PlayerID] and not Stronghold.Players[_PlayerID] then
+    if not Stronghold:IsPlayer(_PlayerID) then
         return;
     end
     XGUIEng.ShowWidget("BuyHeroWindow", 1);
@@ -172,7 +172,7 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
 end
 
 function Stronghold.Hero:OpenBuyHeroWindowForSpouseSelection(_PlayerID)
-    if not self.Data[_PlayerID] and not Stronghold.Players[_PlayerID] then
+    if not Stronghold:IsPlayer(_PlayerID) then
         return;
     end
     XGUIEng.ShowWidget("BuyHeroWindow", 1);
@@ -195,7 +195,7 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
     BuyHeroWindow_UpdateInfoLine_Orig_StrongholdHero = BuyHeroWindow_UpdateInfoLine;
     BuyHeroWindow_UpdateInfoLine = function()
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold:IsPlayer(PlayerID) then
             return BuyHeroWindow_UpdateInfoLine_Orig_StrongholdHero();
         end
 
@@ -244,7 +244,7 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
     BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero = BuyHeroWindow_Action_BuyHero;
     BuyHeroWindow_Action_BuyHero = function(_Type)
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold:IsPlayer(PlayerID) then
             return BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero(_Type);
         end
         if Stronghold.Hero.Config.LordTypes[_Type] then
@@ -268,14 +268,14 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
     BuyHeroWindow_Update_BuyHero_Orig_StrongholdHero = BuyHeroWindow_Update_BuyHero;
     BuyHeroWindow_Update_BuyHero = function(_Type)
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold:IsPlayer(PlayerID) then
             return BuyHeroWindow_Update_BuyHero_Orig_StrongholdHero(_Type);
         end
     end
 end
 
 function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         Stronghold.Players[_PlayerID].LordChosen = true;
         local Position = Stronghold.Players[_PlayerID].DoorPos;
         ID = Logic.CreateEntity(_Type, Position.X, Position.Y, 0, _PlayerID);
@@ -296,7 +296,7 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
 end
 
 function Stronghold.Hero:ConfigurePlayersLord(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local ID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
         if ID > 0 then
             CEntity.SetArmor(ID, self.Config.LordStats.Armor);
@@ -311,7 +311,7 @@ function Stronghold.Hero:ConfigurePlayersLord(_PlayerID)
 end
 
 function Stronghold.Hero:BuyHeroCreateSpouse(_PlayerID, _Type)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         Stronghold.Players[_PlayerID].SpouseChosen = true;
         local Position = Stronghold.Players[_PlayerID].DoorPos;
         local ID = Logic.CreateEntity(_Type, Position.X, Position.Y, 0, _PlayerID);
@@ -332,7 +332,7 @@ function Stronghold.Hero:BuyHeroCreateSpouse(_PlayerID, _Type)
 end
 
 function Stronghold.Hero:ConfigurePlayersSpouse(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local ID = GetID(Stronghold.Players[_PlayerID].SpouseScriptName);
         if ID > 0 then
             CEntity.SetArmor(ID, self.Config.SpouseStats.Armor);
@@ -369,7 +369,7 @@ end
 -- Trigger
 
 function Stronghold.Hero:EntityAttackedController(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         for k,v in pairs(Stronghold.Players[_PlayerID].AttackMemory) do
             -- Count down and remove
             Stronghold.Players[_PlayerID].AttackMemory[k][1] = v[1] -1;
@@ -457,10 +457,10 @@ end
 -- Passive Abilities
 
 function Stronghold.Hero:OverrideCalculationCallbacks()
-    self.Orig_GameCallback_GainedResources_Orig_StrongholdMain = GameCallback_GainedResources;
+    self.Orig_GameCallback_GainedResources = GameCallback_GainedResources;
     GameCallback_GainedResources = function(_PlayerID, _ResourceType, _Amount)
-        Stronghold.Hero.Orig_GameCallback_GainedResources_Orig_StrongholdMain(_PlayerID, _ResourceType, _Amount);
-        if Stronghold.Players[_PlayerID] then
+        Stronghold.Hero.Orig_GameCallback_GainedResources(_PlayerID, _ResourceType, _Amount);
+        if Stronghold:IsPlayer(_PlayerID) then
             Stronghold.Hero:ResourceProductionBonus(_PlayerID, _ResourceType, _Amount);
         end
     end
@@ -522,7 +522,7 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
 end
 
 function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         -- Check lord
         local LordID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
         if IsEntityValid(LordID) then

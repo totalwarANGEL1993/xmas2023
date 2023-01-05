@@ -156,7 +156,7 @@ end
 -- Income & Upkeep
 
 function Stronghold.Economy:UpdateIncomeAndUpkeep(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local MaxReputation = self.Config.MaxReputation;
         MaxReputation = GameCallback_Calculate_ReputationMax(_PlayerID, MaxReputation);
         Stronghold:SetPlayerReputationLimit(_PlayerID, MaxReputation);
@@ -183,7 +183,7 @@ end
 -- Calculate reputation increase
 -- Reputation is produced by buildings and units.
 function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local Income = 0;
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         if WorkerCount > 0 then
@@ -217,7 +217,7 @@ end
 -- A fixed penalty for the tax hight and the amout of workers the player didn't
 -- provide a farm or house are negative factors.
 function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local Decrease = 0;
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         if WorkerCount > 0 then
@@ -240,7 +240,7 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
 end
 
 function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _TaxtHeight, _WorkerCount)
-    if self.Data[_PlayerID] then
+    if Stronghold.Players[_PlayerID] then
         local Penalty = 0;
         if _TaxtHeight > 1 then
             local TaxEffect = self.Config.Income.TaxEffect;
@@ -257,7 +257,7 @@ end
 -- Calculate honor income
 -- Honor is influenced by tax, buildings and units.
 function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local Income = 0;
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         if WorkerCount > 0 then
@@ -291,7 +291,7 @@ end
 -- Calculate tax income
 -- The tax income is mostly unchanged. A worker pays 5 gold times the tax level.
 function Stronghold.Economy:CalculateMoneyIncome(_PlayerID)
-    if self.Data[_PlayerID] and Stronghold.Players[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local TaxHeight = Stronghold.Players[_PlayerID].TaxHeight;
         local PerWorker = self.Config.TaxPerWorker;
         local Income = (Logic.GetNumberOfAttractedWorker(1) * PerWorker) * (TaxHeight -1);
@@ -305,9 +305,9 @@ end
 -- The upkeep is not for the leader himself. Soldiers are also incluced in the
 -- calculation. The upkeep decreases if the group looses soldiers.
 function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
-    if self.Data[_PlayerID] then
+    if Stronghold:IsPlayer(_PlayerID) then
         local Upkeep = 0;
-        for k, v in pairs(Stronghold.Config.Units) do
+        for k, v in pairs(Stronghold.Unit.Config.Units) do
             local Military = GetCompletedEntitiesOfType(_PlayerID, k);
             local TypeUpkeep = 0;
             for i= 1, table.getn(Military) do
@@ -379,7 +379,7 @@ function Stronghold.Economy:HonorMenu()
     local Rank = "Abschaum";
     local Honor = 0;
     local MaxHonor = Stronghold.Config.HonorLimit;
-    if self.Data[PlayerID] and Stronghold.Players[PlayerID] then
+    if Stronghold:IsPlayer(PlayerID) then
         local CurrentRank = Stronghold.Players[PlayerID].Rank;
         Rank = Stronghold.Config.Text.Ranks[CurrentRank] or Rank;
         Honor = Stronghold.Players[PlayerID].Honor;
@@ -480,7 +480,7 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
     GUIUpdate_AverageMotivation_Orig_StrongholdEco = GUIUpdate_AverageMotivation;
     GUIUpdate_AverageMotivation = function()
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Economy.Data[PlayerID] or not Stronghold.Players[PlayerID] then
+        if not Stronghold.Economy.Data[PlayerID] or not Stronghold:IsPlayer(PlayerID) then
             return GUIUpdate_AverageMotivation_Orig_StrongholdEco();
         end
         local Reputation = Stronghold.Players[PlayerID].Reputation;

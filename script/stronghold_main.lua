@@ -30,7 +30,14 @@ Stronghold = {
 
 -- Starts the script
 function Stronghold:Init()
-    CMod.PushArchive(Framework.GetCurrentMapName() .. ".s5x");
+    if not CMod then
+        Message("The S5 Community Server is required!");
+        return false;
+    end
+    self:LoadMapArchive();
+    self:InitAutomaticMapArchiveUnload();
+    self:OverrideFrameworkRestartMap();
+
     XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
@@ -42,6 +49,7 @@ function Stronghold:Init()
     self.Limitation:Install();
     self.Building:Install();
     self.Hero:Install();
+    self.Unit:Install();
 
     self:StartPlayerPaydayUpdater();
     self:StartEntityCreatedTrigger();
@@ -51,29 +59,38 @@ function Stronghold:Init()
 
     self:OverrideAttraction();
     self:OverrideTooltipGenericMain();
-    self:OverrideTooltipConstructionMain();
-    self:OverrideUpdateConstructionMain();
     self:OverrideActionResearchTechnologyMain();
     self:OverrideTooltipUpgradeSettlersMain();
     self:OverwriteCommonCallbacks();
+
+    return true;
 end
 
 -- Restore game state after load
 function Stronghold:OnSaveGameLoaded()
-    CMod.PushArchive(Framework.GetCurrentMapName() .. ".s5x");
+    if not CMod then
+        Message("The S5 Community Server is required!");
+        return false;
+    end
+    self:LoadMapArchive();
+    self:OverrideFrameworkRestartMap();
+
     XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
     XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
-
+    GUI.ClearSelection();
     ResourceType.Honor = 20;
 
     self.Building:OnSaveGameLoaded();
     self.Limitation:OnSaveGameLoaded();
     self.Hero:OnSaveGameLoaded();
+    self.Unit:OnSaveGameLoaded();
 
     self:OverrideAttraction();
     self:SetEntityTypesAttractionUsage();
+
+    return true;
 end
 
 -- Add player
@@ -83,7 +100,8 @@ function Stronghold:AddPlayer(_PlayerID)
     local SpouseName = "SpouseP" .._PlayerID;
     local HQName = "HQ" .._PlayerID;
     local DoorPosName = "DoorP" .._PlayerID;
-    local CampPosName = "CampP" .._PlayerID;
+    local CampName = "CampP" .._PlayerID;
+    local CampPosName = "CampPosP" .._PlayerID;
 
     -- Create door pos
     local DoorPos = GetCirclePosition(HQName, 800, 180);
@@ -93,17 +111,19 @@ function Stronghold:AddPlayer(_PlayerID)
     -- Create camp Pos
     local CampPos = GetCirclePosition(HQName, 1200, 180);
     ID = Logic.CreateEntity(Entities.XD_LargeCampFire, CampPos.X, CampPos.Y, 0, 0);
-    Logic.SetEntityName(ID, CampPosName);
+    Logic.SetEntityName(ID, CampName);
     ID = AI.Entity_CreateFormation(8, Entities.PU_Serf, nil, 0, CampPos.X, CampPos.Y, 0, 0, 0, 0);
     local x,y,z = Logic.EntityGetPos(ID);
     CampPos.X = x; CampPos.Y = y; CampPos.Z = z;
     DestroyEntity(ID);
+    ID = Logic.CreateEntity(Entities.XD_ScriptEntity, x, y, 0, _PlayerID);
+    Logic.SetEntityName(ID, CampPosName);
 
     -- Create serfs
     for i= 1, 6 do
-        local SerfPos = GetCirclePosition(CampPosName, 250, 60 * i);
+        local SerfPos = GetCirclePosition(CampName, 250, 60 * i);
         ID = Logic.CreateEntity(Entities.PU_Serf, SerfPos.X, SerfPos.Y, 360 - (60 * i), _PlayerID);
-        LookAt(ID, CampPosName);
+        LookAt(ID, CampName);
     end
 
     -- Deactivate normal upkeep
@@ -133,6 +153,72 @@ function Stronghold:AddPlayer(_PlayerID)
     };
 
     self.Building:HeadquartersConfigureBuilding(_PlayerID);
+end
+
+function Stronghold:GetPlayer(_PlayerID)
+    return self.Players[_PlayerID];
+end
+
+function Stronghold:IsPlayer(_PlayerID)
+    return self:GetPlayer(_PlayerID) ~= nil;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Achive Loading
+
+function Stronghold:LoadMapArchive()
+    local ArchiveName = Framework.GetCurrentMapName() .. ".s5x";
+    local TopArchive = CMod.GetAllArchives();
+    if not TopArchive or not string.find(TopArchive, "s5x") then
+        CMod.PushArchive(ArchiveName);
+    end
+end
+
+function Stronghold:UnloadMapArchive()
+    local TopArchive = CMod.GetAllArchives();
+    if TopArchive and string.find(TopArchive, "s5x") then
+        CMod.PopArchive();
+    end
+end
+
+function Stronghold:OverrideFrameworkRestartMap()
+    self.Orig_FrameworkRestartMap = Framework.RestartMap;
+    Framework.RestartMap = function()
+        Stronghold:UnloadMapArchive();
+        Stronghold.Orig_FrameworkRestartMap();
+    end
+end
+
+function Stronghold:InitAutomaticMapArchiveUnload()
+    self.Orig_GUIAction_RestartMap = GUIAction_RestartMap;
+    GUIAction_RestartMap = function()
+        Stronghold:UnloadMapArchive();
+        Stronghold.Orig_GUIAction_RestartMap();
+    end
+
+    self.Orig_QuitGame = QuitGame;
+    QuitGame = function()
+        Stronghold:UnloadMapArchive();
+        Stronghold.Orig_QuitGame();
+    end
+
+    self.Orig_QuitApplication = QuitApplication;
+    QuitApplication = function()
+        Stronghold:UnloadMapArchive();
+        Stronghold.Orig_QuitApplication();
+    end
+
+    self.Orig_QuickLoad = QuickLoad;
+    QuickLoad = function()
+        Stronghold:UnloadMapArchive();
+        Stronghold.Orig_QuickLoad();
+    end
+
+    self.Orig_MainWindow_LoadGame_DoLoadGame = MainWindow_LoadGame_DoLoadGame;
+    MainWindow_LoadGame_DoLoadGame = function(_Slot)
+        Stronghold:UnloadMapArchive();
+        Stronghold.Orig_MainWindow_LoadGame_DoLoadGame(_Slot);
+    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -205,7 +291,7 @@ end
 -- much like Stronghold but having 1 super strong hero as the main target
 -- might be a bit risky.
 function Stronghold:PlayerDefeatCondition(_PlayerID)
-    if not self.Players[_PlayerID] then
+    if not self:IsPlayer(_PlayerID) then
         return;
     end
 
@@ -269,7 +355,7 @@ end
 -- don't feel like changing the properties of every entity type they must be
 -- spawned this way.
 function Stronghold:CreateWorkersForPlayer(_PlayerID)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         local DoCreate = true;
         local LeaveMotivation = Logic.GetLogicPropertiesMotivationThresholdLeave();
         if Logic.GetAverageMotivation(_PlayerID) > LeaveMotivation then
@@ -303,7 +389,7 @@ function Stronghold:OverrideAttraction()
     GetPlayerAttractionLimit_Orig_StrongholdEco = Logic.GetPlayerAttractionLimit
     ---@diagnostic disable-next-line: duplicate-set-field
 	Logic.GetPlayerAttractionLimit = function(_PlayerID)
-		if not Stronghold.Players[_PlayerID] then
+		if not Stronghold:IsPlayer(_PlayerID) then
             return GetPlayerAttractionUsage_Orig_StrongholdEco(_PlayerID);
         end
 
@@ -332,7 +418,7 @@ function Stronghold:OverrideAttraction()
 	GetPlayerAttractionUsage_Orig_StrongholdEco = Logic.GetPlayerAttractionUsage
     ---@diagnostic disable-next-line: duplicate-set-field
 	Logic.GetPlayerAttractionUsage = function(_PlayerID)
-		if not Stronghold.Players[_PlayerID] then
+		if not Stronghold:IsPlayer(_PlayerID) then
             return GetPlayerAttractionUsage_Orig_StrongholdEco(_PlayerID);
         end
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
@@ -402,7 +488,7 @@ end
 -- Payday controller
 -- Applies everything that is happening on the payday.
 function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         -- Fix money for payday (only singleplayr)
         if _FixGold then
             local TaxAmount = Logic.GetPlayerPaydayCost(_PlayerID);
@@ -440,7 +526,7 @@ end
 -- Honor
 
 function Stronghold:AddPlayerHonor(_PlayerID, _Amount)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         self.Players[_PlayerID].Honor = self.Players[_PlayerID].Honor + _Amount;
         if self.Players[_PlayerID].Honor > self.Config.HonorLimit then
             self.Players[_PlayerID].Honor = self.Config.HonorLimit;
@@ -452,7 +538,7 @@ function Stronghold:AddPlayerHonor(_PlayerID, _Amount)
 end
 
 function Stronghold:GetPlayerHonor(_PlayerID)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         return self.Players[_PlayerID].Honor;
     end
     return 0;
@@ -462,14 +548,14 @@ end
 -- Reputation
 
 function Stronghold:AddPlayerReputation(_PlayerID, _Amount)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         local Reputation = self:GetPlayerReputation(_PlayerID);
         self:SetPlayerReputation(_PlayerID, Reputation + _Amount);
     end
 end
 
 function Stronghold:SetPlayerReputation(_PlayerID, _Amount)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         self.Players[_PlayerID].Reputation = _Amount;
         if self.Players[_PlayerID].Reputation > self.Players[_PlayerID].ReputationLimit then
             self.Players[_PlayerID].Reputation = self.Players[_PlayerID].ReputationLimit;
@@ -481,27 +567,27 @@ function Stronghold:SetPlayerReputation(_PlayerID, _Amount)
 end
 
 function Stronghold:SetPlayerReputationLimit(_PlayerID, _Amount)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         self.Players[_PlayerID].ReputationLimit = _Amount;
     end
 end
 
 function Stronghold:GetPlayerReputationLimit(_PlayerID)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         return self.Players[_PlayerID].ReputationLimit;
     end
     return 200;
 end
 
 function Stronghold:GetPlayerReputation(_PlayerID)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         return self.Players[_PlayerID].Reputation;
     end
     return 100;
 end
 
 function Stronghold:UpdateMotivationOfWorkers(_PlayerID, _Amount)
-    if self.Players[_PlayerID] then
+    if self:IsPlayer(_PlayerID) then
         if _Amount > 0 and _Amount < self.Players[_PlayerID].ReputationLimit then
             local WorkerList = GetAllWorker(_PlayerID);
             for i= 1, table.getn(WorkerList) do
@@ -523,62 +609,62 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
     self.Building:OnStableSelected(_EntityID);
     self.Building:OnFoundrySelected(_EntityID);
 
-    -- GUIUpdate_BuildingButtons("Build_Barracks", Technologies.B_Barracks);
-    -- GUIUpdate_BuildingButtons("Build_Archery", Technologies.B_Archery);
-    -- GUIUpdate_BuildingButtons("Build_Stables", Technologies.B_Stables);
-    -- GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01);
-    -- GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02);
-    -- for i= 3, 12 do
-    --     local Num = (i < 10 and "0" ..i) or i;
-    --     GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);
-    -- end
+    GUIUpdate_BuildingButtons("Build_Barracks", Technologies.B_Barracks);
+    GUIUpdate_BuildingButtons("Build_Archery", Technologies.B_Archery);
+    GUIUpdate_BuildingButtons("Build_Stables", Technologies.B_Stables);
+    GUIUpdate_BuildingButtons("Build_Beautification01", Technologies.B_Beautification01);
+    GUIUpdate_BuildingButtons("Build_Beautification02", Technologies.B_Beautification02);
+    for i= 3, 12 do
+        local Num = (i < 10 and "0" ..i) or i;
+        GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);
+    end
 end
 
 function Stronghold:OverwriteCommonCallbacks()
-    GameCallback_GUI_SelectionChanged_Orig_Stronghold = GameCallback_GUI_SelectionChanged;
+    self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
 	GameCallback_GUI_SelectionChanged = function()
-		GameCallback_GUI_SelectionChanged_Orig_Stronghold();
+		Stronghold.Orig_GameCallback_GUI_SelectionChanged();
         Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
 	end
 
-	GameCallback_OnBuildingConstructionComplete_Orig_Stronghold = GameCallback_OnBuildingConstructionComplete;
+	self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
-		GameCallback_OnBuildingConstructionComplete_Orig_Stronghold(_EntityID, _PlayerID);
-        Stronghold:OnSelectionMenuChanged(_EntityID);
+		Stronghold.Orig_GameCallback_OnBuildingConstructionComplete(_EntityID, _PlayerID);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
         Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
 	end
 
-	GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold = GameCallback_OnBuildingUpgradeComplete;
+	self.Orig_GameCallback_OnBuildingUpgradeComplete = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
-		GameCallback_OnBuildingUpgradeComplete_Orig_Stronghold(_EntityIDOld, _EntityIDNew);
-        Stronghold:OnSelectionMenuChanged(_EntityIDNew);
+		Stronghold.Orig_GameCallback_OnBuildingUpgradeComplete(_EntityIDOld, _EntityIDNew);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
         if Logic.IsEntityInCategory(_EntityIDNew, EntityCategories.Headquarters) == 1 then
             Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
         end
 	end
 
-	GameCallback_OnTechnologyResearched_Orig_Stronghold = GameCallback_OnTechnologyResearched;
+	self.Orig_GameCallback_OnTechnologyResearched = GameCallback_OnTechnologyResearched;
 	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
-		GameCallback_OnTechnologyResearched_Orig_Stronghold(_PlayerID, _Technology, _EntityID);
-        Stronghold:OnSelectionMenuChanged(_EntityID);
+		Stronghold.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
 	end
 
-    GameCallback_OnCannonConstructionComplete_Orig_Stronghold = GameCallback_OnCannonConstructionComplete;
+    self.Orig_GameCallback_OnCannonConstructionComplete = GameCallback_OnCannonConstructionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
-        GameCallback_OnCannonConstructionComplete_Orig_Stronghold(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(_BuildingID);
+        Stronghold.Orig_GameCallback_OnCannonConstructionComplete(_BuildingID, _null);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
     end
 
-    GameCallback_OnTransactionComplete_Orig_Stronghold = GameCallback_OnTransactionComplete;
+    self.Orig_GameCallback_OnTransactionComplete = GameCallback_OnTransactionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
-        GameCallback_OnTransactionComplete_Orig_Stronghold(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(_BuildingID);
+        Stronghold.Orig_GameCallback_OnTransactionComplete(_BuildingID, _null);
+        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
     end
 
-	Mission_OnSaveGameLoaded_Orig_Stronghold = Mission_OnSaveGameLoaded;
+	self.Orig_Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded;
 	Mission_OnSaveGameLoaded = function()
-		Mission_OnSaveGameLoaded_Orig_Stronghold();
-
+		Stronghold.Orig_Mission_OnSaveGameLoaded();
+        Stronghold:OnSaveGameLoaded();
 	end
 end
 
@@ -587,7 +673,7 @@ function Stronghold:OverrideTooltipGenericMain()
     GUITooltip_Generic_Orig_StrongholdMain = GUITooltip_Generic;
     GUITooltip_Generic = function(_Key)
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold:IsPlayer(PlayerID) then
             return GUITooltip_Generic_Orig_StrongholdMain(_Key);
         end
 
@@ -603,64 +689,6 @@ function Stronghold:OverrideTooltipGenericMain()
         end
         if not TooltipSet then
             GUITooltip_Generic_Orig_StrongholdMain(_Key);
-        end
-    end
-end
-
--- Tooptip Construction Override
-function Stronghold:OverrideTooltipConstructionMain()
-    GUITooltip_ConstructBuilding_Orig_StrongholdMain = GUITooltip_ConstructBuilding;
-    GUITooltip_ConstructBuilding = function(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
-            return GUITooltip_ConstructBuilding_Orig_StrongholdMain(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
-        end
-
-        local TooltipSet = false;
-        if not TooltipSet then
-            TooltipSet = Stronghold:PrintSerfConstructionTooltip(PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
-        end
-        if not TooltipSet then
-            GUITooltip_ConstructBuilding_Orig_StrongholdMain(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
-        end
-    end
-end
-
--- Update Construction Override
-function Stronghold:OverrideUpdateConstructionMain()
-    GUIUpdate_BuildingButtons_Orig_StrongholdMain = GUIUpdate_BuildingButtons;
-    GUIUpdate_BuildingButtons = function(_Button, _Technology)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
-            return GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
-        end
-
-        local Updated = false;
-        if not Updated then
-            Updated = Stronghold:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
-        end
-        if not Updated then
-            GUIUpdate_BuildingButtons_Orig_StrongholdMain(_Button, _Technology);
-            -- Buy lock (is released when :BuyUnit is called)
-            if Stronghold.Players[PlayerID].BuyUnitLock then
-                XGUIEng.DisableButton(_Button, 1);
-            end
-        end
-    end
-
-    GUIUpdate_UpgradeButtons_Orig_StrongholdMain = GUIUpdate_UpgradeButtons;
-    GUIUpdate_UpgradeButtons = function(_Button, _Technology)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
-            return GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
-        end
-
-        local Updated = false;
-        if not Updated then
-            Updated = Stronghold:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
-        end
-        if not Updated then
-            GUIUpdate_UpgradeButtons_Orig_StrongholdMain(_Button, _Technology);
         end
     end
 end
@@ -687,7 +715,7 @@ function Stronghold:OverrideTooltipUpgradeSettlersMain()
     GUITooltip_ResearchTechnologies_Orig_StrongholdMain = GUITooltip_ResearchTechnologies;
     GUITooltip_ResearchTechnologies = function(_Technology, _TextKey, _ShortCut)
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Players[PlayerID] then
+        if not Stronghold:IsPlayer(PlayerID) then
             return GUITooltip_ResearchTechnologies_Orig_StrongholdMain(_Technology, _TextKey, _ShortCut);
         end
 
