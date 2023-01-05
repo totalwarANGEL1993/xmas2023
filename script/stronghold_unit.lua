@@ -187,29 +187,16 @@ end
 -- -------------------------------------------------------------------------- --
 -- Config
 
-function Stronghold.Unit:GetDummyUnitConfig(_Type)
-    return {
-        Costs = {0, 0, 0, 0, 0, 0, 0},
-        Allowed = false,
-        Rank = 1,
-        Upkeep = 0,
-    };
-end
-
 function Stronghold.Unit:GetUnitConfig(_Type)
     if self.Config.Units[_Type] then
         return self.Config.Units[_Type];
     end
-    return self:GetDummyUnitConfig(_Type);
-end
-
-function Stronghold.Unit:SetUnitConfig(_Type, _Config)
-    self.Config.Units[_Type] = {
-        Costs = _Config.Costs,
-        Allowed = _Config.Allowed,
-        Rank = _Config.Rank,
-        Upkeep = _Config.Upkeep,
-    };
+    return {
+        Costs = {0, 0, 0, 0, 0, 0, 0},
+        Allowed = false,
+        Rank = 0,
+        Upkeep = 0,
+    }
 end
 
 -- -------------------------------------------------------------------------- --
@@ -340,9 +327,11 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
         local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
         if UpgradeCategoryName and (string.find(UpgradeCategoryName, "Beautification"))
         or _UpgradeCategory == UpgradeCategories.Tavern
+        or _UpgradeCategory == UpgradeCategories.Tower
         or _UpgradeCategory == UpgradeCategories.Barracks
         or _UpgradeCategory == UpgradeCategories.Archery
-        or _UpgradeCategory == UpgradeCategories.Stable then
+        or _UpgradeCategory == UpgradeCategories.Stable
+        or _UpgradeCategory == UpgradeCategories.Monastery then
             local Effects = Stronghold.Economy.Config.Income.Buildings[Type];
             if Effects then
                 if Effects.Reputation > 0 then
@@ -429,6 +418,14 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
         local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Stable1);
         local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Stable2);
         LimitReached = Barracks1 or Barracks2;
+    end
+
+    -- Monastery
+    if _Technology == Technologies.B_Monastery then
+        local Building1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Monastery1);
+        local Building2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Monastery2);
+        local Building3 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Monastery3);
+        LimitReached = Building1 or Building2 or Building3;
     end
 
     -- Beautification

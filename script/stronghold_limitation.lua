@@ -31,6 +31,12 @@ Stronghold.Limitation = {
             [Entities.PB_Beautification10] = 1,
             [Entities.PB_Beautification11] = 1,
             ---
+            [Entities.PB_Monastery1] = 1,
+            [Entities.PB_Monastery2] = 1,
+            [Entities.PB_Monastery3] = 1,
+            ---
+            [Entities.PB_Market2] = 1,
+            ---
             [Entities.PB_Barracks1] = 1,
             [Entities.PB_Barracks2] = 1,
             [Entities.PB_Archery1] = 1,
@@ -267,6 +273,33 @@ function Stronghold.Limitation:OverrideUpgradeBuilding()
             );
         end
     end
+
+    self.Orig_GUIAction_UpgradeSelectedBuilding = GUIAction_UpgradeSelectedBuilding;
+	GUIAction_UpgradeSelectedBuilding = function()
+		local EntityID = GUI.GetSelectedEntity();
+		local Type = Logic.GetEntityType(EntityID);
+
+        if InterfaceTool_IsBuildingDoingSomething(EntityID) == true then
+            return;
+        end
+        if Logic.IsAlarmModeActive(EntityID) == true then
+            GUI.AddNote(XGUIEng.GetStringTableText("InGameMessages/Note_StoptAlarmFirst"));
+            return;
+        end
+        local LeadersTrainingAtMilitaryBuilding = Logic.GetLeaderTrainingAtBuilding(EntityID);
+        if LeadersTrainingAtMilitaryBuilding ~= 0 then
+            GUI.AddNote(XGUIEng.GetStringTableText("InGameMessages/GUI_UpgradeNotPossibleBecauseOfTraining"))
+            return;
+        end
+
+        gvGUI_UpdateButtonIDArray[EntityID] = XGUIEng.GetCurrentWidgetID();
+        Logic.FillBuildingUpgradeCostsTable(Type, InterfaceGlobals.CostTable);
+        if InterfaceTool_HasPlayerEnoughResources_Feedback(InterfaceGlobals.CostTable) == 1 then
+            GUI.UpgradeSingleBuilding(EntityID);
+            XGUIEng.ShowWidget(gvGUI_WidgetID.UpgradeInProgress, 1);
+            XGUIEng.DoManualButtonUpdate(gvGUI_WidgetID.InGame);
+        end
+	end
 end
 
 -- -------------------------------------------------------------------------- --

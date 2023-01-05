@@ -183,7 +183,8 @@
         "InterfaceGlobals",
         "SetEntityName",
         "DARKMOORMUSIC",
-        "CMod"
+        "CMod",
+        "gvGUI_UpdateButtonIDArray"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

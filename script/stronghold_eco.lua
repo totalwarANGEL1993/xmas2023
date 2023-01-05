@@ -197,7 +197,8 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
                         end
                     end
                 end
-                Income = GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, k, table.getn(Buildings) * v.Reputation);
+                Income = Income + (table.getn(Buildings) * v.Reputation);
+                Income = GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, k, Income);
             end
             -- Tax
             local TaxtHeight = Stronghold.Players[_PlayerID].TaxHeight;
@@ -246,7 +247,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
             local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
             for i= 1, _WorkerCount do
-                Penalty = Penalty * 1.05;
+                Penalty = Penalty * 1.02;
             end
         end
         return math.floor(Penalty + 0.5);

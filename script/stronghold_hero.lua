@@ -7,88 +7,6 @@ Stronghold = Stronghold or {};
 Stronghold.Hero = {
     Data = {},
     Config = {
-        HeroSkills = {
-            [Entities.PU_Hero1c]             = {
-                Description = "Passive Fähigkeit: @cr Für jeden Ingeneur auf der Burg wird zusätzliche Wetterenergie produziert."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann feindliche Einheiten verjagen (außer Nebelvolk).",
-            },
-            [Entities.PU_Hero2]              = {
-                Description = "Passive Fähigkeit: @cr Jedes mal wenn eine Mine Rohstoffe abbaut, wird ein zusätzlicher veredelbarer Rohstoff erzeugt."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
-            },
-            [Entities.PU_Hero3]              = {
-                Description = "Passive Fähigkeit: @cr Erhält mehr Ehre für jeden Alchemisten, Gelehrten und Ingeneur."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann Soldatengruppen wieder auffüllen, wenn diese nicht kämpfen.",
-            },
-            [Entities.PU_Hero4]              = {
-                Description = "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, dadurch steigen allerdings ihre Kosten um 30%."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
-            },
-            [Entities.PU_Hero5]              = {
-                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als mancher denkt. Die Steuereinnahmen werden um 15% erhöht."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann Pfeile auf feindliche Truppen regnen lassen.",
-            },
-            [Entities.PU_Hero6]              = {
-                Description = "Passive Fähigkeit: @cr Für jeden Priester auf der Burg wird zusätzlicher Glauben produziert."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann die Rüstung von verbündeten Einheiten verbessern.",
-            },
-            [Entities.CU_Mary_de_Mortfichet] = {
-                Description = "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein und verlangen keinen Sold."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
-            },
-            [Entities.CU_BlackKnight]        = {
-                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Der Malus auf die Beliebtheit wird um 50% verringert."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden senken.",
-            },
-            [Entities.CU_Barbarian_Hero]     = {
-                Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 50% zusätzliche Beliebtheit."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Ruft die mächtigen Wölfe Hati und Skalli herbei, die Ehre erzeugen, wenn sie Feinde töten.",
-            },
-            [Entities.PU_Hero10]             = {
-                Description = "Passive Fähigkeit: @cr Für diesen meisterlichen Schützen kämpfen Scharfschützen für 10% weniger Sold."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
-            },
-            [Entities.PU_Hero11]             = {
-                Description = "Passive Fähigkeit: @cr Jeder Arbeiter gibt alles für die Einheitspartei! Die maximale Beliebtheit wird auf 300 erhöht."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
-            },
-            [Entities.CU_Evil_Queen] = {
-                Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate hebt Euer Bevölkerungslimit um 30% an."..
-                            " @cr @cr "..
-                            "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
-            },
-        },
-
-        ---
-
-        TypeToBuyHeroButton = {
-            [Entities.PU_Hero1c]             = "BuyHeroWindowBuyHero1",
-            [Entities.PU_Hero2]              = "BuyHeroWindowBuyHero5",
-            [Entities.PU_Hero3]              = "BuyHeroWindowBuyHero4",
-            [Entities.PU_Hero4]              = "BuyHeroWindowBuyHero3",
-            [Entities.PU_Hero5]              = "BuyHeroWindowBuyHero2",
-            [Entities.PU_Hero6]              = "BuyHeroWindowBuyHero6",
-            [Entities.CU_Mary_de_Mortfichet] = "BuyHeroWindowBuyHero7",
-            [Entities.CU_BlackKnight]        = "BuyHeroWindowBuyHero8",
-            [Entities.CU_Barbarian_Hero]     = "BuyHeroWindowBuyHero9",
-            [Entities.PU_Hero10]             = "BuyHeroWindowBuyHero10",
-            [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
-            [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
-        },
-
-        ---
-
         LordStats = {
             Health = 10000,
             Armor = 8,
@@ -114,21 +32,104 @@ Stronghold.Hero = {
 
         ---
 
+        TypeToBuyHeroButton = {
+            [Entities.PU_Hero1c]             = "BuyHeroWindowBuyHero1",
+            [Entities.PU_Hero2]              = "BuyHeroWindowBuyHero5",
+            [Entities.PU_Hero3]              = "BuyHeroWindowBuyHero4",
+            [Entities.PU_Hero4]              = "BuyHeroWindowBuyHero3",
+            [Entities.PU_Hero5]              = "BuyHeroWindowBuyHero2",
+            [Entities.PU_Hero6]              = "BuyHeroWindowBuyHero6",
+            [Entities.CU_Mary_de_Mortfichet] = "BuyHeroWindowBuyHero7",
+            [Entities.CU_BlackKnight]        = "BuyHeroWindowBuyHero8",
+            [Entities.CU_Barbarian_Hero]     = "BuyHeroWindowBuyHero9",
+            [Entities.PU_Hero10]             = "BuyHeroWindowBuyHero10",
+            [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
+            [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
+        },
+
+        ---
+
         LordTypes = {
-            [Entities.PU_Hero1c]             = true,
-            [Entities.PU_Hero2]              = true,
-            [Entities.PU_Hero3]              = true,
-            [Entities.PU_Hero4]              = true,
-            [Entities.PU_Hero6]              = true,
-            [Entities.PU_Hero10]             = true,
-            [Entities.CU_BlackKnight]        = true,
-            [Entities.CU_Barbarian_Hero]     = true,
+            {Entities.PU_Hero1c,             true},
+            {Entities.PU_Hero2,              true},
+            {Entities.PU_Hero3,              true},
+            {Entities.PU_Hero4,              true},
+            {Entities.PU_Hero6,              true},
+            {Entities.CU_BlackKnight,        true},
+            {Entities.CU_Barbarian_Hero,     true},
+            {Entities.PU_Hero10,             true},
         },
         SpouseTypes = {
-            [Entities.PU_Hero5]              = true,
-            [Entities.PU_Hero11]             = true,
-            [Entities.CU_Mary_de_Mortfichet] = true,
-            [Entities.CU_Evil_Queen]         = true,
+            {Entities.PU_Hero5,              true},
+            {Entities.CU_Mary_de_Mortfichet, true},
+            {Entities.PU_Hero11,             true},
+            {Entities.CU_Evil_Queen,         true},
+        },
+
+        --- 
+
+        
+        HeroSkills = {
+            [Entities.PU_Hero1c]             = {
+                Description = "Passive Fähigkeit: @cr Für jeden Ingeneur auf der Burg wird zusätzliche Wetterenergie produziert."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann feindliche Einheiten verjagen (außer Nebelvolk).",
+            },
+            [Entities.PU_Hero2]              = {
+                Description = "Passive Fähigkeit: @cr Jedes mal wenn eine Mine Rohstoffe abbaut, wird ein zusätzlicher veredelbarer Rohstoff erzeugt."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
+            },
+            [Entities.PU_Hero3]              = {
+                Description = "Passive Fähigkeit: @cr Wissen ist Macht! Jedes Mal wenn eine Technologie erforscht wird, erhaltet Ihr 3 Ehre."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann Fallen verstecken, die explodieren, wenn Feinde in der Nähe sind.",
+            },
+            [Entities.PU_Hero4]              = {
+                Description = "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, dadurch steigen allerdings ihre Kosten um 30%."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
+            },
+            [Entities.PU_Hero5]              = {
+                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als mancher denkt. Die Steuereinnahmen werden um 15% erhöht."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann Banditen herbeirufen, die pro Mann 2 Beliebtheit produzieren.",
+            },
+            [Entities.PU_Hero6]              = {
+                Description = "Passive Fähigkeit: @cr Für jeden Priester auf der Burg wird zusätzlicher Glauben produziert."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann die Rüstung von verbündeten Einheiten verbessern.",
+            },
+            [Entities.CU_Mary_de_Mortfichet] = {
+                Description = "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein und verlangen keinen Sold."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
+            },
+            [Entities.CU_BlackKnight]        = {
+                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Der Malus auf die Beliebtheit wird um 50% verringert."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden senken.",
+            },
+            [Entities.CU_Barbarian_Hero]     = {
+                Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 50% zusätzliche Beliebtheit."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Ruft die mächtigen Wölfe Hati und Skalli herbei, die Ehre erzeugen, wenn sie Feinde töten.",
+            },
+            [Entities.PU_Hero10]             = {
+                Description = "Passive Fähigkeit: @cr Für diesen meisterlichen Schützen kämpfen Scharfschützen für 10% weniger Sold."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
+            },
+            [Entities.PU_Hero11]             = {
+                Description = "Passive Fähigkeit: @cr Jeder Arbeiter gibt alles für die Einheitspartei! Die maximale Beliebtheit wird auf 300 erhöht."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
+            },
+            [Entities.CU_Evil_Queen] = {
+                Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate hebt Euer Bevölkerungslimit um 30% an."..
+                              " @cr @cr "..
+                              "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
+            },
         },
     }
 }
@@ -161,9 +162,10 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
     XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
 
     local PositionX = 20;
-    for k, v in pairs(self.Config.LordTypes) do
-        if v then
-            local WidgetID = self.Config.TypeToBuyHeroButton[k];
+    for i= 1, table.getn(self.Config.LordTypes) do
+        local Type = self.Config.LordTypes[i][1];
+        if self.Config.LordTypes[i][2] then
+            local WidgetID = self.Config.TypeToBuyHeroButton[Type];
             XGUIEng.ShowWidget(WidgetID, 1);
             XGUIEng.SetWidgetPosition(WidgetID, PositionX, 120);
             PositionX = PositionX + 90;
@@ -181,13 +183,12 @@ function Stronghold.Hero:OpenBuyHeroWindowForSpouseSelection(_PlayerID)
     XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
 
     local PositionX = 20;
-    for k, v in pairs(self.Config.SpouseTypes) do
-        if v then
-            local WidgetID = self.Config.TypeToBuyHeroButton[k];
-            XGUIEng.ShowWidget(WidgetID, 1);
-            XGUIEng.SetWidgetPosition(WidgetID, PositionX, 120);
-            PositionX = PositionX + 90;
-        end
+    for i= 1, table.getn(self.Config.SpouseTypes) do
+        local Type = self.Config.SpouseTypes[i][1];
+        local WidgetID = self.Config.TypeToBuyHeroButton[Type];
+        XGUIEng.ShowWidget(WidgetID, 1);
+        XGUIEng.SetWidgetPosition(WidgetID, PositionX, 120);
+        PositionX = PositionX + 90;
     end
 end
 
@@ -209,32 +210,34 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
 
         local Text = "";
         local Index = 0;
-        for k,v in pairs(self.Config.LordTypes) do
+        for i= 1, table.getn(self.Config.LordTypes) do
             Index = Index +1;
+            local Type = self.Config.LordTypes[i][1];
             local ButtonStartX = (RowX + (ButtonW * (Index -1)));
             local ButtonEndX = ButtonStartX + ButtonW;
             local ButtonStartY = RowY;
             local ButtonEndY = RowY + ButtonH;
 
-            local WidgetName = self.Config.TypeToBuyHeroButton[k];
+            local WidgetName = self.Config.TypeToBuyHeroButton[Type];
             if XGUIEng.IsWidgetShown(WidgetName) == 1 then
                 if (MouseX >= ButtonStartX and MouseX <= ButtonEndX) and (MouseY >= ButtonStartY and MouseY <= ButtonEndY) then
-                    Text = Stronghold.Hero.Config.HeroSkills[k].Description;
+                    Text = Stronghold.Hero.Config.HeroSkills[Type].Description;
                 end
             end
         end
         local Index = 0;
-        for k,v in pairs(Stronghold.Hero.Config.SpouseTypes) do
+        for i= 1, table.getn(self.Config.SpouseTypes) do
             Index = Index +1;
+            local Type = self.Config.SpouseTypes[i][1];
             local ButtonStartX = (RowX + (ButtonW * (Index -1)));
             local ButtonEndX = ButtonStartX + ButtonW;
             local ButtonStartY = RowY;
             local ButtonEndY = RowY + ButtonH;
 
-            local WidgetName = Stronghold.Hero.Config.TypeToBuyHeroButton[k];
+            local WidgetName = Stronghold.Hero.Config.TypeToBuyHeroButton[Type];
             if XGUIEng.IsWidgetShown(WidgetName) == 1 then
                 if (MouseX >= ButtonStartX and MouseX <= ButtonEndX) and (MouseY >= ButtonStartY and MouseY <= ButtonEndY) then
-                    Text = Stronghold.Hero.Config.HeroSkills[k].Description;
+                    Text = Stronghold.Hero.Config.HeroSkills[Type].Description;
                 end
             end
         end
@@ -247,7 +250,15 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         if not Stronghold:IsPlayer(PlayerID) then
             return BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero(_Type);
         end
-        if Stronghold.Hero.Config.LordTypes[_Type] then
+
+        local IsLordType = false;
+        for i= 1, table.getn(Stronghold.Hero.Config.LordTypes) do
+            if Stronghold.Hero.Config.LordTypes[i][1] == _Type then
+                IsLordType = true;
+                break;
+            end
+        end
+        if IsLordType then
             Sync.Call(
                 "Stronghold_ButtonCallback_Headquarters",
                 PlayerID,
@@ -350,7 +361,7 @@ function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
     local Type = Logic.GetEntityType(_EntityID);
     if self.Config.PetStats[Type] then
-        if Stronghold:HasValidHeroOfType(PlayerID, self.Config.PetStats[Type].Owner) then
+        if self:HasValidHeroOfType(PlayerID, self.Config.PetStats[Type].Owner) then
             -- Special treatment for Vargs wolves
             if Type == Entities.CU_Barbarian_Hero_wolf then
                 Logic.SetSpeedFactor(_EntityID, 1.5);
@@ -403,12 +414,18 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                     local ID = SetPosition(k, Stronghold.Players[_PlayerID].DoorPos);
                     Logic.HurtEntity(ID, Logic.GetEntityHealth(ID));
                     -- Handle lord
-                    if self.Config.LordTypes[HeroType] then
-                        self:ConfigurePlayersLord(_PlayerID);
+                    for i= 1, table.getn(self.Config.LordTypes) do
+                        if self.Config.LordTypes[i][1] == HeroType then
+                            self:ConfigurePlayersLord(_PlayerID);
+                            break;
+                        end
                     end
                     -- Handle spouse
-                    if self.Config.SpouseTypes[HeroType] then
-                        self:ConfigurePlayersSpouse(_PlayerID);
+                    for i= 1, table.getn(self.Config.SpouseTypes) do
+                        if self.Config.SpouseTypes[i][1] == HeroType then
+                            self:ConfigurePlayersSpouse(_PlayerID);
+                            break;
+                        end
                     end
                 end
             end
@@ -431,7 +448,7 @@ function Stronghold.Hero:StartTriggers()
     Trigger.RequestTrigger(
         Events.LOGIC_EVENT_ENTITY_CREATED,
         nil,
-        "Stronghold_Trigger_EntityCreated",
+        "Stronghold_Hero_Trigger_EntityCreated",
         1
     );
 end
@@ -464,6 +481,12 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
             Stronghold.Hero:ResourceProductionBonus(_PlayerID, _ResourceType, _Amount);
         end
     end
+
+    self.Orig_GameCallback_OnTechnologyResearched = GameCallback_OnTechnologyResearched;
+	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
+		Stronghold.Hero.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
+        Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID);
+	end
 
     self.Orig_GameCallback_Calculate_ReputationMax = GameCallback_Calculate_ReputationMax;
     GameCallback_Calculate_ReputationMax = function(_PlayerID, _CurrentAmount)
@@ -548,6 +571,12 @@ function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)
     end
     -- No hero found
     return false;
+end
+
+function Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID)
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
+        AddHonor(_PlayerID, 3);
+    end
 end
 
 -- Passive Ability: Weather energy production bonus
@@ -648,7 +677,11 @@ end
 -- Passive Ability: Increase of reputation
 function Stronghold.Hero:ApplyReputationIncreasePassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    -- do nothing
+    -- This is in theory the passive ability of Aris outlaws...
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
+        local Outlaws = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Hero5_Outlaw);
+        Value = Value + (2 * Outlaws);
+    end
     return Value;
 end
 
@@ -664,12 +697,7 @@ end
 -- Passive Ability: Honor increase bonus
 function Stronghold.Hero:ApplyHonorBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
-    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
-        local Alchemists = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Alchemist);
-        local Engineers = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
-        local Scholars = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scholar);
-        Income = Income + ((Scholars+Engineers+Alchemists) * 0.15);
-    end
+    -- do nothing
     return Income;
 end
 

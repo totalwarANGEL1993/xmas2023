@@ -15,55 +15,67 @@ ALLGEMEINES
 BURGHERR
 
 - Der Burgherr muss besiegt werden, damit ein Spieler verliert.
-- Der Burgherr hat 10000 HP, +0 Heilung, 75 Schaden und 20 Rüstung.
+- Der Burgherr hat 10000 HP, +1 Heilung, 16 Schaden und 8 Rüstung.
 - Burgherren haben passive Fähigkeiten, die besondere Technologien freischalten,
   Rohstoffe produzieren usw.
 - Der Burgherr wird am Anfang des Spiels gewählt.
 
 Dario:
 - Passiv: Produziert Wetterenergie für jeden Ingeneur in der Siedlung
-- Aktiv: Feinde verjagen (läd sehr schnell auf)
+- Aktiv: Feinde verjagen
 
 Pilgrim:
 - Passiv: Minen erwirtschaften jedes Mal 1 Rohstoff mehr
 - Aktiv: Bombe legen
 
 Salim:
-- Passiv: Erhält mehr Ehre für Wissenschaftler in der Siedlung
-- Aktiv: Wiederbeleben (Battalione auffüllen, die nicht kämpfen)
+- Passiv: Erhält für jede erforschte Technologie 3 Ehre.
+- Aktiv: Falle verstecken
 
 Erec:
-- Passiv: Soldaten verlangen 10% weniger Sold
-- Aktiv: Wirbelschlag (läd schnell auf)
+- Passiv: Soldaten werden mit voller Erfahrung rekrutiert und kosten 30% mehr
+- Aktiv: Wirbelschlag
 
 Helias:
 - Passiv: Produziert Glauben für jeden Priester in der Siedlung
 - Aktiv: Einheiten segnen
 
 Kerberos:
-- Passiv: Motivationsstrafe wird um 20% verringert
-- Aktiv: Angriffskraft senken (läd schnell auf)
+- Passiv: Motivationsstrafe wird um 50% verringert
+- Aktiv: Angriffskraft senken
+
+Varg:
+- Passiv: Tavernen produzieren 50% mehr Beliebtheit.
+- Aktiv: Wölfe herbeirufen (gebufft, Ehre für getötete Feinde)
+
+Drake:
+- Passiv: Scharfschützen verlangen 10% weniger Sold.
+- Aktiv: Fernkämpfer verstärken
 
 
 
 BURGFRÄULEIN
 
 - Wird in der Festung rekrutiert
-- Gibt +4 Beliebtheit +4 Ehre wenn am Leben
+- Gibt +5 Beliebtheit +5 Ehre wenn am Leben
 - Man kann nur ein Burgfräulein haben
-- Das Burgfräulein hat 2000 HP, +5 Heilung, 22 Schaden und 5 Rüstung.
+- Das Burgfräulein hat 1000 HP, +10 Heilung, 16 Schaden und 3 Rüstung.
 
 Ari:
-- Passiv: Arbeiter bezahlen 10% mehr Steuern
-- Aktiv: Pfeilhagel (max. 6, läd sehr schnell auf)
+- Passiv: Arbeiter bezahlen 15% mehr Steuern
+- Aktiv: Banditen rufen (gebufft, +2 Beliebtheit pro Outlaw)
 
 Mary:
-- Passiv: Kundschafter und Diebe sind kostenlos
+- Passiv: Kundschafter und Diebe breuchen keinen Platz und sind kostenlos
 - Aktiv: Moral senken
 
 Yuki:
 - Passiv: Maximale Motivation ist 300%
-- Aktiv: Shuriken (max. 6, läd sehr schnell auf)
+- Aktiv: Feuerwerk der Freude
+
+Kala:
+- Passiv: Bevölkerungsgrenze wird um 30% erhöht
+- Aktiv: Giftnebel
 
 --------------------------------------------------------------------------------
 

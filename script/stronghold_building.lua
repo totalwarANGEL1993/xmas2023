@@ -11,34 +11,35 @@ Stronghold.Building = {
     Data = {},
     Config = {
         Headquarters = {
-            Stats = {Health = {5000, 7500, 10000}, Armor = {8, 12, 16}},
+            Health = {5000, 7500, 10000},
+            Armor  = {8, 12, 16}
         },
 
         Monastery = {
             [BlessCategories.Construction] = {
                 Text = "Eure Priester leuten die Glocke zum Gebet.",
-                Reputation = 8,
+                Reputation = 6,
                 Honor = 0,
             },
             [BlessCategories.Research] = {
                 Text = "Eure Priester vergeben die Sünden Eurer Arbeiter.",
                 Reputation = 0,
-                Honor = 4,
+                Honor = 6,
             },
             [BlessCategories.Weapons] = {
                 Text = "Eure Priester predigen Bibeltexte zu ihrer Gemeinde.",
-                Reputation = 16,
+                Reputation = 12,
                 Honor = 0,
             },
             [BlessCategories.Financial] = {
-                Text = "Eure Priester rufen auf zur Kollekte.",
-                Reputation = 8,
-                Honor = 0,
+                Text = "Eure Priester rufen die Siedler auf zur Kollekte.",
+                Reputation = 0,
+                Honor = 12,
             },
             [BlessCategories.Canonisation] = {
                 Text = "Eure Priester sprechen Eure Taten heilig.",
-                Reputation = 12,
-                Honor = 6,
+                Reputation = 9,
+                Honor = 9,
             },
         },
     },
@@ -79,9 +80,9 @@ function Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID)
             if Logic.GetEntityType(ID) == Entities.PB_Headquarters3 then
                 Index = 3;
             end
-            CEntity.SetArmor(ID, self.Config.Headquarters.Stats.Armor[Index]);
-            CEntity.SetMaxHealth(ID, self.Config.Headquarters.Stats.Health[Index]);
-            Logic.HealEntity(ID, self.Config.Headquarters.Stats.Health[Index]);
+            CEntity.SetArmor(ID, self.Config.Headquarters.Armor[Index]);
+            CEntity.SetMaxHealth(ID, self.Config.Headquarters.Health[Index]);
+            Logic.HealEntity(ID, self.Config.Headquarters.Health[Index]);
         end
     end
 end
@@ -163,7 +164,7 @@ function Stronghold.Building:OverrdeHeadquarterButtons()
     GUIAction_BuySerf_Orig_StrongholdBuilding = GUIAction_BuySerf;
     GUIAction_BuySerf = function()
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold.Building.Data[PlayerID] then
+        if not Stronghold:IsPlayer(PlayerID) then
             return GUIAction_BuySerf_Orig_StrongholdBuilding();
         end
         if Stronghold.Building.Data[PlayerID].BuyUnitLock then
@@ -180,13 +181,13 @@ function Stronghold.Building:OverrdeHeadquarterButtons()
             return;
         end
 
-        Stronghold.Building.Data[PlayerID].BuyUnitLock = true;
+        Stronghold.Players[PlayerID].BuyUnitLock = true;
         Sync.Call(
             "Stronghold_ButtonCallback_Headquarters",
             PlayerID,
             Stronghold.Building.SyncEvents.Headquarters.BuySerf,
             Entities.PU_Serf,
-            GetID(Stronghold.Building.Data[PlayerID].HQScriptName),
+            GetID(Stronghold.Players[PlayerID].HQScriptName),
             false
         );
     end
@@ -507,8 +508,8 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         local Type = Entities.PU_LeaderPoleArm1;
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         Text = "@color:180,180,180 Speerträger @color:255,255,255 "..
-               "@cr Das Gesindel des Landes für den Krieg zusammengekehrt "..
-               " erwartet Euren Befehl.";
+               "@cr Ihr Götter, welch Memmen befehlen unsere Schar? Zum "..
+               "Krieg zusammengekehrt, das Gerümpel des Landes.";
 
         -- Costs text
         local Costs = CopyTable(Config.Costs);
@@ -523,7 +524,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " ..Config.Rank;
+                   " " ..Stronghold.Config.Text.Ranks[Config.Rank];
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSword2" then
@@ -546,7 +547,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " ..Config.Rank.. ", Sägemühle"
+                   " " ..Stronghold.Config.Text.Ranks[Config.Rank].. ", Sägemühle"
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSword3" then
@@ -569,7 +570,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Config.Rank.. ", Garnison, Schmiede";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Garnison, Schmiede";
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSpear1" then
@@ -592,7 +593,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Config.Rank.. ", Garnison, Feinschmiede";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Garnison, Feinschmiede";
         end
 
     else
@@ -786,9 +787,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if not Config.Allowed then
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
-            local Rank = Config.Rank;
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Text.Ranks[Rank].. ", Sägemühle";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Sägemühle";
         end
 
     elseif _TextKey == "MenuArchery/UpgradeBow2" then
@@ -810,9 +810,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if not Config.Allowed then
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
-            local Rank = Config.Rank;
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Text.Ranks[Rank].. ", Schießanlage, Sägemühle";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Schießanlage, Sägemühle";
         end
 
     elseif _TextKey == "MenuArchery/UpgradeBow3" then
@@ -834,9 +833,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if not Config.Allowed then
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
-            local Rank = Config.Rank;
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Text.Ranks[Rank].. ", Büchsenmacher";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Büchsenmacher";
         end
 
     elseif _TextKey == "AOMenuArchery/UpgradeRifle1" then
@@ -858,9 +856,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if not Config.Allowed then
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
-            local Rank = Config.Rank;
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Text.Ranks[Rank].. ", Schießanlage, Büchsenmacher";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Schießanlage, Büchsenmacher";
         end
     else
         return false;
@@ -1018,7 +1015,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Config.Rank.. "";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. "";
         end
 
     elseif _TextKey == "MenuStables/UpgradeCavalryHeavy1" then
@@ -1041,7 +1038,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Config.Rank.. ", Reiterei, Feinschmiede";
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Reiterei, Feinschmiede";
         end
 
     else
@@ -1082,6 +1079,17 @@ end
 
 -- -------------------------------------------------------------------------- --
 -- Monastery
+
+function Stronghold.Building:GetMonasteryConfig(_BlessCategory)
+    if self.Config.Monastery[_BlessCategory] then
+        return self.Config.Monastery[_BlessCategory];
+    end
+    return {
+        Text = "DEBUG: Unknown bless category",
+        Reputation = 0,
+        Honor = 0,
+    }
+end
 
 function Stronghold.Building:CreateMonasteryButtonHandlers()
     self.SyncEvents = self.SyncEvents or {};
@@ -1165,7 +1173,7 @@ function Stronghold.Building:OverrdeMonasteryButtons()
             else
                 Text = "@color:180,180,180 Gebetsmesse @color:255,255,255 @cr ";
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Construction];
+                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Construction);
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1179,7 +1187,7 @@ function Stronghold.Building:OverrdeMonasteryButtons()
             else
                 Text = "@color:180,180,180 Ablassbriefe @color:255,255,255 @cr ";
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Research];
+                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Research);
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1196,7 +1204,7 @@ function Stronghold.Building:OverrdeMonasteryButtons()
                     Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
                 end
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Weapons];
+                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Weapons);
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1213,7 +1221,7 @@ function Stronghold.Building:OverrdeMonasteryButtons()
                     Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
                 end
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Financial];
+                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Financial);
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1230,7 +1238,7 @@ function Stronghold.Building:OverrdeMonasteryButtons()
                     Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kathedrale @cr";
                 end
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Canonisation];
+                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Canonisation);
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
