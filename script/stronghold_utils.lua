@@ -12,18 +12,20 @@ function Stronghold:HasPlayerEnoughResourcesFeedback(_Costs)
     end
 
     local CanBuy = true;
-	local Honor = self.Players[PlayerID].Honor;
+	local Honor = self:GetPlayerHonor(PlayerID);
     if _Costs[ResourceType.Honor] ~= nil and _Costs[ResourceType.Honor] - Honor > 0 then
 		CanBuy = false;
         Sound.PlayQueuedFeedbackSound(Sounds.VoicesMentor_INFO_NotEnough);
-        Message = string.format("%d Ehre muss noch erlangt werden.", _Costs[ResourceType.Honor] - Honor);
-		GUI.AddNote(Message);
+		GUI.AddNote(string.format(
+            "%d Ehre muss noch erlangt werden.",
+            _Costs[ResourceType.Honor] - Honor
+        ));
 	end
-    CanBuy = CanBuy and InterfaceTool_HasPlayerEnoughResources_Feedback(_Costs) == 1;
+    CanBuy = InterfaceTool_HasPlayerEnoughResources_Feedback(_Costs) == 1 and CanBuy;
     return CanBuy == true;
 end
 function HasPlayerEnoughResourcesFeedback(_Costs)
-    Stronghold:HasPlayerEnoughResourcesFeedback(_Costs);
+    return Stronghold:HasPlayerEnoughResourcesFeedback(_Costs);
 end
 
 function Stronghold:FormatCostString(_PlayerID, _Costs)
@@ -189,7 +191,7 @@ function Stronghold:HasEnoughResources(_PlayerID, _Costs)
     return true;
 end
 function HasEnoughResources(_PlayerID, _Costs)
-    Stronghold:HasEnoughResources(_PlayerID, _Costs);
+    return Stronghold:HasEnoughResources(_PlayerID, _Costs);
 end
 
 function Stronghold:AddResourcesToPlayer(_PlayerID, _Resources)

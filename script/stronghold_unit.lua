@@ -222,16 +222,20 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             RemoveResourcesFromPlayer(_PlayerID, Costs);
             local ID = AI.Entity_CreateFormation(_PlayerID, _Type, 0, 0, Position.X, Position.Y, 0, 0, Experience, 0);
             if ID ~= 0 then
-                if Logic.GetSector(ID) == Logic.GetSector(GetID("CampPosP" .._PlayerID)) then
-                    Position = Stronghold.Players[_PlayerID].CampPos;
-                end
                 if IsLeader and _AutoFill then
+                    Costs[ResourceType.Honor] = 0;
                     local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
                     for i= 1, MaxSoldiers do
-                        Costs[ResourceType.Honor] = 0;
-                        RemoveResourcesFromPlayer(_PlayerID, Costs);
+                        if HasEnoughResources(_PlayerID, Costs) then
+                            RemoveResourcesFromPlayer(_PlayerID, Costs);
+                            local SoldierType = Logic.LeaderGetSoldiersType(ID);
+                            Logic.CreateEntity(SoldierType, Position.X, Position.Y, 0, _PlayerID);
+                            Tools.AttachSoldiersToLeader(ID, 1);
+                        end
                     end
-                    Tools.CreateSoldiersForLeader(ID, MaxSoldiers);
+                end
+                if Logic.GetSector(ID) == Logic.GetSector(GetID("CampPosP" .._PlayerID)) then
+                    Position = Stronghold.Players[_PlayerID].CampPos;
                 end
                 Logic.MoveSettler(ID, Position.X, Position.Y);
             end
@@ -420,7 +424,7 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
         LimitReached = Barracks1 or Barracks2;
     end
 
-    -- Monastery
+    -- Special buildings
     if _Technology == Technologies.B_Monastery then
         local Building1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Monastery1);
         local Building2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Monastery2);

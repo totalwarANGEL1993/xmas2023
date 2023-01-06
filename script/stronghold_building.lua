@@ -50,8 +50,10 @@ function Stronghold.Building:Install()
         self.Data[i] = {};
     end
 
-    self:OverrdeMonasteryButtons()
-    self:OverrdeHeadquarterButtons();
+    self:OverrideMonasteryButtons()
+    self:OverrideHeadquarterButtons();
+    self:OverrideBuildingUpgradeButtonUpdate();
+    self:OverrideBuildingUpgradeButtonTooltip();
     self:CreateHeadquartersButtonHandlers();
     self:CreateMonasteryButtonHandlers();
     self:CreateBarracksButtonHandlers();
@@ -126,7 +128,7 @@ function Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, _Level)
     end
 end
 
-function Stronghold.Building:OverrdeHeadquarterButtons()
+function Stronghold.Building:OverrideHeadquarterButtons()
     GUIAction_SetTaxes_Orig_StrongholdBuilding = GUIAction_SetTaxes;
     GUIAction_SetTaxes = function(_Level)
         local PlayerID = GUI.GetPlayerID();
@@ -172,7 +174,7 @@ function Stronghold.Building:OverrdeHeadquarterButtons()
         end
 
         local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Serf);
-        if HasPlayerEnoughResourcesFeedback(Config.Costs) == 0 then
+        if not HasPlayerEnoughResourcesFeedback(Config.Costs) then
             return;
         end
         if Logic.GetPlayerAttractionUsage(PlayerID) >= Logic.GetPlayerAttractionLimit(PlayerID) then
@@ -407,7 +409,7 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
-        if not HasPlayerEnoughResourcesFeedback(Costs) then
+        if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
                 "Stronghold_ButtonCallback_Barracks",
@@ -676,7 +678,7 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, unpack(Costs));
-        if not HasPlayerEnoughResourcesFeedback(Costs) then
+        if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
                 "Stronghold_ButtonCallback_Archery",
@@ -933,7 +935,7 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
-        if not HasPlayerEnoughResourcesFeedback(Costs) then
+        if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
                 "Stronghold_ButtonCallback_Stable",
@@ -1135,7 +1137,7 @@ function Stronghold.Building:MonasteryBlessSettlers(_PlayerID, _BlessCategory)
     end
 end
 
-function Stronghold.Building:OverrdeMonasteryButtons()
+function Stronghold.Building:OverrideMonasteryButtons()
     GUIAction_BlessSettlers_Orig_StrongholdBuilding = GUIAction_BlessSettlers;
     GUIAction_BlessSettlers = function(_BlessCategory)
         local PlayerID = GUI.GetPlayerID();
@@ -1249,6 +1251,138 @@ function Stronghold.Building:OverrdeMonasteryButtons()
 		end
 
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Upgrade Button
+
+function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
+    if EMS then
+        function EMS.RD.Rules.Markets:Evaluate(self)
+        end
+    end
+
+    self.GUITooltip_UpgradeBuilding = GUITooltip_UpgradeBuilding;
+    GUITooltip_UpgradeBuilding = function(_Type, _KeyDisabled, _KeyNormal, _Technology)
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return self.GUITooltip_UpgradeBuilding(_Type, _KeyDisabled, _KeyNormal, _Technology);
+        end
+
+        -- Get default text
+        local Text = XGUIEng.GetStringTableText(_KeyNormal);
+        local LineBreakPos, LineBreakEnd = string.find(Text, " @cr ");
+        local TextHeadline = string.sub(Text, 1, LineBreakPos);
+        local TextBody = string.sub(Text, LineBreakEnd +1);
+
+        local CostString = "";
+        local ShortCutToolTip = "";
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            Text = XGUIEng.GetStringTableText(_KeyDisabled);
+        else
+            Logic.FillBuildingCostsTable(_Type, InterfaceGlobals.CostTable);
+            CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
+            ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
+                ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]";
+        end
+
+        -- Effect text
+        local EffectText = "";
+        local TypeName = Logic.GetEntityTypeName(_Type)
+        if string.find(TypeName, "PB_") then
+        -- if _Type == Entities.PB_Tavern1
+        -- or _Type == Entities.PB_Tower1
+        -- or _Type == Entities.PB_Tower2
+        -- or _Type == Entities.PB_Farm1
+        -- or _Type == Entities.PB_Farm2
+        -- or _Type == Entities.PB_Residence1
+        -- or _Type == Entities.PB_Residence2
+        -- or _Type == Entities.PB_Barracks1
+        -- or _Type == Entities.PB_Archery1
+        -- or _Type == Entities.PB_Stable1
+        -- or _Type == Entities.PB_Market1
+        -- or _Type == Entities.PB_Monastery1
+        -- or _Type == Entities.PB_Monastery2 then
+            local Effects = Stronghold.Economy.Config.Income.Buildings[_Type +1];
+            if Effects then
+                if Effects.Reputation > 0 then
+                    EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+                end
+                if Effects.Honor > 0 then
+                    EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
+                end
+                if EffectText ~= "" then
+                    EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
+                end
+            end
+        else
+            return self.GUITooltip_UpgradeBuilding(_Type, _KeyDisabled, _KeyNormal, _Technology);
+        end
+
+        -- Building limit
+        local BuildingMax = Stronghold.Limitation:GetTypeLimit(_Type +1);
+        if BuildingMax > -1 then
+            local BuildingCount = Stronghold.Limitation:GetTypeUsage(PlayerID, _Type +1);
+            Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
+        end
+
+        -- Set text
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text.. " " ..EffectText);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
+    end
+end
+
+function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
+    self.Orig_GUIUpdate_UpgradeButtons = GUIUpdate_UpgradeButtons;
+    GUIUpdate_UpgradeButtons = function(_Button, _Technology)
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold.Building.Data[PlayerID] then
+            return self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
+        end
+
+        local LimitReached = false;
+
+        -- Recruiter buildings
+        if _Technology == Technologies.UP1_Barracks then
+            local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Barracks1);
+            local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Barracks2);
+            LimitReached = Barracks1 or Barracks2;
+        end
+        if _Technology == Technologies.UP1_Archery then
+            local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Archery1);
+            local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Archery2);
+            LimitReached = Barracks1 or Barracks2;
+        end
+        if _Technology == Technologies.UP1_Stables then
+            local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Stable1);
+            local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Stable2);
+            LimitReached = Barracks1 or Barracks2;
+        end
+
+        -- Special building
+        if _Technology == Technologies.UP1_Monastery then
+            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery2);
+            local Building2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery3);
+            LimitReached = Building1 or Building2;
+        end
+        if _Technology == Technologies.UP2_Monastery then
+            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery1);
+            local Building2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery3);
+            LimitReached = Building1 or Building2;
+        end
+        if _Technology == Technologies.UP1_Market then
+            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Market2);
+            LimitReached = Building1;
+        end
+
+        if LimitReached then
+            XGUIEng.DisableButton(_Button, 1);
+            return true;
+        end
+        self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
+        return false;
     end
 end
 

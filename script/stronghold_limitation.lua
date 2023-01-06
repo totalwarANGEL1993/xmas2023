@@ -36,12 +36,18 @@ Stronghold.Limitation = {
             [Entities.PB_Monastery3] = 1,
             ---
             [Entities.PB_Market2] = 1,
+            [Entities.PB_Tavern1] = 6,
+            [Entities.PB_Tavern2] = 3,
+            [Entities.PB_Farm2] = 8,
+            [Entities.PB_Farm3] = 4,
+            [Entities.PB_Residence2] = -1,
+            [Entities.PB_Residence3] = 8,
             ---
-            [Entities.PB_Barracks1] = 1,
+            [Entities.PB_Barracks1] = 3,
             [Entities.PB_Barracks2] = 1,
-            [Entities.PB_Archery1] = 1,
+            [Entities.PB_Archery1] = 3,
             [Entities.PB_Archery2] = 1,
-            [Entities.PB_Stable1] = 1,
+            [Entities.PB_Stable1] = 3,
             [Entities.PB_Stable2] = 1,
         },
     },
@@ -153,6 +159,7 @@ end
 function Stronghold.Limitation:OnEntityDestroyed(_PlayerID, _EntityID)
     if self.Data[_PlayerID] then
         local Type = Logic.GetEntityType(_EntityID);
+        self:RemoveFromList("Potential", Type +1, _PlayerID, _EntityID);
         self:RemoveFromList("Potential", Type, _PlayerID, _EntityID);
         self:RemoveFromList("Current", Type, _PlayerID, _EntityID);
         self:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID);
@@ -164,7 +171,7 @@ function Stronghold.Limitation:OnUpgradeStarted(_PlayerID, _EntityID)
     if self.Data[_PlayerID] then
         local Type = Logic.GetEntityType(_EntityID);
         self.Data[_PlayerID].UpgradeBuildingLock = false;
-        self:AddToList("Potential", Type, _PlayerID, _EntityID);
+        self:AddToList("Potential", Type +1, _PlayerID, _EntityID);
         self:RemoveFromList("Current", Type, _PlayerID, _EntityID);
         -- self:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID);
         -- self:UpdateSelectionSerfConstrucButtons(_PlayerID);
@@ -174,7 +181,7 @@ end
 function Stronghold.Limitation:OnUpgradeCanceled(_PlayerID, _EntityID)
     if self.Data[_PlayerID] then
         local Type = Logic.GetEntityType(_EntityID);
-        self:RemoveFromList("Potential", Type, _PlayerID, _EntityID);
+        self:RemoveFromList("Potential", Type +1, _PlayerID, _EntityID);
         self:AddToList("Current", Type, _PlayerID, _EntityID);
         self:UpdateSelectionBuildingUpgradeButtons(_PlayerID, _EntityID);
         self:UpdateSelectionSerfConstrucButtons(_PlayerID);

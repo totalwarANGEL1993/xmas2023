@@ -10,6 +10,46 @@ Stronghold = {
     Outposts = {},
     Config = {
         AttractionLimit = {[1] = 100, [2] = 200, [3] = 300},
+
+        Ranks = {
+            [1] = {
+                Text = "Edelmann",
+                Costs = {0, 0, 0, 0, 0, 0, 0},
+            },
+            [2] = {
+                Text = "Landvogt",
+                Costs = {10, 50, 0, 0, 0, 0, 0},
+            },
+            [3] = {
+                Text = "Ritter",
+                Costs = {30, 100, 0, 0, 0, 0, 0},
+            },
+            [4] = {
+                Text = "Edler Ritter",
+                Costs = {50, 200, 0, 0, 0, 0, 0},
+            },
+            [5] = {
+                Text = "Fürst",
+                Costs = {100, 500, 0, 0, 0, 0, 0},
+            },
+            [6] = {
+                Text = "Baron",
+                Costs = {150, 1000, 0, 0, 0, 0, 0},
+            },
+            [7] = {
+                Text = "Graf",
+                Costs = {200, 2000, 0, 0, 0, 0, 0},
+            },
+            [8] = {
+                Text = "Herzog",
+                Costs = {250, 4000, 0, 0, 0, 0, 0},
+            },
+            [9] = {
+                Text = "Erzherzog",
+                Costs = {300, 10000, 0, 0, 0, 0, 0},
+            },
+        },
+
         HonorLimit = 9000,
         OutpostAttraction = 25,
         Text = {
@@ -38,6 +78,7 @@ function Stronghold:Init()
     self:InitAutomaticMapArchiveUnload();
     self:OverrideFrameworkRestartMap();
 
+    XGUIEng.TransferMaterials("Formation01", "Levy_Duties");
     XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
@@ -75,6 +116,7 @@ function Stronghold:OnSaveGameLoaded()
     self:LoadMapArchive();
     self:OverrideFrameworkRestartMap();
 
+    XGUIEng.TransferMaterials("Formation01", "Levy_Duties");
     XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
@@ -523,6 +565,55 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
 end
 
 -- -------------------------------------------------------------------------- --
+-- Rank
+
+function Stronghold:GetRank(_PlayerID)
+    if self:IsPlayer(_PlayerID) then
+        return self.Players[_PlayerID].Rank;
+    end
+    return 0;
+end
+
+function Stronghold:SetRank(_PlayerID, _Rank)
+    if self:IsPlayer(_PlayerID) then
+        self.Players[_PlayerID].Rank = _Rank;
+    end
+end
+
+function Stronghold:PromotePlayer(_PlayerID)
+    if self:CanPlayerBePromoted(_PlayerID) then
+        local Rank = self:GetRank(_PlayerID);
+        local RankName = self.Config.Ranks[Rank +1].Text;
+        self:SetRank(_PlayerID, Rank +1);
+
+        local Costs = CreateCostTable(unpack(self.Config.Ranks[Rank +1].Costs));
+        RemoveResourcesFromPlayer(_PlayerID, Costs);
+
+        local MsgText = "Erhebt Euch, " ..RankName.. "!";
+        if GUI.GetPlayerID() == _PlayerID then
+            GameCallback_GUI_SelectionChanged();
+        else
+            local PlayerName = UserTool_GetPlayerName(_PlayerID);
+            local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
+            MsgText = PlayerColor.. " " ..PlayerName.. " @color:180,180,180 wurde "..
+                        "befördert und ist nun @color:255,255,255 " ..RankName;
+        end
+        Message(MsgText);
+    end
+end
+
+function Stronghold:CanPlayerBePromoted(_PlayerID)
+    if self:IsPlayer(_PlayerID) then
+        local Rank = self:GetRank(_PlayerID);
+        if Rank == 0 or Rank >= 9 then
+            return false;
+        end
+        return true;
+    end
+    return false;
+end
+
+-- -------------------------------------------------------------------------- --
 -- Honor
 
 function Stronghold:AddPlayerHonor(_PlayerID, _Amount)
@@ -624,41 +715,65 @@ function Stronghold:OverwriteCommonCallbacks()
     self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
 	GameCallback_GUI_SelectionChanged = function()
 		Stronghold.Orig_GameCallback_GUI_SelectionChanged();
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+
+        local EntityID = GUI.GetSelectedEntity();
+        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold.Hero:OnSelectLeader(EntityID);
+        Stronghold.Hero:OnSelectHero(EntityID);
 	end
 
 	self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		Stronghold.Orig_GameCallback_OnBuildingConstructionComplete(_EntityID, _PlayerID);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
         Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
+
+        local EntityID = GUI.GetSelectedEntity();
+        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold.Hero:OnSelectLeader(EntityID);
+        Stronghold.Hero:OnSelectHero(EntityID);
 	end
 
 	self.Orig_GameCallback_OnBuildingUpgradeComplete = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
 		Stronghold.Orig_GameCallback_OnBuildingUpgradeComplete(_EntityIDOld, _EntityIDNew);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
         if Logic.IsEntityInCategory(_EntityIDNew, EntityCategories.Headquarters) == 1 then
             Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
         end
+
+        local EntityID = GUI.GetSelectedEntity();
+        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold.Hero:OnSelectLeader(EntityID);
+        Stronghold.Hero:OnSelectHero(EntityID);
 	end
 
 	self.Orig_GameCallback_OnTechnologyResearched = GameCallback_OnTechnologyResearched;
 	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
 		Stronghold.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+
+        local EntityID = GUI.GetSelectedEntity();
+        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold.Hero:OnSelectLeader(EntityID);
+        Stronghold.Hero:OnSelectHero(EntityID);
 	end
 
     self.Orig_GameCallback_OnCannonConstructionComplete = GameCallback_OnCannonConstructionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
         Stronghold.Orig_GameCallback_OnCannonConstructionComplete(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+
+        local EntityID = GUI.GetSelectedEntity();
+        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold.Hero:OnSelectLeader(EntityID);
+        Stronghold.Hero:OnSelectHero(EntityID);
     end
 
     self.Orig_GameCallback_OnTransactionComplete = GameCallback_OnTransactionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
         Stronghold.Orig_GameCallback_OnTransactionComplete(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(GUI.GetSelectedEntity());
+
+        local EntityID = GUI.GetSelectedEntity();
+        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold.Hero:OnSelectLeader(EntityID);
+        Stronghold.Hero:OnSelectHero(EntityID);
     end
 
 	self.Orig_Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded;

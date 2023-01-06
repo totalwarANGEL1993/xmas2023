@@ -5,6 +5,7 @@
 Stronghold = Stronghold or {};
 
 Stronghold.Hero = {
+    SyncEvents = {},
     Data = {},
     Config = {
         LordStats = {
@@ -68,7 +69,6 @@ Stronghold.Hero = {
 
         --- 
 
-        
         HeroSkills = {
             [Entities.PU_Hero1c]             = {
                 Description = "Passive Fähigkeit: @cr Für jeden Ingeneur auf der Burg wird zusätzliche Wetterenergie produziert."..
@@ -141,6 +141,10 @@ function Stronghold.Hero:Install()
 
     self:OverrideBuyHeroWindow();
     self:OverrideCalculationCallbacks();
+    self:OverrideLeaderFormationAction();
+    self:OverrideLeaderFormationTooltip();
+    self:OverrideLeaderFormationUpdate();
+    self:CreateHeroButtonHandlers();
     self:StartTriggers();
 end
 
@@ -151,6 +155,319 @@ function Stronghold.Hero:OnSaveGameLoaded()
         self:ConfigurePlayersSpouse(i);
     end
 end
+
+-- -------------------------------------------------------------------------- --
+-- Rank Up
+
+function Stronghold.Hero:CreateHeroButtonHandlers()
+    self.SyncEvents = {
+        RankUp = 1,
+    };
+    function Stronghold_ButtonCallback_Hero(_PlayerID, _Action, ...)
+        if _Action == Stronghold.Hero.SyncEvents.RankUp then
+            Stronghold:PromotePlayer(_PlayerID);
+        end
+    end
+    if CNetwork then
+        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Hero",
+            function(name, _PlayerID, _Action, ...)
+                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
+                    Stronghold_ButtonCallback_Hero(_PlayerID, _Action, unpack(arg));
+                end;
+            end
+        );
+    end;
+end
+
+function Stronghold.Hero:OverrideLeaderFormationAction()
+    self.Orig_GUIAction_ChangeFormation = GUIAction_ChangeFormation;
+    GUIAction_ChangeFormation = function(_Index)
+        local EntityID = GUI.GetSelectedEntity();
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return self.Orig_GUIAction_ChangeFormation(_Index);
+        end
+        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+            return self.Orig_GUIAction_ChangeFormation(_Index);
+        end
+        if _Index > 1 then
+            return self.Orig_GUIAction_ChangeFormation(_Index);
+        end
+
+        local Rank = Stronghold:GetRank(PlayerID);
+        local NextRank = Stronghold.Config.Ranks[Rank+1];
+        if NextRank then
+            local Costs = CreateCostTable(unpack(NextRank.Costs));
+            if not HasPlayerEnoughResourcesFeedback(Costs) then
+                return;
+            end
+        end
+
+        if Stronghold:CanPlayerBePromoted(PlayerID) then
+            Sync.Call(
+                "Stronghold_ButtonCallback_Hero",
+                PlayerID,
+                Stronghold.Hero.SyncEvents.RankUp
+            );
+        end
+    end
+end
+
+function Stronghold.Hero:OverrideLeaderFormationTooltip()
+    self.Orig_GUITooltip_NormalButton = GUITooltip_NormalButton;
+    GUITooltip_NormalButton = function(_Key)
+        local EntityID = GUI.GetSelectedEntity();
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return self.Orig_GUITooltip_NormalButton(_Key);
+        end
+        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+            return self.Orig_GUITooltip_NormalButton(_Key);
+        end
+
+        local CostText = "";
+        local Text = "";
+        local NextRank = Stronghold:GetRank(PlayerID) +1;
+        if _Key == "MenuCommandsGeneric/formation_group" then
+            if Stronghold.Config.Ranks[NextRank] then
+                Text = "@color:180,180,180 " ..Stronghold.Config.Ranks[NextRank].Text..
+                       " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
+                       " erheben, um neuen Privilegien zu genießen.";
+
+                local Costs = Stronghold.Config.Ranks[NextRank].Costs;
+                CostText = FormatCostString(PlayerID, CreateCostTable(unpack(Costs)));
+            else
+                Text = "@color:180,180,180 Höchster Rang @color:255,255,255 @cr "..
+                       " Ihr könnt keinen höheren Rang erreichen.";
+            end
+        else
+            return self.Orig_GUITooltip_NormalButton(_Key);
+        end
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    end
+end
+
+function Stronghold.Hero:OverrideLeaderFormationUpdate()
+    self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
+    GUIUpdate_BuildingButtons = function(_Button, _Technology)
+        local EntityID = GUI.GetSelectedEntity();
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return self.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
+        end
+        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+            return self.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
+        end
+        local Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
+        XGUIEng.DisableButton(_Button, Disabled);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Selection Menu
+
+function Stronghold.Hero:OnSelectLeader(_EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    if GUI.GetPlayerID() ~= PlayerID and not Stronghold:IsPlayer(PlayerID) then
+        return;
+    end
+    if Logic.IsLeader(_EntityID) == 0 then
+        return;
+    end
+
+    XGUIEng.SetWidgetPosition("Command_Attack", 4, 4);
+    XGUIEng.SetWidgetPosition("Command_Stand", 38, 4);
+    XGUIEng.SetWidgetPosition("Command_Defend", 72, 4);
+    XGUIEng.SetWidgetPosition("Command_Patrol", 106, 4);
+    XGUIEng.SetWidgetPosition("Command_Guard", 140, 4);
+    XGUIEng.SetWidgetPosition("Formation01", 4, 38);
+
+    XGUIEng.TransferMaterials("Levy_Duties", "Formation01");
+    XGUIEng.ShowWidget("Selection_Leader", 1);
+    XGUIEng.ShowWidget("Commands_Leader", 1);
+    for i= 1, 4 do
+        XGUIEng.ShowWidget("Formation0" ..i, 1);
+        if XGUIEng.IsButtonDisabled("Formation0" ..i) == 1 then
+            if Logic.IsTechnologyResearched(_EntityID, Technologies.GT_StandingArmy) == 1 then
+                XGUIEng.DisableButton("Formation0" ..i, 0);
+            end
+        end
+    end
+end
+
+function Stronghold.Hero:OnSelectHero(_EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    if GUI.GetPlayerID() ~= PlayerID and not Stronghold:IsPlayer(PlayerID) then
+        return;
+    end
+    if Logic.IsHero(_EntityID) == 0 then
+        return;
+    end
+
+    XGUIEng.SetWidgetPosition("Command_Attack", 4, 4);
+    XGUIEng.SetWidgetPosition("Command_Stand", 38, 4);
+    XGUIEng.SetWidgetPosition("Command_Defend", 72, 4);
+    XGUIEng.SetWidgetPosition("Command_Patrol", 106, 4);
+    XGUIEng.SetWidgetPosition("Command_Guard", 140, 4);
+    XGUIEng.SetWidgetPosition("Formation01", 404, 4);
+
+    local Formation1Visible = 0;
+    local Formation1Disabled = 0;
+    if GetID(Stronghold.Players[PlayerID].LordScriptName) == _EntityID then
+        Formation1Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
+        Formation1Visible = 1;
+        XGUIEng.TransferMaterials("Upgrade_Foundry1", "Formation01");
+        XGUIEng.ShowWidget("Selection_Leader", 1);
+        XGUIEng.ShowWidget("Commands_Leader", 1);
+    end
+    XGUIEng.ShowWidget("Formation01", Formation1Visible);
+    XGUIEng.DisableButton("Formation01", Formation1Disabled);
+    XGUIEng.ShowWidget("Formation02", 0);
+    XGUIEng.ShowWidget("Formation03", 0);
+    XGUIEng.ShowWidget("Formation04", 0);
+
+    self:OnSelectHero1(_EntityID);
+    self:OnSelectHero2(_EntityID);
+    self:OnSelectHero3(_EntityID);
+    self:OnSelectHero4(_EntityID);
+    self:OnSelectHero5(_EntityID);
+    self:OnSelectHero6(_EntityID);
+    self:OnSelectHero7(_EntityID);
+    self:OnSelectHero8(_EntityID);
+    self:OnSelectHero9(_EntityID);
+    self:OnSelectHero10(_EntityID);
+    self:OnSelectHero11(_EntityID);
+    self:OnSelectHero12(_EntityID);
+end
+
+function Stronghold.Hero:OnSelectHero1(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    local TypeName = Logic.GetEntityTypeName(Type);
+    if string.find(TypeName, "^PU_Hero1[abc]+$") then
+        XGUIEng.SetWidgetPosition("Hero1_RechargeProtectUnits", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero1_ProtectUnits", 4, 38);
+        XGUIEng.ShowWidget("Hero1_RechargeSendHawk", 0);
+        XGUIEng.ShowWidget("Hero1_SendHawk", 0);
+        XGUIEng.ShowWidget("Hero1_LookAtHawk", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero2(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero2 then
+        XGUIEng.SetWidgetPosition("Hero2_RechargePlaceBomb", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero2_PlaceBomb", 4, 38);
+        XGUIEng.ShowWidget("Hero2_RechargeBuildCannon", 0);
+        XGUIEng.ShowWidget("GUIAction_Hero2BuildCannon", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero3(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero3 then
+        XGUIEng.SetWidgetPosition("Hero3_RechargeBuildTrap", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero3_BuildTrap", 4, 38);
+        XGUIEng.ShowWidget("Hero3_RechargeHeal", 0);
+        XGUIEng.ShowWidget("Hero3_Heal", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero4(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero4 then
+        XGUIEng.SetWidgetPosition("Hero4_RechargeCircularAttack", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero4_CircularAttack", 4, 38);
+        XGUIEng.ShowWidget("Hero4_RechargeAuraOfWar", 0);
+        XGUIEng.ShowWidget("Hero4_AuraOfWar", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero5(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero5 then
+        XGUIEng.SetWidgetPosition("Hero5_RechargeSummon", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero5_Summon", 4, 38);
+        XGUIEng.ShowWidget("Hero5_RechargeCamouflage", 0);
+        XGUIEng.ShowWidget("Hero5_Camouflage", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero6(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero6 then
+        XGUIEng.SetWidgetPosition("Hero6_RechargeBless", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero6_Bless", 4, 38);
+        XGUIEng.ShowWidget("Hero6_RechargeConvertSettler", 0);
+        XGUIEng.ShowWidget("Hero6_ConvertSettler", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero7(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.CU_BlackKnight then
+        XGUIEng.SetWidgetPosition("Hero7_RechargeMadness", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero7_Madness", 4, 38);
+        XGUIEng.ShowWidget("Hero7_RechargeInflictFear", 0);
+        XGUIEng.ShowWidget("Hero7_InflictFear", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero8(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.CU_Mary_de_Mortfichet then
+        XGUIEng.SetWidgetPosition("Hero8_RechargeMoraleDamage", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero8_MoraleDamage", 4, 38);
+        XGUIEng.ShowWidget("Hero8_RechargePoison", 0);
+        XGUIEng.ShowWidget("Hero8_Poison", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero9(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.CU_Barbarian_Hero then
+        XGUIEng.SetWidgetPosition("Hero9_RechargeCallWolfs", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero9_CallWolfs", 4, 38);
+        XGUIEng.ShowWidget("Hero9_RechargeBerserk", 0);
+        XGUIEng.ShowWidget("Hero9_Berserk", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero10(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero10 then
+        XGUIEng.SetWidgetPosition("Hero10_RechargeLongRangeAura", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero10_LongRangeAura", 4, 38);
+        XGUIEng.ShowWidget("Hero10_RechargeSniperAttack", 0);
+        XGUIEng.ShowWidget("Hero10_SniperAttack", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero11(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero11 then
+        XGUIEng.SetWidgetPosition("Hero11_RechargeFireworksMotivate", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero11_FireworksMotivate", 4, 38);
+        XGUIEng.ShowWidget("Hero11_RechargeShuriken", 0);
+        XGUIEng.ShowWidget("Hero11_RechargeFireworksFear", 0);
+        XGUIEng.ShowWidget("Hero11_Shuriken", 0);
+        XGUIEng.ShowWidget("Hero11_FireworksFear", 0);
+    end
+end
+
+function Stronghold.Hero:OnSelectHero12(_EntityID)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type == Entities.PU_Hero10 then
+        XGUIEng.SetWidgetPosition("Hero12_RechargePoisonArrows", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero12_PoisonArrows", 4, 38);
+        XGUIEng.ShowWidget("Hero12_RechargePoisonRange", 0);
+        XGUIEng.ShowWidget("Hero12_PoisonRange", 0);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- 
 
 function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
     if not Stronghold:IsPlayer(_PlayerID) then
@@ -584,7 +901,9 @@ function Stronghold.Hero:EnergyProductionBonus(_PlayerID)
     if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
         local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
         if Amount > 0 then
-            Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.WeatherEnergy, Amount * 2);
+            if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
+                Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.WeatherEnergy, Amount);
+            end
         end
     end
 end
@@ -594,7 +913,9 @@ function Stronghold.Hero:FaithProductionBonus(_PlayerID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
         local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
         if Amount > 0 then
-            Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount * 2);
+            if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
+                Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount);
+            end
         end
     end
 end
