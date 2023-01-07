@@ -1118,7 +1118,6 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
     if Action > 0 then
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = CreateCostTable(unpack(Config.Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
@@ -1197,7 +1196,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = CreateCostTable(unpack(Costs));
         CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
@@ -1217,7 +1216,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = CreateCostTable(unpack(Costs));
         CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
@@ -1236,7 +1235,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = CreateCostTable(unpack(Costs));
         CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
@@ -1256,7 +1255,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        Costs = CreateCostTable(unpack(Costs));
         CostsText = FormatCostString(_PlayerID, Costs);
 
         -- Disabled text

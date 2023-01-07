@@ -694,6 +694,9 @@ end
 -- Menu update
 -- This calls all updates of the selection menu when selection has changed.
 function Stronghold:OnSelectionMenuChanged(_EntityID)
+    self.Hero:OnSelectLeader(_EntityID);
+    self.Hero:OnSelectHero(_EntityID);
+
     self.Building:OnHeadquarterSelected(_EntityID);
     self.Building:OnBarracksSelected(_EntityID);
     self.Building:OnArcherySelected(_EntityID);
@@ -705,66 +708,50 @@ end
 function Stronghold:OverwriteCommonCallbacks()
     self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
 	GameCallback_GUI_SelectionChanged = function()
-		Stronghold.Orig_GameCallback_GUI_SelectionChanged();
-
         local EntityID = GUI.GetSelectedEntity();
+		Stronghold.Orig_GameCallback_GUI_SelectionChanged();
         Stronghold:OnSelectionMenuChanged(EntityID);
-        Stronghold.Hero:OnSelectLeader(EntityID);
-        Stronghold.Hero:OnSelectHero(EntityID);
 	end
 
 	self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		Stronghold.Orig_GameCallback_OnBuildingConstructionComplete(_EntityID, _PlayerID);
-        Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
-
         local EntityID = GUI.GetSelectedEntity();
+        Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
         Stronghold:OnSelectionMenuChanged(EntityID);
-        Stronghold.Hero:OnSelectLeader(EntityID);
-        Stronghold.Hero:OnSelectHero(EntityID);
 	end
 
 	self.Orig_GameCallback_OnBuildingUpgradeComplete = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
+        local EntityID = GUI.GetSelectedEntity();
 		Stronghold.Orig_GameCallback_OnBuildingUpgradeComplete(_EntityIDOld, _EntityIDNew);
         if Logic.IsEntityInCategory(_EntityIDNew, EntityCategories.Headquarters) == 1 then
             Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
         end
-
-        local EntityID = GUI.GetSelectedEntity();
-        Stronghold:OnSelectionMenuChanged(EntityID);
-        Stronghold.Hero:OnSelectLeader(EntityID);
-        Stronghold.Hero:OnSelectHero(EntityID);
+        if EntityID == _EntityIDNew then
+            Stronghold:OnSelectionMenuChanged(_EntityIDNew);
+        end
 	end
 
 	self.Orig_GameCallback_OnTechnologyResearched = GameCallback_OnTechnologyResearched;
 	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
-		Stronghold.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
-
         local EntityID = GUI.GetSelectedEntity();
+		Stronghold.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
         Stronghold:OnSelectionMenuChanged(EntityID);
-        Stronghold.Hero:OnSelectLeader(EntityID);
-        Stronghold.Hero:OnSelectHero(EntityID);
 	end
 
     self.Orig_GameCallback_OnCannonConstructionComplete = GameCallback_OnCannonConstructionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
-        Stronghold.Orig_GameCallback_OnCannonConstructionComplete(_BuildingID, _null);
-
         local EntityID = GUI.GetSelectedEntity();
+        Stronghold.Orig_GameCallback_OnCannonConstructionComplete(_BuildingID, _null);
         Stronghold:OnSelectionMenuChanged(EntityID);
-        Stronghold.Hero:OnSelectLeader(EntityID);
-        Stronghold.Hero:OnSelectHero(EntityID);
     end
 
     self.Orig_GameCallback_OnTransactionComplete = GameCallback_OnTransactionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
-        Stronghold.Orig_GameCallback_OnTransactionComplete(_BuildingID, _null);
-
         local EntityID = GUI.GetSelectedEntity();
+        Stronghold.Orig_GameCallback_OnTransactionComplete(_BuildingID, _null);
         Stronghold:OnSelectionMenuChanged(EntityID);
-        Stronghold.Hero:OnSelectLeader(EntityID);
-        Stronghold.Hero:OnSelectHero(EntityID);
     end
 
 	self.Orig_Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded;

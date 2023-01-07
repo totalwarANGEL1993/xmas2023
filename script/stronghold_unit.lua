@@ -211,12 +211,13 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             local TypeName = Logic.GetEntityTypeName(_Type);
             local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
+            local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
             local Costs = CreateCostTable(unpack(self.Config.Units[_Type].Costs));
 
             -- Passive ability: experienced troops
             local Experience = 0;
-            if IsLeader and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-                Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+            if IsLeader and not IsCannon and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
+                Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
                 Experience = 3;
             end
 
