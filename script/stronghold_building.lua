@@ -1392,7 +1392,6 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
 
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
     return true;
 end
 
@@ -1575,9 +1574,9 @@ end
 -- Upgrade Button
 
 function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
+    -- Don't let EMS fuck with my script...
     if EMS then
-        function EMS.RD.Rules.Markets:Evaluate(self)
-        end
+        function EMS.RD.Rules.Markets:Evaluate(self) end
     end
 
     self.GUITooltip_UpgradeBuilding = GUITooltip_UpgradeBuilding;
@@ -1604,15 +1603,25 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
                 ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]";
         end
 
+        -- Limit factor
+        local LimitFactor = 1.0;
+        if _Type == Entities.PB_Farm1
+        or _Type == Entities.PB_Farm2
+        or _Type == Entities.PB_Residence1
+        or _Type == Entities.PB_Residence2 then
+            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
+                LimitFactor = 1.5;
+            end
+            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
+                LimitFactor = 2.0;
+            end
+        end
+
         -- Effect text
         local EffectText = "";
-        local TypeName = Logic.GetEntityTypeName(_Type)
-        -- if string.find(TypeName, "PB_") then
         if _Type == Entities.PB_Tavern1
         or _Type == Entities.PB_Tower1
         or _Type == Entities.PB_Tower2
-        or _Type == Entities.PB_Headquarters1
-        or _Type == Entities.PB_Headquarters2
         or _Type == Entities.PB_Farm1
         or _Type == Entities.PB_Farm2
         or _Type == Entities.PB_Residence1
@@ -1640,7 +1649,7 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         end
 
         -- Building limit
-        local BuildingMax = Stronghold.Limitation:GetTypeLimit(_Type +1);
+        local BuildingMax = Stronghold.Limitation:GetTypeLimit(_Type +1, LimitFactor);
         if BuildingMax > -1 then
             local BuildingCount = Stronghold.Limitation:GetTypeUsage(PlayerID, _Type +1);
             Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
@@ -1659,6 +1668,14 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold.Building.Data[PlayerID] then
             return self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
+        end
+
+        local LimitFactor = 1.0;
+        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
+            LimitFactor = 1.5;
+        end
+        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
+            LimitFactor = 2.0;
         end
 
         local LimitReached = false;
@@ -1696,6 +1713,23 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
             LimitReached = Building1;
         end
 
+        -- Supply
+        if _Technology == Technologies.UP1_Farm then
+            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Farm2, LimitFactor);
+            LimitReached = Building1;
+        end
+        if _Technology == Technologies.UP2_Farm then
+            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Farm3, LimitFactor);
+            LimitReached = Building1;
+        end
+        if _Technology == Technologies.UP1_Residence then
+            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Residence2, LimitFactor);
+            LimitReached = Building1;
+        end
+        if _Technology == Technologies.UP2_Residence then
+            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Residence3, LimitFactor);
+            LimitReached = Building1;
+        end
         if LimitReached then
             XGUIEng.DisableButton(_Button, 1);
             return true;

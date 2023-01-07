@@ -44,11 +44,11 @@ Stronghold.Limitation = {
             [Entities.PB_Residence2] = 8,
             [Entities.PB_Residence3] = 4,
             ---
-            [Entities.PB_Barracks1] = 3,
+            [Entities.PB_Barracks1] = 1,
             [Entities.PB_Barracks2] = 1,
-            [Entities.PB_Archery1] = 3,
+            [Entities.PB_Archery1] = 1,
             [Entities.PB_Archery2] = 1,
-            [Entities.PB_Stable1] = 3,
+            [Entities.PB_Stable1] = 1,
             [Entities.PB_Stable2] = 1,
         },
     },
@@ -73,13 +73,13 @@ end
 
 -- Must be called on savegame loaded
 function Stronghold.Limitation:OnSaveGameLoaded()
-    self:OverrideUpgradeBuilding();
 end
 
 -- Checks if the limit is reached
-function Stronghold.Limitation:IsTypeLimitReached(_PlayerID, _Type)
+function Stronghold.Limitation:IsTypeLimitReached(_PlayerID, _Type, _Factor)
+    _Factor = _Factor or 1;
     if self.Data[_PlayerID] then
-        local Limit = self:GetTypeLimit(_Type);
+        local Limit = self:GetTypeLimit(_Type, _Factor);
         if Limit > -1 then
             return self:GetTypeUsage(_PlayerID, _Type) >= Limit;
         end
@@ -113,9 +113,10 @@ end
 -- -1   No limit
 --  0   Forbidden
 -- >0   Limit
-function Stronghold.Limitation:GetTypeLimit(_Type)
+function Stronghold.Limitation:GetTypeLimit(_Type, _Factor)
+    _Factor = _Factor or 1;
     if self.Config.Limits[_Type] then
-        return self.Config.Limits[_Type];
+        return math.floor(self.Config.Limits[_Type] * _Factor);
     end
     return -1;
 end
@@ -260,30 +261,9 @@ function Stronghold.Limitation:UpdateSelectionBuildingUpgradeButtons(_PlayerID, 
 end
 
 function Stronghold.Limitation:OverrideUpgradeBuilding()
-    self.GUI_UpgradeSingleBuilding = GUI.UpgradeSingleBuilding;
-    GUI.UpgradeSingleBuilding = function(_EntityID)
-        local PlayerID = Logic.EntityGetPlayer(_EntityID);
-        if not Stronghold.Limitation.Data[PlayerID] then
-            return Stronghold.Limitation.GUI_UpgradeSingleBuilding(_EntityID);
-        end
-
-        -- Upgrade only if not waiting for server response
-        -- (Prevent framerate and pause abuse)
-        if not Stronghold.Limitation.Data[PlayerID].UpgradeBuildingLock then
-            Stronghold.Limitation.Data[PlayerID].UpgradeBuildingLock = true;
-            Stronghold.Limitation.GUI_UpgradeSingleBuilding(_EntityID);
-
-            Sync.Call(
-                "Stronghold_Limitation_SyncEvent",
-                PlayerID,
-                Stronghold.Limitation.SyncEvent.UpgradeStarted,
-                _EntityID
-            );
-        end
-    end
-
     self.Orig_GUIAction_UpgradeSelectedBuilding = GUIAction_UpgradeSelectedBuilding;
 	GUIAction_UpgradeSelectedBuilding = function()
+        local PlayerID = GUI.GetPlayerID();
 		local EntityID = GUI.GetSelectedEntity();
 		local Type = Logic.GetEntityType(EntityID);
 
@@ -303,7 +283,20 @@ function Stronghold.Limitation:OverrideUpgradeBuilding()
         gvGUI_UpdateButtonIDArray[EntityID] = XGUIEng.GetCurrentWidgetID();
         Logic.FillBuildingUpgradeCostsTable(Type, InterfaceGlobals.CostTable);
         if InterfaceTool_HasPlayerEnoughResources_Feedback(InterfaceGlobals.CostTable) == 1 then
-            GUI.UpgradeSingleBuilding(EntityID);
+            if not Stronghold.Limitation.Data[PlayerID] then
+                GUI.UpgradeSingleBuilding(EntityID);
+            else
+                if not Stronghold.Limitation.Data[PlayerID].UpgradeBuildingLock then
+                    Stronghold.Limitation.Data[PlayerID].UpgradeBuildingLock = true;
+                    GUI.UpgradeSingleBuilding(EntityID);
+                    Sync.Call(
+                        "Stronghold_Limitation_SyncEvent",
+                        PlayerID,
+                        Stronghold.Limitation.SyncEvent.UpgradeStarted,
+                        EntityID
+                    );
+                end
+            end
             XGUIEng.ShowWidget(gvGUI_WidgetID.UpgradeInProgress, 1);
             XGUIEng.DoManualButtonUpdate(gvGUI_WidgetID.InGame);
         end

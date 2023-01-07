@@ -64,8 +64,8 @@ Stronghold.Economy = {
                 [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
                 [Entities.PB_Tavern2] = {Honor = 0, Reputation = 6,},
                 ---
-                [Entities.PB_Farm2] = {Honor = 1, Reputation = 0,},
-                [Entities.PB_Farm3] = {Honor = 2, Reputation = 0,},
+                [Entities.PB_Farm2] = {Honor = 2, Reputation = 0,},
+                [Entities.PB_Farm3] = {Honor = 3, Reputation = 0,},
                 ---
                 [Entities.PB_Residence2] = {Honor = 0, Reputation = 1,},
                 [Entities.PB_Residence3] = {Honor = 0, Reputation = 2,},

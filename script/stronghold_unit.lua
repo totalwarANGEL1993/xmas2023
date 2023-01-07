@@ -369,8 +369,21 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
             return Stronghold.Unit.Orig_GUITooltip_ConstructBuilding(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end
 
+        -- Limit factor
+        -- (Only for beautification)
+        local LimitFactor = 1.0;
+        local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
+        if UpgradeCategoryName and string.find(UpgradeCategoryName, "Beautification") then
+            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
+                LimitFactor = 1.5;
+            end
+            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
+                LimitFactor = 2.0;
+            end
+        end
+
         -- Building limit
-        local BuildingMax = Stronghold.Limitation:GetTypeLimit(Type);
+        local BuildingMax = Stronghold.Limitation:GetTypeLimit(Type, LimitFactor);
         if BuildingMax > -1 then
             local BuildingCount = Stronghold.Limitation:GetTypeUsage(PlayerID, Type);
             Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
@@ -422,23 +435,29 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
         return true;
     end
 
+    -- Limit factor
+    local LimitFactor = 1.0;
+    if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2) > 0 then
+        LimitFactor = 1.5;
+    end
+    if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3) > 0 then
+        LimitFactor = 2.0;
+    end
+
     local LimitReached = false;
 
     -- Recruiter buildings
     if _Technology == Technologies.B_Barracks then
         local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Barracks1);
-        local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Barracks2);
-        LimitReached = Barracks1 or Barracks2;
+        LimitReached = Barracks1;
     end
     if _Technology == Technologies.B_Archery then
         local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Archery1);
-        local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Archery2);
-        LimitReached = Barracks1 or Barracks2;
+        LimitReached = Barracks1;
     end
     if _Technology == Technologies.B_Stables then
         local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Stable1);
-        local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Entities.PB_Stable2);
-        LimitReached = Barracks1 or Barracks2;
+        LimitReached = Barracks1;
     end
 
     -- Special buildings
@@ -452,7 +471,7 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
     -- Beautification
     if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
         local Type = Entities["P" ..TechnologyName];
-        LimitReached = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Type);
+        LimitReached = Stronghold.Limitation:IsTypeLimitReached(_PlayerID, Type, LimitFactor);
     end
 
     if LimitReached then
