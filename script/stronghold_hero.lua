@@ -9,7 +9,7 @@ Stronghold.Hero = {
     Data = {},
     Config = {
         LordStats = {
-            Health = 5000,
+            Health = 2500,
             Armor = 6,
             Damage = 50,
             Healing = 1,
@@ -63,9 +63,9 @@ Stronghold.Hero = {
 
         HeroSkills = {
             [Entities.PU_Hero1c]             = {
-                Description = "Passive Fähigkeit: @cr Für jeden Ingeneur auf der Burg wird zusätzliche Wetterenergie produziert."..
+                Description = "Passive Fähigkeit: @cr Der Sold aller Einheiten wird von der Krone bezahl wodurch Euch alle Einheiten 15% weniger kosten."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann feindliche Einheiten verjagen (außer Nebelvolk).",
+                              "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
             },
             [Entities.PU_Hero2]              = {
                 Description = "Passive Fähigkeit: @cr Jedes mal wenn eine Mine Rohstoffe abbaut, wird ein zusätzlicher veredelbarer Rohstoff erzeugt."..
@@ -73,7 +73,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
             },
             [Entities.PU_Hero3]              = {
-                Description = "Passive Fähigkeit: @cr Wissen ist Macht! Jedes Mal wenn eine Technologie erforscht wird, erhaltet Ihr 3 Ehre."..
+                Description = "Passive Fähigkeit: @cr Wissen ist Macht! Jedes Mal wenn Ihr eine Technologie erforscht, erhaltet Ihr 3 Ehre."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann Fallen verstecken, die explodieren, wenn Feinde in der Nähe sind.",
             },
@@ -108,7 +108,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Ruft die mächtigen Wölfe Hati und Skalli herbei, die Ehre erzeugen, wenn sie Feinde töten.",
             },
             [Entities.PU_Hero10]             = {
-                Description = "Passive Fähigkeit: @cr Training und Unterhalt aller Scharfschützen wird effizienter und senkt die Soldkosten um 10%."..
+                Description = "Passive Fähigkeit: @cr Durch effizientere Trainingsmethoden sinken die Kosten für den Unterhalt aller Scharfschützen um 50%."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
             },
@@ -118,7 +118,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
             },
             [Entities.CU_Evil_Queen] = {
-                Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate hebt Euer Bevölkerungslimit um 30% an."..
+                Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen Wandel, der Euer Bevölkerungslimit um 30% anhebt."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
             },
@@ -702,7 +702,6 @@ end
 function Stronghold_Hero_Trigger_OnEveryTurn()
     for i= 1, table.getn(Score.Player) do
         Stronghold.Hero:EntityAttackedController(i);
-        Stronghold.Hero:EnergyProductionBonus(i);
         Stronghold.Hero:FaithProductionBonus(i);
     end
 end
@@ -818,10 +817,9 @@ end
 
 function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)
     if Stronghold:IsPlayer(_PlayerID) then
-        -- Check lord
-        local LordID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
-        if IsEntityValid(LordID) then
-            local HeroType = Logic.GetEntityType(LordID);
+        local LairdID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
+        if IsEntityValid(LairdID) then
+            local HeroType = Logic.GetEntityType(LairdID);
             local TypeName = Logic.GetEntityTypeName(HeroType);
             if type(_Type) == "string" and TypeName and string.find(TypeName, _Type) then
                 return true;
@@ -830,25 +828,13 @@ function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)
             end
         end
     end
-    -- No hero found
     return false;
 end
 
+-- Passive Ability: Produce honor for technology
 function Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
         AddHonor(_PlayerID, 3);
-    end
-end
-
--- Passive Ability: Weather energy production bonus
-function Stronghold.Hero:EnergyProductionBonus(_PlayerID)
-    if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
-        local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Engineer);
-        if Amount > 0 then
-            if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
-                Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.WeatherEnergy, Amount);
-            end
-        end
     end
 end
 
@@ -871,7 +857,6 @@ function Stronghold.Hero:ResourceProductionBonus(_PlayerID, _Type, _Amount)
         if _Amount >= 4 then
             if _Type == ResourceType.SulfurRaw
             or _Type == ResourceType.ClayRaw
-            or _Type == ResourceType.WoodRaw
             or _Type == ResourceType.StoneRaw
             or _Type == ResourceType.IronRaw then
                 -- TODO: Maybe use the non-raw here?
@@ -974,7 +959,9 @@ end
 -- Passive Ability: Upkeep discount
 function Stronghold.Hero:ApplyUpkeepDiscountPassiveAbility(_PlayerID, _Upkeep)
     local Upkeep = _Upkeep;
-    -- Do nothing
+    if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
+        Upkeep = Upkeep * 0.85;
+    end
     return Upkeep;
 end
 
@@ -989,7 +976,7 @@ function Stronghold.Hero:ApplyUnitUpkeepDiscountPassiveAbility(_PlayerID, _Type,
     end
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero10) then
         if _Type == Entities.PU_LeaderRifle1 or _Type == Entities.PU_LeaderRifle2 then
-            Upkeep = Upkeep * 0.9;
+            Upkeep = Upkeep * 0.5;
         end
     end
     return Upkeep;

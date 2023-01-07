@@ -352,7 +352,8 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
         or _UpgradeCategory == UpgradeCategories.Barracks
         or _UpgradeCategory == UpgradeCategories.Archery
         or _UpgradeCategory == UpgradeCategories.Stable
-        or _UpgradeCategory == UpgradeCategories.Monastery then
+        or _UpgradeCategory == UpgradeCategories.Monastery
+        or _UpgradeCategory == UpgradeCategories.PowerPlant then
             local Effects = Stronghold.Economy.Config.Income.Buildings[Type];
             if Effects then
                 if Effects.Reputation > 0 then
@@ -386,6 +387,23 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
         local BuildingMax = math.floor(GetLimitOfType(Type) * LimitFactor);
         if BuildingMax > -1 then
             local BuildingCount = GetUsageOfType(PlayerID, Type);
+            if _UpgradeCategory == UpgradeCategories.Tower then
+                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Tower2);
+                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Tower3);
+            end
+            if _UpgradeCategory == UpgradeCategories.Monastery then
+                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Monastery2);
+                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Monastery3);
+            end
+            if _UpgradeCategory == UpgradeCategories.Barracks then
+                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Barracks2);
+            end
+            if _UpgradeCategory == UpgradeCategories.Archery then
+                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Archery2);
+            end
+            if _UpgradeCategory == UpgradeCategories.Stable then
+                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Stable2);
+            end
             Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
         end
 
@@ -473,6 +491,11 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
         local Building2 = GetUsageOfType(_PlayerID, Entities.PB_Monastery2);
         local Building3 = GetUsageOfType(_PlayerID, Entities.PB_Monastery3);
         LimitReached = Limit <= (Building1 + Building2 + Building3);
+    end
+    if _Technology == Technologies.B_PowerPlant then
+        local Limit = GetLimitOfType(Entities.PB_PowerPlant1);
+        local Building1 = GetUsageOfType(_PlayerID, Entities.PB_PowerPlant1);
+        LimitReached = Limit <= Building1;
     end
 
     -- Beautification

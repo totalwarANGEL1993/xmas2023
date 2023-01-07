@@ -36,7 +36,7 @@ Stronghold.Limitation = {
             [UpgradeCategories.Residence]           = {[1] = -1, [2] =  8, [3] =  4, [4] = -1},
             [UpgradeCategories.Market]              = {[1] = -1, [2] =  1, [3] = -1, [4] = -1},
             [UpgradeCategories.Tavern]              = {[1] =  6, [2] =  3, [3] = -1, [4] = -1},
-            [UpgradeCategories.PowerPlant]          = {[1] =  3, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.PowerPlant]          = {[1] =  1, [2] = -1, [3] = -1, [4] = -1},
             ---
             [UpgradeCategories.Tower]               = {[1] = -1, [2] = -1, [3] = -1, [4] = -1},
             [UpgradeCategories.Barracks]            = {[1] =  1, [2] =  1, [3] = -1, [4] = -1},

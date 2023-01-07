@@ -11,8 +11,8 @@ Stronghold.Building = {
     Data = {},
     Config = {
         Headquarters = {
-            Health = {5000, 7500, 10000},
-            Armor  = {8, 12, 16}
+            Health = {3500, 4500, 5500},
+            Armor  = {8, 10, 12}
         },
 
         Monastery = {
@@ -1530,21 +1530,18 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
         -- Recruiter buildings
         if _Technology == Technologies.UP1_Barracks then
             local Limit = GetLimitOfType(Entities.PB_Barracks1);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Barracks1);
-            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Barracks2);
-            LimitReached = Limit <= (Building1 + Building2);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Barracks2);
+            LimitReached = Limit <= Building1;
         end
         if _Technology == Technologies.UP1_Archery then
             local Limit = GetLimitOfType(Entities.PB_Archery1);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Archery1);
-            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Archery2);
-            LimitReached = Limit <= (Building1 + Building2);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Archery2);
+            LimitReached = Limit <= Building1;
         end
         if _Technology == Technologies.UP1_Stables then
             local Limit = GetLimitOfType(Entities.PB_Stable1);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Stable1);
-            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Stable2);
-            LimitReached = Limit <= (Building1 + Building2);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Stable2);
+            LimitReached = Limit <= Building1;
         end
 
         -- Special building
