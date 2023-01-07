@@ -185,7 +185,8 @@
         "DARKMOORMUSIC",
         "CMod",
         "gvGUI_UpdateButtonIDArray",
-        "Abilities"
+        "Abilities",
+        "CLogic"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

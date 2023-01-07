@@ -1649,9 +1649,9 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         end
 
         -- Building limit
-        local BuildingMax = Stronghold.Limitation:GetTypeLimit(_Type +1, LimitFactor);
+        local BuildingMax = math.floor(GetLimitOfType(_Type +1) * LimitFactor);
         if BuildingMax > -1 then
-            local BuildingCount = Stronghold.Limitation:GetTypeUsage(PlayerID, _Type +1);
+            local BuildingCount = GetUsageOfType(PlayerID, _Type +1);
             Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
         end
 
@@ -1682,53 +1682,63 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
 
         -- Recruiter buildings
         if _Technology == Technologies.UP1_Barracks then
-            local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Barracks1);
-            local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Barracks2);
-            LimitReached = Barracks1 or Barracks2;
+            local Limit = GetLimitOfType(Entities.PB_Barracks1);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Barracks1);
+            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Barracks2);
+            LimitReached = Limit <= (Building1 + Building2);
         end
         if _Technology == Technologies.UP1_Archery then
-            local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Archery1);
-            local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Archery2);
-            LimitReached = Barracks1 or Barracks2;
+            local Limit = GetLimitOfType(Entities.PB_Archery1);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Archery1);
+            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Archery2);
+            LimitReached = Limit <= (Building1 + Building2);
         end
         if _Technology == Technologies.UP1_Stables then
-            local Barracks1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Stable1);
-            local Barracks2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Stable2);
-            LimitReached = Barracks1 or Barracks2;
+            local Limit = GetLimitOfType(Entities.PB_Stable1);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Stable1);
+            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Stable2);
+            LimitReached = Limit <= (Building1 + Building2);
         end
 
         -- Special building
         if _Technology == Technologies.UP1_Monastery then
-            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery2);
-            local Building2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery3);
-            LimitReached = Building1 or Building2;
+            local Limit = GetLimitOfType(Entities.PB_Monastery2);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Monastery2);
+            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Monastery3);
+            LimitReached = Limit <= (Building1 + Building2);
         end
         if _Technology == Technologies.UP2_Monastery then
-            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery1);
-            local Building2 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Monastery3);
-            LimitReached = Building1 or Building2;
+            local Limit = GetLimitOfType(Entities.PB_Monastery3);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Monastery1);
+            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Monastery3);
+            LimitReached = Limit <= (Building1 + Building2);
         end
         if _Technology == Technologies.UP1_Market then
-            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Market2);
-            LimitReached = Building1;
+            local Limit = GetLimitOfType(Entities.PB_Market2);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Market2);
+            LimitReached = Limit <= Building1;
         end
 
         -- Supply
         if _Technology == Technologies.UP1_Farm then
-            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Farm2, LimitFactor);
-            LimitReached = Building1;
+            local Limit = GetLimitOfType(Entities.PB_Farm2);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Farm2);
+            LimitReached = Limit <= Building1;
         end
         if _Technology == Technologies.UP2_Farm then
-            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Farm3, LimitFactor);
-            LimitReached = Building1;
+            local Limit = GetLimitOfType(Entities.PB_Farm3);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Farm3);
+            LimitReached = Limit <= Building1;
         end
         if _Technology == Technologies.UP1_Residence then
-            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Residence2, LimitFactor);
-            LimitReached = Building1;
+            local Limit = GetLimitOfType(Entities.PB_Residence2);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Residence2);
+            LimitReached = Limit <= Building1;
         end
         if _Technology == Technologies.UP2_Residence then
-            local Building1 = Stronghold.Limitation:IsTypeLimitReached(PlayerID, Entities.PB_Residence3, LimitFactor);
-            LimitReached = Building1;
+            local Limit = GetLimitOfType(Entities.PB_Residence3);
+            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Residence3);
+            LimitReached = Limit <= Building1;
         end
         if LimitReached then
             XGUIEng.DisableButton(_Button, 1);

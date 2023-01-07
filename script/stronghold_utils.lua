@@ -283,6 +283,41 @@ end
 -- -------------------------------------------------------------------------- --
 -- Entities
 
+function GetUpgradeCategoryByEntityType(_Type)
+    local TypeName = Logic.GetEntityTypeName(_Type);
+    if TypeName then
+        local Key = string.sub(TypeName, 4);
+        local s,e = string.find(Key, "^[A-Za-z_]+");
+        local Suffix = string.sub(Key, e+1);
+        if Suffix and tonumber(Suffix) and tonumber(Suffix) < 10 and not string.find(Suffix, "0[0-9]+") then
+            Key = string.sub(Key, 1, e);
+        end
+        if UpgradeCategories[Key] then
+            return UpgradeCategories[Key];
+        end
+    end
+    return 0;
+end
+
+function GetUpgradeLevelByEntityType(_Type)
+    local UpgradeCategory = GetUpgradeCategoryByEntityType(_Type);
+    if UpgradeCategory ~= 0 then
+        local Buildings = {Logic.GetBuildingTypesInUpgradeCategory(UpgradeCategory)};
+        for i=2, Buildings[1] do
+            if Buildings[i] == _Type then
+                return i - 2;
+            end
+        end
+        local Settlers = {Logic.GetSettlerTypesInUpgradeCategory(UpgradeCategory)};
+        for i=2, Settlers[1] do
+            if Settlers[i] == _Type then
+                return i - 2;
+            end
+        end
+    end
+    return 0;
+end
+
 function IsEntityValid(_Entity)
     local ID = GetID(_Entity);
     if IsExisting(ID) then

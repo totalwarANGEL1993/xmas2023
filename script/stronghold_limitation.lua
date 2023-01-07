@@ -14,42 +14,34 @@ Stronghold = Stronghold or {};
 Stronghold.Limitation = {
     Data = {},
     Config = {
-        Limits = {
-            [Entities.PB_Beautification04] = 4,
-            [Entities.PB_Beautification06] = 4,
-            [Entities.PB_Beautification09] = 4,
+        Limit = {
+            [UpgradeCategories.Beautification04]    = {[1] =  4, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification06]    = {[1] =  4, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification09]    = {[1] =  4, [2] = -1, [3] = -1, [4] = -1},
             ---
-            [Entities.PB_Beautification01] = 3,
-            [Entities.PB_Beautification02] = 3,
-            [Entities.PB_Beautification12] = 3,
+            [UpgradeCategories.Beautification01]    = {[1] =  3, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification02]    = {[1] =  3, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification12]    = {[1] =  3, [2] = -1, [3] = -1, [4] = -1},
             ---
-            [Entities.PB_Beautification05] = 2,
-            [Entities.PB_Beautification07] = 2,
-            [Entities.PB_Beautification08] = 2,
+            [UpgradeCategories.Beautification05]    = {[1] =  2, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification07]    = {[1] =  2, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification08]    = {[1] =  2, [2] = -1, [3] = -1, [4] = -1},
             ---
-            [Entities.PB_Beautification03] = 1,
-            [Entities.PB_Beautification10] = 1,
-            [Entities.PB_Beautification11] = 1,
+            [UpgradeCategories.Beautification03]    = {[1] =  1, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification10]    = {[1] =  1, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Beautification11]    = {[1] =  1, [2] = -1, [3] = -1, [4] = -1},
             ---
-            [Entities.PB_Monastery1] = 1,
-            [Entities.PB_Monastery2] = 1,
-            [Entities.PB_Monastery3] = 1,
+            [UpgradeCategories.Monastery]           = {[1] =  1, [2] =  1, [3] =  1, [4] = -1},
+            [UpgradeCategories.Farm]                = {[1] = -1, [2] =  8, [3] =  4, [4] = -1},
+            [UpgradeCategories.Residence]           = {[1] = -1, [2] =  8, [3] =  4, [4] = -1},
+            [UpgradeCategories.Market]              = {[1] = -1, [2] =  1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Tavern]              = {[1] =  6, [2] =  3, [3] = -1, [4] = -1},
+            [UpgradeCategories.PowerPlant]          = {[1] =  3, [2] = -1, [3] = -1, [4] = -1},
             ---
-            [Entities.PB_Market2] = 1,
-            [Entities.PB_Tavern1] = 6,
-            [Entities.PB_PowerPlant1] = 3,
-            [Entities.PB_Tavern2] = 3,
-            [Entities.PB_Farm2] = 8,
-            [Entities.PB_Farm3] = 4,
-            [Entities.PB_Residence2] = 8,
-            [Entities.PB_Residence3] = 4,
-            ---
-            [Entities.PB_Barracks1] = 1,
-            [Entities.PB_Barracks2] = 1,
-            [Entities.PB_Archery1] = 1,
-            [Entities.PB_Archery2] = 1,
-            [Entities.PB_Stable1] = 1,
-            [Entities.PB_Stable2] = 1,
+            [UpgradeCategories.Tower]               = {[1] = -1, [2] = -1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Barracks]            = {[1] =  1, [2] =  1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Archery]             = {[1] =  1, [2] =  1, [3] = -1, [4] = -1},
+            [UpgradeCategories.Stable]              = {[1] =  1, [2] =  1, [3] = -1, [4] = -1},
         },
     },
 }
@@ -75,50 +67,26 @@ end
 function Stronghold.Limitation:OnSaveGameLoaded()
 end
 
--- Checks if the limit is reached
-function Stronghold.Limitation:IsTypeLimitReached(_PlayerID, _Type, _Factor)
-    _Factor = _Factor or 1;
-    if self.Data[_PlayerID] then
-        local Limit = self:GetTypeLimit(_Type, _Factor);
-        if Limit > -1 then
-            return self:GetTypeUsage(_PlayerID, _Type) >= Limit;
-        end
-    end
-    return false;
-end
-
--- Returns the amount currently tracked entities
-function Stronghold.Limitation:GetTypeUsage(_PlayerID, _Type)
-    local Amount = 0;
-    if self.Data[_PlayerID] then
-        if self.Data[_PlayerID].Potential[_Type] then
-            Amount = Amount + table.getn(self.Data[_PlayerID].Potential[_Type]);
-        end
-        if self.Data[_PlayerID].Current[_Type] then
-            Amount = Amount + table.getn(self.Data[_PlayerID].Current[_Type]);
-        end
-    end
-    return Amount;
-end
-
--- Sets a limit for the type
+-- Returns the limit for the type.
 -- -1   No limit
 --  0   Forbidden
 -- >0   Limit
-function Stronghold.Limitation:SetTypeLimit(_Type, _Limit)
-    self.Config.Limits[_Type] = _Limit;
+function GetLimitOfType(_Type)
+    return Stronghold.Limitation:GetLimitForType(_Type);
 end
 
--- Returns thelimit for the type
+-- Sets a limit for the type.
+-- (Type must have a upgrade category)
 -- -1   No limit
 --  0   Forbidden
 -- >0   Limit
-function Stronghold.Limitation:GetTypeLimit(_Type, _Factor)
-    _Factor = _Factor or 1;
-    if self.Config.Limits[_Type] then
-        return math.floor(self.Config.Limits[_Type] * _Factor);
-    end
-    return -1;
+function SetLimitOfType(_Type, _Limit)
+    Stronghold.Limitation:SetLimitForType(_Type, _Limit);
+end
+
+-- Returns the amount currently tracked entities.
+function GetUsageOfType(_PlayerID, _Type)
+    return Stronghold.Limitation:GetCurrentAmountOfType(_PlayerID, _Type);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -147,6 +115,40 @@ function Stronghold.Limitation:SetupSynchronization()
             end
         );
     end;
+end
+
+function Stronghold.Limitation:GetLimitForType(_Type)
+    local UpgradeCategory = GetUpgradeCategoryByEntityType(_Type);
+    local UpgradeLevel = GetUpgradeLevelByEntityType(_Type);
+    if UpgradeCategory ~= 0 and self.Config.Limit[UpgradeCategory] then
+        return self.Config.Limit[UpgradeCategory][UpgradeLevel +1];
+    end
+    return -1;
+end
+
+function Stronghold.Limitation:SetLimitForType(_Type, _Limit)
+    local UpgradeCategory = GetUpgradeCategoryByEntityType(_Type);
+    local UpgradeLevel = GetUpgradeLevelByEntityType(_Type);
+    if UpgradeCategory ~= 0 then
+        if not self.Config.Limit[UpgradeCategory] then
+            self.Config.Limit[UpgradeCategory] = {-1, -1, -1, -1};
+        end
+        self.Config.Limit[UpgradeCategory][UpgradeLevel +1] = _Limit;
+    end
+end
+
+function Stronghold.Limitation:GetCurrentAmountOfType(_PlayerID, _Type)
+    local Amount = 0;
+    local UpgradeCategory = GetUpgradeCategoryByEntityType(_Type);
+    if self.Data[_PlayerID] and self.Config.Limit[UpgradeCategory] then
+        if self.Data[_PlayerID].Potential[_Type] then
+            Amount = Amount + table.getn(self.Data[_PlayerID].Potential[_Type]);
+        end
+        if self.Data[_PlayerID].Current[_Type] then
+            Amount = Amount + table.getn(self.Data[_PlayerID].Current[_Type]);
+        end
+    end
+    return Amount;
 end
 
 function Stronghold.Limitation:OnEntityCreated(_PlayerID, _EntityID)
