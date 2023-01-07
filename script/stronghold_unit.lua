@@ -109,13 +109,13 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderCavalry1] = {
-                Costs = {6, 70, 0, 30, 0, 0, 0},
+                Costs = {6, 55, 0, 30, 0, 0, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 40,
             },
             [Entities.PU_LeaderCavalry2] = {
-                Costs = {10, 100, 0, 40, 0, 0, 0},
+                Costs = {10, 75, 0, 35, 0, 15, 0},
                 Allowed = true,
                 Rank = 4,
                 Upkeep = 70,
@@ -148,13 +148,13 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_Scout] = {
-                Costs = {0, 100, 0, 0, 0, 50, 0},
+                Costs = {0, 150, 0, 50, 0, 50, 0},
                 Allowed = true,
                 Rank = 1,
                 Upkeep = 5,
             },
             [Entities.PU_Thief] = {
-                Costs = {30, 300, 0, 0, 0, 100, 0},
+                Costs = {30, 500, 0, 0, 0, 100, 100},
                 Allowed = true,
                 Rank = 4,
                 Upkeep = 50,
@@ -290,6 +290,8 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
         Position = GetCirclePosition(_BarracksID, 1000, 180);
     elseif BarracksType == Entities.PB_Foundry1 or BarracksType == Entities.PB_Foundry2 then
         Position = GetCirclePosition(_BarracksID, 800, 180);
+    elseif BarracksType == Entities.PB_Tavern1 or BarracksType == Entities.PB_Tavern2 then
+        Position = GetCirclePosition(_BarracksID, 600, 180);
     -- TODO: Add more positions if needed
     end
     return Position;

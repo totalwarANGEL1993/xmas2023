@@ -282,7 +282,15 @@ function Stronghold.Hero:OnSelectLeader(_EntityID)
 
     XGUIEng.TransferMaterials("Levy_Duties", "Formation01");
     XGUIEng.ShowWidget("Selection_Leader", 1);
-    XGUIEng.ShowWidget("Commands_Leader", 1);
+
+    local ShowFormations = 0;
+    if  Logic.IsEntityInCategory(_EntityID, EntityCategories.Leader) == 1
+    and Logic.IsEntityInCategory(_EntityID, EntityCategories.Cannon) == 0
+    and Logic.IsEntityInCategory(_EntityID, EntityCategories.Scout) == 0
+    and Logic.IsEntityInCategory(_EntityID, EntityCategories.Thief) == 0 then
+        ShowFormations = 1;
+    end
+    XGUIEng.ShowWidget("Commands_Leader", ShowFormations);
     for i= 1, 4 do
         XGUIEng.ShowWidget("Formation0" ..i, 1);
         if XGUIEng.IsButtonDisabled("Formation0" ..i) == 1 then

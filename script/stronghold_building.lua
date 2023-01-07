@@ -59,6 +59,7 @@ function Stronghold.Building:Install()
     self:CreateBarracksButtonHandlers();
     self:CreateArcheryButtonHandlers();
     self:CreateStableButtonHandlers();
+    self:CreateTavernButtonHandlers();
     -- self:CreateFoundryButtonHandlers();
 end
 
@@ -827,6 +828,155 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
                    " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Schießanlage, Büchsenmacher";
         end
+    else
+        return false;
+    end
+
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    return true;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Tavern
+
+function Stronghold.Building:CreateTavernButtonHandlers()
+    self.SyncEvents.Tavern = {
+        BuyUnit = 1,
+    };
+
+    function Stronghold_ButtonCallback_Tavern(_PlayerID, ...)
+        if arg[2] == Stronghold.Building.SyncEvents.Tavern.BuyUnit then
+            if arg[3] ~= 0 then
+                Stronghold.Unit:BuyUnit(_PlayerID, arg[3], arg[1], arg[4]);
+            end
+            return;
+        end
+    end
+    if CNetwork then
+        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Tavern",
+            function(name, _PlayerID, _Action, ...)
+                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
+                    Stronghold_ButtonCallback_Tavern(_PlayerID, _Action, unpack(arg));
+                end;
+            end
+        );
+    end;
+end
+
+function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+        return false;
+    end
+    if Stronghold.Players[PlayerID].BuyUnitLock then
+        return false;
+    end
+
+    local UnitType = 0;
+    local Action = 0;
+    if _UpgradeCategory == UpgradeCategories.Scout then
+        UnitType = Entities.PU_Scout;
+        Action = self.SyncEvents.Tavern.BuyUnit;
+    elseif _UpgradeCategory == UpgradeCategories.Thief then
+        UnitType = Entities.PU_Thief;
+        Action = self.SyncEvents.Tavern.BuyUnit;
+    end
+
+    if Action > 0 then
+        local Config = Stronghold.Unit:GetUnitConfig(UnitType);
+        local Costs = CreateCostTable(unpack(Config.Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
+        if HasPlayerEnoughResourcesFeedback(Costs) then
+            Stronghold.Players[PlayerID].BuyUnitLock = true;
+            Sync.Call(
+                "Stronghold_ButtonCallback_Tavern",
+                PlayerID, EntityID, Action, UnitType, false
+            );
+        end
+        return true;
+    end
+    return false;
+end
+
+function Stronghold.Building:OnTavernSelected(_EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+        return;
+    end
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type ~= Entities.PB_Tavern1 and Type ~= Entities.PB_Tavern2 then
+        return;
+    end
+
+    local Rank = Stronghold:GetRank(PlayerID);
+
+    -- Scout
+    local ScoutDisabled = 0;
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Scout);
+    if Config.Allowed == false
+    or Rank < Config.Rank then
+        ScoutDisabled = 1;
+    end
+    XGUIEng.DisableButton("Buy_Scout", ScoutDisabled);
+
+    -- Thief
+    local ThiefDisabled = 0;
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Thief);
+    if Config.Allowed == false
+    or Rank < Config.Rank
+    or Type ~= Entities.PB_Tavern2 then
+        ThiefDisabled = 1;
+    end
+    XGUIEng.DisableButton("Buy_Thief", ThiefDisabled);
+end
+
+function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    local WidgetID = XGUIEng.GetCurrentWidgetID();
+    local EntityID = GUI.GetSelectedEntity();
+    local CostsText = "";
+    local Text = "";
+
+    if _KeyNormal == "MenuTavern/BuyScout_normal" then
+        local Type = Entities.PU_Scout;
+        Text = "@color:180,180,180 Kundschafter @color:255,255,255 "..
+               "@cr Kundschafter erkunden die Umgebung und finden Rohstoffe.";
+
+        -- Costs text
+        local Config = Stronghold.Unit:GetUnitConfig(Type);
+        local Costs = CopyTable(Config.Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
+
+        -- Disabled text
+        if not Config.Allowed then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. "";
+        end
+
+    elseif _KeyNormal == "MenuTavern/BuyThief_normal" then
+        local Type = Entities.PU_Thief;
+        Text = "@color:180,180,180 Dieb @color:255,255,255 "..
+               "@cr Kundschafter erkunden die Umgebung und finden Rohstoffe.";
+
+        -- Costs text
+        local Config = Stronghold.Unit:GetUnitConfig(Type);
+        local Costs = CopyTable(Config.Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
+
+        -- Disabled text
+        if not Config.Allowed then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. ", Wirtshaus";
+        end
+
     else
         return false;
     end
