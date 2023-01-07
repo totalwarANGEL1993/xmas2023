@@ -84,27 +84,27 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PV_Cannon1] = {
-                Costs = {8, 150, 0, 10, 0, 50, 90},
+                Costs = {8, 150, 0, 25, 0, 50, 100},
                 Allowed = true,
-                Rank = 5,
+                Rank = 3,
                 Upkeep = 30,
             },
             [Entities.PV_Cannon2] = {
-                Costs = {15, 10, 0, 20, 0, 0, 130},
+                Costs = {15, 10, 0, 25, 0, 75, 120},
                 Allowed = true,
                 Rank = 5,
                 Upkeep = 50,
             },
             [Entities.PV_Cannon3] = {
-                Costs = {25, 300, 30, 0, 0, 100, 120},
+                Costs = {25, 300, 0, 50, 0, 500, 250},
                 Allowed = true,
-                Rank = 8,
+                Rank = 7,
                 Upkeep = 100,
             },
             [Entities.PV_Cannon4] = {
-                Costs = {30, 300, 40, 0, 0, 180, 180},
+                Costs = {30, 300, 0, 50, 0, 250, 500},
                 Allowed = true,
-                Rank = 8,
+                Rank = 9,
                 Upkeep = 120,
             },
             ---
@@ -143,20 +143,20 @@ Stronghold.Unit = {
             [Entities.PU_LeaderRifle2] = {
                 Costs = {30, 105, 0, 20, 0, 0, 60},
                 Allowed = true,
-                Rank = 9,
+                Rank = 8,
                 Upkeep = 100,
             },
             ---
             [Entities.PU_Scout] = {
                 Costs = {0, 150, 0, 50, 0, 50, 0},
                 Allowed = true,
-                Rank = 1,
+                Rank = 2,
                 Upkeep = 5,
             },
             [Entities.PU_Thief] = {
                 Costs = {30, 500, 0, 0, 0, 100, 100},
                 Allowed = true,
-                Rank = 4,
+                Rank = 5,
                 Upkeep = 50,
             },
             ---
@@ -208,6 +208,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             if not IsExisting(_BarracksID) then
                 return;
             end
+            local TypeName = Logic.GetEntityTypeName(_Type);
             local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
             local Costs = CreateCostTable(unpack(self.Config.Units[_Type].Costs));
@@ -217,6 +218,20 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             if IsLeader and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
                 Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
                 Experience = 3;
+            end
+
+            -- Check worker for foundry and send him to eat (no cannon spamming :) )
+            if TypeName and string.find(TypeName, "Cannon") then
+                local Workers = {Logic.GetAttachedWorkersToBuilding(_BarracksID)};
+                if Workers[1] == 0 or Logic.IsSettlerAtWork(Workers[2]) == 0 then
+                    Stronghold.Players[_PlayerID].BuyUnitLock = false;
+                    Sound.PlayQueuedFeedbackSound(Sounds.VoicesWorker_WORKER_FunnyNo_rnd_01);
+                    Message("Es ist kein Kanonengießer anwesend!");
+                    return;
+                else
+                    Logic.SetCurrentMaxNumWorkersInBuilding(_BarracksID, 0);
+                    Logic.SetCurrentMaxNumWorkersInBuilding(_BarracksID, 1);
+                end
             end
 
             RemoveResourcesFromPlayer(_PlayerID, Costs);
@@ -289,7 +304,7 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     elseif BarracksType == Entities.PB_Stable1 or BarracksType == Entities.PB_Stable2 then
         Position = GetCirclePosition(_BarracksID, 1000, 180);
     elseif BarracksType == Entities.PB_Foundry1 or BarracksType == Entities.PB_Foundry2 then
-        Position = GetCirclePosition(_BarracksID, 800, 180);
+        Position = GetCirclePosition(_BarracksID, 800, 270);
     elseif BarracksType == Entities.PB_Tavern1 or BarracksType == Entities.PB_Tavern2 then
         Position = GetCirclePosition(_BarracksID, 600, 180);
     -- TODO: Add more positions if needed

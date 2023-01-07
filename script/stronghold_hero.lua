@@ -581,7 +581,7 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
         Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Laird gewählt!");
 
         if _PlayerID == GUI.GetPlayerID() then
-            GameCallback_GUI_SelectionChanged();
+            Stronghold.Building:OnHeadquarterSelected(GUI.GetSelectedEntity());
         end
     end
 end

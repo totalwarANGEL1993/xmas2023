@@ -60,7 +60,7 @@ function Stronghold.Building:Install()
     self:CreateArcheryButtonHandlers();
     self:CreateStableButtonHandlers();
     self:CreateTavernButtonHandlers();
-    -- self:CreateFoundryButtonHandlers();
+    self:CreateFoundryButtonHandlers();
 end
 
 function Stronghold.Building:OnSaveGameLoaded()
@@ -1184,6 +1184,72 @@ function Stronghold.Building:ApplyUpkeepDiscountFoundry(_PlayerID, _Upkeep)
     return Upkeep;
 end
 
+function Stronghold.Building:CreateFoundryButtonHandlers()
+    self.SyncEvents.Foundry = {
+        BuyUnit = 1,
+    };
+
+    function Stronghold_ButtonCallback_Foundry(_PlayerID, ...)
+        if arg[2] == Stronghold.Building.SyncEvents.Foundry.BuyUnit then
+            if arg[3] ~= 0 then
+                Stronghold.Unit:BuyUnit(_PlayerID, arg[3], arg[1], arg[4]);
+            end
+            return;
+        end
+    end
+    if CNetwork then
+        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Foundry",
+            function(name, _PlayerID, _Action, ...)
+                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
+                    Stronghold_ButtonCallback_Foundry(_PlayerID, _Action, unpack(arg));
+                end;
+            end
+        );
+    end;
+end
+
+function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+        return false;
+    end
+    if Stronghold.Players[PlayerID].BuyUnitLock then
+        return false;
+    end
+
+    local UnitType = 0;
+    local Action = 0;
+    if _Type == Entities.PV_Cannon1 then
+        UnitType = _Type;
+        Action = self.SyncEvents.Foundry.BuyUnit;
+    elseif _Type == Entities.PV_Cannon2 then
+        UnitType = _Type;
+        Action = self.SyncEvents.Foundry.BuyUnit;
+    elseif _Type == Entities.PV_Cannon3 then
+        UnitType = _Type;
+        Action = self.SyncEvents.Foundry.BuyUnit;
+    elseif _Type == Entities.PV_Cannon4 then
+        UnitType = _Type;
+        Action = self.SyncEvents.Foundry.BuyUnit;
+    end
+
+    if Action > 0 then
+        local Config = Stronghold.Unit:GetUnitConfig(UnitType);
+        local Costs = CreateCostTable(unpack(Config.Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
+        if HasPlayerEnoughResourcesFeedback(Costs) then
+            Stronghold.Players[PlayerID].BuyUnitLock = true;
+            Sync.Call(
+                "Stronghold_ButtonCallback_Foundry",
+                PlayerID, EntityID, Action, UnitType, false
+            );
+        end
+        return true;
+    end
+    return false;
+end
+
 function Stronghold.Building:OnFoundrySelected(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
     if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
@@ -1193,6 +1259,141 @@ function Stronghold.Building:OnFoundrySelected(_EntityID)
     if Type ~= Entities.PB_Foundry1 and Type ~= Entities.PB_Foundry2 then
         return;
     end
+
+    local Rank = Stronghold.Players[PlayerID].Rank;
+
+    -- Cannon 1
+    local Cannon1Disabled = 0;
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PV_Cannon1);
+    if Config.Allowed == false
+    or Rank < Config.Rank then
+        Cannon1Disabled = 1;
+    end
+    XGUIEng.DisableButton("Buy_Cannon1", Cannon1Disabled);
+
+    -- Cannon 2
+    local Cannon2Disabled = 0;
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PV_Cannon2);
+    if Config.Allowed == false
+    or Rank < Config.Rank then
+        Cannon2Disabled = 1;
+    end
+    XGUIEng.DisableButton("Buy_Cannon2", Cannon2Disabled);
+
+    -- Cannon 3
+    local Cannon3Disabled = 0;
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PV_Cannon3);
+    if Config.Allowed == false
+    or Type ~= Entities.PB_Foundry2
+    or Rank < Config.Rank then
+        Cannon3Disabled = 1;
+    end
+    XGUIEng.DisableButton("Buy_Cannon3", Cannon3Disabled);
+
+    -- Cannon 4
+    local Cannon4Disabled = 0;
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PV_Cannon4);
+    if Config.Allowed == false
+    or Type ~= Entities.PB_Foundry2
+    or Rank < Config.Rank then
+        Cannon4Disabled = 1;
+    end
+    XGUIEng.DisableButton("Buy_Cannon4", Cannon4Disabled);
+end
+
+function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    local WidgetID = XGUIEng.GetCurrentWidgetID();
+    local EntityID = GUI.GetSelectedEntity();
+    local CostsText = "";
+    local Text = "";
+
+    if _KeyNormal == "MenuFoundry/BuyCannon1_normal" then
+        local Type = Entities.PV_Cannon1;
+        Text = "@color:180,180,180 Bombarde @color:255,255,255 @cr "..
+               "Die kleinste Kanone. Sie wird gegen Soldaten verwendet, ist "..
+               "aber nicht nennenswert effektiv.";
+
+        -- Costs text
+        local Config = Stronghold.Unit:GetUnitConfig(Type);
+        local Costs = CopyTable(Config.Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
+
+        -- Disabled text
+        if not Config.Allowed then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. "";
+        end
+
+    elseif _KeyNormal == "MenuFoundry/BuyCannon2_normal" then
+        local Type = Entities.PV_Cannon2;
+        Text = "@color:180,180,180 Bronzekanone @color:255,255,255 @cr "..
+               "Die stärkste Kanone des späten Mittelalter. Sie wird gegen "..
+               "Befätigungen eingesetzt.";
+
+        -- Costs text
+        local Config = Stronghold.Unit:GetUnitConfig(Type);
+        local Costs = CopyTable(Config.Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
+
+        -- Disabled text
+        if not Config.Allowed then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. "";
+        end
+
+    elseif _KeyNormal == "MenuFoundry/BuyCannon3_normal" then
+        local Type = Entities.PV_Cannon3;
+        Text = "@color:180,180,180 Eisenkanone @color:255,255,255 @cr "..
+               "Diese große Kanone ist zum vernichten von Truppen gedacht.";
+
+        -- Costs text
+        local Config = Stronghold.Unit:GetUnitConfig(Type);
+        local Costs = CopyTable(Config.Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
+
+        -- Disabled text
+        if not Config.Allowed then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. "";
+        end
+
+    elseif _KeyNormal == "MenuFoundry/BuyCannon4_normal" then
+        local Type = Entities.PV_Cannon4;
+        Text = "@color:180,180,180 Belagerungskanone @color:255,255,255 @cr "..
+               "Eine schwere Kanone deren Aufgabe es ist Befestigungen zu "..
+               " zerstören.";
+
+        -- Costs text
+        local Config = Stronghold.Unit:GetUnitConfig(Type);
+        local Costs = CopyTable(Config.Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
+        CostsText = FormatCostString(_PlayerID, Costs);
+
+        -- Disabled text
+        if not Config.Allowed then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   " " .. Stronghold.Config.Text.Ranks[Config.Rank].. "";
+        end
+
+    else
+        return false;
+    end
+
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    return true;
 end
 
 -- -------------------------------------------------------------------------- --

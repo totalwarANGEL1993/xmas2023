@@ -591,7 +591,7 @@ function Stronghold:PromotePlayer(_PlayerID)
 
         local MsgText = "Erhebt Euch, " ..RankName.. "!";
         if GUI.GetPlayerID() == _PlayerID then
-            GameCallback_GUI_SelectionChanged();
+            Stronghold.Hero:OnSelectHero(GUI.GetSelectedEntity());
         else
             local PlayerName = UserTool_GetPlayerName(_PlayerID);
             local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
@@ -855,10 +855,23 @@ function Stronghold:OverrideActionBuyMilitaryUnitMain()
         end
         Stronghold.Orig_GUIAction_BuyMilitaryUnit(_UpgradeCategory);
     end
+
+    self.Orig_GUIAction_BuyCannon = GUIAction_BuyCannon;
+    GUIAction_BuyCannon = function(_Type, _UpgradeCategory)
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Stronghold.Orig_GUIAction_BuyCannon(_Type, _UpgradeCategory);
+        end
+        local EntityID = GUI.GetSelectedEntity();
+        local Type = Logic.GetEntityType(EntityID);
+        if Type == Entities.PB_Foundry1 or Type == Entities.PB_Foundry2 then
+            return Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory);
+        end
+        Stronghold.Orig_GUIAction_BuyCannon(_Type, _UpgradeCategory);
+    end
 end
 
 function Stronghold:OverrideTooltipBuyMilitaryUnitMain()
-    -- GUITooltip_BuyMilitaryUnit(UpgradeCategories.Thief,"MenuTavern/BuyThief_normal","MenuTavern/BuyThief_disabled", Technologies.MU_Thief,"KeyBindings/BuyUnits2")
     self.Orig_GUITooltip_BuyMilitaryUnit = GUITooltip_BuyMilitaryUnit;
     GUITooltip_BuyMilitaryUnit = function(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
         local PlayerID = GUI.GetPlayerID();
@@ -869,6 +882,9 @@ function Stronghold:OverrideTooltipBuyMilitaryUnitMain()
         local TooltipSet = false;
         if not TooltipSet then
             TooltipSet = Stronghold.Building:UpdateTavernBuyUnitTooltip(PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
+        end
+        if not TooltipSet then
+            TooltipSet = Stronghold.Building:UpdateFoundryBuyUnitTooltip(PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end
         if not TooltipSet then
             Stronghold.Orig_GUITooltip_BuyMilitaryUnit(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
