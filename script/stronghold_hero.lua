@@ -548,9 +548,9 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
             return BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero(_Type);
         end
         Sync.Call(
-            "Stronghold_ButtonCallback_Headquarters",
+            "Stronghold_ButtonCallback_Building",
             PlayerID,
-            Stronghold.Building.SyncEvents.Headquarters.BuyLord,
+            Stronghold.Building.SyncEvents.BuyLord,
             _Type
         );
         XGUIEng.ShowWidget("BuyHeroWindow", 0);

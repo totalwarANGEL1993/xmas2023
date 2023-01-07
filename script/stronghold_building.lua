@@ -54,19 +54,51 @@ function Stronghold.Building:Install()
     self:OverrideHeadquarterButtons();
     self:OverrideBuildingUpgradeButtonUpdate();
     self:OverrideBuildingUpgradeButtonTooltip();
-    self:CreateHeadquartersButtonHandlers();
-    self:CreateMonasteryButtonHandlers();
-    self:CreateBarracksButtonHandlers();
-    self:CreateArcheryButtonHandlers();
-    self:CreateStableButtonHandlers();
-    self:CreateTavernButtonHandlers();
-    self:CreateFoundryButtonHandlers();
+    self:CreateBuildingButtonHandlers();
 end
 
 function Stronghold.Building:OnSaveGameLoaded()
     for i= 1, table.getn(Score.Player) do
         self:HeadquartersConfigureBuilding(i);
     end
+end
+
+function Stronghold.Building:CreateBuildingButtonHandlers()
+    self.SyncEvents = {
+        ChangeTax = 1,
+        BuyLord = 2,
+        BuySerf = 3,
+        BuyUnit = 4,
+        BlessSettlers = 5,
+    };
+
+    function Stronghold_ButtonCallback_Building(_PlayerID, _Action, ...)
+        if _Action == Stronghold.Building.SyncEvents.ChangeTax then
+            Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, arg[1]);
+        end
+        if _Action == Stronghold.Building.SyncEvents.BuyLord then
+            Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
+        end
+        if _Action == Stronghold.Building.SyncEvents.BuySerf then
+            Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
+        end
+        if _Action == Stronghold.Building.SyncEvents.BuyUnit then
+            Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
+        end
+        if _Action == Stronghold.Building.SyncEvents.BlessSettlers then
+            Stronghold.Building:MonasteryBlessSettlers(_PlayerID, arg[1]);
+        end
+    end
+
+    if CNetwork then
+        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Building",
+            function(name, _PlayerID, _Action, ...)
+                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
+                    Stronghold_ButtonCallback_Building(_PlayerID, _Action, unpack(arg));
+                end;
+            end
+        );
+    end;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -90,35 +122,6 @@ function Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID)
     end
 end
 
-function Stronghold.Building:CreateHeadquartersButtonHandlers()
-    self.SyncEvents.Headquarters = {
-        ChangeTax = 1,
-        BuyLord = 2,
-        BuySerf = 3,
-    };
-
-    function Stronghold_ButtonCallback_Headquarters(_PlayerID, _Action, ...)
-        if _Action == Stronghold.Building.SyncEvents.Headquarters.ChangeTax then
-            Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, arg[1]);
-        end
-        if _Action == Stronghold.Building.SyncEvents.Headquarters.BuyLord then
-            Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
-        end
-        if _Action == Stronghold.Building.SyncEvents.Headquarters.BuySerf then
-            Stronghold.Unit:BuyUnit(_PlayerID, arg[1], arg[2], arg[3]);
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Headquarters",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Headquarters(_PlayerID, _Action, unpack(arg));
-                end;
-            end
-        );
-    end;
-end
-
 function Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, _Level)
     if Stronghold:IsPlayer(_PlayerID) then
         Stronghold.Players[_PlayerID].TaxHeight = math.min(math.max(_Level +1, 0), 5);
@@ -133,9 +136,9 @@ function Stronghold.Building:OverrideHeadquarterButtons()
             return GUIAction_SetTaxes_Orig_StrongholdBuilding(_Level);
         end
         Sync.Call(
-            "Stronghold_ButtonCallback_Headquarters",
+            "Stronghold_ButtonCallback_Building",
             PlayerID,
-            Stronghold.Building.SyncEvents.Headquarters.ChangeTax,
+            Stronghold.Building.SyncEvents.ChangeTax,
             _Level
         );
     end
@@ -182,11 +185,11 @@ function Stronghold.Building:OverrideHeadquarterButtons()
 
         Stronghold.Players[PlayerID].BuyUnitLock = true;
         Sync.Call(
-            "Stronghold_ButtonCallback_Headquarters",
+            "Stronghold_ButtonCallback_Building",
             PlayerID,
-            Stronghold.Building.SyncEvents.Headquarters.BuySerf,
-            Entities.PU_Serf,
+            Stronghold.Building.SyncEvents.BuySerf,
             GetID(Stronghold.Players[PlayerID].HQScriptName),
+            Entities.PU_Serf,
             false
         );
     end
@@ -319,32 +322,6 @@ function Stronghold.Building:ApplyUpkeepDiscountBarracks(_PlayerID, _Upkeep)
     return Upkeep;
 end
 
-function Stronghold.Building:CreateBarracksButtonHandlers()
-    self.SyncEvents.Button = self.SyncEvents.Button or {};
-
-    self.SyncEvents.Barracks = {
-        BuyUnit = 1,
-    };
-
-    function Stronghold_ButtonCallback_Barracks(_PlayerID, ...)
-        if arg[2] == Stronghold.Building.SyncEvents.Barracks.BuyUnit then
-            if arg[3] ~= 0 then
-                Stronghold.Unit:BuyUnit(_PlayerID, arg[3], arg[1], arg[4]);
-            end
-            return;
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Barracks",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Barracks(_PlayerID, _Action, unpack(arg));
-                end;
-            end
-        );
-    end;
-end
-
 function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology)
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID = Logic.EntityGetPlayer(EntityID);
@@ -360,16 +337,16 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
     local Action = 0;
     if _Technology == Technologies.T_UpgradeSword1 then
         UnitType = Entities.PU_LeaderPoleArm1;
-        Action = self.SyncEvents.Barracks.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword2 then
         UnitType = Entities.PU_LeaderPoleArm3;
-        Action = self.SyncEvents.Barracks.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword3 then
         UnitType = Entities.PU_LeaderSword3;
-        Action = self.SyncEvents.Barracks.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword4 then
         UnitType = Entities.PU_LeaderSword4;
-        Action = self.SyncEvents.Barracks.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
@@ -379,8 +356,8 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
-                "Stronghold_ButtonCallback_Barracks",
-                PlayerID, EntityID, Action, UnitType, AutoFillActive
+                "Stronghold_ButtonCallback_Building",
+                PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
         end
         return true;
@@ -590,30 +567,6 @@ function Stronghold.Building:ApplyUpkeepDiscountArchery(_PlayerID, _Upkeep)
     return Upkeep;
 end
 
-function Stronghold.Building:CreateArcheryButtonHandlers()
-    self.SyncEvents.Archery = {
-        BuyUnit = 1,
-    };
-
-    function Stronghold_ButtonCallback_Archery(_PlayerID, ...)
-        if arg[2] == self.SyncEvents.Archery.BuyUnit then
-            if arg[3] ~= 0 then
-                Stronghold.Unit:BuyUnit(_PlayerID, arg[3], arg[1], arg[4]);
-            end
-            return;
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Archery",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.Stronghold_ButtonCallback_Archery(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Archery(_PlayerID, _Action, unpack(arg));
-                end;
-            end
-        );
-    end;
-end
-
 function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology)
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID = Logic.EntityGetPlayer(EntityID);
@@ -629,16 +582,16 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
     local Action = 0;
     if _Technology == Technologies.T_UpgradeBow1 then
         UnitType = Entities.PU_LeaderBow2;
-        Action = self.SyncEvents.Archery.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeBow2 then
         UnitType = Entities.PU_LeaderBow3;
-        Action = self.SyncEvents.Archery.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeBow3 then
         UnitType = Entities.PU_LeaderRifle1;
-        Action = self.SyncEvents.Archery.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeRifle1 then
         UnitType = Entities.PU_LeaderRifle2;
-        Action = self.SyncEvents.Archery.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
@@ -648,8 +601,8 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
-                "Stronghold_ButtonCallback_Archery",
-                PlayerID, EntityID, Action, UnitType, AutoFillActive
+                "Stronghold_ButtonCallback_Building",
+                PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
         end
         return true;
@@ -841,30 +794,6 @@ end
 -- -------------------------------------------------------------------------- --
 -- Tavern
 
-function Stronghold.Building:CreateTavernButtonHandlers()
-    self.SyncEvents.Tavern = {
-        BuyUnit = 1,
-    };
-
-    function Stronghold_ButtonCallback_Tavern(_PlayerID, ...)
-        if arg[2] == Stronghold.Building.SyncEvents.Tavern.BuyUnit then
-            if arg[3] ~= 0 then
-                Stronghold.Unit:BuyUnit(_PlayerID, arg[3], arg[1], arg[4]);
-            end
-            return;
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Tavern",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Tavern(_PlayerID, _Action, unpack(arg));
-                end;
-            end
-        );
-    end;
-end
-
 function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID = Logic.EntityGetPlayer(EntityID);
@@ -879,10 +808,10 @@ function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
     local Action = 0;
     if _UpgradeCategory == UpgradeCategories.Scout then
         UnitType = Entities.PU_Scout;
-        Action = self.SyncEvents.Tavern.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _UpgradeCategory == UpgradeCategories.Thief then
         UnitType = Entities.PU_Thief;
-        Action = self.SyncEvents.Tavern.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
@@ -892,8 +821,8 @@ function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
-                "Stronghold_ButtonCallback_Tavern",
-                PlayerID, EntityID, Action, UnitType, false
+                "Stronghold_ButtonCallback_Building",
+                PlayerID, Action, EntityID, UnitType, false
             );
         end
         return true;
@@ -1002,30 +931,6 @@ function Stronghold.Building:ApplyUpkeepDiscountStable(_PlayerID, _Upkeep)
     return Upkeep;
 end
 
-function Stronghold.Building:CreateStableButtonHandlers()
-    self.SyncEvents.Stable = {
-        BuyUnit = 1,
-    };
-
-    function Stronghold_ButtonCallback_Stable(_PlayerID, ...)
-        if arg[2] == Stronghold.Building.SyncEvents.Stable.BuyUnit then
-            if arg[3] ~= 0 then
-                Stronghold.Unit:BuyUnit(_PlayerID, arg[3], arg[1], arg[4]);
-            end
-            return;
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Stable",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Stable(_PlayerID, _Action, unpack(arg));
-                end;
-            end
-        );
-    end;
-end
-
 function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology)
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID = Logic.EntityGetPlayer(EntityID);
@@ -1041,10 +946,10 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
     local Action = 0;
     if _Technology == Technologies.T_UpgradeLightCavalry1 then
         UnitType = Entities.PU_LeaderCavalry2;
-        Action = self.SyncEvents.Stable.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeHeavyCavalry1 then
         UnitType = Entities.PU_LeaderHeavyCavalry2;
-        Action = self.SyncEvents.Stable.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
@@ -1054,8 +959,8 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
-                "Stronghold_ButtonCallback_Stable",
-                PlayerID, EntityID, Action, UnitType, AutoFillActive
+                "Stronghold_ButtonCallback_Building",
+                PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
         end
         return true;
@@ -1184,30 +1089,6 @@ function Stronghold.Building:ApplyUpkeepDiscountFoundry(_PlayerID, _Upkeep)
     return Upkeep;
 end
 
-function Stronghold.Building:CreateFoundryButtonHandlers()
-    self.SyncEvents.Foundry = {
-        BuyUnit = 1,
-    };
-
-    function Stronghold_ButtonCallback_Foundry(_PlayerID, ...)
-        if arg[2] == Stronghold.Building.SyncEvents.Foundry.BuyUnit then
-            if arg[3] ~= 0 then
-                Stronghold.Unit:BuyUnit(_PlayerID, arg[3], arg[1], arg[4]);
-            end
-            return;
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Foundry",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Foundry(_PlayerID, _Action, unpack(arg));
-                end;
-            end
-        );
-    end;
-end
-
 function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID = Logic.EntityGetPlayer(EntityID);
@@ -1222,16 +1103,16 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
     local Action = 0;
     if _Type == Entities.PV_Cannon1 then
         UnitType = _Type;
-        Action = self.SyncEvents.Foundry.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon2 then
         UnitType = _Type;
-        Action = self.SyncEvents.Foundry.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon3 then
         UnitType = _Type;
-        Action = self.SyncEvents.Foundry.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon4 then
         UnitType = _Type;
-        Action = self.SyncEvents.Foundry.BuyUnit;
+        Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
@@ -1241,8 +1122,8 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Sync.Call(
-                "Stronghold_ButtonCallback_Foundry",
-                PlayerID, EntityID, Action, UnitType, false
+                "Stronghold_ButtonCallback_Building",
+                PlayerID, Action, EntityID, UnitType, false
             );
         end
         return true;
@@ -1398,40 +1279,6 @@ end
 -- -------------------------------------------------------------------------- --
 -- Monastery
 
-function Stronghold.Building:GetMonasteryConfig(_BlessCategory)
-    if self.Config.Monastery[_BlessCategory] then
-        return self.Config.Monastery[_BlessCategory];
-    end
-    return {
-        Text = "DEBUG: Unknown bless category",
-        Reputation = 0,
-        Honor = 0,
-    }
-end
-
-function Stronghold.Building:CreateMonasteryButtonHandlers()
-    self.SyncEvents = self.SyncEvents or {};
-
-    self.SyncEvents.Monastery = {
-        BlessSettlers = 1,
-    };
-
-    function Stronghold_ButtonCallback_Monastery(_PlayerID, _Action, ...)
-        if _Action == Stronghold.Building.SyncEvents.Monastery.BlessSettlers then
-            Stronghold.Building:MonasteryBlessSettlers(_PlayerID, arg[1]);
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Monastery",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Monastery(_PlayerID, _Action, unpack(arg));
-                end;
-            end
-        );
-    end;
-end
-
 function Stronghold.Building:MonasteryBlessSettlers(_PlayerID, _BlessCategory)
     local CurrentFaith = Logic.GetPlayersGlobalResource(_PlayerID, ResourceType.Faith);
     Logic.SubFromPlayersGlobalResource(_PlayerID, ResourceType.Faith, CurrentFaith);
@@ -1468,9 +1315,9 @@ function Stronghold.Building:OverrideMonasteryButtons()
         local BlessCosts = Logic.GetBlessCostByBlessCategory(_BlessCategory);
         if BlessCosts <= CurrentFaith then
             Sync.Call(
-                "Stronghold_ButtonCallback_Monastery",
+                "Stronghold_ButtonCallback_Building",
                 PlayerID,
-                Stronghold.Building.SyncEvents.Monastery.BlessSettlers,
+                Stronghold.Building.SyncEvents.BlessSettlers,
                 _BlessCategory
             );
         else
@@ -1491,7 +1338,7 @@ function Stronghold.Building:OverrideMonasteryButtons()
             else
                 Text = "@color:180,180,180 Gebetsmesse @color:255,255,255 @cr ";
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Construction);
+                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Construction];
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1505,7 +1352,7 @@ function Stronghold.Building:OverrideMonasteryButtons()
             else
                 Text = "@color:180,180,180 Ablassbriefe @color:255,255,255 @cr ";
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Research);
+                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Research];
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1522,7 +1369,7 @@ function Stronghold.Building:OverrideMonasteryButtons()
                     Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
                 end
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Weapons);
+                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Weapons];
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1539,7 +1386,7 @@ function Stronghold.Building:OverrideMonasteryButtons()
                     Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
                 end
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Financial);
+                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Financial];
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
@@ -1556,7 +1403,7 @@ function Stronghold.Building:OverrideMonasteryButtons()
                     Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kathedrale @cr";
                 end
                 Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building:GetMonasteryConfig(BlessCategories.Canonisation);
+                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Canonisation];
                 if Effects.Reputation > 0 then
                     Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
                 end
