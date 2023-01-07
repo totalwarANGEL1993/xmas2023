@@ -139,7 +139,6 @@ end
 -- This function adds a new player.
 function Stronghold:AddPlayer(_PlayerID)
     local LordName = "LordP" .._PlayerID;
-    local SpouseName = "SpouseP" .._PlayerID;
     local HQName = "HQ" .._PlayerID;
     local DoorPosName = "DoorP" .._PlayerID;
     local CampName = "CampP" .._PlayerID;
@@ -179,7 +178,6 @@ function Stronghold:AddPlayer(_PlayerID)
         AttackMemory = {},
 
         LordScriptName = LordName,
-        SpouseScriptName = SpouseName,
         HQScriptName = HQName,
         DoorPos = DoorPos;
         CampPos = CampPos;

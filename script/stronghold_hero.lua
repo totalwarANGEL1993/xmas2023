@@ -9,25 +9,19 @@ Stronghold.Hero = {
     Data = {},
     Config = {
         LordStats = {
-            Health = 10000,
-            Armor = 8,
-            Damage = 16,
+            Health = 5000,
+            Armor = 6,
+            Damage = 50,
             Healing = 1,
-        },
-        SpouseStats = {
-            Health = 1000,
-            Armor = 3,
-            Damage = 16,
-            Healing = 10,
         },
         PetStats = {
             [Entities.CU_Barbarian_Hero_wolf] = {
                 Owner = Entities.CU_Barbarian_Hero,
-                Health = 800, Armor = 1, Damage = 35, Healing = 5,
+                Health = 1000, Armor = 2, Damage = 32, Healing = 20,
             },
             [Entities.PU_Hero5_Outlaw] = {
-                Owner = Entities.CU_Barbarian_Hero,
-                Health = 330, Armor = 3, Damage = 16, Healing = 5
+                Owner = Entities.PU_Hero5,
+                Health = 250, Armor = 6, Damage = 12, Healing = 5
             },
         },
 
@@ -55,14 +49,12 @@ Stronghold.Hero = {
             {Entities.PU_Hero2,              true},
             {Entities.PU_Hero3,              true},
             {Entities.PU_Hero4,              true},
+            {Entities.PU_Hero5,              true},
             {Entities.PU_Hero6,              true},
             {Entities.CU_BlackKnight,        true},
+            {Entities.CU_Mary_de_Mortfichet, true},
             {Entities.CU_Barbarian_Hero,     true},
             {Entities.PU_Hero10,             true},
-        },
-        SpouseTypes = {
-            {Entities.PU_Hero5,              true},
-            {Entities.CU_Mary_de_Mortfichet, true},
             {Entities.PU_Hero11,             true},
             {Entities.CU_Evil_Queen,         true},
         },
@@ -91,9 +83,9 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
             },
             [Entities.PU_Hero5]              = {
-                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als mancher denkt. Die Steuereinnahmen werden um 15% erhöht."..
+                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als mancher denkt. Die Steuereinnahmen werden um 30% erhöht."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann Banditen herbeirufen, die pro Mann 2 Beliebtheit produzieren.",
+                              "Aktive Fähigkeit: @cr Kann eine Schar von Gesetzlosen herbeirufen.",
             },
             [Entities.PU_Hero6]              = {
                 Description = "Passive Fähigkeit: @cr Für jeden Priester auf der Burg wird zusätzlicher Glauben produziert."..
@@ -106,9 +98,9 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
             },
             [Entities.CU_BlackKnight]        = {
-                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Der Malus auf die Beliebtheit wird um 50% verringert."..
+                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Sämtliche negative Effekte auf die Beliebtheit werden um 50% verringert."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden senken.",
+                              "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
             },
             [Entities.CU_Barbarian_Hero]     = {
                 Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 50% zusätzliche Beliebtheit."..
@@ -116,7 +108,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Ruft die mächtigen Wölfe Hati und Skalli herbei, die Ehre erzeugen, wenn sie Feinde töten.",
             },
             [Entities.PU_Hero10]             = {
-                Description = "Passive Fähigkeit: @cr Für diesen meisterlichen Schützen kämpfen Scharfschützen für 10% weniger Sold."..
+                Description = "Passive Fähigkeit: @cr Training und Unterhalt aller Scharfschützen wird effizienter und senkt die Soldkosten um 10%."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
             },
@@ -145,6 +137,7 @@ function Stronghold.Hero:Install()
     self:OverrideLeaderFormationTooltip();
     self:OverrideLeaderFormationUpdate();
     self:CreateHeroButtonHandlers();
+    self:OverrideHero5AbilitySummon();
     self:StartTriggers();
 end
 
@@ -152,7 +145,6 @@ function Stronghold.Hero:OnSaveGameLoaded()
     for i= 1, table.getn(Score.Player) do
         self:HeadquartersConfigureBuilding(i);
         self:ConfigurePlayersLord(i);
-        self:ConfigurePlayersSpouse(i);
     end
 end
 
@@ -162,10 +154,14 @@ end
 function Stronghold.Hero:CreateHeroButtonHandlers()
     self.SyncEvents = {
         RankUp = 1,
+        Hero5Summon = 2,
     };
     function Stronghold_ButtonCallback_Hero(_PlayerID, _Action, ...)
         if _Action == Stronghold.Hero.SyncEvents.RankUp then
             Stronghold:PromotePlayer(_PlayerID);
+        end
+        if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
+            Stronghold:OnHero5SummonTargetSelected(_PlayerID, arg[1], arg[2], arg[3]);
         end
     end
     if CNetwork then
@@ -360,7 +356,7 @@ function Stronghold.Hero:OnSelectHero2(_EntityID)
         XGUIEng.SetWidgetPosition("Hero2_RechargePlaceBomb", 4, 38);
         XGUIEng.SetWidgetPosition("Hero2_PlaceBomb", 4, 38);
         XGUIEng.ShowWidget("Hero2_RechargeBuildCannon", 0);
-        XGUIEng.ShowWidget("GUIAction_Hero2BuildCannon", 0);
+        XGUIEng.ShowWidget("Hero2_BuildCannon", 0);
     end
 end
 
@@ -458,54 +454,43 @@ end
 
 function Stronghold.Hero:OnSelectHero12(_EntityID)
     local Type = Logic.GetEntityType(_EntityID);
-    if Type == Entities.PU_Hero10 then
-        XGUIEng.SetWidgetPosition("Hero12_RechargePoisonArrows", 4, 38);
-        XGUIEng.SetWidgetPosition("Hero12_PoisonArrows", 4, 38);
-        XGUIEng.ShowWidget("Hero12_RechargePoisonRange", 0);
-        XGUIEng.ShowWidget("Hero12_PoisonRange", 0);
+    if Type == Entities.CU_Evil_Queen then
+        XGUIEng.SetWidgetPosition("Hero12_RechargePoisonRange", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero12_PoisonRange", 4, 38);
+        XGUIEng.ShowWidget("Hero12_RechargePoisonArrows", 0);
+        XGUIEng.ShowWidget("Hero12_PoisonArrows", 0);
     end
 end
 
 -- -------------------------------------------------------------------------- --
--- 
+-- Buy Hero
 
 function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
     if not Stronghold:IsPlayer(_PlayerID) then
         return;
     end
     XGUIEng.ShowWidget("BuyHeroWindow", 1);
-    XGUIEng.SetText("BuyHeroWindowHeadline", "Wählt Euren Burgherren!");
+    XGUIEng.SetText("BuyHeroWindowHeadline", "Wählt Euren Laird!");
     XGUIEng.SetText("BuyHeroWindowInfoLine", "");
+    XGUIEng.SetWidgetPositionAndSize("BuyHeroWindowInfoLine", 350, 60, 460, 50);
     XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
 
     local PositionX = 20;
+    local PositionY = 20;
+    XGUIEng.SetWidgetPosition("BuyHeroLine1", 40, 40);
     for i= 1, table.getn(self.Config.LordTypes) do
         local Type = self.Config.LordTypes[i][1];
         if self.Config.LordTypes[i][2] then
             local WidgetID = self.Config.TypeToBuyHeroButton[Type];
+            local ButtonW, ButtonH = 60, 90;
             XGUIEng.ShowWidget(WidgetID, 1);
-            XGUIEng.SetWidgetPosition(WidgetID, PositionX, 120);
-            PositionX = PositionX + 90;
+            XGUIEng.SetWidgetPositionAndSize(WidgetID, PositionX, PositionY, ButtonW, ButtonH);
+            PositionX = PositionX + 65;
         end
-    end
-end
-
-function Stronghold.Hero:OpenBuyHeroWindowForSpouseSelection(_PlayerID)
-    if not Stronghold:IsPlayer(_PlayerID) then
-        return;
-    end
-    XGUIEng.ShowWidget("BuyHeroWindow", 1);
-    XGUIEng.SetText("BuyHeroWindowHeadline", "Wählt Eurer Burgfräulein!");
-    XGUIEng.SetText("BuyHeroWindowInfoLine", "");
-    XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
-
-    local PositionX = 20;
-    for i= 1, table.getn(self.Config.SpouseTypes) do
-        local Type = self.Config.SpouseTypes[i][1];
-        local WidgetID = self.Config.TypeToBuyHeroButton[Type];
-        XGUIEng.ShowWidget(WidgetID, 1);
-        XGUIEng.SetWidgetPosition(WidgetID, PositionX, 120);
-        PositionX = PositionX + 90;
+        if math.mod(i, 4) == 0 then
+            PositionY = PositionY + 95;
+            PositionX = 20;
+        end
     end
 end
 
@@ -522,15 +507,13 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         MouseX = MouseX * (1024/ScreenX);
         MouseY = MouseY * (768/ScreenY);
 
-        local RowX, RowY = 160, 278;
-        local ButtonW, ButtonH = 90, 135;
+        local RowX, RowY = 122, 155;
+        local ButtonW, ButtonH = 65, 90;
 
         local Text = "";
-        local Index = 0;
         for i= 1, table.getn(self.Config.LordTypes) do
-            Index = Index +1;
             local Type = self.Config.LordTypes[i][1];
-            local ButtonStartX = (RowX + (ButtonW * (Index -1)));
+            local ButtonStartX = (RowX + (ButtonW * (math.mod(i-1, 4))));
             local ButtonEndX = ButtonStartX + ButtonW;
             local ButtonStartY = RowY;
             local ButtonEndY = RowY + ButtonH;
@@ -541,21 +524,10 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
                     Text = Stronghold.Hero.Config.HeroSkills[Type].Description;
                 end
             end
-        end
-        local Index = 0;
-        for i= 1, table.getn(self.Config.SpouseTypes) do
-            Index = Index +1;
-            local Type = self.Config.SpouseTypes[i][1];
-            local ButtonStartX = (RowX + (ButtonW * (Index -1)));
-            local ButtonEndX = ButtonStartX + ButtonW;
-            local ButtonStartY = RowY;
-            local ButtonEndY = RowY + ButtonH;
 
-            local WidgetName = Stronghold.Hero.Config.TypeToBuyHeroButton[Type];
-            if XGUIEng.IsWidgetShown(WidgetName) == 1 then
-                if (MouseX >= ButtonStartX and MouseX <= ButtonEndX) and (MouseY >= ButtonStartY and MouseY <= ButtonEndY) then
-                    Text = Stronghold.Hero.Config.HeroSkills[Type].Description;
-                end
+            if math.mod(i, 4) == 0 then
+                RowY = RowY + 95;
+                RowX = 122;
             end
         end
         XGUIEng.SetText("BuyHeroWindowInfoLine", Text);
@@ -567,29 +539,12 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         if not Stronghold:IsPlayer(PlayerID) then
             return BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero(_Type);
         end
-
-        local IsLordType = false;
-        for i= 1, table.getn(Stronghold.Hero.Config.LordTypes) do
-            if Stronghold.Hero.Config.LordTypes[i][1] == _Type then
-                IsLordType = true;
-                break;
-            end
-        end
-        if IsLordType then
-            Sync.Call(
-                "Stronghold_ButtonCallback_Headquarters",
-                PlayerID,
-                Stronghold.Building.SyncEvents.Headquarters.BuyLord,
-                _Type
-            );
-        else
-            Sync.Call(
-                "Stronghold_ButtonCallback_Headquarters",
-                PlayerID,
-                Stronghold.Building.SyncEvents.Headquarters.BuySpouse,
-                _Type
-            );
-        end
+        Sync.Call(
+            "Stronghold_ButtonCallback_Headquarters",
+            PlayerID,
+            Stronghold.Building.SyncEvents.Headquarters.BuyLord,
+            _Type
+        );
         XGUIEng.ShowWidget("BuyHeroWindow", 0);
     end
 
@@ -615,7 +570,7 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
         local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
         local TypeName = Logic.GetEntityTypeName(_Type);
         local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
-        Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Burgherr gewählt!");
+        Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Laird gewählt!");
 
         if _PlayerID == GUI.GetPlayerID() then
             GameCallback_GUI_SelectionChanged();
@@ -633,42 +588,6 @@ function Stronghold.Hero:ConfigurePlayersLord(_PlayerID)
             CEntity.SetMaxHealth(ID, self.Config.LordStats.Health);
             if Logic.GetEntityHealth(ID) > 0 then
                 Logic.HealEntity(ID, self.Config.LordStats.Health);
-            end
-        end
-    end
-end
-
-function Stronghold.Hero:BuyHeroCreateSpouse(_PlayerID, _Type)
-    if Stronghold:IsPlayer(_PlayerID) then
-        Stronghold.Players[_PlayerID].SpouseChosen = true;
-        local Position = Stronghold.Players[_PlayerID].DoorPos;
-        local ID = Logic.CreateEntity(_Type, Position.X, Position.Y, 0, _PlayerID);
-        Logic.SetEntityName(ID, Stronghold.Players[_PlayerID].SpouseScriptName);
-        Position = Stronghold.Players[_PlayerID].CampPos;
-        Logic.MoveSettler(ID, Position.X, Position.Y);
-        self:ConfigurePlayersSpouse(_PlayerID);
-
-        local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
-        local TypeName = Logic.GetEntityTypeName(_Type);
-        local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
-        Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Burgfräulein gewählt!");
-
-        if _PlayerID == GUI.GetPlayerID() then
-            GameCallback_GUI_SelectionChanged();
-        end
-    end
-end
-
-function Stronghold.Hero:ConfigurePlayersSpouse(_PlayerID)
-    if Stronghold:IsPlayer(_PlayerID) then
-        local ID = GetID(Stronghold.Players[_PlayerID].SpouseScriptName);
-        if ID > 0 then
-            CEntity.SetArmor(ID, self.Config.SpouseStats.Armor);
-            CEntity.SetDamage(ID, self.Config.SpouseStats.Damage);
-            CEntity.SetHealingPoints(ID, self.Config.SpouseStats.Healing);
-            CEntity.SetMaxHealth(ID, self.Config.SpouseStats.Health);
-            if Logic.GetEntityHealth(ID) > 0 then
-                Logic.HealEntity(ID, self.Config.SpouseStats.Health);
             end
         end
     end
@@ -737,13 +656,6 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                             break;
                         end
                     end
-                    -- Handle spouse
-                    for i= 1, table.getn(self.Config.SpouseTypes) do
-                        if self.Config.SpouseTypes[i][1] == HeroType then
-                            self:ConfigurePlayersSpouse(_PlayerID);
-                            break;
-                        end
-                    end
                 end
             end
 
@@ -784,6 +696,41 @@ function Stronghold_Hero_Trigger_OnEveryTurn()
         Stronghold.Hero:EntityAttackedController(i);
         Stronghold.Hero:EnergyProductionBonus(i);
         Stronghold.Hero:FaithProductionBonus(i);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Activated Abilities
+
+function Stronghold:OnHero5SummonTargetSelected(_PlayerID, _EntityID, _X, _Y)
+    if GUI.GetPlayerID() == _PlayerID then
+        Sound.PlayQueuedFeedbackSound(Sounds.VoicesHero5_HERO5_CallBandits_rnd_01);
+    end
+    Logic.HeroSetAbilityChargeSeconds(_EntityID, Abilities.AbilitySummon, 0);
+    for i= 1, 6 do
+        local x = _X + math.random(-400, 400);
+        local y = _Y + math.random(-400, 400);
+        local ID = AI.Entity_CreateFormation(_PlayerID, Entities.PU_Hero5_Outlaw, nil, 0, x, y, 0, 0, 0, 0);
+        Logic.GroupAttackMove(ID, x, y);
+    end
+end
+
+function Stronghold.Hero:OverrideHero5AbilitySummon()
+    self.Orig_GUIAction_Hero5Summon = GUIAction_Hero5Summon;
+    GUIAction_Hero5Summon = function()
+        local PlayerID = GUI.GetPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        local x,y,z = Logic.EntityGetPos(EntityID);
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Stronghold.Hero.Orig_GUIAction_Hero5Summon();
+        end
+        Sync.Call(
+            "Stronghold_ButtonCallback_Hero",
+            PlayerID,
+            Stronghold.Hero.SyncEvents.Hero5Summon,
+            EntityID,
+            x,y
+        );
     end
 end
 
@@ -867,17 +814,6 @@ function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)
         local LordID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
         if IsEntityValid(LordID) then
             local HeroType = Logic.GetEntityType(LordID);
-            local TypeName = Logic.GetEntityTypeName(HeroType);
-            if type(_Type) == "string" and TypeName and string.find(TypeName, _Type) then
-                return true;
-            elseif type(_Type) == "number" and HeroType == _Type then
-                return true;
-            end
-        end
-        -- Check spouse
-        local SpouseID = GetID(Stronghold.Players[_PlayerID].SpouseScriptName);
-        if IsEntityValid(SpouseID) then
-            local HeroType = Logic.GetEntityType(SpouseID);
             local TypeName = Logic.GetEntityTypeName(HeroType);
             if type(_Type) == "string" and TypeName and string.find(TypeName, _Type) then
                 return true;
@@ -998,11 +934,7 @@ end
 -- Passive Ability: Increase of reputation
 function Stronghold.Hero:ApplyReputationIncreasePassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    -- This is in theory the passive ability of Aris outlaws...
-    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
-        local Outlaws = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Hero5_Outlaw);
-        Value = Value + (2 * Outlaws);
-    end
+    -- Do nothing
     return Value;
 end
 
@@ -1026,7 +958,7 @@ end
 function Stronghold.Hero:ApplyIncomeBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
-        Income = Income * 1.15;
+        Income = Income * 1.3;
     end
     return Income;
 end

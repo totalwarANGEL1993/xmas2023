@@ -37,11 +37,12 @@ Stronghold.Limitation = {
             ---
             [Entities.PB_Market2] = 1,
             [Entities.PB_Tavern1] = 6,
+            [Entities.PB_PowerPlant1] = 3,
             [Entities.PB_Tavern2] = 3,
             [Entities.PB_Farm2] = 8,
             [Entities.PB_Farm3] = 4,
-            [Entities.PB_Residence2] = -1,
-            [Entities.PB_Residence3] = 8,
+            [Entities.PB_Residence2] = 8,
+            [Entities.PB_Residence3] = 4,
             ---
             [Entities.PB_Barracks1] = 3,
             [Entities.PB_Barracks2] = 1,

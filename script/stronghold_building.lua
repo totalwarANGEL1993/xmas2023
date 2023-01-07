@@ -93,8 +93,7 @@ function Stronghold.Building:CreateHeadquartersButtonHandlers()
     self.SyncEvents.Headquarters = {
         ChangeTax = 1,
         BuyLord = 2,
-        BuySpouse = 3,
-        BuySerf = 4,
+        BuySerf = 3,
     };
 
     function Stronghold_ButtonCallback_Headquarters(_PlayerID, _Action, ...)
@@ -103,9 +102,6 @@ function Stronghold.Building:CreateHeadquartersButtonHandlers()
         end
         if _Action == Stronghold.Building.SyncEvents.Headquarters.BuyLord then
             Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
-        end
-        if _Action == Stronghold.Building.SyncEvents.Headquarters.BuySpouse then
-            Stronghold.Hero:BuyHeroCreateSpouse(_PlayerID, arg[1]);
         end
         if _Action == Stronghold.Building.SyncEvents.Headquarters.BuySerf then
             Stronghold.Unit:BuyUnit(_PlayerID, arg[1], arg[2], arg[3]);
@@ -200,8 +196,6 @@ function Stronghold.Building:OverrideHeadquarterButtons()
     end
 
     GUIAction_BackToWork = function()
-        local PlayerID = GUI.GetPlayerID();
-        Stronghold.Hero:OpenBuyHeroWindowForSpouseSelection(PlayerID);
     end
 end
 
@@ -224,15 +218,8 @@ function Stronghold.Building:OnHeadquarterSelected(_EntityID)
         XGUIEng.ShowWidget("HQ_CallMilitia", 1);
         XGUIEng.ShowWidget("HQ_BackToWork", 0);
     else
-        if not Stronghold.Players[PlayerID].SpouseChosen then
-            XGUIEng.ShowWidget("HQ_CallMilitia", 0);
-            XGUIEng.ShowWidget("HQ_BackToWork", 1);
-            local Disabled = Logic.GetEntityType(_EntityID) == Entities.PB_Headquarters1;
-            XGUIEng.DisableButton("HQ_BackToWork", (Disabled and 1) or 0);
-        else
-            XGUIEng.ShowWidget("HQ_CallMilitia", 0);
-            XGUIEng.ShowWidget("HQ_BackToWork", 0);
-        end
+        XGUIEng.ShowWidget("HQ_CallMilitia", 0);
+        XGUIEng.ShowWidget("HQ_BackToWork", 0);
     end
 end
 
@@ -302,30 +289,9 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
         end
     elseif _Key == "MenuHeadquarter/CallMilitia" then
         if Logic.IsEntityInCategory(GUI.GetSelectedEntity(), EntityCategories.Headquarters) == 1 then
-            Text = "@color:180,180,180 Burgherren wählen @color:255,255,255 "..
-                   "@cr Wählt euren Burgherren aus. Jeder Burgherr verfügt "..
-                   "über starke Fähigkeiten.";
-        end
-    elseif _Key == "MenuHeadquarter/BackToWork" then
-        if Logic.IsEntityInCategory(GUI.GetSelectedEntity(), EntityCategories.Headquarters) == 1 then
-            Text = "@color:180,180,180 Burgfräulein wählen @color:255,255,255 ";
-
-            if Logic.GetEntityType(GUI.GetSelectedEntity()) == Entities.PB_Headquarters1 then
-                Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                       "Festung";
-            else
-                Text = Text .. " @cr Die bessere Hälfte Eures Burgherren. Sie "..
-                       "gewährt Euch extra Beliebtheit und Ehre, solange sie lebt.";
-            end
-
-            local Effects = Stronghold.Economy.Config.Income.Spouse;
-            EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-            if Effects.Reputation > 0 then
-                EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-            end
-            if Effects.Honor > 0 then
-                EffectText = EffectText.. "+" ..Effects.Honor.." Ehre ";
-            end
+            Text = "@color:180,180,180 Laird wählen @color:255,255,255 "..
+                   "@cr Wählt euren Laird aus. Jeder Laird verfügt über "..
+                   "starke Fähigkeiten.";
         end
     else
         return false;
@@ -533,7 +499,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         local Type = Entities.PU_LeaderPoleArm3;
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         Text = "@color:180,180,180 Lanzenträger @color:255,255,255 "..
-               "@cr Die Leibwache Eures Burgherren. Sie sind gut gepanzert "..
+               "@cr Die Leibwache Eures Laird. Sie sind gut gepanzert "..
                "und besonders stark gegen Kavalerie.";
 
         -- Costs text
@@ -1290,20 +1256,22 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         -- Effect text
         local EffectText = "";
         local TypeName = Logic.GetEntityTypeName(_Type)
-        if string.find(TypeName, "PB_") then
-        -- if _Type == Entities.PB_Tavern1
-        -- or _Type == Entities.PB_Tower1
-        -- or _Type == Entities.PB_Tower2
-        -- or _Type == Entities.PB_Farm1
-        -- or _Type == Entities.PB_Farm2
-        -- or _Type == Entities.PB_Residence1
-        -- or _Type == Entities.PB_Residence2
-        -- or _Type == Entities.PB_Barracks1
-        -- or _Type == Entities.PB_Archery1
-        -- or _Type == Entities.PB_Stable1
-        -- or _Type == Entities.PB_Market1
-        -- or _Type == Entities.PB_Monastery1
-        -- or _Type == Entities.PB_Monastery2 then
+        -- if string.find(TypeName, "PB_") then
+        if _Type == Entities.PB_Tavern1
+        or _Type == Entities.PB_Tower1
+        or _Type == Entities.PB_Tower2
+        or _Type == Entities.PB_Headquarters1
+        or _Type == Entities.PB_Headquarters2
+        or _Type == Entities.PB_Farm1
+        or _Type == Entities.PB_Farm2
+        or _Type == Entities.PB_Residence1
+        or _Type == Entities.PB_Residence2
+        or _Type == Entities.PB_Barracks1
+        or _Type == Entities.PB_Archery1
+        or _Type == Entities.PB_Stable1
+        or _Type == Entities.PB_Market1
+        or _Type == Entities.PB_Monastery1
+        or _Type == Entities.PB_Monastery2 then
             local Effects = Stronghold.Economy.Config.Income.Buildings[_Type +1];
             if Effects then
                 if Effects.Reputation > 0 then

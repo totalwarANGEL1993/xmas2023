@@ -64,13 +64,12 @@ Stronghold.Economy = {
                 [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
                 [Entities.PB_Tavern2] = {Honor = 0, Reputation = 6,},
                 ---
-                [Entities.PB_Farm2] = {Honor = 2, Reputation = 0,},
-                [Entities.PB_Farm3] = {Honor = 3, Reputation = 0,},
+                [Entities.PB_Farm2] = {Honor = 1, Reputation = 0,},
+                [Entities.PB_Farm3] = {Honor = 2, Reputation = 0,},
                 ---
                 [Entities.PB_Residence2] = {Honor = 0, Reputation = 1,},
                 [Entities.PB_Residence3] = {Honor = 0, Reputation = 2,},
             },
-            Spouse = {Honor = 5, Reputation = 5,},
         }
     }
 };
@@ -167,12 +166,6 @@ function Stronghold.Economy:UpdateIncomeAndUpkeep(_PlayerID)
         local ReputationMinus = self:CalculateReputationDecrease(_PlayerID);
         local Honor = self:CalculateHonorIncome(_PlayerID);
 
-        -- Spouse
-        if Logic.GetEntityHealth(GetID(Stronghold.Players[_PlayerID].SpouseScriptName)) > 0 then
-            ReputationPlus = ReputationPlus + self.Config.Income.Spouse.Reputation;
-            Honor = Honor + self.Config.Income.Spouse.Honor;
-        end
-
         self.Data[_PlayerID].IncomeMoney = Income;
         self.Data[_PlayerID].UpkeepMoney = Upkeep;
         self.Data[_PlayerID].IncomeReputation = math.floor(ReputationPlus - ReputationMinus);
@@ -247,7 +240,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
             local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
             for i= 1, _WorkerCount do
-                Penalty = Penalty * 1.03;
+                Penalty = Penalty * 1.05;
             end
         end
         return math.floor(Penalty + 0.5);
