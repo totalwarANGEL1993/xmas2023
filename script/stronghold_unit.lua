@@ -186,6 +186,8 @@ function Stronghold.Unit:Install()
     self:OverrideBuySoldierButtonAction();
     self:OverrideBuySoldierButtonTooltip();
     self:OverrideBuySoldierButtonUpdate();
+    self:OverrideExpelSettlerButtonAction();
+    self:OverrideExpelSettlerButtonTooltip();
     self:CreateUnitButtonHandlers();
 end
 
@@ -272,7 +274,11 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                 if Logic.GetSector(ID) == Logic.GetSector(GetID("CampPosP" .._PlayerID)) then
                     Position = Stronghold.Players[_PlayerID].CampPos;
                 end
-                Logic.MoveSettler(ID, Position.X, Position.Y);
+                if Logic.IsLeader(ID) == 1 then
+                    Logic.GroupAttackMove(ID, Position.X, Position.Y);
+                else
+                    Logic.MoveSettler(ID, Position.X, Position.Y);
+                end
             end
         end
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;
@@ -456,6 +462,59 @@ function Stronghold.Unit:GetCurrentUnitCosts(_PlayerID, _EntityID, _Costs, _Amou
     Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
     return Costs;
 end
+
+-- -------------------------------------------------------------------------- --
+-- Expel
+
+function Stronghold.Unit:OverrideExpelSettlerButtonAction()
+    self.Orig_GUIAction_ExpelSettler = GUIAction_ExpelSettler;
+    GUIAction_ExpelSettler = function()
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Stronghold.Unit.Orig_GUIAction_ExpelSettler();
+        end
+        if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
+            local Selected = {GUI.GetSelectedEntities()};
+            for i= 1, table.getn(Selected) do
+                if Logic.IsHero(Selected[i]) == 0 then
+                    if Logic.IsLeader(Selected[i]) == 1 then
+                        local Soldiers = {Logic.GetSoldiersAttachedToLeader(Selected[i])};
+                        for j= 2, Soldiers[1] +1 do
+                            GUI.ExpelSettler(Soldiers[j]);
+                        end
+                    end
+                    GUI.ExpelSettler(Selected[i]);
+                end
+            end
+            return;
+        end
+        Stronghold.Unit.Orig_GUIAction_ExpelSettler();
+    end
+end
+
+function Stronghold.Unit:OverrideExpelSettlerButtonTooltip()
+    self.Orig_GUITooltip_NormalButton = GUITooltip_NormalButton;
+    GUITooltip_NormalButton = function(_Key)
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Stronghold.Unit.Orig_GUITooltip_NormalButton(_Key);
+        end
+        if _Key == "MenuCommandsGeneric/expel" then
+            local Text = "@color:180,180,180 Einheit entlassen @color:255,255,255 @cr "..
+                         "Entlasst die selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
+                         "Soldaten entlasst, geht der Hauptmann zuletzt.";
+            if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
+                Text   = "@color:180,180,180 Alle entlassen @color:255,255,255 @cr "..
+                         "Entlasst alle selektierten Einheiten aus ihrem Dienst. Alle "..
+                         "Einheiten werden sofort entlassen!";
+            end
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+            return;
+        end
+        Stronghold.Unit.Orig_GUITooltip_NormalButton(_Key);
+    end
+end
+
 
 -- -------------------------------------------------------------------------- --
 -- Construction
