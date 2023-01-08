@@ -21,6 +21,15 @@ function CopyTable(_Source, _Dest)
     return _Dest;
 end
 
+function IsInTable(_Value, _Table)
+    for k, v in pairs(_Table) do
+        if v == _Value then
+            return true;
+        end
+    end
+    return false;
+end
+
 function KeyOf(_wert, _table)
     if _table == nil then return false end
     for k, v in pairs(_table) do

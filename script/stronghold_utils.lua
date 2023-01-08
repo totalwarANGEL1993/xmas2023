@@ -116,7 +116,7 @@ end
 -- -------------------------------------------------------------------------- --
 -- Resources
 
-function CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
+function Stronghold:CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
     local Costs = {};
     if _Honor ~= nil and _Honor > 0 then
         Costs[ResourceType.Honor] = _Honor;
@@ -140,6 +140,9 @@ function CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
         Costs[ResourceType.Sulfur] = _Sulfur;
     end
     return Costs
+end
+function CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
+    return Stronghold:CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur);
 end
 
 function Stronghold:HasEnoughResources(_PlayerID, _Costs)

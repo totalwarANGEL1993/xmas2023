@@ -98,23 +98,16 @@ function Stronghold.Limitation:SetupSynchronization()
         UpgradeCanceled = 2,
     };
 
-    function Stronghold_Limitation_SyncEvent(_PlayerID, _Action, ...)
-        if _Action == Stronghold.Limitation.SyncEvent.UpgradeStarted then
-            Stronghold.Limitation:OnUpgradeStarted(_PlayerID, arg[1]);
-        end
-        if _Action == Stronghold.Limitation.SyncEvent.UpgradeCanceled then
-            Stronghold.Limitation:OnUpgradeCanceled(_PlayerID, arg[1]);
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_Limitation_SyncEvent",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_Limitation_SyncEvent(_PlayerID, _Action, unpack(arg));
-                end;
+    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+        function(_PlayerID, _Action, ...)
+            if _Action == Stronghold.Limitation.SyncEvent.UpgradeStarted then
+                Stronghold.Limitation:OnUpgradeStarted(_PlayerID, arg[1]);
             end
-        );
-    end;
+            if _Action == Stronghold.Limitation.SyncEvent.UpgradeCanceled then
+                Stronghold.Limitation:OnUpgradeCanceled(_PlayerID, arg[1]);
+            end
+        end
+    );
 end
 
 function Stronghold.Limitation:GetLimitForType(_Type)
@@ -291,8 +284,8 @@ function Stronghold.Limitation:OverrideUpgradeBuilding()
                 if not Stronghold.Limitation.Data[PlayerID].UpgradeBuildingLock then
                     Stronghold.Limitation.Data[PlayerID].UpgradeBuildingLock = true;
                     GUI.UpgradeSingleBuilding(EntityID);
-                    Sync.Call(
-                        "Stronghold_Limitation_SyncEvent",
+                    Stronghold.Sync:Call(
+                        Stronghold.Limitation.NetworkCall,
                         PlayerID,
                         Stronghold.Limitation.SyncEvent.UpgradeStarted,
                         EntityID
@@ -329,8 +322,8 @@ function Stronghold.Limitation:StartTriggers()
         local EntityID = GUI.GetSelectedEntity();
         local PlayerID = Logic.EntityGetPlayer(EntityID);
 
-        Sync.Call(
-            "Stronghold_Limitation_SyncEvent",
+        Stronghold.Sync:Call(
+            Stronghold.Limitation.NetworkCall,
             PlayerID,
             Stronghold.Limitation.SyncEvent.UpgradeCanceled,
             EntityID

@@ -212,7 +212,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
             local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
-            local Costs = CreateCostTable(unpack(self.Config.Units[_Type].Costs));
+            local Costs = Stronghold:CreateCostTable(unpack(self.Config.Units[_Type].Costs));
 
             -- Passive ability: experienced troops
             local Experience = 0;
@@ -271,7 +271,7 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount)
                         local BuildingID = Logic.LeaderGetNearbyBarracks(_UnitID);
                         local Position = self:GetBarracksDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
 
-                        local Costs = CreateCostTable(unpack(self.Config.Units[LeaderType].Costs));
+                        local Costs = Stronghold:CreateCostTable(unpack(self.Config.Units[LeaderType].Costs));
                         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
                         Costs[ResourceType.Honor] = 0;
 

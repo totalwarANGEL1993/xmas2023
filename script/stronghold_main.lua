@@ -660,7 +660,7 @@ function Stronghold:PromotePlayer(_PlayerID)
         local RankName = Stronghold:GetRankName(_PlayerID, Rank +1);
         self:SetRank(_PlayerID, Rank +1);
 
-        local Costs = CreateCostTable(unpack(self.Config.Ranks[Rank +1].Costs));
+        local Costs = Stronghold:CreateCostTable(unpack(self.Config.Ranks[Rank +1].Costs));
         RemoveResourcesFromPlayer(_PlayerID, Costs);
 
         local MsgText = "Erhebt Euch, " ..RankName.. "!";

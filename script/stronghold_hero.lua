@@ -155,24 +155,22 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
     self.SyncEvents = {
         RankUp = 1,
         Hero5Summon = 2,
+        BuyLord = 3,
     };
-    function Stronghold_ButtonCallback_Hero(_PlayerID, _Action, ...)
-        if _Action == Stronghold.Hero.SyncEvents.RankUp then
-            Stronghold:PromotePlayer(_PlayerID);
-        end
-        if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
-            Stronghold:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
-        end
-    end
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Hero",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Hero(_PlayerID, _Action, unpack(arg));
-                end;
+
+    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+        function(_PlayerID, _Action, ...)
+            if _Action == Stronghold.Hero.SyncEvents.RankUp then
+                Stronghold:PromotePlayer(_PlayerID);
             end
-        );
-    end;
+            if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
+                Stronghold:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
+            end
+            if _Action == Stronghold.Hero.SyncEvents.BuyLord then
+                Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
+            end
+        end
+    );
 end
 
 function Stronghold.Hero:OverrideLeaderFormationAction()
@@ -193,15 +191,15 @@ function Stronghold.Hero:OverrideLeaderFormationAction()
         local Rank = Stronghold:GetRank(PlayerID);
         local NextRank = Stronghold.Config.Ranks[Rank+1];
         if NextRank then
-            local Costs = CreateCostTable(unpack(NextRank.Costs));
+            local Costs = Stronghold:CreateCostTable(unpack(NextRank.Costs));
             if not HasPlayerEnoughResourcesFeedback(Costs) then
                 return;
             end
         end
 
         if Stronghold:CanPlayerBePromoted(PlayerID) then
-            Sync.Call(
-                "Stronghold_ButtonCallback_Hero",
+            Stronghold.Sync:Call(
+                Stronghold.Hero.NetworkCall,
                 PlayerID,
                 Stronghold.Hero.SyncEvents.RankUp
             );
@@ -231,7 +229,8 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
                        " erheben, um neuen Privilegien zu genießen.";
 
                 local Costs = Stronghold.Config.Ranks[NextRank].Costs;
-                CostText = FormatCostString(PlayerID, CreateCostTable(unpack(Costs)));
+                Costs = Stronghold:CreateCostTable(unpack(Costs));
+                CostText = Stronghold:FormatCostString(PlayerID, Costs);
             else
                 Text = "@color:180,180,180 Höchster Rang @color:255,255,255 @cr "..
                        " Ihr könnt keinen höheren Rang erreichen.";
@@ -547,10 +546,10 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         if not Stronghold:IsPlayer(PlayerID) then
             return BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero(_Type);
         end
-        Sync.Call(
-            "Stronghold_ButtonCallback_Building",
+        Stronghold.Sync:Call(
+            Stronghold.Hero.NetworkCall,
             PlayerID,
-            Stronghold.Building.SyncEvents.BuyLord,
+            Stronghold.Hero.SyncEvents.BuyLord,
             _Type
         );
         XGUIEng.ShowWidget("BuyHeroWindow", 0);
@@ -744,8 +743,8 @@ function Stronghold.Hero:OverrideHero5AbilitySummon()
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Hero.Orig_GUIAction_Hero5Summon();
         end
-        Sync.Call(
-            "Stronghold_ButtonCallback_Hero",
+        Stronghold.Sync:Call(
+            Stronghold.Hero.NetworkCall,
             PlayerID,
             Stronghold.Hero.SyncEvents.Hero5Summon,
             EntityID,

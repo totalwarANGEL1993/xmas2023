@@ -72,33 +72,22 @@ function Stronghold.Building:CreateBuildingButtonHandlers()
         BlessSettlers = 5,
     };
 
-    function Stronghold_ButtonCallback_Building(_PlayerID, _Action, ...)
-        if _Action == Stronghold.Building.SyncEvents.ChangeTax then
-            Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, arg[1]);
-        end
-        if _Action == Stronghold.Building.SyncEvents.BuyLord then
-            Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
-        end
-        if _Action == Stronghold.Building.SyncEvents.BuySerf then
-            Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
-        end
-        if _Action == Stronghold.Building.SyncEvents.BuyUnit then
-            Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
-        end
-        if _Action == Stronghold.Building.SyncEvents.BlessSettlers then
-            Stronghold.Building:MonasteryBlessSettlers(_PlayerID, arg[1]);
-        end
-    end
-
-    if CNetwork then
-        CNetwork.SetNetworkHandler("Stronghold_ButtonCallback_Building",
-            function(name, _PlayerID, _Action, ...)
-                if CNetwork.IsAllowedToManipulatePlayer(name, _PlayerID) then
-                    Stronghold_ButtonCallback_Building(_PlayerID, _Action, unpack(arg));
-                end;
+    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+        function(_PlayerID, _Action, ...)
+            if _Action == Stronghold.Building.SyncEvents.ChangeTax then
+                Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, arg[1]);
             end
-        );
-    end;
+            if _Action == Stronghold.Building.SyncEvents.BuySerf then
+                Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
+            end
+            if _Action == Stronghold.Building.SyncEvents.BuyUnit then
+                Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
+            end
+            if _Action == Stronghold.Building.SyncEvents.BlessSettlers then
+                Stronghold.Building:MonasteryBlessSettlers(_PlayerID, arg[1]);
+            end
+        end
+    );
 end
 
 -- -------------------------------------------------------------------------- --
@@ -135,8 +124,8 @@ function Stronghold.Building:OverrideHeadquarterButtons()
         if not Stronghold.Building.Data[PlayerID] then
             return GUIAction_SetTaxes_Orig_StrongholdBuilding(_Level);
         end
-        Sync.Call(
-            "Stronghold_ButtonCallback_Building",
+        Stronghold.Sync:Call(
+            Stronghold.Building.NetworkCall,
             PlayerID,
             Stronghold.Building.SyncEvents.ChangeTax,
             _Level
@@ -184,8 +173,8 @@ function Stronghold.Building:OverrideHeadquarterButtons()
         end
 
         Stronghold.Players[PlayerID].BuyUnitLock = true;
-        Sync.Call(
-            "Stronghold_ButtonCallback_Building",
+        Stronghold.Sync:Call(
+            Stronghold.Building.NetworkCall,
             PlayerID,
             Stronghold.Building.SyncEvents.BuySerf,
             GetID(Stronghold.Players[PlayerID].HQScriptName),
@@ -351,12 +340,12 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
 
     if Action > 0 then
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
-        local Costs = CreateCostTable(unpack(Config.Costs));
+        local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Sync.Call(
-                "Stronghold_ButtonCallback_Building",
+            Stronghold.Sync:Call(
+                Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
         end
@@ -460,8 +449,9 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 5; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -483,8 +473,9 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -506,8 +497,9 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -529,8 +521,9 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -594,12 +587,12 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
 
     if Action > 0 then
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
-        local Costs = CreateCostTable(unpack(Config.Costs));
+        local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, unpack(Costs));
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Sync.Call(
-                "Stronghold_ButtonCallback_Building",
+            Stronghold.Sync:Call(
+                Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
         end
@@ -698,8 +691,9 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 5; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -721,8 +715,9 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -744,8 +739,9 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 5; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -767,8 +763,9 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -812,12 +809,12 @@ function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
 
     if Action > 0 then
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
-        local Costs = CreateCostTable(unpack(Config.Costs));
+        local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Sync.Call(
-                "Stronghold_ButtonCallback_Building",
+            Stronghold.Sync:Call(
+                Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, false
             );
         end
@@ -871,9 +868,9 @@ function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCateg
 
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
-        local Costs = CopyTable(Config.Costs);
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(CopyTable(Config.Costs)));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -890,9 +887,9 @@ function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCateg
 
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
-        local Costs = CopyTable(Config.Costs);
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(CopyTable(Config.Costs)));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -950,12 +947,12 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
 
     if Action > 0 then
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
-        local Costs = CreateCostTable(unpack(Config.Costs));
+        local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Sync.Call(
-                "Stronghold_ButtonCallback_Building",
+            Stronghold.Sync:Call(
+                Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
         end
@@ -1024,8 +1021,9 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 4; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -1047,8 +1045,9 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
         if Logic.IsAutoFillActive(EntityID) == 1 then
             for i= 2, 7 do Costs[i] = Costs[i] * 4; end
         end
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CreateCostTable(unpack(Costs)));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -1111,11 +1110,11 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
 
     if Action > 0 then
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
-        local Costs = CreateCostTable(unpack(Config.Costs));
+        local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Sync.Call(
-                "Stronghold_ButtonCallback_Building",
+            Stronghold.Sync:Call(
+                Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, false
             );
         end
@@ -1188,8 +1187,8 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = CreateCostTable(unpack(Costs));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -1208,8 +1207,8 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = CreateCostTable(unpack(Costs));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -1227,8 +1226,8 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = CreateCostTable(unpack(Costs));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -1247,8 +1246,8 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
-        Costs = CreateCostTable(unpack(Costs));
-        CostsText = FormatCostString(_PlayerID, Costs);
+        Costs = Stronghold:CreateCostTable(unpack(Costs));
+        CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
 
         -- Disabled text
         if not Config.Allowed then
@@ -1305,8 +1304,8 @@ function Stronghold.Building:OverrideMonasteryButtons()
         local CurrentFaith = Logic.GetPlayersGlobalResource(PlayerID, ResourceType.Faith);
         local BlessCosts = Logic.GetBlessCostByBlessCategory(_BlessCategory);
         if BlessCosts <= CurrentFaith then
-            Sync.Call(
-                "Stronghold_ButtonCallback_Building",
+            Stronghold.Sync:Call(
+                Stronghold.Building.NetworkCall,
                 PlayerID,
                 Stronghold.Building.SyncEvents.BlessSettlers,
                 _BlessCategory
