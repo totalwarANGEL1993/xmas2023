@@ -588,7 +588,7 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
     if Action > 0 then
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Stronghold.Sync:Call(
@@ -633,7 +633,7 @@ function Stronghold.Building:OnArcherySelected(_EntityID)
 
     -- Bowmen
     local BowDisabled = 0;
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderBow1);
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderBow2);
     if Config.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
     or Sawmill1 + Sawmill2 == 0 then
@@ -667,7 +667,7 @@ function Stronghold.Building:OnArcherySelected(_EntityID)
     if Config.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
     or Type ~= Entities.PB_Archery2
-    or Gunsmith1 + Gunsmith2 == 0 then
+    or Gunsmith2 == 0 then
         MusketDisabled = 1;
     end
     XGUIEng.DisableButton("Research_UpgradeRifle1", MusketDisabled);
@@ -772,7 +772,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Schießanlage, Büchsenmacher";
+                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Schießanlage, Büchsenmanufaktur";
         end
     else
         return false;

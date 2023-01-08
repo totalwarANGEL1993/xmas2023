@@ -9,36 +9,37 @@
 Stronghold = Stronghold or {};
 
 Stronghold.Unit = {
+    SyncEvents = {},
     Data = {},
     Config = {
         Units = {
             [Entities.PU_LeaderPoleArm1] = {
-                Costs = {0, 40, 0, 24, 0, 0, 0},
+                Costs = {0, 30, 0, 20, 0, 0, 0},
                 Allowed = true,
                 Rank = 1,
                 Upkeep = 15,
             },
             [Entities.PU_LeaderPoleArm2] = {
-                Costs = {5, 20, 0, 45, 0, 0, 0},
+                Costs = {5, 40, 0, 30, 0, 0, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderPoleArm3] = {
-                Costs = {10, 65, 0, 35, 0, 10, 0},
+                Costs = {10, 40, 0, 40, 0, 10, 0},
                 Allowed = true,
                 Rank = 3,
                 Upkeep = 70
             },
             [Entities.PU_LeaderPoleArm4] = {
-                Costs = {15, 40, 0, 35, 0, 25, 0},
+                Costs = {15, 50, 0, 50, 0, 20, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 80
             },
             ---
             [Entities.PU_LeaderSword1] = {
-                Costs = {6, 25, 0, 0, 0, 40, 0},
+                Costs = {6, 20, 0, 0, 0, 40, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 25,
@@ -50,51 +51,51 @@ Stronghold.Unit = {
                 Upkeep = 40,
             },
             [Entities.PU_LeaderSword3] = {
-                Costs = {20, 70, 0, 0, 0, 45, 0},
+                Costs = {20, 60, 0, 0, 0, 40, 0},
                 Allowed = true,
                 Rank = 5,
                 Upkeep = 100,
             },
             [Entities.PU_LeaderSword4] = {
-                Costs = {30, 80, 0, 0, 0, 55, 0},
+                Costs = {30, 80, 0, 0, 0, 60, 0},
                 Allowed = true,
                 Rank = 8,
                 Upkeep = 120,
             },
             ---
             [Entities.PU_LeaderBow1] = {
-                Costs = {2, 50, 0, 36, 0, 0, 0},
+                Costs = {2, 50, 0, 30, 0, 0, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 25,
             },
             [Entities.PU_LeaderBow2] = {
-                Costs = {6, 56, 0, 44, 0, 0, 0},
+                Costs = {6, 60, 0, 40, 0, 0, 0},
                 Allowed = true,
                 Rank = 2,
                 Upkeep = 30,
             },
             [Entities.PU_LeaderBow3] = {
-                Costs = {12, 72, 0, 30, 0, 22, 0},
+                Costs = {12, 70, 0, 40, 0, 20, 0},
                 Allowed = true,
                 Rank = 4,
                 Upkeep = 80,
             },
             [Entities.PU_LeaderBow4] = {
-                Costs = {15, 10, 0, 0, 0, 0, 0},
+                Costs = {15, 80, 0, 50, 0, 40, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 90,
             },
             ---
             [Entities.PV_Cannon1] = {
-                Costs = {8, 150, 0, 25, 0, 50, 100},
+                Costs = {8, 150, 0, 20, 0, 50, 100},
                 Allowed = true,
                 Rank = 3,
                 Upkeep = 30,
             },
             [Entities.PV_Cannon2] = {
-                Costs = {15, 10, 0, 25, 0, 75, 120},
+                Costs = {15, 10, 0, 30, 0, 70, 120},
                 Allowed = true,
                 Rank = 5,
                 Upkeep = 50,
@@ -113,26 +114,26 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderCavalry1] = {
-                Costs = {6, 55, 0, 30, 0, 0, 0},
+                Costs = {6, 100, 0, 60, 0, 0, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 40,
             },
             [Entities.PU_LeaderCavalry2] = {
-                Costs = {10, 75, 0, 35, 0, 15, 0},
+                Costs = {10, 120, 0, 60, 0, 40, 0},
                 Allowed = true,
                 Rank = 4,
                 Upkeep = 70,
             },
             ---
             [Entities.PU_LeaderHeavyCavalry1] = {
-                Costs = {28, 145, 0, 0, 0, 55, 0},
+                Costs = {30, 200, 0, 0, 0, 130, 0},
                 Allowed = false,
                 Rank = 0,
                 Upkeep = 120,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
-                Costs = {40, 165, 0, 0, 0, 65, 0},
+                Costs = {40, 230, 0, 0, 0, 180, 0},
                 Allowed = true,
                 Rank = 9,
                 Upkeep = 150,
@@ -145,7 +146,7 @@ Stronghold.Unit = {
                 Upkeep = 70,
             },
             [Entities.PU_LeaderRifle2] = {
-                Costs = {30, 105, 0, 20, 0, 0, 60},
+                Costs = {30, 110, 0, 20, 0, 0, 60},
                 Allowed = true,
                 Rank = 8,
                 Upkeep = 100,
@@ -182,14 +183,28 @@ function Stronghold.Unit:Install()
     self:OverrideTooltipConstructionButton();
     self:OverrideUpdateConstructionButton();
     self:OverrideUpdateUpgradeButton();
+    self:OverrideBuySoldierButtonAction();
+    self:OverrideBuySoldierButtonTooltip();
+    self:OverrideBuySoldierButtonUpdate();
+    self:CreateUnitButtonHandlers();
 end
 
 function Stronghold.Unit:OnSaveGameLoaded()
-
 end
 
--- -------------------------------------------------------------------------- --
--- Config
+function Stronghold.Unit:CreateUnitButtonHandlers()
+    self.SyncEvents = {
+        BuySoldier = 1,
+    };
+
+    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+        function(_PlayerID, _Action, ...)
+            if _Action == Stronghold.Unit.SyncEvents.BuySoldier then
+                Stronghold.Unit:RefillUnit(_PlayerID, arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8]);
+            end
+        end
+    );
+end
 
 function Stronghold.Unit:GetUnitConfig(_Type)
     if self.Config.Units[_Type] then
@@ -264,7 +279,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
     end
 end
 
-function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount)
+function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
     if Stronghold:IsPlayer(_PlayerID) then
         local LeaderType = Logic.GetEntityType(_UnitID);
         if self.Config.Units[LeaderType] then
@@ -275,15 +290,21 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount)
                         local BuildingID = Logic.LeaderGetNearbyBarracks(_UnitID);
                         local Position = self:GetBarracksDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
 
-                        local Costs = Stronghold:CreateCostTable(unpack(self.Config.Units[LeaderType].Costs));
-                        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
-                        Costs[ResourceType.Honor] = 0;
+                        local Costs = Stronghold:CreateCostTable(unpack({
+                            0,
+                            _Gold or 0,
+                            _Clay or 0,
+                            _Wood or 0,
+                            _Stone or 0,
+                            _Iron or 0,
+                            _Sulfur or 0
+                        }));
 
-                        local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(_UnitID);
-                        local Soldiers = Logic.LeaderGetNumberOfSoldiers(_UnitID);
+                        RemoveResourcesFromPlayer(_PlayerID, Costs);
                         for i= 1, _Amount do
+                            local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(_UnitID);
+                            local Soldiers = Logic.LeaderGetNumberOfSoldiers(_UnitID);
                             if Soldiers < MaxSoldiers then
-                                RemoveResourcesFromPlayer(_PlayerID, Costs);
                                 local SoldierType = Logic.LeaderGetSoldiersType(_UnitID);
                                 Logic.CreateEntity(SoldierType, Position.X, Position.Y, 0, _PlayerID);
                                 Tools.AttachSoldiersToLeader(_UnitID, 1);
@@ -294,6 +315,115 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount)
             end
         end
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+    end
+end
+
+function Stronghold.Unit:OverrideBuySoldierButtonAction()
+    self.Orig_GUIAction_BuySoldier = GUIAction_BuySoldier;
+    GUIAction_BuySoldier = function()
+        local PlayerID = GUI.GetPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Stronghold.Unit.Orig_GUIAction_BuySoldier();
+        end
+
+        local BuyAmount = 1;
+        if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
+            local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
+            local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
+            BuyAmount = MaxSoldiers - CurrentSoldiers;
+        end
+        if BuyAmount < 1 then
+            return;
+        end
+
+        local Type = Logic.GetEntityType(EntityID);
+        local Costs = self.Config.Units[Type].Costs;
+        Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
+        Costs[ResourceType.Honor] = 0;
+        if not HasPlayerEnoughResourcesFeedback(Costs) then
+            return;
+        end
+
+        local Task = Logic.GetCurrentTaskList(EntityID);
+        if Task and (string.find(Task, "BATTLE") or string.find(Task, "DIE")) then
+            return;
+        end
+
+        Stronghold.Players[PlayerID].BuyUnitLock = true;
+        Stronghold.Sync:Call(
+            Stronghold.Unit.NetworkCall,
+            PlayerID,
+            Stronghold.Unit.SyncEvents.BuySoldier,
+            EntityID,
+            BuyAmount,
+            Costs[ResourceType.Gold],
+            Costs[ResourceType.Clay],
+            Costs[ResourceType.Wood],
+            Costs[ResourceType.Stone],
+            Costs[ResourceType.Iron],
+            Costs[ResourceType.Sulfur]
+        );
+    end
+end
+
+function Stronghold.Unit:OverrideBuySoldierButtonTooltip()
+    self.Orig_GUITooltip_BuySoldier = GUITooltip_BuySoldier;
+    GUITooltip_BuySoldier = function(_KeyNormal, _KeyDisabled, _ShortCut)
+        local PlayerID = GUI.GetPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Stronghold.Unit.Orig_GUITooltip_BuySoldier(_KeyNormal, _KeyDisabled, _ShortCut);
+        end
+
+        local BuyAmount = 1;
+        if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
+            local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
+            local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
+            BuyAmount = MaxSoldiers - CurrentSoldiers;
+        end
+
+        local Type = Logic.GetEntityType(EntityID);
+        local Costs = self.Config.Units[Type].Costs;
+        Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
+        Costs[ResourceType.Honor] = nil;
+
+        local Text = "@color:180,180,180 Soldat rekrutieren @color:255,255,255 @cr ";
+        if BuyAmount > 1 then
+            Text = "@color:180,180,180 Soldaten rekrutieren @color:255,255,255 @cr ";
+        end
+        Text = Text .. "Heuert Gruppenmitglieder an, um den Hauptmann zu verstärken.";
+        local CostText = FormatCostString(PlayerID, Costs);
+        if _KeyNormal == "MenuCommandsGeneric/Buy_Soldier" then
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
+        end
+    end
+end
+
+function Stronghold.Unit:OverrideBuySoldierButtonUpdate()
+    self.Orig_GUIUpdate_BuySoldierButton = GUIUpdate_BuySoldierButton;
+    GUIUpdate_BuySoldierButton = function()
+        local PlayerID = GUI.GetPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        local Type = Logic.GetEntityType(EntityID);
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Stronghold.Unit.Orig_GUIUpdate_BuySoldierButton();
+        end
+        if not self.Config.Units[Type] then
+            XGUIEng.ShowWidget("Buy_Soldier_Button", 0);
+        end
+        if Logic.IsLeader(EntityID) == 0 then
+            XGUIEng.ShowWidget("Buy_Soldier_Button", 0);
+        end
+        local BarracksID = Logic.LeaderGetNearbyBarracks(EntityID);
+        local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
+        local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
+        if BarracksID == 0 or CurrentSoldiers == MaxSoldiers then
+            XGUIEng.DisableButton("Buy_Soldier_Button", 1);
+            return;
+        end
+        XGUIEng.DisableButton("Buy_Soldier_Button", 0);
     end
 end
 
@@ -317,8 +447,18 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     return Position;
 end
 
+function Stronghold.Unit:GetCurrentUnitCosts(_PlayerID, _EntityID, _Costs, _Amount)
+    local Costs = CopyTable(_Costs);
+    for i= 2, 7 do
+        Costs[i] = Costs[i] * _Amount;
+    end
+    Costs = Stronghold:CreateCostTable(unpack(Costs));
+    Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+    return Costs;
+end
+
 -- -------------------------------------------------------------------------- --
--- UI
+-- Construction
 
 function Stronghold.Unit:OverrideTooltipConstructionButton()
     self.Orig_GUITooltip_ConstructBuilding = GUITooltip_ConstructBuilding;
