@@ -374,8 +374,7 @@ function Stronghold.Economy:HonorMenu()
     local Honor = 0;
     local MaxHonor = Stronghold.Config.HonorLimit;
     if Stronghold:IsPlayer(PlayerID) then
-        local CurrentRank = Stronghold:GetRank(PlayerID);
-        Rank = Stronghold.Config.Ranks[CurrentRank].Text or Rank;
+        Rank = Stronghold:GetRankName(PlayerID) or Rank;
         Honor = Stronghold.Players[PlayerID].Honor;
     end
 

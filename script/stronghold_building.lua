@@ -468,7 +468,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " ..Stronghold.Config.Ranks[Config.Rank].Text;
+                   " " ..Stronghold:GetRankName(_PlayerID, Config.Rank);
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSword2" then
@@ -491,7 +491,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " ..Stronghold.Config.Ranks[Config.Rank].Text.. ", Sägemühle"
+                   " " ..Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Sägemühle"
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSword3" then
@@ -514,7 +514,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Garnison, Schmiede";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Garnison, Schmiede";
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSpear1" then
@@ -537,7 +537,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Garnison, Feinschmiede";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Garnison, Feinschmiede";
         end
 
     else
@@ -706,7 +706,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Sägemühle";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Sägemühle";
         end
 
     elseif _TextKey == "MenuArchery/UpgradeBow2" then
@@ -729,7 +729,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Schießanlage, Sägemühle";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Schießanlage, Sägemühle";
         end
 
     elseif _TextKey == "MenuArchery/UpgradeBow3" then
@@ -752,7 +752,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Büchsenmacher";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Büchsenmacher";
         end
 
     elseif _TextKey == "AOMenuArchery/UpgradeRifle1" then
@@ -775,7 +775,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Schießanlage, Büchsenmacher";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Schießanlage, Büchsenmacher";
         end
     else
         return false;
@@ -880,7 +880,7 @@ function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCateg
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. "";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. "";
         end
 
     elseif _KeyNormal == "MenuTavern/BuyThief_normal" then
@@ -899,7 +899,7 @@ function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCateg
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Wirtshaus";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Wirtshaus";
         end
 
     else
@@ -1032,7 +1032,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. "";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. "";
         end
 
     elseif _TextKey == "MenuStables/UpgradeCavalryHeavy1" then
@@ -1055,7 +1055,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. ", Reiterei, Feinschmiede";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. ", Reiterei, Feinschmiede";
         end
 
     else
@@ -1196,7 +1196,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. "";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. "";
         end
 
     elseif _KeyNormal == "MenuFoundry/BuyCannon2_normal" then
@@ -1216,7 +1216,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. "";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. "";
         end
 
     elseif _KeyNormal == "MenuFoundry/BuyCannon3_normal" then
@@ -1235,7 +1235,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. "";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. "";
         end
 
     elseif _KeyNormal == "MenuFoundry/BuyCannon4_normal" then
@@ -1255,7 +1255,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold.Config.Ranks[Config.Rank].Text.. "";
+                   " " .. Stronghold:GetRankName(_PlayerID, Config.Rank).. "";
         end
 
     else

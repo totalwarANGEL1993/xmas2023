@@ -226,7 +226,7 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
         local NextRank = Stronghold:GetRank(PlayerID) +1;
         if _Key == "MenuCommandsGeneric/formation_group" then
             if Stronghold.Config.Ranks[NextRank] then
-                Text = "@color:180,180,180 " ..Stronghold.Config.Ranks[NextRank].Text..
+                Text = "@color:180,180,180 " ..Stronghold:GetRankName(PlayerID, NextRank)..
                        " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
                        " erheben, um neuen Privilegien zu genießen.";
 

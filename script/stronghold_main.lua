@@ -18,41 +18,56 @@ Stronghold = {
 
         Ranks = {
             [1] = {
-                Text = "Edelmann",
+                Text = {"Edelmann", "Edelfrau"},
                 Costs = {0, 0, 0, 0, 0, 0, 0},
             },
             [2] = {
-                Text = "Landvogt",
+                Text = {"Landvogt", "Landvögtin"},
                 Costs = {10, 50, 0, 0, 0, 0, 0},
             },
             [3] = {
-                Text = "Ritter",
+                Text = {"Lord", "Lady"},
                 Costs = {30, 100, 0, 0, 0, 0, 0},
             },
             [4] = {
-                Text = "Edler Ritter",
+                Text = {"Edler Lord", "Edle Lady"},
                 Costs = {50, 200, 0, 0, 0, 0, 0},
             },
             [5] = {
-                Text = "Fürst",
-                Costs = {100, 500, 0, 0, 0, 0, 0},
+                Text = {"Fürst", "Fürstin"},
+                Costs = {100, 300, 0, 0, 0, 0, 0},
             },
             [6] = {
-                Text = "Baron",
-                Costs = {150, 1000, 0, 0, 0, 0, 0},
+                Text = {"Baron", "Baronin"},
+                Costs = {150, 500, 0, 0, 0, 0, 0},
             },
             [7] = {
-                Text = "Graf",
-                Costs = {200, 2000, 0, 0, 0, 0, 0},
+                Text = {"Graf", "Gräfin"},
+                Costs = {200, 1000, 0, 0, 0, 0, 0},
             },
             [8] = {
-                Text = "Herzog",
-                Costs = {250, 4000, 0, 0, 0, 0, 0},
+                Text = {"Herzog", "Herzogin"},
+                Costs = {250, 2000, 0, 0, 0, 0, 0},
             },
             [9] = {
-                Text = "Erzherzog",
-                Costs = {300, 10000, 0, 0, 0, 0, 0},
+                Text = {"Erzherzog", "Erzherzogin"},
+                Costs = {300, 3000, 0, 0, 0, 0, 0},
             },
+        },
+
+        Gender = {
+            [Entities.PU_Hero1c]             = 1,
+            [Entities.PU_Hero2]              = 1,
+            [Entities.PU_Hero3]              = 1,
+            [Entities.PU_Hero4]              = 1,
+            [Entities.PU_Hero5]              = 2,
+            [Entities.PU_Hero6]              = 1,
+            [Entities.CU_BlackKnight]        = 1,
+            [Entities.CU_Mary_de_Mortfichet] = 2,
+            [Entities.CU_Barbarian_Hero]     = 1,
+            [Entities.PU_Hero10]             = 1,
+            [Entities.PU_Hero11]             = 2,
+            [Entities.CU_Evil_Queen]         = 2,
         },
     },
 }
@@ -60,53 +75,49 @@ Stronghold = {
 -- -------------------------------------------------------------------------- --
 -- API
 
+--- Starts the Stronghold script
 function SetupStronghold()
     Stronghold:Init();
 end
 
+--- Creates a new human player
 function SetupHumanPlayer(_PlayerID)
     if not Stronghold:IsPlayer(_PlayerID) then
         Stronghold:AddPlayer(_PlayerID);
     end
 end
 
+--- Returns the reputation of the player
 function GetLairdReputation(_PlayerID)
     return Stronghold:GetPlayerReputation(_PlayerID);
 end
 
+--- Returns the max reputation of the player
 function GetLairdMaxReputation(_PlayerID)
     return Stronghold:GetPlayerReputationLimit(_PlayerID);
 end
 
+--- Adds honor to the player
 function AddLairdHonor(_PlayerID, _Amount)
     Stronghold:AddPlayerHonor(_PlayerID, _Amount);
 end
 
+--- Returns the amount of honor of the player
 function GetLairdHonor(_PlayerID)
     return Stronghold:GetPlayerHonor(_PlayerID);
 end
 
+--- Returns the rank of the player
 function GetLairdRank(_PlayerID)
     return Stronghold:GetRank(_PlayerID);
 end
 
+--- Sets the rank of the player
 function SetLairdRank(_PlayerID, _Rank)
     return Stronghold:SetRank(_PlayerID, _Rank);
 end
 
-function SetBuyUnitLocked(_PlayerID, _Locked)
-    if Stronghold:IsPlayer(_PlayerID) then
-        Stronghold.Players[_PlayerID].BuyUnitLock = _Locked == true;
-    end
-end
-
-function IsBuyUnitLocked(_PlayerID, _Locked)
-    if Stronghold:IsPlayer(_PlayerID) then
-        return Stronghold.Players[_PlayerID].BuyUnitLock == true;
-    end
-    return false;
-end
-
+--- Returns the player data
 function GetPlayerData(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         return Stronghold:GetPlayer(_PlayerID);
@@ -139,12 +150,13 @@ function Stronghold:Init()
     self.Building:Install();
     self.Hero:Install();
     self.Unit:Install();
+    self.Province:Install();
+    self.AI:Install();
 
     self:StartPlayerPaydayUpdater();
     self:StartEntityCreatedTrigger();
     self:StartEntityHurtTrigger();
     self:StartOnEveryTurnTrigger();
-    self:SetEntityTypesAttractionUsage();
 
     self:OverrideAttraction();
     self:OverrideTooltipGenericMain();
@@ -178,10 +190,10 @@ function Stronghold:OnSaveGameLoaded()
     self.Limitation:OnSaveGameLoaded();
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
+    self.Province:OnSaveGameLoaded();
+    self.AI:OnSaveGameLoaded();
 
     self:OverrideAttraction();
-    self:SetEntityTypesAttractionUsage();
-
     return true;
 end
 
@@ -524,13 +536,6 @@ function Stronghold:OverrideAttraction()
 	end
 end
 
-function Stronghold:SetEntityTypesAttractionUsage()
-    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon1, 0);
-    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon2, 0);
-    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon3, 0);
-    CLogic.SetEntitiesAttractionUsage(Entities.PV_Cannon4, 0);
-end
-
 -- -------------------------------------------------------------------------- --
 -- Payday
 
@@ -622,6 +627,27 @@ function Stronghold:GetRank(_PlayerID)
     return 0;
 end
 
+function Stronghold:GetRankName(_PlayerID, _Rank)
+    if self:IsPlayer(_PlayerID) then
+        local Rank = _Rank or self.Players[_PlayerID].Rank;
+        local LairdID = GetID(self.Players[_PlayerID].LordScriptName);
+
+        local Gender = 1;
+        if LairdID ~= 0 then
+            Gender = self:GetLairdGender(Logic.GetEntityType(LairdID)) or 1;
+        end
+        return self.Config.Ranks[Rank].Text[Gender];
+    end
+    return "Fußvolk";
+end
+
+function Stronghold:GetLairdGender(_Type)
+    if self.Config.Gender[_Type] then
+        return self.Config.Gender[_Type];
+    end
+    return 1;
+end
+
 function Stronghold:SetRank(_PlayerID, _Rank)
     if self:IsPlayer(_PlayerID) then
         self.Players[_PlayerID].Rank = _Rank;
@@ -631,7 +657,7 @@ end
 function Stronghold:PromotePlayer(_PlayerID)
     if self:CanPlayerBePromoted(_PlayerID) then
         local Rank = self:GetRank(_PlayerID);
-        local RankName = self.Config.Ranks[Rank +1].Text;
+        local RankName = Stronghold:GetRankName(_PlayerID, Rank +1);
         self:SetRank(_PlayerID, Rank +1);
 
         local Costs = CreateCostTable(unpack(self.Config.Ranks[Rank +1].Costs));
