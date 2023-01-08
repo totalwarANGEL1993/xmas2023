@@ -44,11 +44,11 @@ EMS_CustomMapConfig = {
     -- * Called at the end of the 10 seconds delay, after the host chose the rules and started
     -- ********************************************************************************************
     Callback_OnGameStart = function()
-        Stronghold:Init();
-        Stronghold:AddPlayer(1);
-        Stronghold:AddPlayer(2);
-        Stronghold:AddPlayer(3);
-        Stronghold:AddPlayer(4);
+        SetupStronghold();
+        SetupHumanPlayer(1);
+        SetupHumanPlayer(2);
+        SetupHumanPlayer(3);
+        SetupHumanPlayer(4);
     end,
 
     -- ********************************************************************************************

@@ -17,11 +17,11 @@ Stronghold.Hero = {
         PetStats = {
             [Entities.CU_Barbarian_Hero_wolf] = {
                 Owner = Entities.CU_Barbarian_Hero,
-                Health = 1000, Armor = 2, Damage = 32, Healing = 20,
+                Health = 400, Armor = 1, Damage = 20, Healing = 10,
             },
             [Entities.PU_Hero5_Outlaw] = {
                 Owner = Entities.PU_Hero5,
-                Health = 250, Armor = 6, Damage = 12, Healing = 5
+                Health = 150, Armor = 3, Damage = 10, Healing = 5
             },
         },
 
@@ -63,7 +63,7 @@ Stronghold.Hero = {
 
         HeroSkills = {
             [Entities.PU_Hero1c]             = {
-                Description = "Passive Fähigkeit: @cr Der Sold aller Einheiten wird von der Krone bezahl wodurch Euch alle Einheiten 15% weniger kosten."..
+                Description = "Passive Fähigkeit: @cr Der Sold aller Einheiten wird von der Krone bezahlt, wodurch Euch alle Einheiten 15% weniger kosten."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
             },
@@ -85,7 +85,7 @@ Stronghold.Hero = {
             [Entities.PU_Hero5]              = {
                 Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als mancher denkt. Die Steuereinnahmen werden um 30% erhöht."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann eine Schar von Gesetzlosen herbeirufen.",
+                              "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr Gesetzlose sind es.",
             },
             [Entities.PU_Hero6]              = {
                 Description = "Passive Fähigkeit: @cr Für jeden Priester auf der Burg wird zusätzlicher Glauben produziert."..
@@ -98,14 +98,14 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
             },
             [Entities.CU_BlackKnight]        = {
-                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Sämtliche negative Effekte auf die Beliebtheit werden um 50% verringert."..
+                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative Effekte auf die Beliebtheit werden um 50% verringert."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
             },
             [Entities.CU_Barbarian_Hero]     = {
                 Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 50% zusätzliche Beliebtheit."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Ruft die mächtigen Wölfe Hati und Skalli herbei, die Ehre erzeugen, wenn sie Feinde töten.",
+                              "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre Stärke richtet sich nach dem Rang.",
             },
             [Entities.PU_Hero10]             = {
                 Description = "Passive Fähigkeit: @cr Durch effizientere Trainingsmethoden sinken die Kosten für den Unterhalt aller Scharfschützen um 50%."..
@@ -161,7 +161,7 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
             Stronghold:PromotePlayer(_PlayerID);
         end
         if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
-            Stronghold:OnHero5SummonTargetSelected(_PlayerID, arg[1], arg[2], arg[3]);
+            Stronghold:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
         end
     end
     if CNetwork then
@@ -606,16 +606,28 @@ function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
     local Type = Logic.GetEntityType(_EntityID);
     if self.Config.PetStats[Type] then
         if self:HasValidHeroOfType(PlayerID, self.Config.PetStats[Type].Owner) then
-            -- Special treatment for Vargs wolves
+            local Armor = self.Config.PetStats[Type].Armor;
+            local Damage = self.Config.PetStats[Type].Damage;
+            local Healing = self.Config.PetStats[Type].Healing;
+            local Health = self.Config.PetStats[Type].Health;
+
+            -- Vargs wolves getting stronger with higher rank
+            -- (and getting bigger just for show)
             if Type == Entities.CU_Barbarian_Hero_wolf then
-                Logic.SetSpeedFactor(_EntityID, 1.5);
-                SVLib.SetEntitySize(_EntityID, 1.5);
+                local CurrentRank = Stronghold:GetRank(PlayerID);
+                Logic.SetSpeedFactor(_EntityID, 1.1 + ((CurrentRank -1) * 0.035));
+                SVLib.SetEntitySize(_EntityID, 1.1 + ((CurrentRank -1) * 0.035));
+                Health = Health + math.floor((CurrentRank -1) * 50);
+                Healing = Healing + math.floor((CurrentRank -1) * 2);
+                Armor = Armor + math.floor(CurrentRank/2);
+                Damage = Damage + math.floor(CurrentRank * 2);
             end
-            CEntity.SetArmor(_EntityID, self.Config.PetStats[Type].Armor);
-            CEntity.SetDamage(_EntityID, self.Config.PetStats[Type].Damage);
-            CEntity.SetHealingPoints(_EntityID, self.Config.PetStats[Type].Healing);
-            CEntity.SetMaxHealth(_EntityID, self.Config.PetStats[Type].Health);
-            Logic.HealEntity(_EntityID, self.Config.PetStats[Type].Health);
+
+            CEntity.SetArmor(_EntityID, Armor);
+            CEntity.SetDamage(_EntityID, Damage);
+            CEntity.SetHealingPoints(_EntityID, Healing);
+            CEntity.SetMaxHealth(_EntityID, Health);
+            Logic.HealEntity(_EntityID, Health);
         end
     end
 end
@@ -709,12 +721,13 @@ end
 -- -------------------------------------------------------------------------- --
 -- Activated Abilities
 
-function Stronghold:OnHero5SummonTargetSelected(_PlayerID, _EntityID, _X, _Y)
+function Stronghold:OnHero5SummonSelected(_PlayerID, _EntityID, _X, _Y)
     if GUI.GetPlayerID() == _PlayerID then
         Sound.PlayQueuedFeedbackSound(Sounds.VoicesHero5_HERO5_CallBandits_rnd_01);
     end
     Logic.HeroSetAbilityChargeSeconds(_EntityID, Abilities.AbilitySummon, 0);
-    for i= 1, 6 do
+    local CurrentRank = self:GetRank(_PlayerID);
+    for i= 1, (4 + (2 * (CurrentRank -1))) do
         local x = _X + math.random(-400, 400);
         local y = _Y + math.random(-400, 400);
         local ID = AI.Entity_CreateFormation(_PlayerID, Entities.PU_Hero5_Outlaw, nil, 0, x, y, 0, 0, 0, 0);

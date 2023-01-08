@@ -7,9 +7,14 @@
 Stronghold = {
     Shared = {},
     Players = {},
-    Outposts = {},
     Config = {
-        AttractionLimit = {[1] = 100, [2] = 200, [3] = 300},
+        HonorLimit = 9000,
+        OPAttraction = 25,
+        HQAttraction = {
+            [1] = 100,
+            [2] = 200,
+            [3] = 300
+        },
 
         Ranks = {
             [1] = {
@@ -49,24 +54,67 @@ Stronghold = {
                 Costs = {300, 10000, 0, 0, 0, 0, 0},
             },
         },
-
-        HonorLimit = 9000,
-        OutpostAttraction = 25,
-        Text = {
-            Ranks = {
-                [1] = "Edelmann",
-                [2] = "Landvogt",
-                [3] = "Ritter",
-                [4] = "Edler Ritter",
-                [5] = "Fürst",
-                [6] = "Baron",
-                [7] = "Graf",
-                [8] = "Herzog",
-                [9] = "Erzherzog",
-            }
-        },
     },
 }
+
+-- -------------------------------------------------------------------------- --
+-- API
+
+function SetupStronghold()
+    Stronghold:Init();
+end
+
+function SetupHumanPlayer(_PlayerID)
+    if not Stronghold:IsPlayer(_PlayerID) then
+        Stronghold:AddPlayer(_PlayerID);
+    end
+end
+
+function GetLairdReputation(_PlayerID)
+    return Stronghold:GetPlayerReputation(_PlayerID);
+end
+
+function GetLairdMaxReputation(_PlayerID)
+    return Stronghold:GetPlayerReputationLimit(_PlayerID);
+end
+
+function AddLairdHonor(_PlayerID, _Amount)
+    Stronghold:AddPlayerHonor(_PlayerID, _Amount);
+end
+
+function GetLairdHonor(_PlayerID)
+    return Stronghold:GetPlayerHonor(_PlayerID);
+end
+
+function GetLairdRank(_PlayerID)
+    return Stronghold:GetRank(_PlayerID);
+end
+
+function SetLairdRank(_PlayerID, _Rank)
+    return Stronghold:SetRank(_PlayerID, _Rank);
+end
+
+function SetBuyUnitLocked(_PlayerID, _Locked)
+    if Stronghold:IsPlayer(_PlayerID) then
+        Stronghold.Players[_PlayerID].BuyUnitLock = _Locked == true;
+    end
+end
+
+function IsBuyUnitLocked(_PlayerID, _Locked)
+    if Stronghold:IsPlayer(_PlayerID) then
+        return Stronghold.Players[_PlayerID].BuyUnitLock == true;
+    end
+    return false;
+end
+
+function GetPlayerData(_PlayerID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        return Stronghold:GetPlayer(_PlayerID);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Main
 
 -- Starts the script
 function Stronghold:Init()
@@ -436,19 +484,19 @@ function Stronghold:OverrideAttraction()
         end
 
         -- Attraction limit
-        local AttractionLimit = Stronghold.Config.AttractionLimit[1];
+        local AttractionLimit = Stronghold.Config.HQAttraction[1];
         local CastleT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
         if CastleT2 > 0 then
-            AttractionLimit = Stronghold.Config.AttractionLimit[2];
+            AttractionLimit = Stronghold.Config.HQAttraction[2];
         end
         local CastleT3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3);
         if CastleT3 > 0 then
-            AttractionLimit = Stronghold.Config.AttractionLimit[3];
+            AttractionLimit = Stronghold.Config.HQAttraction[3];
         end
         -- Outposts bonus
         local Outposts = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.CB_Bastille1);
         if Outposts > 0 then
-            local OutpostAttraction = Stronghold.Config.OutpostAttraction;
+            local OutpostAttraction = Stronghold.Config.OPAttraction;
             AttractionLimit = AttractionLimit + (Outposts * OutpostAttraction);
         end
         -- Hero bonus

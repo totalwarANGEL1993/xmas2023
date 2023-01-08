@@ -116,14 +116,6 @@ end
 -- -------------------------------------------------------------------------- --
 -- Resources
 
-function AddHonor(_PlayerID, _Amount)
-    Stronghold:AddPlayerHonor(_PlayerID, _Amount);
-end
-
-function GetHonor(_PlayerID)
-    return Stronghold:GetPlayerHonor(_PlayerID);
-end
-
 function CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
     local Costs = {};
     if _Honor ~= nil and _Honor > 0 then

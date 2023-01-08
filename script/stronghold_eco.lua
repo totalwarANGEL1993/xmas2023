@@ -374,8 +374,8 @@ function Stronghold.Economy:HonorMenu()
     local Honor = 0;
     local MaxHonor = Stronghold.Config.HonorLimit;
     if Stronghold:IsPlayer(PlayerID) then
-        local CurrentRank = Stronghold.Players[PlayerID].Rank;
-        Rank = Stronghold.Config.Text.Ranks[CurrentRank] or Rank;
+        local CurrentRank = Stronghold:GetRank(PlayerID);
+        Rank = Stronghold.Config.Ranks[CurrentRank].Text or Rank;
         Honor = Stronghold.Players[PlayerID].Honor;
     end
 
@@ -477,8 +477,8 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
         if not Stronghold.Economy.Data[PlayerID] or not Stronghold:IsPlayer(PlayerID) then
             return GUIUpdate_AverageMotivation_Orig_StrongholdEco();
         end
-        local Reputation = Stronghold.Players[PlayerID].Reputation;
-        local ReputationLimit = Stronghold.Players[PlayerID].ReputationLimit;
+        local Reputation = Stronghold:GetPlayerReputation(PlayerID)
+        local ReputationLimit = Stronghold:GetPlayerReputationLimit(PlayerID)
         -- Icon
         local TexturePath = "data/graphics/textures/gui/";
         if Reputation < 70 then
