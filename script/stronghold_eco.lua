@@ -5,6 +5,9 @@
 --- and reputation and privides calculation callbacks for external changes.
 ---
 --- Defined game callbacks:
+--- - <number> GameCallback_Calculate_ReputationMax(_PlayerID, _Amount)
+---   Allows to overwrite the max reputation.
+---
 --- - <number> GameCallback_Calculate_ReputationIncrease(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the reputation income.
 ---
@@ -374,7 +377,7 @@ function Stronghold.Economy:HonorMenu()
     local Honor = 0;
     local MaxHonor = Stronghold.Config.HonorLimit;
     if Stronghold:IsPlayer(PlayerID) then
-        Rank = Stronghold:GetRankName(PlayerID) or Rank;
+        Rank = Stronghold:GetPlayerRankName(PlayerID) or Rank;
         Honor = Stronghold.Players[PlayerID].Honor;
     end
 

@@ -1,18 +1,27 @@
 ---
+--- Synchronizer script
 ---
+--- This script provides synchronized calls for Multiplayer.
 ---
+--- If the map is played in Singleplayer then each call is executed directly.
+---
+--- If played in Multiplayer the script automatically reconizes the community
+--- server and uses its API. If the server methods are not defined the script
+--- uses tributes and messages for synchronization.
+---
+--- TODO: Not compatible with EMS.
 ---
 
 Stronghold = Stronghold or {};
 
 Stronghold.Sync = {
     Data = {},
-
-
-    Transactions = {},
-    TransactionParameter = {},
-    UniqueActionCounter = 1,
-    UniqueTributeCounter = 999,
+    Transaction = {
+        Transactions = {},
+        TransactionParameter = {},
+        UniqueActionCounter = 1,
+        UniqueTributeCounter = 999,
+    },
 };
 
 -- -------------------------------------------------------------------------- --
@@ -113,8 +122,8 @@ end
 -- Logic
 
 function Stronghold.Sync:CreateSyncEvent(_Function)
-    self.UniqueActionCounter = self.UniqueActionCounter +1;
-    local ActionIndex = self.UniqueActionCounter;
+    self.Transaction.UniqueActionCounter = self.Transaction.UniqueActionCounter +1;
+    local ActionIndex = self.Transaction.UniqueActionCounter;
 
     -- Network handler for community server
     local NetworkHandler = function(name, _ID, _PlayerID, ...)
@@ -125,7 +134,7 @@ function Stronghold.Sync:CreateSyncEvent(_Function)
 
     self.Data[ActionIndex] = {
         Function = _Function,
-        CNetwork = "Synchronization_CNetworkHandler_" .. self.UniqueActionCounter;
+        CNetwork = "Stronghold_Synchronization_CNetworkHandler_" .. self.Transaction.UniqueActionCounter;
     };
     if CNetwork then
         CNetwork.SetNetworkHandler(
@@ -133,7 +142,7 @@ function Stronghold.Sync:CreateSyncEvent(_Function)
             NetworkHandler
         );
     end
-    return self.UniqueActionCounter;
+    return self.Transaction.UniqueActionCounter;
 end
 
 function Stronghold.Sync:DeleteSyncEvent(_ID)
@@ -286,7 +295,7 @@ function Stronghold.Sync:TransactionSend(_ID, _PlayerID, _Time, _Msg, _Parameter
     local PreHashedMsg = "".._ID..":::" .._PlayerID..":::" .._Time.. ":::" .._Msg;
     local Hash = _ID.. "_" .._PlayerID.. "_" .._Time;
     local TransMsg = "___MPTransact:::"..Hash..":::" ..PreHashedMsg;
-    self.Transactions[Hash] = {};
+    self.Transaction.Transactions[Hash] = {};
     -- Send message
     if self:IsMultiplayerGame() then
         XNetwork.Chat_SendMessageToAll(TransMsg);
@@ -327,8 +336,8 @@ function Stronghold.Sync:TransactionManage(_Type, _Msg)
         local Hash       = table.remove(Parameters, 1);
         local PlayerID   = table.remove(Parameters, 1);
         local Timestamp  = table.remove(Parameters, 1);
-        self.Transactions[Hash] = self.Transactions[Hash] or {};
-        self.Transactions[Hash][PlayerID] = true;
+        self.Transaction.Transactions[Hash] = self.Transaction.Transactions[Hash] or {};
+        self.Transaction.Transactions[Hash][PlayerID] = true;
     end
 end
 
@@ -347,13 +356,13 @@ function Stronghold.Sync:TransactionSplitMessage(_Msg)
 end
 
 function Stronghold.Sync:CreateTribute(_PlayerID, _ID, ...)
-    self.UniqueTributeCounter = self.UniqueTributeCounter +1;
-    Logic.AddTribute(_PlayerID, self.UniqueTributeCounter, 0, 0, "", {[ResourceType.Gold] = 0});
-    self.TransactionParameter[self.UniqueTributeCounter] = {
+    self.Transaction.UniqueTributeCounter = self.Transaction.UniqueTributeCounter +1;
+    Logic.AddTribute(_PlayerID, self.Transaction.UniqueTributeCounter, 0, 0, "", {[ResourceType.Gold] = 0});
+    self.Transaction.TransactionParameter[self.Transaction.UniqueTributeCounter] = {
         Action    = _ID,
         Parameter = CopyTable(arg),
     };
-    return self.UniqueTributeCounter;
+    return self.Transaction.UniqueTributeCounter;
 end
 
 function Stronghold.Sync:PayTribute(_PlayerID, _TributeID)
@@ -386,9 +395,9 @@ function Stronghold.Sync:OverrideMessageReceived()
 end
 
 function Stronghold.Sync:OnTributePaidTrigger(_ID)
-    if self.TransactionParameter[_ID] then
-        local ActionID  = self.TransactionParameter[_ID].Action;
-        local Parameter = self.TransactionParameter[_ID].Parameter;
+    if self.Transaction.TransactionParameter[_ID] then
+        local ActionID  = self.Transaction.TransactionParameter[_ID].Action;
+        local Parameter = self.Transaction.TransactionParameter[_ID].Parameter;
         if self.Data[ActionID] then
             self.Data[ActionID].Function(unpack(Parameter));
         end
@@ -406,7 +415,7 @@ function Stronghold.Sync:OnAcknowlegementReceivedTrigger(_PlayerID, _ID, _Hash, 
     local ActivePlayers = Stronghold.Sync:GetActivePlayers();
     local AllAcksReceived = true;
     for i= 1, table.getn(ActivePlayers), 1 do
-        if _PlayerID ~= ActivePlayers[i] and not self.Transactions[_Hash][ActivePlayers[i]] then
+        if _PlayerID ~= ActivePlayers[i] and not self.Transaction.Transactions[_Hash][ActivePlayers[i]] then
             AllAcksReceived = false;
         end
     end

@@ -1,13 +1,13 @@
--- 
--- Entity Limitaions
---
--- Any entity type can be tracked whit this. The script only tracks the types
--- configured in the limits table. Changes in the UI aka disableing buttons ect.
--- must be done by the scripts using this.
---
--- GameCallback_GUI_SelectionChanged is called by code if an configured type
--- is created/destroyed or an building upgrade is started/canceled.
--- 
+--- 
+--- Entity Limitaions
+---
+--- Any entity type can be tracked whit this. The script only tracks the types
+--- configured in the limits table. Changes in the UI aka disableing buttons
+--- ect. must be done by the scripts using this.
+---
+--- GameCallback_GUI_SelectionChanged is called by code if an configured type
+--- is created/destroyed or an building upgrade is started/canceled.
+--- 
 
 Stronghold = Stronghold or {};
 
@@ -238,8 +238,7 @@ function Stronghold.Limitation:UpdateSelectionSerfConstrucButtons(_PlayerID)
                     GUIUpdate_UpgradeButtons("Build_Beautification" ..Num, Technologies["B_Beautification" ..Num]);
                 end
             else
-                GUI.DeselectEntity(SelectedID);
-                GUI.SelectEntity(SelectedID);
+                GameCallback_GUI_SelectionChanged();
             end
         end
     end
@@ -249,8 +248,7 @@ function Stronghold.Limitation:UpdateSelectionBuildingUpgradeButtons(_PlayerID, 
     if GUI.GetPlayerID() == _PlayerID then
         local SelectedID = GUI.GetSelectedEntity();
         if _EntityID == SelectedID and Logic.IsBuilding(SelectedID) == 1 then
-            GUI.DeselectEntity(SelectedID);
-            GUI.SelectEntity(SelectedID);
+            GameCallback_GUI_SelectionChanged();
         end
     end
 end

@@ -57,7 +57,7 @@ function OnMapStart()
 
     for i= 1, 4 do
         Tools.GiveResouces(i, 999999, 999999, 999999, 999999, 999999, 999999);
-        AddHonor(i, 1000);
+        AddPlayerHonor(i, 1000);
     end
 end
 

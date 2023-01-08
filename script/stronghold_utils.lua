@@ -1,6 +1,8 @@
--- 
--- 
--- 
+--- 
+--- Util functions
+---
+--- This script contains comforts specific to Stronghold.
+--- 
 
 -- -------------------------------------------------------------------------- --
 -- UI Tools
@@ -192,7 +194,7 @@ end
 function Stronghold:AddResourcesToPlayer(_PlayerID, _Resources)
     if self.Players[_PlayerID] then
         if _Resources[ResourceType.Honor] ~= nil then
-            AddHonor(_PlayerID, _Resources[ResourceType.Honor]);
+            AddPlayerHonor(_PlayerID, _Resources[ResourceType.Honor]);
         end
         if _Resources[ResourceType.Gold] ~= nil then
             AddGold(_PlayerID, _Resources[ResourceType.Gold] or _Resources[ResourceType.GoldRaw]);
@@ -237,7 +239,7 @@ function Stronghold:RemoveResourcesFromPlayer(_PlayerID, _Costs)
         -- Silver cost
         if  _Costs[ResourceType.Honor] ~= nil and _Costs[ResourceType.Honor] > 0
         and Honor >= _Costs[ResourceType.Honor] then
-            AddHonor(_PlayerID, _Costs[ResourceType.Honor] * (-1));
+            AddPlayerHonor(_PlayerID, _Costs[ResourceType.Honor] * (-1));
         end
         -- Gold cost
         if  _Costs[ResourceType.Gold] ~= nil and _Costs[ResourceType.Gold] > 0
@@ -273,130 +275,5 @@ function Stronghold:RemoveResourcesFromPlayer(_PlayerID, _Costs)
 end
 function RemoveResourcesFromPlayer(_PlayerID, _Costs)
     Stronghold:RemoveResourcesFromPlayer(_PlayerID, _Costs);
-end
-
--- -------------------------------------------------------------------------- --
--- Entities
-
-function GetUpgradeCategoryByEntityType(_Type)
-    local TypeName = Logic.GetEntityTypeName(_Type);
-    if TypeName then
-        local Key = string.sub(TypeName, 4);
-        local s,e = string.find(Key, "^[A-Za-z_]+");
-        local Suffix = string.sub(Key, e+1);
-        if Suffix and tonumber(Suffix) and tonumber(Suffix) < 10 and not string.find(Suffix, "0[0-9]+") then
-            Key = string.sub(Key, 1, e);
-        end
-        if UpgradeCategories[Key] then
-            return UpgradeCategories[Key];
-        end
-    end
-    return 0;
-end
-
-function GetUpgradeLevelByEntityType(_Type)
-    local UpgradeCategory = GetUpgradeCategoryByEntityType(_Type);
-    if UpgradeCategory ~= 0 then
-        local Buildings = {Logic.GetBuildingTypesInUpgradeCategory(UpgradeCategory)};
-        for i=2, Buildings[1] do
-            if Buildings[i] == _Type then
-                return i - 2;
-            end
-        end
-        local Settlers = {Logic.GetSettlerTypesInUpgradeCategory(UpgradeCategory)};
-        for i=2, Settlers[1] do
-            if Settlers[i] == _Type then
-                return i - 2;
-            end
-        end
-    end
-    return 0;
-end
-
-function IsEntityValid(_Entity)
-    local ID = GetID(_Entity);
-    if IsExisting(ID) then
-        if Logic.GetEntityHealth(ID) > 0 then
-            if Logic.IsSettler(ID) == 1 then
-                local Task = Logic.GetCurrentTaskList(ID);
-                if Task and string.find(Task, "DIE") then
-                    return false;
-                end
-            end
-            return true;
-        end
-    end
-    return false;
-end
-
-function GetAllWorker(_PlayerID, _EntityType)
-    _EntityType = _EntityType or 0;
-    local PlayerEntities = GetEntitiesOfType(_PlayerID, _EntityType);
-    for i= table.getn(PlayerEntities), 1, -1 do
-        if Logic.IsWorker(PlayerEntities[i]) == 0 then
-            table.remove(PlayerEntities, i);
-        end
-    end
-    return PlayerEntities;
-end
-
-function GetAllWorkplaces(_PlayerID, _EntityType)
-    _EntityType = _EntityType or 0;
-    local PlayerEntities = GetCompletedEntitiesOfType(_PlayerID, _EntityType);
-    for i= table.getn(PlayerEntities), 1, -1 do
-        if Logic.GetBuildingWorkPlaceLimit(PlayerEntities[i]) == 0 then
-            table.remove(PlayerEntities, i);
-        end
-    end
-    return PlayerEntities;
-end
-
-function GetCompletedEntitiesOfType(_PlayerID, _EntityType)
-    local PlayerEntities = GetEntitiesOfType(_PlayerID, _EntityType);
-    for i= table.getn(PlayerEntities), 1, -1 do
-        -- Remove buildings if construction is incomplete or no workers.
-        if Logic.IsBuilding(PlayerEntities[i]) == 1 then
-            if Logic.IsConstructionComplete(PlayerEntities[i]) == 0 then
-                table.remove(PlayerEntities, i);
-            end
-        end
-        -- Remove settlers if they are training or dying
-        if Logic.IsSettler(PlayerEntities[i]) == 1 then
-            local Task = Logic.GetCurrentTaskList(PlayerEntities[i]);
-            if Task and (string.find(Task, "TRAIN") or string.find(Task, "DIE")) then
-                table.remove(PlayerEntities, i);
-            end
-        end
-    end
-    return PlayerEntities;
-end
-
-function GetEntitiesOfType(_PlayerID, _EntityType)
-    local PlayerEntities = {}
-    if _EntityType ~= 0 then
-        local n,eID = Logic.GetPlayerEntities(_PlayerID, _EntityType, 1);
-        if (n > 0) then
-            local firstEntity = eID;
-            repeat
-                table.insert(PlayerEntities,eID)
-                eID = Logic.GetNextEntityOfPlayerOfType(eID);
-            until (firstEntity == eID);
-        end
-    elseif _EntityType == 0 then
-        for k,v in pairs(Entities) do
-            if string.find(k, "PU_") or string.find(k, "PB_") or string.find(k, "CU_") or string.find(k, "CB_")
-            or string.find(k, "XD_DarkWall") or string.find(k, "XD_Wall") or string.find(k, "PV_") then
-                local n,eID = Logic.GetPlayerEntities(_PlayerID, v, 1);
-                if (n > 0) then
-                local firstEntity = eID;
-                repeat
-                    table.insert(PlayerEntities,eID)
-                    eID = Logic.GetNextEntityOfPlayerOfType(eID);
-                until (firstEntity == eID);
-                end
-            end
-        end
-    end
-    return PlayerEntities;
 end
 

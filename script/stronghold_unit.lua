@@ -1,6 +1,10 @@
--- 
--- 
--- 
+--- 
+--- Unit script
+---
+--- This script implements al unit specific actions and overwrites their
+--- selection menus. Also properties like costs, needed rank, upkeep and
+--- if they are allowed are defined here.
+--- 
 
 Stronghold = Stronghold or {};
 

@@ -1,7 +1,18 @@
 ---
 --- Main Script
 ---
---- This script runs all jobs and calls all scripts.
+--- This script implements everything reguarding the player.
+---
+--- Managed by the script:
+--- - Players rank
+--- - Players honor
+--- - Players reputation
+--- - Players payday
+--- - Players attraction limit
+--- - Defeat condition
+--- - Shared UI stuff
+--- - automatic archive loading
+---   (TODO: Use hook if CMod is nil)
 ---
 
 Stronghold = {
@@ -80,44 +91,49 @@ function SetupStronghold()
     Stronghold:Init();
 end
 
---- Creates a new human player
+--- Creates a new human player.
 function SetupHumanPlayer(_PlayerID)
     if not Stronghold:IsPlayer(_PlayerID) then
         Stronghold:AddPlayer(_PlayerID);
     end
 end
 
---- Returns the reputation of the player
-function GetLairdReputation(_PlayerID)
+--- Gives reputation to the player.
+function AddPlayerReputation(_PlayerID, _Amount)
+    Stronghold:AddPlayerReputation(_PlayerID, _Amount)
+end
+
+--- Returns the reputation of the player.
+function GetPlayerReputation(_PlayerID)
     return Stronghold:GetPlayerReputation(_PlayerID);
 end
 
---- Returns the max reputation of the player
-function GetLairdMaxReputation(_PlayerID)
+--- Returns the max reputation of the player.
+function GetPlayerMaxReputation(_PlayerID)
     return Stronghold:GetPlayerReputationLimit(_PlayerID);
 end
 
---- Adds honor to the player
-function AddLairdHonor(_PlayerID, _Amount)
+--- Adds honor to the player.
+function AddPlayerHonor(_PlayerID, _Amount)
     Stronghold:AddPlayerHonor(_PlayerID, _Amount);
 end
 
---- Returns the amount of honor of the player
-function GetLairdHonor(_PlayerID)
+--- Returns the amount of honor of the player.
+function GetPlayerHonor(_PlayerID)
     return Stronghold:GetPlayerHonor(_PlayerID);
 end
 
---- Returns the rank of the player
-function GetLairdRank(_PlayerID)
-    return Stronghold:GetRank(_PlayerID);
+--- Returns the rank of the player.
+function GetPlayerRank(_PlayerID)
+    return Stronghold:GetPlayerRank(_PlayerID);
 end
 
---- Sets the rank of the player
-function SetLairdRank(_PlayerID, _Rank)
-    return Stronghold:SetRank(_PlayerID, _Rank);
+--- Sets the rank of the player.
+function SetPlayerRank(_PlayerID, _Rank)
+    return Stronghold:SetPlayerRank(_PlayerID, _Rank);
 end
 
---- Returns the player data
+--- Returns the player data.
 function GetPlayerData(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         return Stronghold:GetPlayer(_PlayerID);
@@ -620,14 +636,14 @@ end
 -- -------------------------------------------------------------------------- --
 -- Rank
 
-function Stronghold:GetRank(_PlayerID)
+function Stronghold:GetPlayerRank(_PlayerID)
     if self:IsPlayer(_PlayerID) then
         return self.Players[_PlayerID].Rank;
     end
     return 0;
 end
 
-function Stronghold:GetRankName(_PlayerID, _Rank)
+function Stronghold:GetPlayerRankName(_PlayerID, _Rank)
     if self:IsPlayer(_PlayerID) then
         local Rank = _Rank or self.Players[_PlayerID].Rank;
         local LairdID = GetID(self.Players[_PlayerID].LordScriptName);
@@ -648,7 +664,7 @@ function Stronghold:GetLairdGender(_Type)
     return 1;
 end
 
-function Stronghold:SetRank(_PlayerID, _Rank)
+function Stronghold:SetPlayerRank(_PlayerID, _Rank)
     if self:IsPlayer(_PlayerID) then
         self.Players[_PlayerID].Rank = _Rank;
     end
@@ -656,9 +672,9 @@ end
 
 function Stronghold:PromotePlayer(_PlayerID)
     if self:CanPlayerBePromoted(_PlayerID) then
-        local Rank = self:GetRank(_PlayerID);
-        local RankName = Stronghold:GetRankName(_PlayerID, Rank +1);
-        self:SetRank(_PlayerID, Rank +1);
+        local Rank = self:GetPlayerRank(_PlayerID);
+        local RankName = Stronghold:GetPlayerRankName(_PlayerID, Rank +1);
+        self:SetPlayerRank(_PlayerID, Rank +1);
 
         local Costs = Stronghold:CreateCostTable(unpack(self.Config.Ranks[Rank +1].Costs));
         RemoveResourcesFromPlayer(_PlayerID, Costs);
@@ -678,7 +694,7 @@ end
 
 function Stronghold:CanPlayerBePromoted(_PlayerID)
     if self:IsPlayer(_PlayerID) then
-        local Rank = self:GetRank(_PlayerID);
+        local Rank = self:GetPlayerRank(_PlayerID);
         if Rank == 0 or Rank >= 9 then
             return false;
         end

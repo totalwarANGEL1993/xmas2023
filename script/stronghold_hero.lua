@@ -1,6 +1,17 @@
--- 
--- 
--- 
+--- 
+--- Hero Script
+---
+--- This script implements all processes around the hero.
+---
+--- Managed by the script:
+--- - Stats of hero
+--- - Stats of summons
+--- - Selection of hero
+--- - Activated abilities
+--- - Passive abilities
+--- - Selection menus
+--- - Gender of hero (for text)
+--- 
 
 Stronghold = Stronghold or {};
 
@@ -164,7 +175,7 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
                 Stronghold:PromotePlayer(_PlayerID);
             end
             if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
-                Stronghold:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
+                Stronghold.Hero:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
             end
             if _Action == Stronghold.Hero.SyncEvents.BuyLord then
                 Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
@@ -188,7 +199,7 @@ function Stronghold.Hero:OverrideLeaderFormationAction()
             return self.Orig_GUIAction_ChangeFormation(_Index);
         end
 
-        local Rank = Stronghold:GetRank(PlayerID);
+        local Rank = Stronghold:GetPlayerRank(PlayerID);
         local NextRank = Stronghold.Config.Ranks[Rank+1];
         if NextRank then
             local Costs = Stronghold:CreateCostTable(unpack(NextRank.Costs));
@@ -221,10 +232,10 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
 
         local CostText = "";
         local Text = "";
-        local NextRank = Stronghold:GetRank(PlayerID) +1;
+        local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
         if _Key == "MenuCommandsGeneric/formation_group" then
             if Stronghold.Config.Ranks[NextRank] then
-                Text = "@color:180,180,180 " ..Stronghold:GetRankName(PlayerID, NextRank)..
+                Text = "@color:180,180,180 " ..Stronghold:GetPlayerRankName(PlayerID, NextRank)..
                        " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
                        " erheben, um neuen Privilegien zu genießen.";
 
@@ -613,7 +624,7 @@ function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
             -- Vargs wolves getting stronger with higher rank
             -- (and getting bigger just for show)
             if Type == Entities.CU_Barbarian_Hero_wolf then
-                local CurrentRank = Stronghold:GetRank(PlayerID);
+                local CurrentRank = Stronghold:GetPlayerRank(PlayerID);
                 Logic.SetSpeedFactor(_EntityID, 1.1 + ((CurrentRank -1) * 0.035));
                 SVLib.SetEntitySize(_EntityID, 1.1 + ((CurrentRank -1) * 0.035));
                 Health = Health + math.floor((CurrentRank -1) * 50);
@@ -648,7 +659,7 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                 if Logic.GetEntityHealth(k) == 0 then
                     Stronghold.Players[_PlayerID].AttackMemory[k] = nil;
                     local WolfPlayerID = Logic.EntityGetPlayer(v[2]);
-                    AddHonor(WolfPlayerID, 1);
+                    Stronghold:AddPlayerHonor(WolfPlayerID, 1);
                 end
             end
 
@@ -720,12 +731,12 @@ end
 -- -------------------------------------------------------------------------- --
 -- Activated Abilities
 
-function Stronghold:OnHero5SummonSelected(_PlayerID, _EntityID, _X, _Y)
+function Stronghold.Hero:OnHero5SummonSelected(_PlayerID, _EntityID, _X, _Y)
     if GUI.GetPlayerID() == _PlayerID then
         Sound.PlayQueuedFeedbackSound(Sounds.VoicesHero5_HERO5_CallBandits_rnd_01);
     end
     Logic.HeroSetAbilityChargeSeconds(_EntityID, Abilities.AbilitySummon, 0);
-    local CurrentRank = self:GetRank(_PlayerID);
+    local CurrentRank = Stronghold:GetPlayerRank(_PlayerID);
     for i= 1, (4 + (2 * (CurrentRank -1))) do
         local x = _X + math.random(-400, 400);
         local y = _Y + math.random(-400, 400);
@@ -846,7 +857,7 @@ end
 -- Passive Ability: Produce honor for technology
 function Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
-        AddHonor(_PlayerID, 3);
+        Stronghold:AddPlayerHonor(_PlayerID, 3);
     end
 end
 
@@ -855,8 +866,13 @@ function Stronghold.Hero:FaithProductionBonus(_PlayerID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
         local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
         if Amount > 0 then
-            if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
-                Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount);
+            local Building1 = GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Monastery1);
+            local Building2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
+            local Building3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
+            if table.getn(Building1) + Building2 + Building3 > 0 then
+                if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
+                    Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount);
+                end
             end
         end
     end
