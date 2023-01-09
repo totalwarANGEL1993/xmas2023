@@ -44,7 +44,7 @@ Stronghold = {
             [3] = 300
         },
         HQMilitaryAttraction = {
-            [1] = 10,
+            [1] = 200,
             [2] = 400,
             [3] = 600
         },
