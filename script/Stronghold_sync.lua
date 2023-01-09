@@ -20,7 +20,6 @@ Stronghold.Sync = {
         Transactions = {},
         TransactionParameter = {},
         UniqueActionCounter = 1,
-        UniqueTributeCounter = 999,
     },
 };
 
@@ -356,13 +355,13 @@ function Stronghold.Sync:TransactionSplitMessage(_Msg)
 end
 
 function Stronghold.Sync:CreateTribute(_PlayerID, _ID, ...)
-    self.Transaction.UniqueTributeCounter = self.Transaction.UniqueTributeCounter +1;
-    Logic.AddTribute(_PlayerID, self.Transaction.UniqueTributeCounter, 0, 0, "", {[ResourceType.Gold] = 0});
-    self.Transaction.TransactionParameter[self.Transaction.UniqueTributeCounter] = {
+    Stronghold.UnitqueTributeID = Stronghold.UnitqueTributeID +1;
+    Logic.AddTribute(_PlayerID, Stronghold.UnitqueTributeID, 0, 0, "", {[ResourceType.Gold] = 0});
+    self.Transaction.TransactionParameter[Stronghold.UnitqueTributeID] = {
         Action    = _ID,
         Parameter = CopyTable(arg),
     };
-    return self.Transaction.UniqueTributeCounter;
+    return Stronghold.UnitqueTributeID;
 end
 
 function Stronghold.Sync:PayTribute(_PlayerID, _TributeID)

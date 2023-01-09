@@ -836,6 +836,13 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         CurrentAmount = Stronghold.Hero:ApplyUnitUpkeepDiscountPassiveAbility(_PlayerID, _UnitType, CurrentAmount)
         return CurrentAmount;
     end
+
+    self.Orig_GameCallback_Calculate_AttrationLimit = GameCallback_Calculate_AttrationLimit;
+    GameCallback_Calculate_AttrationLimit = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_AttrationLimit(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
 end
 
 function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)

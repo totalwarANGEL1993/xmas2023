@@ -14,13 +14,21 @@
 --- - automatic archive loading
 ---   (TODO: Use hook if CMod is nil)
 ---
+--- Defined game callbacks:
+--- - <number> GameCallback_Calculate_AttrationLimit(_PlayerID, _Amount)
+---   Allows to overwrite the max attraction.
+---
+--- - GameCallback_Stronghold_OnPayday(_PlayerID)
+---   Called after the payday is done.
+---
 
 Stronghold = {
-    Shared = {},
+    Shared = {
+        UnitqueTributeID = 999,
+    },
     Players = {},
     Config = {
         HonorLimit = 9000,
-        OPAttraction = 25,
         HQAttraction = {
             [1] = 100,
             [2] = 200,
@@ -282,6 +290,16 @@ function Stronghold:IsPlayer(_PlayerID)
 end
 
 -- -------------------------------------------------------------------------- --
+-- Game Callbacks
+
+function GameCallback_Calculate_AttrationLimit(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Stronghold_OnPayday(_PlayerID)
+end
+
+-- -------------------------------------------------------------------------- --
 -- Achive Loading
 
 function Stronghold:LoadMapArchive()
@@ -521,14 +539,8 @@ function Stronghold:OverrideAttraction()
         if CastleT3 > 0 then
             AttractionLimit = Stronghold.Config.HQAttraction[3];
         end
-        -- Outposts bonus
-        local Outposts = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.CB_Bastille1);
-        if Outposts > 0 then
-            local OutpostAttraction = Stronghold.Config.OPAttraction;
-            AttractionLimit = AttractionLimit + (Outposts * OutpostAttraction);
-        end
-        -- Hero bonus
-        AttractionLimit = Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, AttractionLimit);
+        -- External
+        AttractionLimit = GameCallback_Calculate_AttrationLimit(_PlayerID, AttractionLimit);
 
         return math.floor(AttractionLimit + 0.5);
 	end
@@ -627,9 +639,8 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
         local Honor = Stronghold.Economy.Data[_PlayerID].IncomeHonor;
         self:AddPlayerHonor(_PlayerID, Honor);
 
-        if GameCallback_Stronghold_OnPayday then
-            GameCallback_Stronghold_OnPayday(_PlayerID);
-        end
+        -- Payday done
+        GameCallback_Stronghold_OnPayday(_PlayerID);
     end
 end
 
