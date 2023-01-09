@@ -837,9 +837,16 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         return CurrentAmount;
     end
 
-    self.Orig_GameCallback_Calculate_AttrationLimit = GameCallback_Calculate_AttrationLimit;
-    GameCallback_Calculate_AttrationLimit = function(_PlayerID, _CurrentAmount)
-        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_AttrationLimit(_PlayerID, _CurrentAmount);
+    self.Orig_GameCallback_Calculate_CivilAttrationLimit = GameCallback_Calculate_CivilAttrationLimit;
+    GameCallback_Calculate_CivilAttrationLimit = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_CivilAttrationLimit(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_CivilAttrationUsage = GameCallback_Calculate_CivilAttrationUsage;
+    GameCallback_Calculate_CivilAttrationUsage = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_CivilAttrationUsage(_PlayerID, _CurrentAmount);
         CurrentAmount = Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, CurrentAmount);
         return CurrentAmount;
     end
@@ -941,11 +948,22 @@ function Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Costs)
     return Costs;
 end
 
--- Passive Ability: Increase of attraction
+-- Passive Ability: Increase of civil attraction
 function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
         Value = Value * 1.3;
+    end
+    return Value;
+end
+
+-- Passive Ability: decrease of used civil attraction
+function Stronghold.Hero:ApplyAttractionPassiveAbility(_PlayerID, _Value)
+    local Value = _Value;
+    if Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
+        local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
+        local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
+        Value = Value - (ScoutCount + ThiefCount);
     end
     return Value;
 end

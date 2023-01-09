@@ -54,12 +54,26 @@ function Stronghold.Building:Install()
     self:OverrideHeadquarterButtons();
     self:OverrideBuildingUpgradeButtonUpdate();
     self:OverrideBuildingUpgradeButtonTooltip();
+    self:OverrideManualButtonUpdate();
     self:CreateBuildingButtonHandlers();
 end
 
 function Stronghold.Building:OnSaveGameLoaded()
     for i= 1, table.getn(Score.Player) do
         self:HeadquartersConfigureBuilding(i);
+    end
+    self:OverrideManualButtonUpdate();
+end
+
+function Stronghold.Building:OverrideManualButtonUpdate()
+    self.Orig_XGUIEng_DoManualButtonUpdate = XGUIEng.DoManualButtonUpdate;
+    XGUIEng.DoManualButtonUpdate = function(_WidgetID)
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local SingleLeader = XGUIEng.GetWidgetID("Activate_RecruitSingleLeader");
+        local FullLeader = XGUIEng.GetWidgetID("Activate_RecruitGroups");
+        if WidgetID ~= SingleLeader and WidgetID ~= FullLeader then
+            self.Orig_XGUIEng_DoManualButtonUpdate(_WidgetID);
+        end
     end
 end
 
@@ -322,23 +336,34 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
         return false;
     end
 
+    local Places = 0;
     local UnitType = 0;
     local Action = 0;
     if _Technology == Technologies.T_UpgradeSword1 then
         UnitType = Entities.PU_LeaderPoleArm1;
+        Places = (AutoFillActive and 5) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword2 then
         UnitType = Entities.PU_LeaderPoleArm3;
+        Places = (AutoFillActive and 5) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword3 then
         UnitType = Entities.PU_LeaderSword3;
+        Places = (AutoFillActive and 9) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword4 then
         UnitType = Entities.PU_LeaderSword4;
+        Places = (AutoFillActive and 9) or 1;
         Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
+        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Message("Euer Heer ist bereits groß genug!");
+            return true;
+        end
+
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
@@ -569,23 +594,34 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
         return false;
     end
 
+    local Places = 1;
     local UnitType = 0;
     local Action = 0;
     if _Technology == Technologies.T_UpgradeBow1 then
         UnitType = Entities.PU_LeaderBow2;
+        Places = (AutoFillActive and 5) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeBow2 then
         UnitType = Entities.PU_LeaderBow3;
+        Places = (AutoFillActive and 5) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeBow3 then
         UnitType = Entities.PU_LeaderRifle1;
+        Places = (AutoFillActive and 5) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeRifle1 then
         UnitType = Entities.PU_LeaderRifle2;
+        Places = (AutoFillActive and 5) or 1;
         Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
+        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Message("Euer Heer ist bereits groß genug!");
+            return true;
+        end
+
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
@@ -935,17 +971,26 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
         return false;
     end
 
+    local Places = 0;
     local UnitType = 0;
     local Action = 0;
     if _Technology == Technologies.T_UpgradeLightCavalry1 then
         UnitType = Entities.PU_LeaderCavalry2;
+        Places = (AutoFillActive and 4) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeHeavyCavalry1 then
         UnitType = Entities.PU_LeaderHeavyCavalry2;
+        Places = (AutoFillActive and 4) or 1;
         Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
+        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Message("Euer Heer ist bereits groß genug!");
+            return true;
+        end
+
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
@@ -1092,23 +1137,34 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
         return false;
     end
 
+    local Places = 0;
     local UnitType = 0;
     local Action = 0;
     if _Type == Entities.PV_Cannon1 then
         UnitType = _Type;
+        Places = 5;
         Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon2 then
         UnitType = _Type;
+        Places = 10;
         Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon3 then
         UnitType = _Type;
+        Places = 15;
         Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon4 then
         UnitType = _Type;
+        Places = 15;
         Action = self.SyncEvents.BuyUnit;
     end
 
     if Action > 0 then
+        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Message("Euer Heer ist bereits groß genug!");
+            return true;
+        end
+
         local Config = Stronghold.Unit:GetUnitConfig(UnitType);
         local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         if HasPlayerEnoughResourcesFeedback(Costs) then

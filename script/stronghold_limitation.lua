@@ -248,7 +248,45 @@ function Stronghold.Limitation:UpdateSelectionBuildingUpgradeButtons(_PlayerID, 
     if GUI.GetPlayerID() == _PlayerID then
         local SelectedID = GUI.GetSelectedEntity();
         if _EntityID == SelectedID and Logic.IsBuilding(SelectedID) == 1 then
-            GameCallback_GUI_SelectionChanged();
+            GUIUpdate_UpgradeButtons("Upgrade_Headquarter1", Technologies.UP1_Headquarter);
+            GUIUpdate_UpgradeButtons("Upgrade_Headquarter2", Technologies.UP2_Headquarter);
+            GUIUpdate_UpgradeButtons("Upgrade_Farm1", Technologies.UP1_Farm);
+            GUIUpdate_UpgradeButtons("Upgrade_Farm2", Technologies.UP2_Farm);
+            GUIUpdate_UpgradeButtons("Upgrade_Residence1", Technologies.UP1_Residence);
+            GUIUpdate_UpgradeButtons("Upgrade_Residence2", Technologies.UP2_Residence);
+            GUIUpdate_UpgradeButtons("Upgrade_Village1", Technologies.UP1_Village);
+            GUIUpdate_UpgradeButtons("Upgrade_Village2", Technologies.UP2_Village);
+
+            GUIUpdate_UpgradeButtons("Upgrade_Tower1", Technologies.UP1_Tower);
+            GUIUpdate_UpgradeButtons("Upgrade_Tower2", Technologies.UP2_Tower);
+            GUIUpdate_UpgradeButtons("Upgrade_Archery1", Technologies.UP1_Archery);
+            GUIUpdate_UpgradeButtons("Upgrade_Stables1", Technologies.UP1_Stables);
+            GUIUpdate_UpgradeButtons("Upgrade_Foundry1", Technologies.UP1_Foundry);
+            GUIUpdate_UpgradeButtons("Upgrade_Barracks1", Technologies.UP1_Barracks);
+
+            GUIUpdate_UpgradeButtons("Upgrade_Claymine1", Technologies.UP1_Claymine);
+            GUIUpdate_UpgradeButtons("Upgrade_Claymine2", Technologies.UP2_Claymine);
+            GUIUpdate_UpgradeButtons("Upgrade_Stonemine1", Technologies.UP1_Stonemine);
+            GUIUpdate_UpgradeButtons("Upgrade_Stonemine2", Technologies.UP2_Stonemine);
+            GUIUpdate_UpgradeButtons("Upgrade_Ironmine1", Technologies.UP1_Ironmine);
+            GUIUpdate_UpgradeButtons("Upgrade_Ironmine2", Technologies.UP2_Ironmine);
+            GUIUpdate_UpgradeButtons("Upgrade_Sulfurmine1", Technologies.UP1_Sulfurmine);
+            GUIUpdate_UpgradeButtons("Upgrade_Sulfurmine2", Technologies.UP2_Sulfurmine);
+            GUIUpdate_UpgradeButtons("Upgrade_Alchemist1", Technologies.UP1_Alchemist);
+            GUIUpdate_UpgradeButtons("Upgrade_Bank1", Technologies.UP1_Bank);
+            GUIUpdate_UpgradeButtons("Upgrade_Brickworks1", Technologies.UP1_Brickworks);
+            GUIUpdate_UpgradeButtons("Upgrade_Blacksmith1", Technologies.UP1_Blacksmith);
+            GUIUpdate_UpgradeButtons("Upgrade_Blacksmith2", Technologies.UP2_Blacksmith);
+            GUIUpdate_UpgradeButtons("Upgrade_Sawmill1", Technologies.UP1_Sawmill);
+            GUIUpdate_UpgradeButtons("Upgrade_Stonemason1", Technologies.UP1_StoneMason);
+
+            GUIUpdate_UpgradeButtons("Upgrade_University1", Technologies.UP1_University);
+            GUIUpdate_UpgradeButtons("Upgrade_Monastery1", Technologies.UP1_Monastery);
+            GUIUpdate_UpgradeButtons("Upgrade_Monastery2", Technologies.UP2_Monastery);
+            GUIUpdate_UpgradeButtons("Upgrade_Market1", Technologies.UP1_Market);
+
+            GUIUpdate_UpgradeButtons("Upgrade_Tavern1", Technologies.UP1_Tavern);
+            GUIUpdate_UpgradeButtons("Upgrade_GunsmithWorkshop1", Technologies.UP1_GunsmithWorkshop);
         end
     end
 end
@@ -291,7 +329,7 @@ function Stronghold.Limitation:OverrideUpgradeBuilding()
                 end
             end
             XGUIEng.ShowWidget(gvGUI_WidgetID.UpgradeInProgress, 1);
-            XGUIEng.DoManualButtonUpdate(gvGUI_WidgetID.InGame);
+            XGUIEng.TransferMaterials(XGUIEng.GetCurrentWidgetID(), "Cancelupgrade");
         end
 	end
 end
@@ -314,11 +352,11 @@ function Stronghold.Limitation:StartTriggers()
         1
     );
 
-    self.GUIAction_CancelUpgrade = GUIAction_CancelUpgrade;
     GUIAction_CancelUpgrade = function()
-        Stronghold.Limitation.GUIAction_CancelUpgrade();
         local EntityID = GUI.GetSelectedEntity();
         local PlayerID = Logic.EntityGetPlayer(EntityID);
+        GUI.CancelBuildingUpgrade(EntityID);
+        XGUIEng.ShowWidget(gvGUI_WidgetID.UpgradeInProgress, 0);
 
         Stronghold.Sync:Call(
             Stronghold.Limitation.NetworkCall,

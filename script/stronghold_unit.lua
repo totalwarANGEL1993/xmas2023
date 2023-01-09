@@ -156,13 +156,13 @@ Stronghold.Unit = {
                 Costs = {0, 150, 0, 50, 0, 50, 0},
                 Allowed = true,
                 Rank = 2,
-                Upkeep = 5,
+                Upkeep = 50,
             },
             [Entities.PU_Thief] = {
                 Costs = {30, 500, 0, 0, 0, 100, 100},
                 Allowed = true,
                 Rank = 5,
-                Upkeep = 50,
+                Upkeep = 200,
             },
             ---
             [Entities.PU_Serf] = {
@@ -340,6 +340,11 @@ function Stronghold.Unit:OverrideBuySoldierButtonAction()
             BuyAmount = MaxSoldiers - CurrentSoldiers;
         end
         if BuyAmount < 1 then
+            return;
+        end
+        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Message("Euer Heer ist bereits groß genug!");
             return;
         end
 

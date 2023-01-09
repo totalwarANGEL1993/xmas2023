@@ -15,8 +15,17 @@
 ---   (TODO: Use hook if CMod is nil)
 ---
 --- Defined game callbacks:
---- - <number> GameCallback_Calculate_AttrationLimit(_PlayerID, _Amount)
----   Allows to overwrite the max attraction.
+--- - <number> GameCallback_Calculate_CivilAttrationLimit(_PlayerID, _Amount)
+---   Allows to overwrite the max worker attraction.
+---
+--- - <number> GameCallback_Calculate_CivilAttrationUsage(_PlayerID, _Amount)
+---   Allows to overwrite the used worker attraction.
+---
+--- - <number> GameCallback_Calculate_MilitaryAttrationLimit(_PlayerID, _Amount)
+---   Allows to overwrite the max usage of military places.
+---
+--- - <number> GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, _Amount)
+---   Allows to overwrite the current usage of military places.
 ---
 --- - GameCallback_Stronghold_OnPayday(_PlayerID)
 ---   Called after the payday is done.
@@ -29,10 +38,15 @@ Stronghold = {
     Players = {},
     Config = {
         HonorLimit = 9000,
-        HQAttraction = {
+        HQCivilAttraction = {
             [1] = 100,
             [2] = 200,
             [3] = 300
+        },
+        HQMilitaryAttraction = {
+            [1] = 10,
+            [2] = 400,
+            [3] = 600
         },
 
         Ranks = {
@@ -292,7 +306,19 @@ end
 -- -------------------------------------------------------------------------- --
 -- Game Callbacks
 
-function GameCallback_Calculate_AttrationLimit(_PlayerID, _Amount)
+function GameCallback_Calculate_CivilAttrationLimit(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_CivilAttrationUsage(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_MilitaryAttrationLimit(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, _Amount)
     return _Amount
 end
 
@@ -522,46 +548,96 @@ end
 -- The attraction limit is based on the headquarters. To make my life easier
 -- I just overwrite the logics.
 function Stronghold:OverrideAttraction()
-    GetPlayerAttractionLimit_Orig_StrongholdEco = Logic.GetPlayerAttractionLimit
-    ---@diagnostic disable-next-line: duplicate-set-field
+    self.Orig_GetPlayerAttractionLimit = Logic.GetPlayerAttractionLimit
 	Logic.GetPlayerAttractionLimit = function(_PlayerID)
-		if not Stronghold:IsPlayer(_PlayerID) then
-            return GetPlayerAttractionUsage_Orig_StrongholdEco(_PlayerID);
+		local Limit = 0;
+        if not Stronghold:IsPlayer(_PlayerID) then
+            return Stronghold.Orig_GetPlayerAttractionLimit(_PlayerID);
         end
+        local HeadquarterID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
 
         -- Attraction limit
-        local AttractionLimit = Stronghold.Config.HQAttraction[1];
-        local CastleT2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
-        if CastleT2 > 0 then
-            AttractionLimit = Stronghold.Config.HQAttraction[2];
+        Limit = Stronghold.Config.HQCivilAttraction[1];
+        if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters2 then
+            Limit = Stronghold.Config.HQCivilAttraction[2];
         end
-        local CastleT3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3);
-        if CastleT3 > 0 then
-            AttractionLimit = Stronghold.Config.HQAttraction[3];
+        if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters3 then
+            Limit = Stronghold.Config.HQCivilAttraction[3];
         end
         -- External
-        AttractionLimit = GameCallback_Calculate_AttrationLimit(_PlayerID, AttractionLimit);
+        Limit = GameCallback_Calculate_CivilAttrationLimit(_PlayerID, Limit);
 
-        return math.floor(AttractionLimit + 0.5);
+        return math.floor(Limit + 0.5);
 	end
 
-	GetPlayerAttractionUsage_Orig_StrongholdEco = Logic.GetPlayerAttractionUsage
-    ---@diagnostic disable-next-line: duplicate-set-field
+	self.Orig_GetPlayerAttractionUsage = Logic.GetPlayerAttractionUsage
 	Logic.GetPlayerAttractionUsage = function(_PlayerID)
+        local Usage = 0;
 		if not Stronghold:IsPlayer(_PlayerID) then
-            return GetPlayerAttractionUsage_Orig_StrongholdEco(_PlayerID);
+            return Stronghold.Orig_GetPlayerAttractionUsage(_PlayerID);
         end
         local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         local SerfCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Serf);
         local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
-        -- Mary makes scouts and thieves totally free of charge
-        if Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
-            ScoutCount = 0;
-            ThiefCount = 0;
-        end
-        return WorkerCount + SerfCount + ScoutCount + (ThiefCount *5);
+        Usage = WorkerCount + SerfCount + ScoutCount + (ThiefCount *5);
+        -- External
+        Usage = GameCallback_Calculate_CivilAttrationUsage(_PlayerID, Usage);
+
+        return math.floor(Usage + 0.5);
 	end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Military
+
+function Stronghold:GetPlayerMilitaryAttractionLimit(_PlayerID)
+    local Limit = 0;
+    if self:IsPlayer(_PlayerID) then
+        local HeadquarterID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
+
+        -- Attraction limit
+        Limit = Stronghold.Config.HQMilitaryAttraction[1];
+        if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters2 then
+            Limit = Stronghold.Config.HQMilitaryAttraction[2];
+        end
+        if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters3 then
+            Limit = Stronghold.Config.HQMilitaryAttraction[3];
+        end
+        -- External
+        Limit = GameCallback_Calculate_MilitaryAttrationLimit(_PlayerID, Limit);
+    end
+    return Limit;
+end
+
+function Stronghold:GetPlayerMilitaryAttractionUsage(_PlayerID)
+    local Usage = 0;
+    if self:IsPlayer(_PlayerID) then
+        -- Attraction usage
+        local Soldiers = Logic.GetNumberOfAttractedSoldiers(_PlayerID);
+        local Cannon1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon1);
+        local Cannon2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon2);
+        local Cannon3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon3);
+        local Cannon4 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon4);
+        -- Cannons count as 1 soldier so we add multiple of 5 -1
+        local Military = Soldiers + (Cannon1*4) + (Cannon2*9) + (Cannon3*14) + (Cannon4*14);
+        -- Scouts and thieves count as soldiers so we must substract them
+        local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
+        local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
+        Usage = Military - (ScoutCount + ThiefCount);
+        -- External
+        Usage = GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, Usage);
+    end
+    return Usage;
+end
+
+function Stronghold:HasPlayerSpaceForUnits(_PlayerID, _Amount)
+    if self:IsPlayer(_PlayerID) then
+        local Limit = self:GetPlayerMilitaryAttractionLimit(_PlayerID);
+        local Usage = self:GetPlayerMilitaryAttractionUsage(_PlayerID);
+        return Limit - Usage >= _Amount;
+    end
+    return false;
 end
 
 -- -------------------------------------------------------------------------- --
