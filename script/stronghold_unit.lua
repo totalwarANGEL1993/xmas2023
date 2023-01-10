@@ -229,6 +229,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             if not IsExisting(_BarracksID) then
                 return;
             end
+            local Orientation = Logic.GetEntityOrientation(_BarracksID);
             local TypeName = Logic.GetEntityTypeName(_Type);
             local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
@@ -271,14 +272,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                         end
                     end
                 end
-                if Logic.GetSector(ID) == Logic.GetSector(GetID("CampPosP" .._PlayerID)) then
-                    Position = Stronghold.Players[_PlayerID].CampPos;
-                end
-                if Logic.IsLeader(ID) == 1 then
-                    Logic.GroupAttackMove(ID, Position.X, Position.Y);
-                else
-                    Logic.MoveSettler(ID, Position.X, Position.Y);
-                end
+                Logic.RotateEntity(ID, Orientation +180);
             end
         end
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;

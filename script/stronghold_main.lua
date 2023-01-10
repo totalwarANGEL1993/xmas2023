@@ -940,11 +940,11 @@ end
 
 -- Tooptip Generic Override
 function Stronghold:OverrideTooltipGenericMain()
-    GUITooltip_Generic_Orig_StrongholdMain = GUITooltip_Generic;
+    self.Orig_GUITooltip_Generic = GUITooltip_Generic;
     GUITooltip_Generic = function(_Key)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return GUITooltip_Generic_Orig_StrongholdMain(_Key);
+            return Stronghold.Orig_GUITooltip_Generic(_Key);
         end
 
         local TooltipSet = false;
@@ -958,14 +958,14 @@ function Stronghold:OverrideTooltipGenericMain()
             TooltipSet = Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, _Key);
         end
         if not TooltipSet then
-            GUITooltip_Generic_Orig_StrongholdMain(_Key);
+            Stronghold.Orig_GUITooltip_Generic(_Key);
         end
     end
 end
 
 -- Action research technology Override
 function Stronghold:OverrideActionResearchTechnologyMain()
-    GUIAction_ReserachTechnology_Orig_StrongholdMain = GUIAction_ReserachTechnology;
+    self.Orig_GUIAction_ReserachTechnology = GUIAction_ReserachTechnology;
     GUIAction_ReserachTechnology = function(_Technology)
         if Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
             return;
@@ -976,17 +976,17 @@ function Stronghold:OverrideActionResearchTechnologyMain()
         if Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
             return;
         end
-        GUIAction_ReserachTechnology_Orig_StrongholdMain(_Technology);
+        Stronghold.Orig_GUIAction_ReserachTechnology(_Technology);
     end
 end
 
 -- Tooptip Upgrade Settlers Override
 function Stronghold:OverrideTooltipUpgradeSettlersMain()
-    GUITooltip_ResearchTechnologies_Orig_StrongholdMain = GUITooltip_ResearchTechnologies;
+    self.Orig_GUITooltip_ResearchTechnologies = GUITooltip_ResearchTechnologies;
     GUITooltip_ResearchTechnologies = function(_Technology, _TextKey, _ShortCut)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return GUITooltip_ResearchTechnologies_Orig_StrongholdMain(_Technology, _TextKey, _ShortCut);
+            return Stronghold.Orig_GUITooltip_ResearchTechnologies(_Technology, _TextKey, _ShortCut);
         end
 
         local TooltipSet = false;
@@ -1000,7 +1000,7 @@ function Stronghold:OverrideTooltipUpgradeSettlersMain()
             TooltipSet = Stronghold.Building:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
         end
         if not TooltipSet then
-            GUITooltip_ResearchTechnologies_Orig_StrongholdMain(_Technology, _TextKey, _ShortCut);
+            Stronghold.Orig_GUITooltip_ResearchTechnologies(_Technology, _TextKey, _ShortCut);
         end
     end
 end

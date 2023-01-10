@@ -187,7 +187,8 @@
         "gvGUI_UpdateButtonIDArray",
         "Abilities",
         "CLogic",
-        "IncludeGlobals"
+        "IncludeGlobals",
+        "gvGUI_StateID"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

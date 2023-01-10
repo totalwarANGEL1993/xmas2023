@@ -353,7 +353,10 @@ end
 -- UI
 
 function Stronghold.Economy:OverrideFindViewUpdate()
+    self.Orig_GUIUpdate_FindView = GUIUpdate_FindView;
     GUIUpdate_FindView = function()
+        Stronghold.Economy.Orig_GUIUpdate_FindView();
+
         XGUIEng.ShowWidget("FindView", 1);
 		XGUIEng.ShowWidget("FindSpearmen", 1);
         XGUIEng.ShowWidget("FindSwordmen", 1);

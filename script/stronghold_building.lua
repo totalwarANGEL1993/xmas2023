@@ -10,6 +10,8 @@ Stronghold.Building = {
     SyncEvents = {},
     Data = {},
     Config = {
+        TowerDistance = 1500,
+
         Headquarters = {
             Health = {3500, 4500, 5500},
             Armor  = {8, 10, 12}
@@ -52,6 +54,7 @@ function Stronghold.Building:Install()
 
     self:OverrideMonasteryButtons()
     self:OverrideHeadquarterButtons();
+    self:OverridePlaceBuildingAction();
     self:OverrideBuildingUpgradeButtonUpdate();
     self:OverrideBuildingUpgradeButtonTooltip();
     self:OverrideManualButtonUpdate();
@@ -308,6 +311,92 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
     return true;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Soft Tower Limit
+
+-- Check tower placement (Community Server)
+-- Prevents towers from being placed if another tower of the same player is
+-- to close. Type of tower does not matter.
+-- This function is the one to be called!
+function Stronghold.Building:StartCheckTowerDistanceCallback()
+    if not GameCallback_PlaceBuildingAdditionalCheck then
+        return false;
+    end
+    self.Orig_GameCallback_PlaceBuildingAdditionalCheck = GameCallback_PlaceBuildingAdditionalCheck;
+    GameCallback_PlaceBuildingAdditionalCheck = function(_ucat, _x, _y, _rotation, _isBuildOn)
+        local PlayerID = GUI.GetPlayerID();
+        local Allowed = Stronghold.Building.Orig_GameCallback_PlaceBuildingAdditionalCheck(_ucat, _x, _y, _rotation, _isBuildOn);
+        if Stronghold:IsPlayer(PlayerID) then
+            if Allowed and _ucat == EntityCategories.Tower then
+                local AreaSize = self.Config.TowerDistance;
+                if self:AreTowersOfPlayerInArea(PlayerID, _x, _y, AreaSize) then
+                    Allowed = false;
+                end
+            end
+        end
+        return Allowed;
+    end
+    return true;
+end
+
+-- Check tower placement (Vanilla)
+-- Prevents towers from being placed if another tower of the same player is
+-- to close. Type of tower does not matter.
+-- Does overwrite place building and find view but only if the initalization
+-- for the community server variant previously failed.
+function Stronghold.Building:OverridePlaceBuildingAction()
+    if self:StartCheckTowerDistanceCallback() then
+        return;
+    end
+
+    self.Orig_GUIAction_PlaceBuilding = GUIAction_PlaceBuilding;
+    GUIAction_PlaceBuilding = function(_UpgradeCategory)
+        Stronghold.Building.Orig_GUIAction_PlaceBuilding(_UpgradeCategory);
+        local PlayerID = GUI.GetPlayerID();
+        if Stronghold:IsPlayer(PlayerID) then
+            Stronghold.Building.Data[PlayerID].LastPlacedUpgradeCategory = _UpgradeCategory;
+        end
+    end
+
+    self.Orig_GUIUpdate_FindView = GUIUpdate_FindView;
+    GUIUpdate_FindView = function()
+        Stronghold.Building.Orig_GUIUpdate_FindView();
+        local PlayerID = GUI.GetPlayerID();
+        if Stronghold:IsPlayer(PlayerID) then
+            Stronghold.Building:CancelBuildingPlacementForUpgradeCategory(
+                PlayerID,
+                Stronghold.Building.Data[PlayerID].LastPlacedUpgradeCategory
+            );
+        end
+	end
+end
+
+function Stronghold.Building:CancelBuildingPlacementForUpgradeCategory(_PlayerID, _UpgradeCategory)
+    local StateID = GUI.GetCurrentStateID();
+    if StateID == gvGUI_StateID.PlaceBuilding then
+        if _UpgradeCategory == UpgradeCategories.Tower then
+            AreaSize = self.Config.TowerDistance;
+            local x, y = GUI.Debug_GetMapPositionUnderMouse();
+            if self:AreTowersOfPlayerInArea(_PlayerID, x, y, AreaSize) then
+                Message("Ihr könnt Türme nicht so na aneinander bauen!");
+                Sound.PlayQueuedFeedbackSound(Sounds.VoicesSerf_SERF_No_rnd_01);
+                self.Data[_PlayerID].LastPlacedUpgradeCategory = nil;
+                GUI.CancelState();
+            end
+        end
+    end
+end
+
+function Stronghold.Building:AreTowersOfPlayerInArea(_PlayerID, _X, _Y, _AreaSize)
+    local DarkTower1 = {Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.PB_DarkTower1, _X, _Y, _AreaSize, 1)};
+    local DarkTower2 = {Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.PB_DarkTower2, _X, _Y, _AreaSize, 1)};
+    local DarkTower3 = {Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.PB_DarkTower3, _X, _Y, _AreaSize, 1)};
+    local Tower1 = {Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.PB_Tower1, _X, _Y, _AreaSize, 1)};
+    local Tower2 = {Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.PB_Tower2, _X, _Y, _AreaSize, 1)};
+    local Tower3 = {Logic.GetPlayerEntitiesInArea(_PlayerID, Entities.PB_Tower3, _X, _Y, _AreaSize, 1)};
+    return Tower1[1] + Tower2[1] + Tower3[1] + DarkTower1[1] + DarkTower2[1] + DarkTower3[1] > 0;
 end
 
 -- -------------------------------------------------------------------------- --
