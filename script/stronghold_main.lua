@@ -387,19 +387,17 @@ end
 -- Trigger
 
 function Stronghold:StartOnEveryTurnTrigger()
-    function Stronghold_Trigger_OnEveryTurn()
-        ---@diagnostic disable-next-line: undefined-field
-        local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), 10);
-        if PlayerID > 0 and PlayerID < 9 then
-            Stronghold:PlayerDefeatCondition(PlayerID);
-            Stronghold:CreateWorkersForPlayer(PlayerID);
+    function Stronghold_Trigger_OnEverySecond()
+        for i= 1, table.getn(Score.Player) do
+            Stronghold:PlayerDefeatCondition(i);
+            Stronghold:CreateWorkersForPlayer(i);
         end
     end
 
     Trigger.RequestTrigger(
-        Events.LOGIC_EVENT_EVERY_TURN,
+        Events.LOGIC_EVENT_EVERY_SECOND,
         nil,
-        "Stronghold_Trigger_OnEveryTurn",
+        "Stronghold_Trigger_OnEverySecond",
         1
     );
 end
@@ -518,22 +516,17 @@ end
 -- spawned this way.
 function Stronghold:CreateWorkersForPlayer(_PlayerID)
     if self:IsPlayer(_PlayerID) then
-        local DoCreate = true;
-        local LeaveMotivation = Logic.GetLogicPropertiesMotivationThresholdLeave();
-        if Logic.GetAverageMotivation(_PlayerID) > LeaveMotivation then
+        if not self.Players[_PlayerID].CivilAttractionLocked then
             if Logic.GetPlayerAttractionUsage(_PlayerID) < Logic.GetPlayerAttractionLimit(_PlayerID) then
                 local Index = self.Players[_PlayerID].LastBuildingWorkerCreatedIndex or 1;
                 local Buildings = GetAllWorkplaces(_PlayerID);
                 if Buildings[Index] then
-                    if DoCreate then
-                        local PlacesLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[Index]);
-                        local PlacesUsed = Logic.GetBuildingWorkPlaceUsage(Buildings[Index]);
-                        if PlacesUsed < PlacesLimit then
-                            local Type = Logic.GetWorkerTypeByBuilding(Buildings[Index]);
-                            local Position = self.Players[_PlayerID].DoorPos;
-                            Logic.CreateEntity(Type, Position.X, Position.Y, 0, _PlayerID);
-                            DoCreate = false;
-                        end
+                    local PlacesLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[Index]);
+                    local PlacesUsed = Logic.GetBuildingWorkPlaceUsage(Buildings[Index]);
+                    if PlacesUsed < PlacesLimit then
+                        local Type = Logic.GetWorkerTypeByBuilding(Buildings[Index]);
+                        local Position = self.Players[_PlayerID].DoorPos;
+                        Logic.CreateEntity(Type, Position.X, Position.Y, 0, _PlayerID);
                     end
                     self.Players[_PlayerID].LastBuildingWorkerCreatedIndex = Index +1;
                 else
@@ -702,7 +695,6 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
         -- Reputation
         local OldReputation = self:GetPlayerReputation(_PlayerID);
         local Reputation = Stronghold.Economy.Data[_PlayerID].IncomeReputation;
-        self:UpdateMotivationOfWorkers(_PlayerID, OldReputation + Reputation);
         self.Players[_PlayerID].Reputation = OldReputation + Reputation;
         if self.Players[_PlayerID].Reputation > self.Players[_PlayerID].ReputationLimit then
             self.Players[_PlayerID].Reputation = self.Players[_PlayerID].ReputationLimit;
@@ -710,6 +702,18 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
         if self.Players[_PlayerID].Reputation < 0 then
             self.Players[_PlayerID].Reputation = 0;
         end
+
+        -- Attraction
+        if self.Players[_PlayerID].Reputation < 50 then
+            self.Players[_PlayerID].CivilAttractionLocked = true;
+        else
+            self.Players[_PlayerID].CivilAttractionLocked = false;
+        end
+
+        -- Motivation
+        local Motivation = math.max(OldReputation + Reputation, 30);
+        self:UpdateMotivationOfWorkers(_PlayerID, Motivation);
+        self:ControlReputationAttractionPenalty(_PlayerID);
 
         -- Honor
         local Honor = Stronghold.Economy.Data[_PlayerID].IncomeHonor;
@@ -861,6 +865,41 @@ function Stronghold:UpdateMotivationOfWorkers(_PlayerID, _Amount)
             for i= 1, table.getn(WorkerList) do
                 CEntity.SetMotivation(WorkerList[i], _Amount / 100);
             end
+        end
+    end
+end
+
+function Stronghold:ControlReputationAttractionPenalty(_PlayerID)
+    local Reputation = self:GetPlayerReputation(_PlayerID);
+    local WorkerList = GetAllWorker(_PlayerID);
+    local WorkerAmount = table.getn(WorkerList);
+    local LeaveAmount = 0;
+
+    -- Restore reputation when workers are all gone
+    if WorkerAmount == 0 then
+        self:SetPlayerReputation(_PlayerID, math.min(Reputation +6, 75));
+        return;
+    end
+
+    if Reputation <= 30 then
+        -- Get all not already leaving workers
+        for i= table.getn(WorkerList), 1, -1 do
+            if Logic.GetCurrentTaskList(WorkerList[i]) == "TL_WORKER_LEAVE" then
+                table.remove(WorkerList, i);
+            end
+        end
+
+        -- Make workers leave
+        WorkerAmount = table.getn(WorkerList);
+        LeaveAmount = math.ceil(WorkerAmount * 0.3);
+        while LeaveAmount > 0 do
+            if table.getn(WorkerList) == 0 then
+                break;
+            end
+            local ID = table.remove(WorkerList, math.random(1, WorkerAmount));
+            Logic.SetTaskList(ID, TaskLists.TL_WORKER_LEAVE);
+            WorkerAmount = table.getn(WorkerList);
+            LeaveAmount = LeaveAmount -1;
         end
     end
 end

@@ -140,17 +140,17 @@ function Stronghold.Economy:InitTradeBalancer()
     local PurchaseTyp = Event.GetBuyResource();
     local PlayerID = Logic.EntityGetPlayer(EntityID);
 
-    if Logic.GetCurrentPrice(PlayerID, SellTyp) > 1.2 then
-        Logic.SetCurrentPrice(PlayerID, SellTyp, 1.2);
+    if Logic.GetCurrentPrice(PlayerID, SellTyp) > 1.25 then
+        Logic.SetCurrentPrice(PlayerID, SellTyp, 1.25);
     end
-    if Logic.GetCurrentPrice(PlayerID, SellTyp) < 0.8 then
-        Logic.SetCurrentPrice(PlayerID, SellTyp, 0.8);
+    if Logic.GetCurrentPrice(PlayerID, SellTyp) < 0.75 then
+        Logic.SetCurrentPrice(PlayerID, SellTyp, 0.75);
     end
-    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) > 1.2 then
-        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 1.2);
+    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) > 1.25 then
+        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 1.25);
     end
-    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.8 then
-        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.8);
+    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.75 then
+        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.75);
     end
 end
 
