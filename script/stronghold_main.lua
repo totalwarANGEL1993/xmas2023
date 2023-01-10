@@ -931,6 +931,7 @@ function Stronghold:OverwriteCommonCallbacks()
         Stronghold:OnSelectionMenuChanged(EntityID);
     end
 
+    Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded or function() end
 	self.Orig_Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded;
 	Mission_OnSaveGameLoaded = function()
 		Stronghold.Orig_Mission_OnSaveGameLoaded();

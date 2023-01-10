@@ -52,13 +52,14 @@ function Stronghold.Building:Install()
         self.Data[i] = {};
     end
 
+    self:CreateBuildingButtonHandlers();
     self:OverrideMonasteryButtons()
     self:OverrideHeadquarterButtons();
     self:OverridePlaceBuildingAction();
     self:OverrideBuildingUpgradeButtonUpdate();
     self:OverrideBuildingUpgradeButtonTooltip();
     self:OverrideManualButtonUpdate();
-    self:CreateBuildingButtonHandlers();
+    self:OverrideSellBuildingAction();
 end
 
 function Stronghold.Building:OnSaveGameLoaded()
@@ -66,18 +67,7 @@ function Stronghold.Building:OnSaveGameLoaded()
         self:HeadquartersConfigureBuilding(i);
     end
     self:OverrideManualButtonUpdate();
-end
-
-function Stronghold.Building:OverrideManualButtonUpdate()
-    self.Orig_XGUIEng_DoManualButtonUpdate = XGUIEng.DoManualButtonUpdate;
-    XGUIEng.DoManualButtonUpdate = function(_WidgetID)
-        local WidgetID = XGUIEng.GetCurrentWidgetID();
-        local SingleLeader = XGUIEng.GetWidgetID("Activate_RecruitSingleLeader");
-        local FullLeader = XGUIEng.GetWidgetID("Activate_RecruitGroups");
-        if WidgetID ~= SingleLeader and WidgetID ~= FullLeader then
-            self.Orig_XGUIEng_DoManualButtonUpdate(_WidgetID);
-        end
-    end
+    self:OverrideSellBuildingAction();
 end
 
 function Stronghold.Building:CreateBuildingButtonHandlers()
@@ -1725,6 +1715,31 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
         end
         self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
         return false;
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- UI Stuff
+
+-- HACK: Prevent nasty update when toggle groups is used.
+function Stronghold.Building:OverrideManualButtonUpdate()
+    self.Orig_XGUIEng_DoManualButtonUpdate = XGUIEng.DoManualButtonUpdate;
+    XGUIEng.DoManualButtonUpdate = function(_WidgetID)
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local SingleLeader = XGUIEng.GetWidgetID("Activate_RecruitSingleLeader");
+        local FullLeader = XGUIEng.GetWidgetID("Activate_RecruitGroups");
+        if WidgetID ~= SingleLeader and WidgetID ~= FullLeader then
+            self.Orig_XGUIEng_DoManualButtonUpdate(_WidgetID);
+        end
+    end
+end
+
+-- HACK: Deselect building on demolition to prevent click spamming.
+function Stronghold.Building:OverrideSellBuildingAction()
+    self.Orig_GUI_SellBuilding = GUI.SellBuilding;
+    GUI.SellBuilding = function(_EntityID)
+        GUI.DeselectEntity(_EntityID);
+        self.Orig_GUI_SellBuilding(_EntityID);
     end
 end
 
