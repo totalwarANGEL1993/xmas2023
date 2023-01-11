@@ -180,6 +180,7 @@ function Stronghold:Init()
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
     XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
+    Camera.ZoomSetFactorMax(2.5);
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
@@ -221,6 +222,7 @@ function Stronghold:OnSaveGameLoaded()
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
     XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
+    Camera.ZoomSetFactorMax(2.5);
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 

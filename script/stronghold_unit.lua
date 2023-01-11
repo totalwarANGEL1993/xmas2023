@@ -272,7 +272,12 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                         end
                     end
                 end
-                Logic.RotateEntity(ID, Orientation +180);
+                if _BarracksID == GetID(Stronghold.Players[_PlayerID].HQScriptName) then
+                    local CampPos = Stronghold.Players[_PlayerID].CampPos;
+                    Logic.MoveSettler(ID, CampPos.X, CampPos.Y);
+                else
+                    Logic.RotateEntity(ID, Orientation +180);
+                end
             end
         end
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;
