@@ -326,10 +326,14 @@ end
 function Stronghold.Unit:OverrideBuySoldierButtonAction()
     self.Orig_GUIAction_BuySoldier = GUIAction_BuySoldier;
     GUIAction_BuySoldier = function()
-        local PlayerID = GUI.GetPlayerID();
+        local GuiPlayer = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         local EntityID = GUI.GetSelectedEntity();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUIAction_BuySoldier();
+        end
+        if GuiPlayer ~= PlayerID then
+            return;
         end
 
         local BuyAmount = 1;
@@ -380,10 +384,14 @@ end
 function Stronghold.Unit:OverrideBuySoldierButtonTooltip()
     self.Orig_GUITooltip_BuySoldier = GUITooltip_BuySoldier;
     GUITooltip_BuySoldier = function(_KeyNormal, _KeyDisabled, _ShortCut)
-        local PlayerID = GUI.GetPlayerID();
+        local GuiPlayer = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         local EntityID = GUI.GetSelectedEntity();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUITooltip_BuySoldier(_KeyNormal, _KeyDisabled, _ShortCut);
+        end
+        if GuiPlayer ~= PlayerID then
+            return;
         end
 
         local BuyAmount = 1;
@@ -473,9 +481,13 @@ end
 function Stronghold.Unit:OverrideExpelSettlerButtonAction()
     self.Orig_GUIAction_ExpelSettler = GUIAction_ExpelSettler;
     GUIAction_ExpelSettler = function()
-        local PlayerID = GUI.GetPlayerID();
+        local GuiPlayer = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUIAction_ExpelSettler();
+        end
+        if GuiPlayer ~= PlayerID then
+            return;
         end
         if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
             local Selected = {GUI.GetSelectedEntities()};
@@ -499,7 +511,7 @@ end
 function Stronghold.Unit:OverrideExpelSettlerButtonTooltip()
     self.Orig_GUITooltip_NormalButton = GUITooltip_NormalButton;
     GUITooltip_NormalButton = function(_Key)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUITooltip_NormalButton(_Key);
         end
@@ -526,7 +538,7 @@ end
 function Stronghold.Unit:OverrideTooltipConstructionButton()
     self.Orig_GUITooltip_ConstructBuilding = GUITooltip_ConstructBuilding;
     GUITooltip_ConstructBuilding = function(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUITooltip_ConstructBuilding(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end
@@ -625,7 +637,7 @@ end
 function Stronghold.Unit:OverrideUpdateConstructionButton()
     self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
     GUIUpdate_BuildingButtons = function(_Button, _Technology)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
         end
@@ -638,7 +650,7 @@ end
 function Stronghold.Unit:OverrideUpdateUpgradeButton()
     self.Orig_GUIUpdate_UpgradeButtons = GUIUpdate_UpgradeButtons;
     GUIUpdate_UpgradeButtons = function(_Button, _Technology)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
         end

@@ -150,15 +150,6 @@ function Stronghold.Building:OverrideHeadquarterButtons()
 	    XGUIEng.HighLightButton(gvGUI_WidgetID.TaxesButtons[TaxLevel], 1);
     end
 
-    GUIAction_ToggleMenu_Orig_StrongholdBuilding = GUIAction_ToggleMenu;
-    GUIAction_ToggleMenu = function(_Menu, _State)
-        if _Menu == gvGUI_WidgetID.BuyHeroWindow and _State == -1 then
-            Stronghold.Hero:OpenBuyHeroWindowForLordSelection(GUI.GetPlayerID());
-        else
-            GUIAction_ToggleMenu_Orig_StrongholdBuilding(_Menu, _State);
-        end
-    end
-
     GUIAction_BuySerf_Orig_StrongholdBuilding = GUIAction_BuySerf;
     GUIAction_BuySerf = function()
         local PlayerID = GUI.GetPlayerID();

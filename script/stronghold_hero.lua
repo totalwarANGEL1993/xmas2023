@@ -276,10 +276,7 @@ end
 
 function Stronghold.Hero:OnSelectLeader(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if GUI.GetPlayerID() ~= PlayerID and not Stronghold:IsPlayer(PlayerID) then
-        return;
-    end
-    if Logic.IsLeader(_EntityID) == 0 then
+    if not Stronghold:IsPlayer(PlayerID) or Logic.IsLeader(_EntityID) == 0 then
         return;
     end
 
@@ -313,10 +310,7 @@ end
 
 function Stronghold.Hero:OnSelectHero(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if GUI.GetPlayerID() ~= PlayerID and not Stronghold:IsPlayer(PlayerID) then
-        return;
-    end
-    if Logic.IsHero(_EntityID) == 0 then
+    if not Stronghold:IsPlayer(PlayerID) or Logic.IsHero(_EntityID) == 0 then
         return;
     end
 
@@ -484,6 +478,7 @@ end
 -- Buy Hero
 
 function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
     if not Stronghold:IsPlayer(_PlayerID) then
         return;
     end
@@ -502,6 +497,9 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
             local WidgetID = self.Config.TypeToBuyHeroButton[Type];
             local ButtonW, ButtonH = 60, 90;
             XGUIEng.ShowWidget(WidgetID, 1);
+            if GuiPlayer ~= _PlayerID then
+                XGUIEng.DisableButton(WidgetID, 1);
+            end
             XGUIEng.SetWidgetPositionAndSize(WidgetID, PositionX, PositionY, ButtonW, ButtonH);
             PositionX = PositionX + 65;
         end
@@ -513,11 +511,11 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
 end
 
 function Stronghold.Hero:OverrideBuyHeroWindow()
-    BuyHeroWindow_UpdateInfoLine_Orig_StrongholdHero = BuyHeroWindow_UpdateInfoLine;
+    self.Orig_BuyHeroWindow_UpdateInfoLine = BuyHeroWindow_UpdateInfoLine;
     BuyHeroWindow_UpdateInfoLine = function()
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return BuyHeroWindow_UpdateInfoLine_Orig_StrongholdHero();
+            return Stronghold.Hero.Orig_BuyHeroWindow_UpdateInfoLine();
         end
 
         local ScreenX, ScreenY = GUI.GetScreenSize();
@@ -551,11 +549,15 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         XGUIEng.SetText("BuyHeroWindowInfoLine", Text);
     end
 
-    BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero = BuyHeroWindow_Action_BuyHero;
+    self.Orig_BuyHeroWindow_Action_BuyHero = BuyHeroWindow_Action_BuyHero;
     BuyHeroWindow_Action_BuyHero = function(_Type)
-        local PlayerID = GUI.GetPlayerID();
+        local GuiPlayer = GUI.GetPlayerID()
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return BuyHeroWindow_Action_BuyHero_Orig_StrongholdHero(_Type);
+            return Stronghold.Hero.Orig_BuyHeroWindow_Action_BuyHero(_Type);
+        end
+        if GuiPlayer ~= PlayerID then
+            return;
         end
         Stronghold.Sync:Call(
             Stronghold.Hero.NetworkCall,
@@ -566,11 +568,11 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         XGUIEng.ShowWidget("BuyHeroWindow", 0);
     end
 
-    BuyHeroWindow_Update_BuyHero_Orig_StrongholdHero = BuyHeroWindow_Update_BuyHero;
+    self.Orig_BuyHeroWindow_Update_BuyHero = BuyHeroWindow_Update_BuyHero;
     BuyHeroWindow_Update_BuyHero = function(_Type)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return BuyHeroWindow_Update_BuyHero_Orig_StrongholdHero(_Type);
+            return Stronghold.Hero.Orig_BuyHeroWindow_Update_BuyHero(_Type);
         end
     end
 end
@@ -748,11 +750,15 @@ end
 function Stronghold.Hero:OverrideHero5AbilitySummon()
     self.Orig_GUIAction_Hero5Summon = GUIAction_Hero5Summon;
     GUIAction_Hero5Summon = function()
-        local PlayerID = GUI.GetPlayerID();
+        local GuiPlayer = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         local EntityID = GUI.GetSelectedEntity();
         local x,y,z = Logic.EntityGetPos(EntityID);
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Hero.Orig_GUIAction_Hero5Summon();
+        end
+        if GuiPlayer ~= PlayerID() then
+            return;
         end
         Stronghold.Sync:Call(
             Stronghold.Hero.NetworkCall,

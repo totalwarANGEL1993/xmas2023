@@ -301,6 +301,18 @@ function Stronghold:GetPlayer(_PlayerID)
     return self.Players[_PlayerID];
 end
 
+function Stronghold:GetLocalPlayerID()
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID1 = GUI.GetPlayerID();
+    if CNetwork and EntityID ~= 0 then
+        local PlayerID2 = Logic.EntityGetPlayer(EntityID);
+        if PlayerID1 ~= PlayerID2 then
+            return PlayerID2;
+        end
+    end
+    return PlayerID1;
+end
+
 function Stronghold:IsPlayer(_PlayerID)
     return self:GetPlayer(_PlayerID) ~= nil;
 end
@@ -683,6 +695,7 @@ end
 -- Applies everything that is happening on the payday.
 function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
     if self:IsPlayer(_PlayerID) then
+
         -- Fix money for payday (only singleplayr)
         if _FixGold then
             local TaxAmount = Logic.GetPlayerPaydayCost(_PlayerID);
@@ -878,8 +891,8 @@ function Stronghold:ControlReputationAttractionPenalty(_PlayerID)
     local LeaveAmount = 0;
 
     -- Restore reputation when workers are all gone
-    if WorkerAmount == 0 then
-        self:SetPlayerReputation(_PlayerID, math.min(Reputation +6, 75));
+    if WorkerAmount == 0 and Logic.GetTime() > 1 then
+        self:SetPlayerReputation(_PlayerID, math.min(Reputation +9, 75));
         return;
     end
 
@@ -984,7 +997,7 @@ end
 function Stronghold:OverrideTooltipGenericMain()
     self.Orig_GUITooltip_Generic = GUITooltip_Generic;
     GUITooltip_Generic = function(_Key)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Orig_GUITooltip_Generic(_Key);
         end
@@ -1026,7 +1039,7 @@ end
 function Stronghold:OverrideTooltipUpgradeSettlersMain()
     self.Orig_GUITooltip_ResearchTechnologies = GUITooltip_ResearchTechnologies;
     GUITooltip_ResearchTechnologies = function(_Technology, _TextKey, _ShortCut)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Orig_GUITooltip_ResearchTechnologies(_Technology, _TextKey, _ShortCut);
         end
@@ -1080,7 +1093,7 @@ end
 function Stronghold:OverrideTooltipBuyMilitaryUnitMain()
     self.Orig_GUITooltip_BuyMilitaryUnit = GUITooltip_BuyMilitaryUnit;
     GUITooltip_BuyMilitaryUnit = function(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Orig_GUITooltip_BuyMilitaryUnit(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end

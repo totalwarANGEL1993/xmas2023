@@ -8,7 +8,7 @@
 -- UI Tools
 
 function Stronghold:HasPlayerEnoughResourcesFeedback(_Costs)
-    local PlayerID = GUI.GetPlayerID();
+    local PlayerID = self:GetLocalPlayerID();
     if not self.Players[PlayerID] then
         return InterfaceTool_HasPlayerEnoughResources_Feedback(_Costs) == 1;
     end

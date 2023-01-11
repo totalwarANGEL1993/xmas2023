@@ -48,27 +48,27 @@ Stronghold.Economy = {
             Buildings = {
                 [Entities.CB_Bastille1] = {Honor = 15, Reputation = 5,},
                 ---
-                [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
-                [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
-                [Entities.PB_Beautification09] = {Honor = 1, Reputation = 1,},
+                [Entities.PB_Beautification04] = {Honor = 2, Reputation = 2,},
+                [Entities.PB_Beautification06] = {Honor = 2, Reputation = 2,},
+                [Entities.PB_Beautification09] = {Honor = 2, Reputation = 2,},
                 ---
-                [Entities.PB_Beautification01] = {Honor = 1, Reputation = 2,},
-                [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
-                [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
+                [Entities.PB_Beautification01] = {Honor = 2, Reputation = 3,},
+                [Entities.PB_Beautification02] = {Honor = 2, Reputation = 3,},
+                [Entities.PB_Beautification12] = {Honor = 2, Reputation = 3,},
                 ---
-                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
-                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
-                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification05] = {Honor = 2, Reputation = 4,},
+                [Entities.PB_Beautification07] = {Honor = 2, Reputation = 4,},
+                [Entities.PB_Beautification08] = {Honor = 2, Reputation = 4,},
                 ---
-                [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification03] = {Honor = 2, Reputation = 5,},
+                [Entities.PB_Beautification10] = {Honor = 2, Reputation = 5,},
+                [Entities.PB_Beautification11] = {Honor = 2, Reputation = 5,},
                 ---
                 [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
-                [Entities.PB_Tavern2] = {Honor = 0, Reputation = 6,},
+                [Entities.PB_Tavern2] = {Honor = 0, Reputation = 5,},
                 ---
-                [Entities.PB_Farm2] = {Honor = 2, Reputation = 0,},
-                [Entities.PB_Farm3] = {Honor = 3, Reputation = 0,},
+                [Entities.PB_Farm2] = {Honor = 1, Reputation = 0,},
+                [Entities.PB_Farm3] = {Honor = 2, Reputation = 0,},
                 ---
                 [Entities.PB_Residence2] = {Honor = 0, Reputation = 1,},
                 [Entities.PB_Residence3] = {Honor = 0, Reputation = 2,},
@@ -374,9 +374,9 @@ function Stronghold.Economy:OverrideFindViewUpdate()
 end
 
 function Stronghold.Economy:HonorMenu()
-    local PlayerID = GUI.GetPlayerID()
+    local PlayerID = Stronghold:GetLocalPlayerID();
 
-    local Rank = "Abschaum";
+    local Rank = "Fußvolk";
     local Honor = 0;
     local MaxHonor = Stronghold.Config.HonorLimit;
     if Stronghold:IsPlayer(PlayerID) then
@@ -403,7 +403,7 @@ end
 function Stronghold.Economy:OverridePaydayClockTooltip()
     GUITooltip_Payday_Orig_StrongholdEco = GUITooltip_Payday
     GUITooltip_Payday = function()
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Economy.Data[PlayerID] then
             return GUITooltip_Payday_Orig_StrongholdEco();
         end
@@ -438,7 +438,7 @@ end
 function Stronghold.Economy:OverrideTaxAndPayStatistics()
     GUIUpdate_TaxPaydayIncome_Orig_StrongholdEco = GUIUpdate_TaxPaydayIncome;
     GUIUpdate_TaxPaydayIncome = function()
-		local PlayerID = GUI.GetPlayerID();
+		local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Economy.Data[PlayerID] then
             return GUIUpdate_TaxPaydayIncome_Orig_StrongholdEco();
         end
@@ -456,7 +456,7 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
 
     GUIUpdate_TaxSumOfTaxes_Orig_StrongholdEco = GUIUpdate_TaxSumOfTaxes;
 	GUIUpdate_TaxSumOfTaxes = function()
-		local PlayerID = GUI.GetPlayerID();
+		local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Economy.Data[PlayerID] then
             return GUIUpdate_TaxSumOfTaxes_Orig_StrongholdEco();
         end
@@ -467,7 +467,7 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
 
     GUIUpdate_TaxLeaderCosts_Orig_StrongholdEco = GUIUpdate_TaxLeaderCosts;
 	GUIUpdate_TaxLeaderCosts = function()
-		local PlayerID = GUI.GetPlayerID();
+		local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Economy.Data[PlayerID] then
             return GUIUpdate_TaxLeaderCosts_Orig_StrongholdEco();
         end
@@ -478,7 +478,7 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
 
     GUIUpdate_AverageMotivation_Orig_StrongholdEco = GUIUpdate_AverageMotivation;
     GUIUpdate_AverageMotivation = function()
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Economy.Data[PlayerID] or not Stronghold:IsPlayer(PlayerID) then
             return GUIUpdate_AverageMotivation_Orig_StrongholdEco();
         end
