@@ -74,7 +74,7 @@ Stronghold.Hero = {
 
         HeroSkills = {
             [Entities.PU_Hero1c]             = {
-                Description = "Passive Fähigkeit: @cr Der Sold aller Einheiten wird von der Krone bezahlt, wodurch Euch alle Einheiten 15% weniger kosten."..
+                Description = "Passive Fähigkeit: @cr Der Unterhalt Euer Streitkräfte wird von der Krone subventioniert, wodurch der Sold aller Einheiten um 15% sinkt."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
             },
@@ -84,7 +84,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
             },
             [Entities.PU_Hero3]              = {
-                Description = "Passive Fähigkeit: @cr Wissen ist Macht! Jedes Mal wenn Ihr eine Technologie erforscht, erhaltet Ihr 3 Ehre."..
+                Description = "Passive Fähigkeit: @cr Wissen ist Macht! Jedes Mal wenn Ihr eine Technologie erforscht, erhaltet Ihr 5 Ehre."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann Fallen verstecken, die explodieren, wenn Feinde in der Nähe sind.",
             },
@@ -94,7 +94,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
             },
             [Entities.PU_Hero5]              = {
-                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als mancher denkt. Die Steuereinnahmen werden um 30% erhöht."..
+                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die Steuereinnahmen werden um 50% erhöht."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr Gesetzlose sind es.",
             },
@@ -263,10 +263,16 @@ function Stronghold.Hero:OverrideLeaderFormationUpdate()
         if not Stronghold:IsPlayer(PlayerID) then
             return self.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
         end
-        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+        if not string.find(_Button, "Formation") then
             return self.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
         end
-        local Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
+        local Disabled = 1;
+        if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
+            Disabled = 0;
+        end
+        if GetID(Stronghold.Players[PlayerID].LordScriptName) == EntityID then
+            Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
+        end
         XGUIEng.DisableButton(_Button, Disabled);
     end
 end
@@ -757,7 +763,7 @@ function Stronghold.Hero:OverrideHero5AbilitySummon()
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Hero.Orig_GUIAction_Hero5Summon();
         end
-        if GuiPlayer ~= PlayerID() then
+        if GuiPlayer ~= PlayerID then
             return;
         end
         Stronghold.Sync:Call(
@@ -853,7 +859,7 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
     self.Orig_GameCallback_Calculate_CivilAttrationUsage = GameCallback_Calculate_CivilAttrationUsage;
     GameCallback_Calculate_CivilAttrationUsage = function(_PlayerID, _CurrentAmount)
         local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_CivilAttrationUsage(_PlayerID, _CurrentAmount);
-        CurrentAmount = Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyAttractionPassiveAbility(_PlayerID, CurrentAmount);
         return CurrentAmount;
     end
 end
@@ -877,7 +883,7 @@ end
 -- Passive Ability: Produce honor for technology
 function Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
-        Stronghold:AddPlayerHonor(_PlayerID, 3);
+        Stronghold:AddPlayerHonor(_PlayerID, 5);
     end
 end
 
@@ -969,7 +975,7 @@ function Stronghold.Hero:ApplyAttractionPassiveAbility(_PlayerID, _Value)
     if Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
         local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
-        Value = Value - (ScoutCount + ThiefCount);
+        Value = Value - (ScoutCount + ThiefCount * 5);
     end
     return Value;
 end
@@ -1010,7 +1016,7 @@ end
 function Stronghold.Hero:ApplyIncomeBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
-        Income = Income * 1.3;
+        Income = Income * 1.5;
     end
     return Income;
 end

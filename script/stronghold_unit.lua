@@ -14,7 +14,7 @@ Stronghold.Unit = {
     Config = {
         Units = {
             [Entities.PU_LeaderPoleArm1] = {
-                Costs = {0, 30, 0, 20, 0, 0, 0},
+                Costs = {0, 35, 0, 25, 0, 0, 0},
                 Allowed = true,
                 Rank = 1,
                 Upkeep = 15,
@@ -128,13 +128,13 @@ Stronghold.Unit = {
             ---
             [Entities.PU_LeaderHeavyCavalry1] = {
                 Costs = {30, 200, 0, 0, 0, 130, 0},
-                Allowed = false,
-                Rank = 0,
+                Allowed = true,
+                Rank = 7,
                 Upkeep = 120,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
                 Costs = {40, 230, 0, 0, 0, 180, 0},
-                Allowed = true,
+                Allowed = false,
                 Rank = 9,
                 Upkeep = 150,
             },
@@ -156,13 +156,13 @@ Stronghold.Unit = {
                 Costs = {0, 150, 0, 50, 0, 50, 0},
                 Allowed = true,
                 Rank = 2,
-                Upkeep = 50,
+                Upkeep = 10,
             },
             [Entities.PU_Thief] = {
                 Costs = {30, 500, 0, 0, 0, 100, 100},
                 Allowed = true,
                 Rank = 5,
-                Upkeep = 200,
+                Upkeep = 50,
             },
             ---
             [Entities.PU_Serf] = {

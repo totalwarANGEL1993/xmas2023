@@ -909,8 +909,10 @@ function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
         UnitType = Entities.PU_Scout;
         Action = self.SyncEvents.BuyUnit;
     elseif _UpgradeCategory == UpgradeCategories.Thief then
-        UnitType = Entities.PU_Thief;
-        Action = self.SyncEvents.BuyUnit;
+        if Logic.GetPlayerAttractionLimit(PlayerID) >= Logic.GetPlayerAttractionUsage(PlayerID) +5 then
+            UnitType = Entities.PU_Thief;
+            Action = self.SyncEvents.BuyUnit;
+        end
     end
 
     if Action > 0 then
@@ -1049,7 +1051,7 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
         Places = (AutoFillActive and 4) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeHeavyCavalry1 then
-        UnitType = Entities.PU_LeaderHeavyCavalry2;
+        UnitType = Entities.PU_LeaderHeavyCavalry1;
         Places = (AutoFillActive and 4) or 1;
         Action = self.SyncEvents.BuyUnit;
     end
@@ -1109,7 +1111,7 @@ function Stronghold.Building:OnStableSelected(_EntityID)
 
     -- Knights
     local KnightDisabled = 0;
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderHeavyCavalry2);
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderHeavyCavalry1);
     if Config.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
     or Type ~= Entities.PB_Stable2
@@ -1149,7 +1151,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
         end
 
     elseif _TextKey == "MenuStables/UpgradeCavalryHeavy1" then
-        local Type = Entities.PU_LeaderHeavyCavalry2;
+        local Type = Entities.PU_LeaderHeavyCavalry1;
         Text = "@color:180,180,180 Berittene Streitaxtkämpfer @color:255,255,255 "..
                "@cr Treue Ritter, die jeden Gegner gnadenlos niedermähen, der "..
                "es wagt, sich Euch entgegenzustallen.";

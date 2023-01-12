@@ -587,7 +587,7 @@ function Stronghold:OverrideAttraction()
         local SerfCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Serf);
         local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
-        Usage = WorkerCount + SerfCount + ScoutCount + (ThiefCount *5);
+        Usage = WorkerCount + SerfCount + ScoutCount + (ThiefCount * 5);
         -- External
         Usage = GameCallback_Calculate_CivilAttrationUsage(_PlayerID, Usage);
 
@@ -628,7 +628,7 @@ function Stronghold:GetPlayerMilitaryAttractionUsage(_PlayerID)
         local Cannon4 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon4);
         -- Cannons count as 1 soldier so we add multiple of 5 -1
         local Military = Soldiers + (Cannon1*4) + (Cannon2*9) + (Cannon3*14) + (Cannon4*14);
-        -- Scouts and thieves count as soldiers so we must substract them
+        -- Scouts and thieves count as 1 soldier so we must substract them
         local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
         Usage = Military - (ScoutCount + ThiefCount);
