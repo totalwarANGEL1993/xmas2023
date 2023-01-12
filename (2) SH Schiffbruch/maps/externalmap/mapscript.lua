@@ -37,7 +37,8 @@ function OnMapStart()
 
     local WoodPiles = {Logic.GetEntities(Entities.XD_SingnalFireOff, 48)};
     for i= 2, WoodPiles[1] +1 do
-        CreateWoodPile(WoodPiles[i], 25000);
+        Logic.SetEntityName(WoodPiles[i], "WoodPile" ..i);
+        CreateWoodPile("WoodPile" ..i, 25000);
     end
 end
 

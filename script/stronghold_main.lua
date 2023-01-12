@@ -255,6 +255,7 @@ function Stronghold:Init()
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
     XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
     Camera.ZoomSetFactorMax(2.5);
+    GUI.SetTaxLevel(0);
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
@@ -763,14 +764,7 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
             self.Players[_PlayerID].HasHadRegularPayday = true;
         end
 
-        -- Fix money for payday (only singleplayer)
-        if _FixGold then
-            local TaxAmount = Logic.GetPlayerPaydayCost(_PlayerID);
-            if TaxAmount > 0 then
-                AddGold(_PlayerID, -1 * TaxAmount);
-            end
-        end
-        AddGold(_PlayerID, Logic.GetNumberOfLeader(_PlayerID) * 20, 0, 0, 0, 0, 0);
+        Tools.GiveResouces(_PlayerID, Logic.GetNumberOfLeader(_PlayerID) * 20, 0, 0, 0, 0, 0);
         Tools.GiveResouces(_PlayerID, Stronghold.Economy.Data[_PlayerID].IncomeMoney, 0, 0, 0, 0, 0);
         AddGold(_PlayerID, -Stronghold.Economy.Data[_PlayerID].UpkeepMoney);
 
