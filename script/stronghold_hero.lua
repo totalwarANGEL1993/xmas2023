@@ -74,7 +74,7 @@ Stronghold.Hero = {
 
         HeroSkills = {
             [Entities.PU_Hero1c]             = {
-                Description = "Passive Fähigkeit: @cr Der Unterhalt Euer Streitkräfte wird von der Krone subventioniert, wodurch der Sold aller Einheiten um 15% sinkt."..
+                Description = "Passive Fähigkeit: @cr Der Unterhalt Euer Streitkräfte wird von der Krone subventioniert, wodurch der Sold aller Einheiten um 10% sinkt."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
             },
@@ -94,7 +94,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
             },
             [Entities.PU_Hero5]              = {
-                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die Steuereinnahmen werden um 50% erhöht."..
+                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die Steuereinnahmen werden um 30% erhöht."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr Gesetzlose sind es.",
             },
@@ -114,7 +114,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
             },
             [Entities.CU_Barbarian_Hero]     = {
-                Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 50% zusätzliche Beliebtheit."..
+                Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 30% zusätzliche Beliebtheit."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre Stärke richtet sich nach dem Rang.",
             },
@@ -129,7 +129,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
             },
             [Entities.CU_Evil_Queen] = {
-                Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen Wandel, der Euer Bevölkerungslimit um 30% anhebt."..
+                Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen Wandel, der Euer Bevölkerungslimit um 15% anhebt."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
             },
@@ -962,7 +962,7 @@ function Stronghold.Hero:ApplyReputationBuildingBonusPassiveAbility(_PlayerID, _
     local Value = _Amount;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Barbarian_Hero) then
         if _Type == Entities.PB_Tavern1 or _Type == Entities.PB_Tavern2 then
-            Value = Value * 1.5;
+            Value = Value * 1.3;
         end
     end
     return Value;
@@ -1001,7 +1001,7 @@ end
 function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        Value = Value * 1.3;
+        Value = Value * 1.15;
     end
     return Value;
 end
@@ -1053,7 +1053,7 @@ end
 function Stronghold.Hero:ApplyIncomeBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
-        Income = Income * 1.5;
+        Income = Income * 1.3;
     end
     return Income;
 end
@@ -1062,7 +1062,7 @@ end
 function Stronghold.Hero:ApplyUpkeepDiscountPassiveAbility(_PlayerID, _Upkeep)
     local Upkeep = _Upkeep;
     if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
-        Upkeep = Upkeep * 0.85;
+        Upkeep = Upkeep * 0.9;
     end
     return Upkeep;
 end

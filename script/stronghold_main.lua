@@ -254,7 +254,7 @@ function Stronghold:Init()
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
     XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
-    Camera.ZoomSetFactorMax(2.5);
+    Camera.ZoomSetFactorMax(2.0);
     GUI.SetTaxLevel(0);
     GUI.ClearSelection();
     ResourceType.Honor = 20;
@@ -297,7 +297,7 @@ function Stronghold:OnSaveGameLoaded()
     XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
     XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
     XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
-    Camera.ZoomSetFactorMax(2.5);
+    Camera.ZoomSetFactorMax(2.0);
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
@@ -370,6 +370,10 @@ function Stronghold:AddPlayer(_PlayerID)
     };
 
     self.Building:HeadquartersConfigureBuilding(_PlayerID);
+
+    if CNetwork then
+        SendEvent.SetTaxes(_PlayerID, 0);
+    end
 end
 
 function Stronghold:GetPlayer(_PlayerID)
@@ -496,9 +500,11 @@ function Stronghold:StartEntityCreatedTrigger()
         local EntityID = Event.GetEntityID();
         local PlayerID = Logic.EntityGetPlayer(EntityID);
 
-        -- Beautification limit
-        if Logic.IsBuilding(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
-            Stronghold:OnSelectionMenuChanged(EntityID, GUI.GetSelectedEntity());
+        if Logic.IsBuilding(EntityID) == 1 then
+            if GUI.GetPlayerID() == PlayerID then
+                Stronghold:OnSelectionMenuChanged(EntityID, GUI.GetSelectedEntity());
+            end
+            Stronghold:SetBuildingCurrentWorkerAmount(EntityID, 0);
         end
     end
 
@@ -607,16 +613,23 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
     if self:IsPlayer(_PlayerID) then
         if not self.Players[_PlayerID].CivilAttractionLocked then
             if Logic.GetPlayerAttractionUsage(_PlayerID) < Logic.GetPlayerAttractionLimit(_PlayerID) then
-                local Index = self.Players[_PlayerID].LastBuildingWorkerCreatedIndex or 1;
+                -- Get buildings that need workers
                 local Buildings = GetAllWorkplaces(_PlayerID);
-                if Buildings[Index] then
-                    local PlacesLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[Index]);
-                    local PlacesUsed = Logic.GetBuildingWorkPlaceUsage(Buildings[Index]);
-                    if PlacesUsed < PlacesLimit then
-                        local Type = Logic.GetWorkerTypeByBuilding(Buildings[Index]);
-                        local Position = self.Players[_PlayerID].DoorPos;
-                        Logic.CreateEntity(Type, Position.X, Position.Y, 0, _PlayerID);
+                for i= table.getn(Buildings), 1, -1 do
+                    local Used, Limit = self:GetBuildingCurrentAndMaxWorkerAmount(Buildings[i]);
+                    if Used == Limit then
+                        table.remove(Buildings, i);
                     end
+                end
+                -- Create 1 worker
+                local Index = self.Players[_PlayerID].LastBuildingWorkerCreatedIndex or 1;
+                if Buildings[Index] then
+                    local Type = Logic.GetWorkerTypeByBuilding(Buildings[Index]);
+                    local Used, Limit = self:GetBuildingCurrentAndMaxWorkerAmount(Buildings[Index]);
+                    local Position = self.Players[_PlayerID].DoorPos;
+                    self:SetBuildingCurrentWorkerAmount(Buildings[Index], math.min(Used +1, Limit));
+                    Logic.CreateEntity(Type, Position.X, Position.Y, 0, _PlayerID);
+
                     self.Players[_PlayerID].LastBuildingWorkerCreatedIndex = Index +1;
                 else
                     self.Players[_PlayerID].LastBuildingWorkerCreatedIndex = nil;
@@ -624,6 +637,29 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
             end
         end
     end
+end
+
+-- Set the current amount of workplaces in the building.
+-- (Spread workers evenly over all buildings)
+function Stronghold:SetBuildingCurrentWorkerAmount(_EntityID, _Max)
+    local WorkerMax = Logic.GetMaxNumWorkersInBuilding(_EntityID);
+    local WorkerAmount = math.min(WorkerMax, _Max);
+    if CNetwork then
+        SendEvent.SetCurrentMaxNumWorkersInBuilding(_EntityID, WorkerAmount);
+    else
+        GUI.SetCurrentMaxNumWorkersInBuilding(_EntityID, WorkerAmount);
+    end
+end
+
+-- Returns the current worker amount and the current max amount
+function Stronghold:GetBuildingCurrentAndMaxWorkerAmount(_EntityID)
+    local PlacesLimit = 0;
+    local PlacesUsed = 0;
+    if Logic.IsBuilding(_EntityID) == 1 then
+        PlacesLimit = Logic.GetBuildingWorkPlaceLimit(_EntityID);
+        PlacesUsed = Logic.GetBuildingWorkPlaceUsage(_EntityID);
+    end
+    return PlacesUsed, PlacesLimit;
 end
 
 -- Overwrite attraction
