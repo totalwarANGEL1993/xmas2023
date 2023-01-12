@@ -25,7 +25,8 @@
 ---   Allows to overwrite the max usage of military places.
 ---
 --- - <number> GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, _Amount)
----   Allows to overwrite the current usage of military places.
+---   Allows to overwrite the current overall usage of military places.
+---   (For unit type see GameCallback_Calculate_UnitPlaces)
 ---
 --- - GameCallback_Stronghold_OnPayday(_PlayerID)
 ---   Called after the payday is done.
@@ -53,38 +54,111 @@ Stronghold = {
             [1] = {
                 Text = {"Edelmann", "Edelfrau"},
                 Costs = {0, 0, 0, 0, 0, 0, 0},
+                Description = "",
+                Condition = function(_PlayerID)
+                    return true;
+                end,
             },
             [2] = {
                 Text = {"Landvogt", "Landvögtin"},
                 Costs = {10, 50, 0, 0, 0, 0, 0},
+                Description = "15 Arbeiter",
+                Condition = function(_PlayerID)
+                    return Logic.GetNumberOfAttractedWorker(_PlayerID) >= 15;
+                end,
             },
             [3] = {
-                Text = {"Lord", "Lady"},
+                Text = {"Edler Lord", "Edle Lady"},
                 Costs = {30, 100, 0, 0, 0, 0, 0},
+                Description = "Kapelle, 30 Arbeiter",
+                Condition = function(_PlayerID)
+                    local Chapell = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Monastery1));
+                    local Workers = Logic.GetNumberOfAttractedWorker(_PlayerID);
+                    return Chapell > 0 and Workers >= 30;
+                end,
             },
             [4] = {
-                Text = {"Edler Lord", "Edle Lady"},
+                Text = {"Fürst", "Fürstin"},
                 Costs = {50, 200, 0, 0, 0, 0, 0},
+                Description = "Handelswesen, Festung",
+                Condition = function(_PlayerID)
+                    local Castle2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
+                    local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
+                    local HasTrading = Logic.IsTechnologyResearched(_PlayerID, Technologies.GT_Trading) == 1;
+                    return HasTrading and Castle2 + Castle3 > 0;
+                end,
             },
             [5] = {
-                Text = {"Fürst", "Fürstin"},
+                Text = {"Baron", "Baronin"},
                 Costs = {100, 300, 0, 0, 0, 0, 0},
+                Description = "8 Ziergebäude",
+                Condition = function(_PlayerID)
+                    local Beauty01 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification01));
+                    local Beauty02 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification02));
+                    local Beauty03 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification03));
+                    local Beauty04 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification04));
+                    local Beauty05 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification05));
+                    local Beauty06 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification06));
+                    local Beauty07 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification07));
+                    local Beauty08 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification08));
+                    local Beauty09 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification09));
+                    local Beauty10 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification10));
+                    local Beauty11 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification11));
+                    local Beauty12 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification12));
+                    return Beauty01 + Beauty02 + Beauty03 + Beauty04 + Beauty05 + Beauty06 +
+                           Beauty07 + Beauty08 + Beauty09 + Beauty10 + Beauty11 + Beauty12 >= 8;
+                end,
             },
             [6] = {
-                Text = {"Baron", "Baronin"},
+                Text = {"Graf", "Gräfin"},
                 Costs = {150, 500, 0, 0, 0, 0, 0},
+                Description = "6 Alchemisten, 6 Ziegelbrenner, 6 Sägewerker, 6 Schmiede, 6 Steinmetze",
+                Condition = function(_PlayerID)
+                    local Workers1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_BrickMaker);
+                    local Workers2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Sawmillworker);
+                    local Workers3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Smith);
+                    local Workers4 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Stonecutter);
+                    local Workers5 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Alchemist);
+                    return Workers1 >= 6 and Workers2 >= 6 and Workers3 >= 6 and Workers4 >= 6 and Workers5 >= 6;
+                end,
             },
             [7] = {
-                Text = {"Graf", "Gräfin"},
+                Text = {"Marktgraf", "Marktgräfin"},
                 Costs = {200, 1000, 0, 0, 0, 0, 0},
+                Description = "Kathedrale, 50 Arbeiter",
+                Condition = function(_PlayerID)
+                    local Cathedral = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
+                    return Cathedral > 0 and Logic.GetNumberOfAttractedWorker(_PlayerID) >= 50;
+                end,
             },
             [8] = {
                 Text = {"Herzog", "Herzogin"},
                 Costs = {250, 2000, 0, 0, 0, 0, 0},
+                Description = "Zitadelle, 70 Arbeiter",
+                Condition = function(_PlayerID)
+                    local Workers = Logic.GetNumberOfAttractedWorker(_PlayerID);
+                    local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
+                    return Castle3 > 0 and Workers >= 75;
+                end,
             },
             [9] = {
                 Text = {"Erzherzog", "Erzherzogin"},
                 Costs = {300, 3000, 0, 0, 0, 0, 0},
+                Description = "Alle Ziergebäude, 100 Arbeiter",
+                Condition = function(_PlayerID)
+                    local IsFulfilled = false;
+                    if Logic.GetNumberOfAttractedWorker(_PlayerID) >= 100 then
+                        IsFulfilled = true;
+                        for i= 1, 12 do
+                            local Type = "PB_Beautification" .. ((i < 10 and "0"..i) or i);
+                            if table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities[Type])) < 1 then
+                                IsFulfilled = false;
+                                break;
+                            end
+                        end
+                    end
+                    return IsFulfilled;
+                end,
             },
         },
 
@@ -620,18 +694,7 @@ end
 function Stronghold:GetPlayerMilitaryAttractionUsage(_PlayerID)
     local Usage = 0;
     if self:IsPlayer(_PlayerID) then
-        -- Attraction usage
-        local Soldiers = Logic.GetNumberOfAttractedSoldiers(_PlayerID);
-        local Cannon1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon1);
-        local Cannon2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon2);
-        local Cannon3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon3);
-        local Cannon4 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PV_Cannon4);
-        -- Cannons count as 1 soldier so we add multiple of 5 -1
-        local Military = Soldiers + (Cannon1*4) + (Cannon2*9) + (Cannon3*14) + (Cannon4*14);
-        -- Scouts and thieves count as 1 soldier so we must substract them
-        local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
-        local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
-        Usage = Military - (ScoutCount + ThiefCount);
+        Usage = Stronghold.Unit:GetMillitarySize(_PlayerID);
         -- External
         Usage = GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, Usage);
     end
@@ -695,8 +758,12 @@ end
 -- Applies everything that is happening on the payday.
 function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
     if self:IsPlayer(_PlayerID) then
+        -- First regular payday
+        if Logic.GetNumberOfAttractedWorker(_PlayerID) > 0 and Logic.GetTime() > 1 then
+            self.Players[_PlayerID].HasHadRegularPayday = true;
+        end
 
-        -- Fix money for payday (only singleplayr)
+        -- Fix money for payday (only singleplayer)
         if _FixGold then
             local TaxAmount = Logic.GetPlayerPaydayCost(_PlayerID);
             if TaxAmount > 0 then
@@ -804,7 +871,7 @@ function Stronghold:CanPlayerBePromoted(_PlayerID)
         if Rank == 0 or Rank >= 9 then
             return false;
         end
-        return true;
+        return self.Config.Ranks[Rank +1].Condition(_PlayerID);
     end
     return false;
 end
@@ -891,7 +958,8 @@ function Stronghold:ControlReputationAttractionPenalty(_PlayerID)
     local LeaveAmount = 0;
 
     -- Restore reputation when workers are all gone
-    if WorkerAmount == 0 and Logic.GetTime() > 1 then
+    if  self.Players[_PlayerID].HasHadRegularPayday
+    and Logic.GetNumberOfAttractedWorker(_PlayerID) == 0 then
         self:SetPlayerReputation(_PlayerID, math.min(Reputation +9, 75));
         return;
     end

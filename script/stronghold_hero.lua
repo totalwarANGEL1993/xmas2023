@@ -179,6 +179,7 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
             end
             if _Action == Stronghold.Hero.SyncEvents.BuyLord then
                 Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
+                Stronghold.Hero:PlayFunnyComment(_PlayerID);
             end
         end
     );
@@ -235,12 +236,16 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
         local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
         if _Key == "MenuCommandsGeneric/formation_group" then
             if Stronghold.Config.Ranks[NextRank] then
+                local Config = Stronghold.Config.Ranks[NextRank];
                 Text = "@color:180,180,180 " ..Stronghold:GetPlayerRankName(PlayerID, NextRank)..
                        " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
-                       " erheben, um neuen Privilegien zu genießen.";
+                       " erheben, um Euer Heer besser aufzustellen.";
+                if Config.Description ~= "" then
+                    Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                           Config.Description;
+                end
 
-                local Costs = Stronghold.Config.Ranks[NextRank].Costs;
-                Costs = Stronghold:CreateCostTable(unpack(Costs));
+                local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
                 CostText = Stronghold:FormatCostString(PlayerID, Costs);
             else
                 Text = "@color:180,180,180 Höchster Rang @color:255,255,255 @cr "..
@@ -650,6 +655,38 @@ function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
     end
 end
 
+-- Play a funny comment when the hero is selected.
+-- (Yes, it is intendet that every player hears them.)
+function Stronghold.Hero:PlayFunnyComment(_PlayerID)
+    local FunnyComment = Sounds.VoicesHero1_HERO1_FunnyComment_rnd_01;
+    local LordID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
+    local Type = Logic.GetEntityType(LordID);
+    if Type == Entities.PU_Hero2 then
+        FunnyComment = Sounds.VoicesHero2_HERO2_FunnyComment_rnd_01;
+    elseif Type == Entities.PU_Hero3 then
+        FunnyComment = Sounds.VoicesHero3_HERO3_FunnyComment_rnd_01;
+    elseif Type == Entities.PU_Hero4 then
+        FunnyComment = Sounds.VoicesHero4_HERO4_FunnyComment_rnd_01;
+    elseif Type == Entities.PU_Hero5 then
+        FunnyComment = Sounds.VoicesHero5_HERO5_FunnyComment_rnd_01;
+    elseif Type == Entities.PU_Hero6 then
+        FunnyComment = Sounds.VoicesHero6_HERO6_FunnyComment_rnd_01;
+    elseif Type == Entities.CU_BlackKnight then
+        FunnyComment = Sounds.VoicesHero7_HERO7_FunnyComment_rnd_01;
+    elseif Type == Entities.CU_Mary_de_Mortfichet then
+        FunnyComment = Sounds.VoicesHero8_HERO8_FunnyComment_rnd_01;
+    elseif Type == Entities.CU_Barbarian_Hero then
+        FunnyComment = Sounds.VoicesHero9_HERO9_FunnyComment_rnd_01;
+    elseif Type == Entities.PU_Hero10 then
+        FunnyComment = Sounds.AOVoicesHero10_HERO10_FunnyComment_rnd_01;
+    elseif Type == Entities.PU_Hero11 then
+        FunnyComment = Sounds.AOVoicesHero11_HERO11_FunnyComment_rnd_01;
+    elseif Type == Entities.CU_Evil_Queen then
+        FunnyComment = Sounds.AOVoicesHero12_HERO12_FunnyComment_rnd_01;
+    end
+    Sound.PlayQueuedFeedbackSound(FunnyComment, 127);
+end
+
 -- -------------------------------------------------------------------------- --
 -- Trigger
 
@@ -741,7 +778,7 @@ end
 
 function Stronghold.Hero:OnHero5SummonSelected(_PlayerID, _EntityID, _X, _Y)
     if GUI.GetPlayerID() == _PlayerID then
-        Sound.PlayQueuedFeedbackSound(Sounds.VoicesHero5_HERO5_CallBandits_rnd_01);
+        Sound.PlayQueuedFeedbackSound(Sounds.VoicesHero5_HERO5_CallBandits_rnd_01, 127);
     end
     Logic.HeroSetAbilityChargeSeconds(_EntityID, Abilities.AbilitySummon, 0);
     local CurrentRank = Stronghold:GetPlayerRank(_PlayerID);

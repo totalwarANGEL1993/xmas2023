@@ -32,8 +32,6 @@ Stronghold.Limitation = {
             [UpgradeCategories.Beautification11]    = {[1] =  1, [2] = -1, [3] = -1, [4] = -1},
             ---
             [UpgradeCategories.Monastery]           = {[1] =  1, [2] =  1, [3] =  1, [4] = -1},
-            [UpgradeCategories.Farm]                = {[1] = -1, [2] = -1, [3] = -1, [4] = -1},
-            [UpgradeCategories.Residence]           = {[1] = -1, [2] = -1, [3] = -1, [4] = -1},
             [UpgradeCategories.Market]              = {[1] = -1, [2] =  1, [3] = -1, [4] = -1},
             [UpgradeCategories.Tavern]              = {[1] = -1, [2] = -1, [3] = -1, [4] = -1},
             [UpgradeCategories.PowerPlant]          = {[1] =  1, [2] = -1, [3] = -1, [4] = -1},

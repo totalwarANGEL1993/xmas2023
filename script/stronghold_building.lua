@@ -44,6 +44,15 @@ Stronghold.Building = {
                 Honor = 9,
             },
         },
+
+        TypesToCheckForUpgrade = {
+            [Technologies.UP1_Barracks]  = {Entities.PB_Barracks2,},
+            [Technologies.UP1_Archery]   = {Entities.PB_Archery2,},
+            [Technologies.UP1_Stables]   = {Entities.PB_Stable2,},
+            [Technologies.UP1_Monastery] = {Entities.PB_Monastery2, Entities.PB_Monastery3},
+            [Technologies.UP2_Monastery] = {Entities.PB_Monastery1, Entities.PB_Monastery3},
+            [Technologies.UP1_Market]    = {Entities.PB_Market2},
+        },
     },
 }
 
@@ -165,7 +174,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
             return;
         end
         if Logic.GetPlayerAttractionUsage(PlayerID) >= Logic.GetPlayerAttractionLimit(PlayerID) then
-            Sound.PlayQueuedFeedbackSound(Sounds.VoicesSerf_SERF_No_rnd_01);
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesSerf_SERF_No_rnd_01, 127);
             Message("Ihr habt keinen Platz für weitere Leibeigene!");
             return;
         end
@@ -362,7 +371,7 @@ function Stronghold.Building:CancelBuildingPlacementForUpgradeCategory(_PlayerID
             local x, y = GUI.Debug_GetMapPositionUnderMouse();
             if self:AreTowersOfPlayerInArea(_PlayerID, x, y, AreaSize) then
                 Message("Ihr könnt Türme nicht so na aneinander bauen!");
-                Sound.PlayQueuedFeedbackSound(Sounds.VoicesSerf_SERF_No_rnd_01);
+                Sound.PlayQueuedFeedbackSound(Sounds.VoicesSerf_SERF_No_rnd_01, 127);
                 self.Data[_PlayerID].LastPlacedUpgradeCategory = nil;
                 GUI.CancelState();
             end
@@ -429,7 +438,7 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
-            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;
         end
@@ -687,7 +696,7 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
-            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;
         end
@@ -1058,7 +1067,7 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
-            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;
         end
@@ -1232,7 +1241,7 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
-            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;
         end
@@ -1550,6 +1559,7 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         if not Stronghold:IsPlayer(PlayerID) then
             return self.GUITooltip_UpgradeBuilding(_Type, _KeyDisabled, _KeyNormal, _Technology);
         end
+        local IsForbidden = false;
 
         -- Get default text
         local Text = XGUIEng.GetStringTableText(_KeyNormal);
@@ -1561,42 +1571,20 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         local ShortCutToolTip = "";
         if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
             Text = XGUIEng.GetStringTableText(_KeyDisabled);
+            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
+                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+                IsForbidden = true;
+            end
         else
-            Logic.FillBuildingCostsTable(_Type, InterfaceGlobals.CostTable);
+            Logic.FillBuildingUpgradeCostsTable(_Type, InterfaceGlobals.CostTable);
             CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
             ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
                 ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]";
         end
 
-        -- Limit factor
-        local LimitFactor = 1.0;
-        if _Type == Entities.PB_Farm1
-        or _Type == Entities.PB_Farm2
-        or _Type == Entities.PB_Residence1
-        or _Type == Entities.PB_Residence2 then
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
-                LimitFactor = 1.5;
-            end
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
-                LimitFactor = 2.0;
-            end
-        end
-
-        -- Effect text
         local EffectText = "";
-        if _Type == Entities.PB_Tavern1
-        or _Type == Entities.PB_Tower1
-        or _Type == Entities.PB_Tower2
-        or _Type == Entities.PB_Farm1
-        or _Type == Entities.PB_Farm2
-        or _Type == Entities.PB_Residence1
-        or _Type == Entities.PB_Residence2
-        or _Type == Entities.PB_Barracks1
-        or _Type == Entities.PB_Archery1
-        or _Type == Entities.PB_Stable1
-        or _Type == Entities.PB_Market1
-        or _Type == Entities.PB_Monastery1
-        or _Type == Entities.PB_Monastery2 then
+        if not IsForbidden then
+            -- Effect text
             local Effects = Stronghold.Economy.Config.Income.Buildings[_Type +1];
             if Effects then
                 if Effects.Reputation > 0 then
@@ -1609,19 +1597,18 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
                     EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
                 end
             end
-        else
-            return self.GUITooltip_UpgradeBuilding(_Type, _KeyDisabled, _KeyNormal, _Technology);
-        end
 
-        -- Building limit
-        local BuildingMax = math.floor(GetLimitOfType(_Type +1) * LimitFactor);
-        if BuildingMax > -1 then
-            local BuildingCount = GetUsageOfType(PlayerID, _Type +1);
-            Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
+            -- Building limit
+            local BuildingMax = GetLimitOfType(_Type +1);
+            if BuildingMax > -1 then
+                local BuildingCount = GetUsageOfType(PlayerID, _Type +1);
+                Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
+            end
+            Text = Text .. EffectText;
         end
 
         -- Set text
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text.. " " ..EffectText);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
     end
@@ -1634,74 +1621,19 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
         if not Stronghold.Building.Data[PlayerID] then
             return self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
         end
-
-        local LimitFactor = 1.0;
-        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
-            LimitFactor = 1.5;
-        end
-        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
-            LimitFactor = 2.0;
-        end
-
         local LimitReached = false;
+        local CheckList = Stronghold.Building.Config.TypesToCheckForUpgrade[_Technology] or {};
 
-        -- Recruiter buildings
-        if _Technology == Technologies.UP1_Barracks then
-            local Limit = GetLimitOfType(Entities.PB_Barracks1);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Barracks2);
-            LimitReached = Limit <= Building1;
-        end
-        if _Technology == Technologies.UP1_Archery then
-            local Limit = GetLimitOfType(Entities.PB_Archery1);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Archery2);
-            LimitReached = Limit <= Building1;
-        end
-        if _Technology == Technologies.UP1_Stables then
-            local Limit = GetLimitOfType(Entities.PB_Stable1);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Stable2);
-            LimitReached = Limit <= Building1;
+        local Type = Logic.GetEntityType(GUI.GetSelectedEntity());
+        local Limit = GetLimitOfType(Type);
+        local Usage = 0;
+        if Limit > -1 then
+            for i= 1, table.getn(CheckList) do
+                Usage = Usage + GetUsageOfType(PlayerID, CheckList[i]);
+            end
+            LimitReached = Limit <= Usage;
         end
 
-        -- Special building
-        if _Technology == Technologies.UP1_Monastery then
-            local Limit = GetLimitOfType(Entities.PB_Monastery2);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Monastery2);
-            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Monastery3);
-            LimitReached = Limit <= (Building1 + Building2);
-        end
-        if _Technology == Technologies.UP2_Monastery then
-            local Limit = GetLimitOfType(Entities.PB_Monastery3);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Monastery1);
-            local Building2 = GetUsageOfType(PlayerID, Entities.PB_Monastery3);
-            LimitReached = Limit <= (Building1 + Building2);
-        end
-        if _Technology == Technologies.UP1_Market then
-            local Limit = GetLimitOfType(Entities.PB_Market2);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Market2);
-            LimitReached = Limit <= Building1;
-        end
-
-        -- Supply
-        if _Technology == Technologies.UP1_Farm then
-            local Limit = GetLimitOfType(Entities.PB_Farm2);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Farm2);
-            LimitReached = Limit <= Building1;
-        end
-        if _Technology == Technologies.UP2_Farm then
-            local Limit = GetLimitOfType(Entities.PB_Farm3);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Farm3);
-            LimitReached = Limit <= Building1;
-        end
-        if _Technology == Technologies.UP1_Residence then
-            local Limit = GetLimitOfType(Entities.PB_Residence2);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Residence2);
-            LimitReached = Limit <= Building1;
-        end
-        if _Technology == Technologies.UP2_Residence then
-            local Limit = GetLimitOfType(Entities.PB_Residence3);
-            local Building1 = GetUsageOfType(PlayerID, Entities.PB_Residence3);
-            LimitReached = Limit <= Building1;
-        end
         if LimitReached then
             XGUIEng.DisableButton(_Button, 1);
             return true;

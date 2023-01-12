@@ -4,6 +4,10 @@
 --- This script implements al unit specific actions and overwrites their
 --- selection menus. Also properties like costs, needed rank, upkeep and
 --- if they are allowed are defined here.
+---
+--- Defined game callbacks:
+--- - <number> GameCallback_Calculate_UnitPlaces(_PlayerID, _EntityID, _Type, _Places)
+---   Allows to overwrite the places a unit is occupying
 --- 
 
 Stronghold = Stronghold or {};
@@ -16,24 +20,28 @@ Stronghold.Unit = {
             [Entities.PU_LeaderPoleArm1] = {
                 Costs = {0, 35, 0, 25, 0, 0, 0},
                 Allowed = true,
+                Places = 1,
                 Rank = 1,
                 Upkeep = 15,
             },
             [Entities.PU_LeaderPoleArm2] = {
                 Costs = {5, 40, 0, 30, 0, 0, 0},
                 Allowed = false,
+                Places = 1,
                 Rank = 0,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderPoleArm3] = {
                 Costs = {10, 40, 0, 40, 0, 10, 0},
                 Allowed = true,
+                Places = 2,
                 Rank = 3,
                 Upkeep = 70
             },
             [Entities.PU_LeaderPoleArm4] = {
                 Costs = {15, 50, 0, 50, 0, 20, 0},
                 Allowed = false,
+                Places = 2,
                 Rank = 0,
                 Upkeep = 80
             },
@@ -41,24 +49,28 @@ Stronghold.Unit = {
             [Entities.PU_LeaderSword1] = {
                 Costs = {6, 20, 0, 0, 0, 40, 0},
                 Allowed = false,
+                Places = 1,
                 Rank = 0,
                 Upkeep = 25,
             },
             [Entities.PU_LeaderSword2] = {
                 Costs = {10, 30, 0, 0, 0, 40, 0},
                 Allowed = false,
+                Places = 1,
                 Rank = 0,
                 Upkeep = 40,
             },
             [Entities.PU_LeaderSword3] = {
                 Costs = {20, 60, 0, 0, 0, 40, 0},
                 Allowed = true,
+                Places = 2,
                 Rank = 5,
                 Upkeep = 100,
             },
             [Entities.PU_LeaderSword4] = {
                 Costs = {30, 80, 0, 0, 0, 60, 0},
                 Allowed = true,
+                Places = 3,
                 Rank = 8,
                 Upkeep = 120,
             },
@@ -66,24 +78,28 @@ Stronghold.Unit = {
             [Entities.PU_LeaderBow1] = {
                 Costs = {2, 50, 0, 30, 0, 0, 0},
                 Allowed = false,
+                Places = 1,
                 Rank = 0,
                 Upkeep = 25,
             },
             [Entities.PU_LeaderBow2] = {
                 Costs = {6, 60, 0, 40, 0, 0, 0},
                 Allowed = true,
+                Places = 1,
                 Rank = 2,
                 Upkeep = 30,
             },
             [Entities.PU_LeaderBow3] = {
                 Costs = {12, 70, 0, 40, 0, 20, 0},
                 Allowed = true,
+                Places = 2,
                 Rank = 4,
                 Upkeep = 80,
             },
             [Entities.PU_LeaderBow4] = {
                 Costs = {15, 80, 0, 50, 0, 40, 0},
                 Allowed = false,
+                Places = 3,
                 Rank = 0,
                 Upkeep = 90,
             },
@@ -91,24 +107,28 @@ Stronghold.Unit = {
             [Entities.PV_Cannon1] = {
                 Costs = {8, 150, 0, 20, 0, 50, 100},
                 Allowed = true,
+                Places = 5,
                 Rank = 3,
                 Upkeep = 30,
             },
             [Entities.PV_Cannon2] = {
                 Costs = {15, 10, 0, 30, 0, 70, 120},
                 Allowed = true,
+                Places = 10,
                 Rank = 5,
                 Upkeep = 50,
             },
             [Entities.PV_Cannon3] = {
                 Costs = {25, 300, 0, 50, 0, 500, 250},
                 Allowed = true,
+                Places = 15,
                 Rank = 7,
                 Upkeep = 100,
             },
             [Entities.PV_Cannon4] = {
                 Costs = {30, 300, 0, 50, 0, 250, 500},
                 Allowed = true,
+                Places = 20,
                 Rank = 9,
                 Upkeep = 120,
             },
@@ -116,12 +136,14 @@ Stronghold.Unit = {
             [Entities.PU_LeaderCavalry1] = {
                 Costs = {6, 100, 0, 60, 0, 0, 0},
                 Allowed = false,
+                Places = 1,
                 Rank = 0,
                 Upkeep = 40,
             },
             [Entities.PU_LeaderCavalry2] = {
                 Costs = {10, 120, 0, 60, 0, 40, 0},
                 Allowed = true,
+                Places = 2,
                 Rank = 4,
                 Upkeep = 70,
             },
@@ -129,12 +151,14 @@ Stronghold.Unit = {
             [Entities.PU_LeaderHeavyCavalry1] = {
                 Costs = {30, 200, 0, 0, 0, 130, 0},
                 Allowed = true,
+                Places = 3,
                 Rank = 7,
                 Upkeep = 120,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
                 Costs = {40, 230, 0, 0, 0, 180, 0},
                 Allowed = false,
+                Places = 4,
                 Rank = 9,
                 Upkeep = 150,
             },
@@ -142,12 +166,14 @@ Stronghold.Unit = {
             [Entities.PU_LeaderRifle1] = {
                 Costs = {20, 90, 0, 10, 0, 0, 40},
                 Allowed = true,
+                Places = 3,
                 Rank = 6,
                 Upkeep = 70,
             },
             [Entities.PU_LeaderRifle2] = {
                 Costs = {30, 110, 0, 20, 0, 0, 60},
                 Allowed = true,
+                Places = 2,
                 Rank = 8,
                 Upkeep = 100,
             },
@@ -155,12 +181,14 @@ Stronghold.Unit = {
             [Entities.PU_Scout] = {
                 Costs = {0, 150, 0, 50, 0, 50, 0},
                 Allowed = true,
+                Places = 0,
                 Rank = 2,
                 Upkeep = 10,
             },
             [Entities.PU_Thief] = {
                 Costs = {30, 500, 0, 0, 0, 100, 100},
                 Allowed = true,
+                Places = 0,
                 Rank = 5,
                 Upkeep = 50,
             },
@@ -168,9 +196,31 @@ Stronghold.Unit = {
             [Entities.PU_Serf] = {
                 Costs = {0, 50, 0, 0, 0, 0, 0},
                 Allowed = true,
+                Places = 0,
                 Rank = 1,
                 Upkeep = 0,
             },
+        },
+
+        TypesToCheckForConstruction = {
+            [Technologies.B_Beautification01] = {Entities.PB_Beautification01},
+            [Technologies.B_Beautification02] = {Entities.PB_Beautification02},
+            [Technologies.B_Beautification03] = {Entities.PB_Beautification03},
+            [Technologies.B_Beautification04] = {Entities.PB_Beautification04},
+            [Technologies.B_Beautification05] = {Entities.PB_Beautification05},
+            [Technologies.B_Beautification06] = {Entities.PB_Beautification06},
+            [Technologies.B_Beautification07] = {Entities.PB_Beautification07},
+            [Technologies.B_Beautification08] = {Entities.PB_Beautification08},
+            [Technologies.B_Beautification09] = {Entities.PB_Beautification09},
+            [Technologies.B_Beautification10] = {Entities.PB_Beautification10},
+            [Technologies.B_Beautification11] = {Entities.PB_Beautification11},
+            [Technologies.B_Beautification12] = {Entities.PB_Beautification12},
+
+            [Technologies.B_Barracks]         = {Entities.PB_Barracks1, Entities.PB_Barracks2,},
+            [Technologies.B_Archery]          = {Entities.PB_Archery1, Entities.PB_Archery2,},
+            [Technologies.B_Stables]          = {Entities.PB_Stable1, Entities.PB_Stable2,},
+            [Technologies.B_Monastery]        = {Entities.PB_Monastery1, Entities.PB_Monastery2, Entities.PB_Monastery3},
+            [Technologies.B_PowerPlant]       = {Entities.PB_PowerPlant1},
         },
     },
 }
@@ -215,9 +265,37 @@ function Stronghold.Unit:GetUnitConfig(_Type)
     return {
         Costs = {0, 0, 0, 0, 0, 0, 0},
         Allowed = false,
+        Places = 0,
         Rank = 0,
         Upkeep = 0,
     }
+end
+
+function Stronghold.Unit:GetMillitarySize(_PlayerID)
+    local Size = 0;
+    for k,v in pairs(self.Config.Units) do
+        local UnitList = GetEntitiesOfType(_PlayerID, k);
+        for i= 1, table.getn(UnitList) do
+            -- Get unit size
+            local Usage = v.Places;
+            if Logic.IsLeader(UnitList[i]) == 1 then
+                local Soldiers = {Logic.GetSoldiersAttachedToLeader(UnitList[i])};
+                Usage = Usage + (Usage * Soldiers[1]);
+            end
+            -- External
+            Usage = GameCallback_Calculate_UnitPlaces(_PlayerID, UnitList[i], k, Usage);
+
+            Size = Size + Usage;
+        end
+    end
+    return Size;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Callbacks
+
+function GameCallback_Calculate_UnitPlaces(_PlayerID, _EntityID, _Type, _Usage)
+    return _Usage;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -248,7 +326,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                 local Workers = {Logic.GetAttachedWorkersToBuilding(_BarracksID)};
                 if Workers[1] == 0 or Logic.IsSettlerAtWork(Workers[2]) == 0 then
                     Stronghold.Players[_PlayerID].BuyUnitLock = false;
-                    Sound.PlayQueuedFeedbackSound(Sounds.VoicesWorker_WORKER_FunnyNo_rnd_01);
+                    Sound.PlayQueuedFeedbackSound(Sounds.VoicesWorker_WORKER_FunnyNo_rnd_01, 127);
                     Message("Es ist kein Kanonengießer anwesend!");
                     return;
                 else
@@ -346,7 +424,7 @@ function Stronghold.Unit:OverrideBuySoldierButtonAction()
             return;
         end
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
-            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01);
+            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return;
         end
@@ -542,6 +620,7 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUITooltip_ConstructBuilding(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end
+        local IsForbidden = false;
 
         -- Get default text
         local Text = XGUIEng.GetStringTableText(_KeyNormal);
@@ -554,6 +633,10 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
         local Type = Logic.GetBuildingTypeByUpgradeCategory(_UpgradeCategory, PlayerID);
         if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
             Text = XGUIEng.GetStringTableText(_KeyDisabled);
+            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
+                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+                IsForbidden = true;
+            end
         else
             Logic.FillBuildingCostsTable(Type, InterfaceGlobals.CostTable);
             CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
@@ -563,17 +646,8 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
             end
         end
 
-        -- Effect text
         local EffectText = "";
-        local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
-        if UpgradeCategoryName and (string.find(UpgradeCategoryName, "Beautification"))
-        or _UpgradeCategory == UpgradeCategories.Tavern
-        or _UpgradeCategory == UpgradeCategories.Tower
-        or _UpgradeCategory == UpgradeCategories.Barracks
-        or _UpgradeCategory == UpgradeCategories.Archery
-        or _UpgradeCategory == UpgradeCategories.Stable
-        or _UpgradeCategory == UpgradeCategories.Monastery
-        or _UpgradeCategory == UpgradeCategories.PowerPlant then
+        if not IsForbidden then
             local Effects = Stronghold.Economy.Config.Income.Buildings[Type];
             if Effects then
                 if Effects.Reputation > 0 then
@@ -586,49 +660,30 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
                     EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
                 end
             end
-        else
-            return Stronghold.Unit.Orig_GUITooltip_ConstructBuilding(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
-        end
 
-        -- Limit factor
-        -- (Only for beautification)
-        local LimitFactor = 1.0;
-        local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
-        if UpgradeCategoryName and string.find(UpgradeCategoryName, "Beautification") then
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
-                LimitFactor = 1.5;
+            -- Limit factor
+            -- (Only for beautification)
+            local LimitFactor = 1.0;
+            local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
+            if UpgradeCategoryName and string.find(UpgradeCategoryName, "Beautification") then
+                if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
+                    LimitFactor = 1.5;
+                end
+                if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
+                    LimitFactor = 2.0;
+                end
             end
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
-                LimitFactor = 2.0;
-            end
-        end
 
-        -- Building limit
-        local BuildingMax = math.floor(GetLimitOfType(Type) * LimitFactor);
-        if BuildingMax > -1 then
-            local BuildingCount = GetUsageOfType(PlayerID, Type);
-            if _UpgradeCategory == UpgradeCategories.Tower then
-                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Tower2);
-                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Tower3);
+            local BuildingMax = math.floor(GetLimitOfType(Type) * LimitFactor);
+            if BuildingMax > -1 then
+                local BuildingCount = GetUsageOfType(PlayerID, Type);
+                Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
             end
-            if _UpgradeCategory == UpgradeCategories.Monastery then
-                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Monastery2);
-                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Monastery3);
-            end
-            if _UpgradeCategory == UpgradeCategories.Barracks then
-                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Barracks2);
-            end
-            if _UpgradeCategory == UpgradeCategories.Archery then
-                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Archery2);
-            end
-            if _UpgradeCategory == UpgradeCategories.Stable then
-                BuildingCount = BuildingCount + GetUsageOfType(PlayerID, Entities.PB_Stable2);
-            end
-            Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
         end
+        Text = Text .. EffectText;
 
         -- Set text
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text.. " " ..EffectText);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
     end
@@ -673,56 +728,28 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
         return true;
     end
 
-    -- Limit factor
-    local LimitFactor = 1.0;
-    if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2) > 0 then
-        LimitFactor = 1.5;
-    end
-    if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3) > 0 then
-        LimitFactor = 2.0;
-    end
-
     local LimitReached = false;
+    local CheckList = Stronghold.Unit.Config.TypesToCheckForConstruction[_Technology];
 
-    -- Recruiter buildings
-    if _Technology == Technologies.B_Barracks then
-        local Limit = GetLimitOfType(Entities.PB_Barracks1);
-        local Barracks1 = GetUsageOfType(_PlayerID, Entities.PB_Barracks1);
-        local Barracks2 = GetUsageOfType(_PlayerID, Entities.PB_Barracks2);
-        LimitReached = Limit <= (Barracks1 + Barracks2);
+    local Usage = 0;
+    local Limit = -1;
+    if CheckList then
+        Limit = GetLimitOfType(CheckList[1]);
     end
-    if _Technology == Technologies.B_Archery then
-        local Limit = GetLimitOfType(Entities.PB_Archery1);
-        local Barracks1 = GetUsageOfType(_PlayerID, Entities.PB_Archery1);
-        local Barracks2 = GetUsageOfType(_PlayerID, Entities.PB_Archery2);
-        LimitReached = Limit <= (Barracks1 + Barracks2);
-    end
-    if _Technology == Technologies.B_Stables then
-        local Limit = GetLimitOfType(Entities.PB_Stable1);
-        local Barracks1 = GetUsageOfType(_PlayerID, Entities.PB_Stable1);
-        local Barracks2 = GetUsageOfType(_PlayerID, Entities.PB_Stable2);
-        LimitReached = Limit <= (Barracks1 + Barracks2);
-    end
-
-    -- Special buildings
-    if _Technology == Technologies.B_Monastery then
-        local Limit = GetLimitOfType(Entities.PB_Monastery1);
-        local Building1 = GetUsageOfType(_PlayerID, Entities.PB_Monastery1);
-        local Building2 = GetUsageOfType(_PlayerID, Entities.PB_Monastery2);
-        local Building3 = GetUsageOfType(_PlayerID, Entities.PB_Monastery3);
-        LimitReached = Limit <= (Building1 + Building2 + Building3);
-    end
-    if _Technology == Technologies.B_PowerPlant then
-        local Limit = GetLimitOfType(Entities.PB_PowerPlant1);
-        local Building1 = GetUsageOfType(_PlayerID, Entities.PB_PowerPlant1);
-        LimitReached = Limit <= Building1;
-    end
-
-    -- Beautification
-    if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
-        local Limit = GetLimitOfType(Entities["P" ..TechnologyName]);
-        local Usage = GetUsageOfType(_PlayerID, Entities["P" ..TechnologyName]);
-        LimitReached = math.floor(Limit * LimitFactor) <= Usage;
+    if Limit > -1 then
+        for i= 1, table.getn(CheckList) do
+            Usage = Usage + GetUsageOfType(_PlayerID, CheckList[i]);
+        end
+        local LimitFactor = 1.0;
+        if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
+            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2) > 0 then
+                LimitFactor = 1.5;
+            end
+            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3) > 0 then
+                LimitFactor = 2.0;
+            end
+        end
+        LimitReached = Limit * LimitFactor <= Usage;
     end
 
     if LimitReached then

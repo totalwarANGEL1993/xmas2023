@@ -46,32 +46,33 @@ Stronghold.Economy = {
                 [5] = {Honor = 0, Reputation = -16,},
             },
             Buildings = {
-                [Entities.CB_Bastille1] = {Honor = 15, Reputation = 5,},
+                [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
+                [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
+                [Entities.PB_Beautification09] = {Honor = 1, Reputation = 1,},
                 ---
-                [Entities.PB_Beautification04] = {Honor = 2, Reputation = 2,},
-                [Entities.PB_Beautification06] = {Honor = 2, Reputation = 2,},
-                [Entities.PB_Beautification09] = {Honor = 2, Reputation = 2,},
+                [Entities.PB_Beautification01] = {Honor = 1, Reputation = 2,},
+                [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
+                [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
                 ---
-                [Entities.PB_Beautification01] = {Honor = 2, Reputation = 3,},
-                [Entities.PB_Beautification02] = {Honor = 2, Reputation = 3,},
-                [Entities.PB_Beautification12] = {Honor = 2, Reputation = 3,},
+                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
                 ---
-                [Entities.PB_Beautification05] = {Honor = 2, Reputation = 4,},
-                [Entities.PB_Beautification07] = {Honor = 2, Reputation = 4,},
-                [Entities.PB_Beautification08] = {Honor = 2, Reputation = 4,},
+                [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
                 ---
-                [Entities.PB_Beautification03] = {Honor = 2, Reputation = 5,},
-                [Entities.PB_Beautification10] = {Honor = 2, Reputation = 5,},
-                [Entities.PB_Beautification11] = {Honor = 2, Reputation = 5,},
+                [Entities.PB_Headquarters2] = {Honor = 8, Reputation = 3,},
+                [Entities.PB_Headquarters3] = {Honor = 16, Reputation = 6,},
                 ---
-                [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
-                [Entities.PB_Tavern2] = {Honor = 0, Reputation = 5,},
+                [Entities.PB_Tavern1] = {Honor = 0, Reputation = 4,},
+                [Entities.PB_Tavern2] = {Honor = 0, Reputation = 8,},
                 ---
                 [Entities.PB_Farm2] = {Honor = 1, Reputation = 0,},
                 [Entities.PB_Farm3] = {Honor = 2, Reputation = 0,},
                 ---
-                [Entities.PB_Residence2] = {Honor = 0, Reputation = 1,},
-                [Entities.PB_Residence3] = {Honor = 0, Reputation = 2,},
+                [Entities.PB_Residence2] = {Honor = 0, Reputation = 0,},
+                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0,},
             },
         }
     }
@@ -242,11 +243,9 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
-            for i= 1, _WorkerCount do
-                Penalty = Penalty * 1.05;
-            end
+            Penalty = Penalty + (_WorkerCount * 0.15);
         end
-        return math.floor(Penalty + 0.5);
+        return math.floor(Penalty);
     end
     return 0;
 end

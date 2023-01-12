@@ -17,7 +17,7 @@ function Stronghold:HasPlayerEnoughResourcesFeedback(_Costs)
 	local Honor = self:GetPlayerHonor(PlayerID);
     if _Costs[ResourceType.Honor] ~= nil and _Costs[ResourceType.Honor] - Honor > 0 then
 		CanBuy = false;
-        Sound.PlayQueuedFeedbackSound(Sounds.VoicesMentor_INFO_NotEnough);
+        Sound.PlayQueuedFeedbackSound(Sounds.VoicesMentor_INFO_NotEnough, 127);
 		GUI.AddNote(string.format(
             "%d Ehre muss noch erlangt werden.",
             _Costs[ResourceType.Honor] - Honor
