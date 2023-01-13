@@ -34,7 +34,7 @@
 function OnMapStart()
     Player_Teams = {[1] = {1, 2}, [2] = {3, 4}};
 
-    local Path = "E:/Siedler/Projekte/xmas2023/script/";
+    local Path = "E:/Siedler/Projekte/xmas2023/stronghold/script/";
     Script.Load(Path.. "comforts.lua");
     Script.Load(Path.. "stronghold_main.lua");
     Script.Load(Path.. "stronghold_utils.lua");

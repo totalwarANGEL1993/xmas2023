@@ -15,7 +15,7 @@ function OnMapStart()
 
     local Path = "maps/externalmap/script/";
     if false then
-        Path = "E:/Siedler/Projekte/xmas2023/script/";
+        Path = "E:/Siedler/Projekte/xmas2023/stronghold/script/";
     end
     Script.Load(Path.. "comforts.lua");
     Script.Load(Path.. "stronghold_main.lua");
