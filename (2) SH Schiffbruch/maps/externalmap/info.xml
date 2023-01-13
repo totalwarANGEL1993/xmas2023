@@ -3,7 +3,7 @@
  <NameKey></NameKey>
  <DescKey></DescKey>
  <Name>(2) @color:255,225,95 SH @color:255,255,255 Schiffbruch</Name>
- <Desc>@color:255,225,95 von totalwarANGEL @color:255,255,255 Ihr seid gestranded. Und Ihr seid nicht alein.... Könnt Ihr Euch gegen den Feind behaupten und diese gottverlassene Insel als Sieger verlassen?</Desc>
+ <Desc>@color:255,225,95 von totalwarANGEL @cr @cr @color:255,255,255 Ihr seid gestranded. Und Ihr seid nicht alein.... Könnt Ihr Euch gegen den Feind behaupten und diese gottverlassene Insel als Sieger verlassen?</Desc>
  <SizeX>417</SizeX>
  <SizeY>417</SizeY>
  <MPFlag>true</MPFlag>
@@ -12,6 +12,6 @@
  <MiniMapTextureName>data\graphics\Textures\GUI\MapPics\externalmap</MiniMapTextureName>
  <Key>2</Key>
  <GUID>
-  <Data>8cb2db6d-7e58-4404-9c02-ce546f54e800</Data>
+  <Data>de526b04-d02d-4b79-b939-7cd56f5979dd</Data>
  </GUID>
 </root>
