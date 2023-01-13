@@ -165,7 +165,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
         if not Stronghold:IsPlayer(PlayerID) then
             return GUIAction_BuySerf_Orig_StrongholdBuilding();
         end
-        if Stronghold.Building.Data[PlayerID].BuyUnitLock then
+        if Stronghold.Players[PlayerID].BuyUnitLock then
             return;
         end
 

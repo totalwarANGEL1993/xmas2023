@@ -194,5 +194,10 @@
     "Lua.diagnostics.disable": [
         "deprecated",
         "lowercase-global",
+    ],
+    "Lua.workspace.ignoreDir": [
+        "(2) SH Schiffbruch/maps/externalmap/script",
+        "(4) xmas2023-test/maps/externalmap/script",
+        "good_old_stronghold/maps/externalmap/script",
     ]
 }

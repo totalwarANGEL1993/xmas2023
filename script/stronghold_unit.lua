@@ -358,7 +358,10 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                 end
             end
         end
-        Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+
+        Stronghold:AddDelayedAction(10, function(_PlayerID)
+            Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+        end, _PlayerID);
     end
 end
 
@@ -397,7 +400,9 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
                 end
             end
         end
-        Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+        Stronghold:AddDelayedAction(10, function(_PlayerID)
+            Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+        end, _PlayerID);
     end
 end
 
