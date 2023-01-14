@@ -54,7 +54,7 @@ Stronghold.Economy = {
                 },
                 Reputation = {
                     BetterFarmBonus = 0,
-                    BetterHouseBonus = 0.09,
+                    BetterHouseBonus = 0.25,
                     NoFarmPenalty = 0.25,
                     NoHousePenalty = 0.25,
                 },
@@ -68,13 +68,13 @@ Stronghold.Economy = {
                 [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
                 [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
                 ---
-                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
                 ---
-                [Entities.PB_Beautification03] = {Honor = 2, Reputation = 5,},
-                [Entities.PB_Beautification10] = {Honor = 2, Reputation = 5,},
-                [Entities.PB_Beautification11] = {Honor = 2, Reputation = 5,},
+                [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
                 ---
                 [Entities.PB_Headquarters2] = {Honor = 4, Reputation = 0,},
                 [Entities.PB_Headquarters3] = {Honor = 8, Reputation = 0,},
