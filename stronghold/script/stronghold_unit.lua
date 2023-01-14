@@ -359,7 +359,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             end
         end
 
-        Stronghold:AddDelayedAction(3, function(_PlayerID)
+        Stronghold:AddDelayedAction(5, function(_PlayerID)
             Stronghold.Players[_PlayerID].BuyUnitLock = nil;
         end, _PlayerID);
     end
