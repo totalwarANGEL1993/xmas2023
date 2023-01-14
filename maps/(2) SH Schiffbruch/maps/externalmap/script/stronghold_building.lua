@@ -165,7 +165,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
         if not Stronghold:IsPlayer(PlayerID) then
             return GUIAction_BuySerf_Orig_StrongholdBuilding();
         end
-        if Stronghold.Building.Data[PlayerID].BuyUnitLock then
+        if Stronghold.Players[PlayerID].BuyUnitLock then
             return;
         end
 
@@ -1584,6 +1584,14 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
 
         local EffectText = "";
         if not IsForbidden then
+            -- Text amendments
+            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Farm then
+                Text = Text .. " Das bessere Essen wird Euch zu Ehre gereichen.";
+            end
+            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Residence then
+                Text = Text .. " Die bessere Unterbringung steigert Eure Beliebtheit.";
+            end
+
             -- Effect text
             local Effects = Stronghold.Economy.Config.Income.Buildings[_Type +1];
             if Effects then

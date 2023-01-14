@@ -45,6 +45,20 @@ Stronghold.Economy = {
                 [4] = {Honor = 0, Reputation = -8,},
                 [5] = {Honor = 0, Reputation = -16,},
             },
+            Settlers = {
+                Honor = {
+                    BetterFarmBonus = 0.12,
+                    BetterHouseBonus = 0,
+                    NoFarmPenalty = 0,
+                    NoHousePenalty = 0,
+                },
+                Reputation = {
+                    BetterFarmBonus = 0,
+                    BetterHouseBonus = 0.25,
+                    NoFarmPenalty = 0.25,
+                    NoHousePenalty = 0.25,
+                },
+            },
             Buildings = {
                 [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
                 [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
@@ -54,13 +68,13 @@ Stronghold.Economy = {
                 [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
                 [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
                 ---
-                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
                 ---
-                [Entities.PB_Beautification03] = {Honor = 2, Reputation = 5,},
-                [Entities.PB_Beautification10] = {Honor = 2, Reputation = 5,},
-                [Entities.PB_Beautification11] = {Honor = 2, Reputation = 5,},
+                [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
                 ---
                 [Entities.PB_Headquarters2] = {Honor = 4, Reputation = 0,},
                 [Entities.PB_Headquarters3] = {Honor = 8, Reputation = 0,},
@@ -71,12 +85,6 @@ Stronghold.Economy = {
                 [Entities.PB_Monastery1] = {Honor = 0, Reputation = 5,},
                 [Entities.PB_Monastery2] = {Honor = 0, Reputation = 10,},
                 [Entities.PB_Monastery3] = {Honor = 0, Reputation = 15,},
-                ---
-                [Entities.PB_Farm2] = {Honor = 1, Reputation = 0,},
-                [Entities.PB_Farm3] = {Honor = 2, Reputation = 0,},
-                ---
-                [Entities.PB_Residence2] = {Honor = 0, Reputation = 0,},
-                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0,},
             },
         }
     }
@@ -168,8 +176,8 @@ function Stronghold.Economy:UpdateIncomeAndUpkeep(_PlayerID)
         MaxReputation = GameCallback_Calculate_ReputationMax(_PlayerID, MaxReputation);
         Stronghold:SetPlayerReputationLimit(_PlayerID, MaxReputation);
 
-        local Income = self:CalculateMoneyIncome(_PlayerID);
         local Upkeep = self:CalculateMoneyUpkeep(_PlayerID);
+        local Income = self:CalculateMoneyIncome(_PlayerID);
         local ReputationPlus = self:CalculateReputationIncrease(_PlayerID);
         local ReputationMinus = self:CalculateReputationDecrease(_PlayerID);
         local Honor = self:CalculateHonorIncome(_PlayerID);
@@ -183,12 +191,37 @@ end
 
 -- Calculate reputation increase
 -- Reputation is produced by buildings and units.
+-- Reputation can only increase if there are pepole at the fortress.
 function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local Income = 0;
-        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        if WorkerCount > 0 then
-            -- Buildings
+        local WorkerList = GetAllWorker(_PlayerID, 0);
+        if table.getn(WorkerList) > 0 then
+            -- Tax height
+            local TaxtHeight = Stronghold.Players[_PlayerID].TaxHeight;
+            if TaxtHeight == 1 then
+                local TaxEffect = self.Config.Income.TaxEffect;
+                Income = Income + TaxEffect[TaxtHeight].Reputation;
+            end
+
+            -- Care for the settlers
+            for k, v in pairs(WorkerList) do
+                local FarmID = Logic.GetSettlersFarm(v);
+                if FarmID ~= 0 then
+                    local UpgradeCategory = Logic.GetUpgradeCategoryByBuildingType(FarmID);
+                    if UpgradeCategory ~= UpgradeCategories.Tavern then
+                        local Level = Logic.GetUpgradeLevelForBuilding(FarmID);
+                        Income = Income + (Level * self.Config.Income.Settlers.Reputation.BetterFarmBonus);
+                    end
+                end
+                local ResidenceID = Logic.GetSettlersResidence(v);
+                if ResidenceID ~= 0 then
+                    local Level = Logic.GetUpgradeLevelForBuilding(ResidenceID);
+                    Income = Income + (Level * self.Config.Income.Settlers.Reputation.BetterHouseBonus);
+                end
+            end
+
+            -- Building bonuses
             for k, v in pairs(self.Config.Income.Buildings) do
                 local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
                 for i= table.getn(Buildings), 1, -1 do
@@ -201,13 +234,8 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
                 Income = Income + (table.getn(Buildings) * v.Reputation);
                 Income = GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, k, Income);
             end
-            -- Tax
-            local TaxtHeight = Stronghold.Players[_PlayerID].TaxHeight;
-            if TaxtHeight == 1 then
-                local TaxEffect = self.Config.Income.TaxEffect;
-                Income = Income + TaxEffect[TaxtHeight].Reputation;
-            end
-            -- External
+
+            -- External calculations
             Income = GameCallback_Calculate_ReputationIncrease(_PlayerID, Income);
         end
         return math.floor(Income + 0.5);
@@ -218,22 +246,33 @@ end
 -- Calculate reputation decrease
 -- A fixed penalty for the tax hight and the amout of workers the player didn't
 -- provide a farm or house are negative factors.
+-- Reputation can only decrease if there are pepole at the fortress.
 function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local Decrease = 0;
-        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        if WorkerCount > 0 then
-            -- Tax
+        local WorkerList = GetAllWorker(_PlayerID, 0);
+        if table.getn(WorkerList) > 0 then
+            -- Tax height
             local TaxPenalty = self:CalculateReputationTaxPenaltyAmount(
                 _PlayerID,
                 Stronghold.Players[_PlayerID].TaxHeight,
-                WorkerCount
+                table.getn(WorkerList)
             );
-            -- Provision
-            local NoFood = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID) * 0.25;
-            local NoSleep = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID) * 0.25;
-            Decrease = TaxPenalty + NoFood + NoSleep;
-            -- External
+            Decrease = TaxPenalty;
+
+            -- Care for the settlers
+            for k, v in pairs(WorkerList) do
+                local FarmID = Logic.GetSettlersFarm(v);
+                if FarmID == 0 then
+                    Decrease = Decrease + self.Config.Income.Settlers.Reputation.NoFarmPenalty;
+                end
+                local ResidenceID = Logic.GetSettlersResidence(v);
+                if ResidenceID == 0 then
+                    Decrease = Decrease + self.Config.Income.Settlers.Reputation.NoHousePenalty;
+                end
+            end
+
+            -- External calculations
             Decrease = GameCallback_Calculate_ReputationDecrease(_PlayerID, Decrease);
         end
         return math.floor(Decrease + 0.5);
@@ -257,32 +296,52 @@ end
 
 -- Calculate honor income
 -- Honor is influenced by tax, buildings and units.
+-- A player can only gain honor if they have workers and a laird.
 function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local Income = 0;
-        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        if WorkerCount > 0 then
-            -- Tax
-            local TaxHight = Stronghold.Players[_PlayerID].TaxHeight;
-            local TaxBonus = self.Config.Income.TaxEffect[TaxHight].Honor;
-            Income = Income + TaxBonus;
+        if GetID(Stronghold.Players[_PlayerID].LordScriptName) ~= 0 then
+            local WorkerList = GetAllWorker(_PlayerID, 0);
+            if table.getn(WorkerList) > 0 then
+                -- Tax height
+                local TaxHight = Stronghold.Players[_PlayerID].TaxHeight;
+                local TaxBonus = self.Config.Income.TaxEffect[TaxHight].Honor;
+                Income = Income + TaxBonus;
 
-            -- Buildings
-            for k, v in pairs(self.Config.Income.Buildings) do
-                local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
-                for i= table.getn(Buildings), 1, -1 do
-                    local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
-                    if WorkplaceLimit then
-                        if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) < WorkplaceLimit then
-                            table.remove(Buildings, i);
+                -- Care for the settlers
+                for k, v in pairs(WorkerList) do
+                    local FarmID = Logic.GetSettlersFarm(v);
+                    if FarmID ~= 0 then
+                        local UpgradeCategory = Logic.GetUpgradeCategoryByBuildingType(FarmID);
+                        if UpgradeCategory ~= UpgradeCategories.Tavern then
+                            local Level = Logic.GetUpgradeLevelForBuilding(FarmID);
+                            Income = Income + (Level * self.Config.Income.Settlers.Honor.BetterFarmBonus);
                         end
                     end
+                    local ResidenceID = Logic.GetSettlersResidence(v);
+                    if ResidenceID ~= 0 then
+                        local Level = Logic.GetUpgradeLevelForBuilding(ResidenceID);
+                        Income = Income + (Level * self.Config.Income.Settlers.Honor.BetterHouseBonus);
+                    end
                 end
-                Income = Income + (table.getn(Buildings) * v.Honor);
-            end
 
-            -- External
-            Income = GameCallback_Calculate_HonorIncrease(_PlayerID, Income);
+                -- Buildings bonuses
+                for k, v in pairs(self.Config.Income.Buildings) do
+                    local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
+                    for i= table.getn(Buildings), 1, -1 do
+                        local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
+                        if WorkplaceLimit then
+                            if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) < WorkplaceLimit then
+                                table.remove(Buildings, i);
+                            end
+                        end
+                    end
+                    Income = Income + (table.getn(Buildings) * v.Honor);
+                end
+
+                -- External calculations
+                Income = GameCallback_Calculate_HonorIncrease(_PlayerID, Income);
+            end
         end
         return math.floor(Income + 0.5);
     end
@@ -293,9 +352,10 @@ end
 -- The tax income is mostly unchanged. A worker pays 5 gold times the tax level.
 function Stronghold.Economy:CalculateMoneyIncome(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
+        local WorkerList = GetAllWorker(_PlayerID, 0);
         local TaxHeight = Stronghold.Players[_PlayerID].TaxHeight;
         local PerWorker = self.Config.TaxPerWorker;
-        local Income = (Logic.GetNumberOfAttractedWorker(1) * PerWorker) * (TaxHeight -1);
+        local Income = (table.getn(WorkerList) * PerWorker) * (TaxHeight -1);
         Income = GameCallback_Calculate_TotalPaydayIncome(_PlayerID, Income);
         return math.floor(Income + 0.5);
     end
@@ -310,6 +370,7 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
         local Upkeep = 0;
         for k, v in pairs(Stronghold.Unit.Config.Units) do
             local Military = GetCompletedEntitiesOfType(_PlayerID, k);
+            -- Calculate regular upkeep
             local TypeUpkeep = 0;
             for i= 1, table.getn(Military) do
                 local UnitUpkeep = v.Upkeep;
@@ -320,27 +381,7 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
                 end
                 TypeUpkeep = TypeUpkeep + UnitUpkeep;
             end
-
-            -- Barracks high tier discount
-            if k == Entities.PU_LeaderPoleArm3 or k == Entities.PU_LeaderPoleArm4
-            or k == Entities.PU_LeaderSword3 or k == Entities.PU_LeaderSword4 then
-                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountBarracks(_PlayerID, TypeUpkeep);
-            end
-            -- Archery high tier discount
-            if Logic.IsEntityTypeInCategory(k, EntityCategories.Rifle) == 1
-            or k == Entities.PU_LeaderBow3 or k == Entities.PU_LeaderBow4 then
-                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountArchery(_PlayerID, TypeUpkeep);
-            end
-            -- Stables high tier discount
-            if Logic.IsEntityTypeInCategory(k, EntityCategories.CavalryHeavy) == 1
-            or Logic.IsEntityTypeInCategory(k, EntityCategories.CavalryLight) == 1 then
-                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountStable(_PlayerID, TypeUpkeep);
-            end
-            -- Foundry high tier discount
-            if k == Entities.PV_Cannon3 or k == Entities.PV_Cannon4 then
-                TypeUpkeep = Stronghold.Building:ApplyUpkeepDiscountFoundry(_PlayerID, TypeUpkeep);
-            end
-            -- External
+            -- External calculations
             TypeUpkeep = GameCallback_Calculate_PaydayUpkeep(_PlayerID, k, TypeUpkeep)
 
             self.Data[_PlayerID].UpkeepDetails[k] = TypeUpkeep;
@@ -412,7 +453,7 @@ function Stronghold.Economy:OverridePaydayClockTooltip()
             return GUITooltip_Payday_Orig_StrongholdEco();
         end
 
-        local PaydayTime = math.floor((Logic.GetPlayerPaydayTimeLeft(1)/1000) + 0.5);
+        local PaydayTime = math.floor((Logic.GetPlayerPaydayTimeLeft(PlayerID)/1000) + 0.5);
         local Honor = Stronghold.Economy.Data[PlayerID].IncomeHonor;
         local Reputation = Stronghold.Economy.Data[PlayerID].IncomeReputation;
 

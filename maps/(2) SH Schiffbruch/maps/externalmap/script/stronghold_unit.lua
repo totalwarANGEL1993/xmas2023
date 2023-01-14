@@ -358,7 +358,10 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                 end
             end
         end
-        Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+
+        Stronghold:AddDelayedAction(3, function(_PlayerID)
+            Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+        end, _PlayerID);
     end
 end
 
@@ -397,7 +400,9 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
                 end
             end
         end
-        Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+        Stronghold:AddDelayedAction(1, function(_PlayerID)
+            Stronghold.Players[_PlayerID].BuyUnitLock = nil;
+        end, _PlayerID);
     end
 end
 
@@ -674,7 +679,7 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
                 end
             end
 
-            local BuildingMax = math.floor(GetLimitOfType(Type) * LimitFactor);
+            local BuildingMax = math.ceil(GetLimitOfType(Type) * LimitFactor);
             if BuildingMax > -1 then
                 local BuildingCount = GetUsageOfType(PlayerID, Type);
                 Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
@@ -749,7 +754,7 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
                 LimitFactor = 2.0;
             end
         end
-        LimitReached = Limit * LimitFactor <= Usage;
+        LimitReached = math.ceil(Limit * LimitFactor) <= Usage;
     end
 
     if LimitReached then

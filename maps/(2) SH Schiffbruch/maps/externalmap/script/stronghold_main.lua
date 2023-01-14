@@ -35,6 +35,7 @@
 Stronghold = {
     Shared = {
         UnitqueTributeID = 999,
+        DelayedAction = {},
     },
     Players = {},
     Config = {
@@ -267,6 +268,7 @@ function Stronghold:Init()
     self.Province:Install();
     self.AI:Install();
 
+    self:StartTurnDelayTrigger();
     self:StartPlayerPaydayUpdater();
     self:StartEntityCreatedTrigger();
     self:StartEntityHurtTrigger();
@@ -419,6 +421,39 @@ function GameCallback_Stronghold_OnPayday(_PlayerID)
 end
 
 -- -------------------------------------------------------------------------- --
+-- Turn Delay
+
+-- Delays an action by the amount of turns.
+-- (Sometimes actions must be delayed a turn to work properly.)
+function Stronghold:AddDelayedAction(_Delay, _Function, ...)
+    table.insert(self.Shared.DelayedAction, {
+        StartTime = Logic.GetTimeMs(),
+        Delay     = _Delay,
+        Action    = _Function,
+        Parameter = arg
+    });
+end
+
+function Stronghold:DelayedActionController()
+    for i= table.getn(self.Shared.DelayedAction), 1, -1 do
+        local Data = self.Shared.DelayedAction[i];
+        if Logic.GetTimeMs() >= Data.StartTime + (Data.Delay * 100) then
+            table.remove(self.Shared.DelayedAction, i);
+            if Data.Action then
+                Data.Action(unpack(Data.Parameter));
+            end
+        end
+    end
+end
+
+function Stronghold:StartTurnDelayTrigger()
+    function Stronghold_Trigger_TurnDelay()
+        Stronghold:DelayedActionController();
+    end
+    StartSimpleHiResJob("Stronghold_Trigger_TurnDelay");
+end
+
+-- -------------------------------------------------------------------------- --
 -- Achive Loading
 
 function Stronghold:LoadMapArchive()
@@ -504,7 +539,7 @@ function Stronghold:StartEntityCreatedTrigger()
             if GUI.GetPlayerID() == PlayerID then
                 Stronghold:OnSelectionMenuChanged(EntityID, GUI.GetSelectedEntity());
             end
-            Stronghold:SetBuildingCurrentWorkerAmount(EntityID, 0);
+            Stronghold:SetBuildingCurrentWorkerAmount(EntityID, 1);
         end
     end
 
@@ -626,9 +661,10 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
                 if Buildings[Index] then
                     local Type = Logic.GetWorkerTypeByBuilding(Buildings[Index]);
                     local Used, Limit = self:GetBuildingCurrentAndMaxWorkerAmount(Buildings[Index]);
+                    local Current = Logic.GetCurrentMaxNumWorkersInBuilding(Buildings[Index]);
                     local Position = self.Players[_PlayerID].DoorPos;
                     self:SetBuildingCurrentWorkerAmount(Buildings[Index], math.min(Used +1, Limit));
-                    Logic.CreateEntity(Type, Position.X, Position.Y, 0, _PlayerID);
+                    self:AddDelayedAction(1, Logic.CreateEntity, Type, Position.X, Position.Y, 0, _PlayerID);
 
                     self.Players[_PlayerID].LastBuildingWorkerCreatedIndex = Index +1;
                 else
