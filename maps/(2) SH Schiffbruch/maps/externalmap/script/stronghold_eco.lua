@@ -460,19 +460,15 @@ function Stronghold.Economy:HonorMenu()
     end
 
     local ScreenSize = {GUI.GetScreenSize()}
-    local YOffset = 4 * (ScreenSize[2]/768);
+    local YOffset = (11 * (ScreenSize[2]/1080));
 	XGUIEng.ShowWidget("GCWindow", 1);
 	XGUIEng.ShowAllSubWidgets("GCWindow", 0);
 	XGUIEng.ShowWidget("GCWindowNew", 1);
 	XGUIEng.ShowAllSubWidgets("GCWindowNew", 0);
     XGUIEng.ShowWidget("GCWindowWelcome", 1);
-	XGUIEng.SetWidgetPositionAndSize("GCWindow", ScreenSize[1], YOffset, 160, 45);
-	XGUIEng.SetWidgetPositionAndSize("GCWindowWelcome", 3, 5, 160, 0);
-	XGUIEng.SetText(
-        "GCWindowWelcome",
-        " @color:0,0,0,0 ___ @color:255,255,255 " ..Rank.. " @cr "..
-        " @color:0,0,0,0 ___ @color:255,255,255 " ..Honor.."/" ..MaxHonor
-    );
+	XGUIEng.SetWidgetPositionAndSize("GCWindow", ScreenSize[1], YOffset, 145, 45);
+	XGUIEng.SetWidgetPositionAndSize("GCWindowWelcome", 0, 0, 145, 0);
+	XGUIEng.SetText("GCWindowWelcome",Rank.. " @cr " ..Honor.."/" ..MaxHonor);
 end
 
 function Stronghold.Economy:OverridePaydayClockTooltip()

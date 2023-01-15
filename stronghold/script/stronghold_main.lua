@@ -40,6 +40,7 @@ Stronghold = {
     Players = {},
     Config = {
         HonorLimit = 9000,
+        StartingSerfs = 6,
         HQCivilAttraction = {
             [1] = 100,
             [2] = 200,
@@ -74,10 +75,12 @@ Stronghold = {
                 Costs = {50, 200, 0, 0, 0, 0, 0},
                 Description = "Handelswesen, Festung",
                 Condition = function(_PlayerID)
-                    local Castle2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
-                    local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
-                    local HasTrading = Logic.IsTechnologyResearched(_PlayerID, Technologies.GT_Trading) == 1;
-                    return HasTrading and Castle2 + Castle3 > 0;
+                    local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
+                    if Logic.GetEntityType(CastleID) == Entities.PB_Headquarters2
+                    or Logic.GetEntityType(CastleID) == Entities.PB_Headquarters3 then
+                        return true;
+                    end
+                    return false;
                 end,
             },
             [4] = {
@@ -131,7 +134,8 @@ Stronghold = {
                 Condition = function(_PlayerID)
                     local IsFulfilled = false;
                     if Logic.GetNumberOfAttractedWorker(_PlayerID) >= 75 then
-                        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3) > 0 then
+                        local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
+                        if Logic.GetEntityType(CastleID) == Entities.PB_Headquarters3 then
                             IsFulfilled = true;
                             for i= 1, 12 do
                                 local Type = "PB_Beautification" .. ((i < 10 and "0"..i) or i);
@@ -234,12 +238,9 @@ function Stronghold:Init()
     self:InitAutomaticMapArchiveUnload();
     self:OverrideFrameworkRestartMap();
 
-    XGUIEng.TransferMaterials("Formation01", "Levy_Duties");
-    XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
-    XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
-    XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
-    XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
-    Camera.ZoomSetFactorMax(2.0);
+    Stronghold:AddDelayedAction(1, function(_PlayerID)
+        Stronghold:LoadGUIDelayed(_PlayerID);
+    end, GUI.GetPlayerID());
     GUI.SetTaxLevel(0);
     GUI.ClearSelection();
     ResourceType.Honor = 20;
@@ -278,12 +279,9 @@ function Stronghold:OnSaveGameLoaded()
     self:LoadMapArchive();
     self:OverrideFrameworkRestartMap();
 
-    XGUIEng.TransferMaterials("Formation01", "Levy_Duties");
-    XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
-    XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
-    XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
-    XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
-    Camera.ZoomSetFactorMax(2.0);
+    Stronghold:AddDelayedAction(1, function(_PlayerID)
+        Stronghold:LoadGUIDelayed(_PlayerID);
+    end, GUI.GetPlayerID());
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
@@ -298,6 +296,17 @@ function Stronghold:OnSaveGameLoaded()
     return true;
 end
 
+function Stronghold:LoadGUIDelayed(_PlayerID)
+    if GUI.GetPlayerID() == _PlayerID then
+        XGUIEng.TransferMaterials("Formation01", "Research_Gilds");
+        XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
+        XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
+        XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
+        XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
+        Camera.ZoomSetFactorMax(2.0);
+    end
+end
+
 -- Add player
 -- This function adds a new player.
 function Stronghold:AddPlayer(_PlayerID)
@@ -305,7 +314,6 @@ function Stronghold:AddPlayer(_PlayerID)
     local HQName = "HQ" .._PlayerID;
     local DoorPosName = "DoorP" .._PlayerID;
     local CampName = "CampP" .._PlayerID;
-    local CampPosName = "CampPosP" .._PlayerID;
 
     -- Create door pos
     local DoorPos = GetCirclePosition(HQName, 800, 180);
@@ -314,19 +322,14 @@ function Stronghold:AddPlayer(_PlayerID)
 
     -- Create camp Pos
     local CampPos = GetCirclePosition(HQName, 1200, 180);
-    ID = Logic.CreateEntity(Entities.XD_LargeCampFire, CampPos.X -5, CampPos.Y -5, 0, 0);
+    ID = Logic.CreateEntity(Entities.XD_Camp_Internal, CampPos.X, CampPos.Y, 0, _PlayerID);
     Logic.SetEntityName(ID, CampName);
-    ID = AI.Entity_CreateFormation(8, Entities.PU_Serf, nil, 0, CampPos.X, CampPos.Y, 0, 0, 0, 0);
-    local x,y,z = Logic.EntityGetPos(ID);
-    CampPos.X = x; CampPos.Y = y; CampPos.Z = z;
-    DestroyEntity(ID);
-    ID = Logic.CreateEntity(Entities.XD_ScriptEntity, x, y, 0, _PlayerID);
-    Logic.SetEntityName(ID, CampPosName);
 
     -- Create serfs
-    for i= 1, 6 do
-        local SerfPos = GetCirclePosition(CampName, 250, 60 * i);
-        ID = Logic.CreateEntity(Entities.PU_Serf, SerfPos.X, SerfPos.Y, 360 - (60 * i), _PlayerID);
+    local SerfCount = self.Config.StartingSerfs;
+    for i= 1, SerfCount do
+        local SerfPos = GetCirclePosition(CampName, 250, (360/SerfCount) * i);
+        ID = Logic.CreateEntity(Entities.PU_Serf, SerfPos.X, SerfPos.Y, 360 - ((360/SerfCount) * i), _PlayerID);
         LookAt(ID, CampName);
     end
 
@@ -343,7 +346,6 @@ function Stronghold:AddPlayer(_PlayerID)
         LordScriptName = LordName,
         HQScriptName = HQName,
         DoorPos = DoorPos;
-        CampPos = CampPos;
 
         ReputationLimit = 200,
         Reputation = 100,
@@ -369,7 +371,7 @@ end
 function Stronghold:GetLocalPlayerID()
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID1 = GUI.GetPlayerID();
-    if CNetwork and EntityID ~= 0 then
+    if CNetwork and EntityID ~= 0 and PlayerID1 == 17 then
         local PlayerID2 = Logic.EntityGetPlayer(EntityID);
         if PlayerID1 ~= PlayerID2 then
             return PlayerID2;
@@ -771,19 +773,10 @@ end
 -- Payday
 
 -- Payday updater
--- The real payday is deactivated. If the payday callback is present the payday
--- is implemented using it. If not we use the good old fashioned way.
+-- The real payday is deactivated. We simultate the payday by using a job the
+-- old fashioned way.
 function Stronghold:StartPlayerPaydayUpdater()
-    -- On community server
-    if CNetwork then
-        GameCallback_PaydayPayed = function(_player, _amount)
-            Stronghold.OnPlayerPayday(_player);
-            return 0;
-        end
-        return;
-    end
 
-    -- In singleplayer
     function Stronghold_Trigger_OnPayday()
         Stronghold.Shared.PaydayTriggerFlag = Stronghold.Shared.PaydayTriggerFlag or {};
         Stronghold.Shared.PaydayOverFlag = Stronghold.Shared.PaydayOverFlag or {};
@@ -1043,64 +1036,64 @@ end
 -- Menu update
 -- This calls all updates of the selection menu when selection has changed.
 function Stronghold:OnSelectionMenuChanged(_EntityID)
-    self.Hero:OnSelectLeader(_EntityID);
-    self.Hero:OnSelectHero(_EntityID);
+    local GuiPlayer = self:GetLocalPlayerID();
+    local SelectedID = GUI.GetSelectedEntity();
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    if GuiPlayer ~= 17 and GuiPlayer ~= PlayerID then
+        return;
+    end
 
-    self.Building:OnHeadquarterSelected(_EntityID);
-    self.Building:OnBarracksSelected(_EntityID);
-    self.Building:OnArcherySelected(_EntityID);
-    self.Building:OnStableSelected(_EntityID);
-    self.Building:OnFoundrySelected(_EntityID);
-    self.Building:OnTavernSelected(_EntityID);
+    self.Hero:OnSelectLeader(SelectedID);
+    self.Hero:OnSelectHero(SelectedID);
+
+    self.Building:OnHeadquarterSelected(SelectedID);
+    self.Building:OnBarracksSelected(SelectedID);
+    self.Building:OnArcherySelected(SelectedID);
+    self.Building:OnStableSelected(SelectedID);
+    self.Building:OnFoundrySelected(SelectedID);
+    self.Building:OnTavernSelected(SelectedID);
 end
 
 function Stronghold:OverwriteCommonCallbacks()
     self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
 	GameCallback_GUI_SelectionChanged = function()
-        local EntityID = GUI.GetSelectedEntity();
 		Stronghold.Orig_GameCallback_GUI_SelectionChanged();
+        local EntityID = GUI.GetSelectedEntity();
         Stronghold:OnSelectionMenuChanged(EntityID);
 	end
 
 	self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		Stronghold.Orig_GameCallback_OnBuildingConstructionComplete(_EntityID, _PlayerID);
-        local EntityID = GUI.GetSelectedEntity();
         Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
-        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold:OnSelectionMenuChanged(_EntityID);
 	end
 
 	self.Orig_GameCallback_OnBuildingUpgradeComplete = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
-        local EntityID = GUI.GetSelectedEntity();
 		Stronghold.Orig_GameCallback_OnBuildingUpgradeComplete(_EntityIDOld, _EntityIDNew);
         if Logic.IsEntityInCategory(_EntityIDNew, EntityCategories.Headquarters) == 1 then
             Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
         end
-        if EntityID == _EntityIDNew then
-            Stronghold:OnSelectionMenuChanged(_EntityIDNew);
-        end
+        Stronghold:OnSelectionMenuChanged(_EntityIDNew);
 	end
 
 	self.Orig_GameCallback_OnTechnologyResearched = GameCallback_OnTechnologyResearched;
 	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
-        local EntityID = GUI.GetSelectedEntity();
 		Stronghold.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
-        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold:OnSelectionMenuChanged(_EntityID);
 	end
 
     self.Orig_GameCallback_OnCannonConstructionComplete = GameCallback_OnCannonConstructionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
-        local EntityID = GUI.GetSelectedEntity();
         Stronghold.Orig_GameCallback_OnCannonConstructionComplete(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold:OnSelectionMenuChanged(_BuildingID);
     end
 
     self.Orig_GameCallback_OnTransactionComplete = GameCallback_OnTransactionComplete;
     GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
-        local EntityID = GUI.GetSelectedEntity();
         Stronghold.Orig_GameCallback_OnTransactionComplete(_BuildingID, _null);
-        Stronghold:OnSelectionMenuChanged(EntityID);
+        Stronghold:OnSelectionMenuChanged(_BuildingID);
     end
 
     Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded or function() end

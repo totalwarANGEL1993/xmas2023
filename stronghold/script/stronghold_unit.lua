@@ -32,18 +32,18 @@ Stronghold.Unit = {
                 Upkeep = 20,
             },
             [Entities.PU_LeaderPoleArm3] = {
-                Costs = {10, 40, 0, 40, 0, 10, 0},
+                Costs = {10, 30, 0, 40, 0, 10, 0},
                 Allowed = true,
                 Places = 2,
                 Rank = 3,
-                Upkeep = 70
+                Upkeep = 40
             },
             [Entities.PU_LeaderPoleArm4] = {
-                Costs = {15, 50, 0, 50, 0, 20, 0},
+                Costs = {15, 35, 0, 50, 0, 20, 0},
                 Allowed = false,
                 Places = 2,
                 Rank = 0,
-                Upkeep = 80
+                Upkeep = 50
             },
             ---
             [Entities.PU_LeaderSword1] = {
@@ -51,57 +51,57 @@ Stronghold.Unit = {
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
-                Upkeep = 25,
+                Upkeep = 20,
             },
             [Entities.PU_LeaderSword2] = {
                 Costs = {10, 30, 0, 0, 0, 40, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
-                Upkeep = 40,
+                Upkeep = 35,
             },
             [Entities.PU_LeaderSword3] = {
-                Costs = {20, 60, 0, 0, 0, 40, 0},
+                Costs = {20, 45, 0, 0, 0, 35, 0},
                 Allowed = true,
                 Places = 2,
                 Rank = 5,
-                Upkeep = 100,
+                Upkeep = 60,
             },
             [Entities.PU_LeaderSword4] = {
-                Costs = {30, 80, 0, 0, 0, 60, 0},
+                Costs = {30, 60, 0, 0, 0, 45, 0},
                 Allowed = true,
                 Places = 3,
                 Rank = 7,
-                Upkeep = 120,
+                Upkeep = 75,
             },
             ---
             [Entities.PU_LeaderBow1] = {
-                Costs = {2, 50, 0, 30, 0, 0, 0},
+                Costs = {2, 35, 0, 25, 0, 0, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
-                Upkeep = 25,
+                Upkeep = 15,
             },
             [Entities.PU_LeaderBow2] = {
-                Costs = {6, 60, 0, 40, 0, 0, 0},
+                Costs = {6, 40, 0, 30, 0, 0, 0},
                 Allowed = true,
                 Places = 1,
                 Rank = 2,
-                Upkeep = 30,
+                Upkeep = 20,
             },
             [Entities.PU_LeaderBow3] = {
-                Costs = {12, 70, 0, 40, 0, 20, 0},
+                Costs = {12, 35, 0, 25, 0, 10, 0},
                 Allowed = true,
-                Places = 2,
+                Places = 1,
                 Rank = 3,
-                Upkeep = 80,
+                Upkeep = 35,
             },
             [Entities.PU_LeaderBow4] = {
-                Costs = {15, 80, 0, 50, 0, 40, 0},
+                Costs = {15, 40, 0, 30, 0, 15, 0},
                 Allowed = false,
-                Places = 3,
+                Places = 2,
                 Rank = 0,
-                Upkeep = 90,
+                Upkeep = 50,
             },
             ---
             [Entities.PV_Cannon1] = {
@@ -112,7 +112,7 @@ Stronghold.Unit = {
                 Upkeep = 30,
             },
             [Entities.PV_Cannon2] = {
-                Costs = {15, 10, 0, 30, 0, 70, 120},
+                Costs = {15, 150, 0, 30, 0, 70, 120},
                 Allowed = true,
                 Places = 10,
                 Rank = 4,
@@ -134,18 +134,18 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderCavalry1] = {
-                Costs = {6, 100, 0, 60, 0, 0, 0},
+                Costs = {6, 85, 0, 40, 0, 0, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
-                Upkeep = 40,
+                Upkeep = 25,
             },
             [Entities.PU_LeaderCavalry2] = {
-                Costs = {10, 120, 0, 60, 0, 40, 0},
+                Costs = {10, 95, 0, 40, 0, 20, 0},
                 Allowed = true,
-                Places = 2,
+                Places = 1,
                 Rank = 4,
-                Upkeep = 70,
+                Upkeep = 40,
             },
             ---
             [Entities.PU_LeaderHeavyCavalry1] = {
@@ -153,29 +153,29 @@ Stronghold.Unit = {
                 Allowed = true,
                 Places = 3,
                 Rank = 6,
-                Upkeep = 120,
+                Upkeep = 70,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
                 Costs = {40, 230, 0, 0, 0, 180, 0},
                 Allowed = false,
                 Places = 4,
                 Rank = 7,
-                Upkeep = 150,
+                Upkeep = 90,
             },
             ---
             [Entities.PU_LeaderRifle1] = {
-                Costs = {20, 90, 0, 10, 0, 0, 40},
+                Costs = {20, 90, 0, 10, 0, 0, 60},
                 Allowed = true,
                 Places = 3,
                 Rank = 5,
-                Upkeep = 70,
+                Upkeep = 50,
             },
             [Entities.PU_LeaderRifle2] = {
-                Costs = {30, 110, 0, 20, 0, 0, 60},
+                Costs = {30, 105, 0, 20, 0, 0, 65},
                 Allowed = true,
-                Places = 2,
+                Places = 1,
                 Rank = 6,
-                Upkeep = 100,
+                Upkeep = 80,
             },
             ---
             [Entities.PU_Scout] = {
@@ -350,18 +350,10 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                         end
                     end
                 end
-                if _BarracksID == GetID(Stronghold.Players[_PlayerID].HQScriptName) then
-                    local CampPos = Stronghold.Players[_PlayerID].CampPos;
-                    Logic.MoveSettler(ID, CampPos.X, CampPos.Y);
-                else
-                    Logic.RotateEntity(ID, Orientation +180);
-                end
+                Logic.RotateEntity(ID, Orientation +180);
             end
         end
-
-        Stronghold:AddDelayedAction(5, function(_PlayerID)
-            Stronghold.Players[_PlayerID].BuyUnitLock = nil;
-        end, _PlayerID);
+        Stronghold.Players[_PlayerID].BuyUnitLock = nil;
     end
 end
 
@@ -400,9 +392,7 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
                 end
             end
         end
-        Stronghold:AddDelayedAction(1, function(_PlayerID)
-            Stronghold.Players[_PlayerID].BuyUnitLock = nil;
-        end, _PlayerID);
+        Stronghold.Players[_PlayerID].BuyUnitLock = nil;
     end
 end
 
@@ -652,7 +642,7 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
             end
         end
 
-        local Text = DefaultText[1] .. DefaultText[2];
+        local Text = DefaultText[1] .. " @cr " .. DefaultText[2];
         if not IsForbidden then
             -- Effect text
             local EffectText = "";

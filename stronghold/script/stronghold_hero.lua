@@ -109,7 +109,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
             },
             [Entities.CU_BlackKnight]        = {
-                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative Effekte auf die Beliebtheit werden um 50% verringert."..
+                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative Effekte auf die Beliebtheit werden um 40% verringert."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
             },
@@ -223,7 +223,7 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
     self.Orig_GUITooltip_NormalButton = GUITooltip_NormalButton;
     GUITooltip_NormalButton = function(_Key)
         local EntityID = GUI.GetSelectedEntity();
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
             return self.Orig_GUITooltip_NormalButton(_Key);
         end
@@ -298,7 +298,7 @@ function Stronghold.Hero:OnSelectLeader(_EntityID)
     XGUIEng.SetWidgetPosition("Command_Guard", 140, 4);
     XGUIEng.SetWidgetPosition("Formation01", 4, 38);
 
-    XGUIEng.TransferMaterials("Levy_Duties", "Formation01");
+    XGUIEng.TransferMaterials("Research_Gilds", "Formation01");
     XGUIEng.ShowWidget("Selection_Leader", 1);
 
     local ShowFormations = 0;
@@ -591,11 +591,12 @@ end
 function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
     if Stronghold:IsPlayer(_PlayerID) then
         Stronghold.Players[_PlayerID].LordChosen = true;
+        local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
+        local Orientation = Logic.GetEntityOrientation(CastleID);
         local Position = Stronghold.Players[_PlayerID].DoorPos;
         ID = Logic.CreateEntity(_Type, Position.X, Position.Y, 0, _PlayerID);
         Logic.SetEntityName(ID, Stronghold.Players[_PlayerID].LordScriptName);
-        Position = Stronghold.Players[_PlayerID].CampPos;
-        Logic.MoveSettler(ID, Position.X, Position.Y);
+        Logic.RotateEntity(ID, Orientation +180);
         self:ConfigurePlayersLord(_PlayerID);
 
         local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
@@ -603,7 +604,7 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
         local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
         Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Laird gewählt!");
 
-        if _PlayerID == GUI.GetPlayerID() then
+        if _PlayerID == GUI.GetPlayerID() or GUI.GetPlayerID() == 17 then
             Stronghold.Building:OnHeadquarterSelected(GUI.GetSelectedEntity());
         end
     end
@@ -1034,7 +1035,7 @@ end
 function Stronghold.Hero:ApplyReputationDecreasePassiveAbility(_PlayerID, _Decrease)
     local Decrease = _Decrease;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
-        Decrease = Decrease * 0.5;
+        Decrease = Decrease * 0.6;
     end
     return Decrease;
 end

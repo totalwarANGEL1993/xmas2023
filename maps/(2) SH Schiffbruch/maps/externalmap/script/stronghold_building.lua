@@ -69,6 +69,7 @@ function Stronghold.Building:Install()
     self:OverrideBuildingUpgradeButtonTooltip();
     self:OverrideManualButtonUpdate();
     self:OverrideSellBuildingAction();
+    self:InitalizeBuyUnitKeybindings();
 end
 
 function Stronghold.Building:OnSaveGameLoaded()
@@ -77,6 +78,7 @@ function Stronghold.Building:OnSaveGameLoaded()
     end
     self:OverrideManualButtonUpdate();
     self:OverrideSellBuildingAction();
+    self:InitalizeBuyUnitKeybindings();
 end
 
 function Stronghold.Building:CreateBuildingButtonHandlers()
@@ -412,7 +414,7 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
-        return false;
+        return true;
     end
 
     local Places = 0;
@@ -459,8 +461,10 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
 end
 
 function Stronghold.Building:OnBarracksSelected(_EntityID)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if (PlayerID ~= GuiPlayer and GuiPlayer ~= 17)
+    or not Stronghold:IsPlayer(PlayerID) then
         return;
     end
     local Type = Logic.GetEntityType(_EntityID);
@@ -481,6 +485,8 @@ function Stronghold.Building:OnBarracksSelected(_EntityID)
     XGUIEng.SetWidgetPositionAndSize("Research_BetterTrainingBarracks", 4, 38, 31, 31);
     XGUIEng.ShowWidget("Buy_LeaderSword", 0);
     XGUIEng.ShowWidget("Buy_LeaderSpear", 0);
+    XGUIEng.ShowWidget("Research_UpgradeSword1", 1);
+    XGUIEng.ShowWidget("Research_UpgradeSword2", 1);
     XGUIEng.ShowWidget("Research_UpgradeSword3", 1);
     XGUIEng.ShowWidget("Research_UpgradeSpear1", 1);
     XGUIEng.ShowWidget("Research_UpgradeSpear2", 0);
@@ -539,6 +545,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
     local WidgetID = XGUIEng.GetCurrentWidgetID();
     local EntityID = GUI.GetSelectedEntity();
     local Text = "";
+    local ShortcutText = "";
     local CostsText = "";
 
     if _TextKey == "MenuBarracks/UpgradeSword1" then
@@ -548,6 +555,8 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
                "@cr Ihr Götter, welch Memmen befehlen unsere Schar? Zum "..
                "Krieg zusammengekehrt, das Gerümpel des Landes.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [A]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -572,6 +581,8 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
                "@cr Die Leibwache Eures Laird. Sie sind gut gepanzert "..
                "und besonders stark gegen Kavalerie.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [S]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -596,6 +607,8 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
                "@cr Schwer gepanzerte Berufssoldaten, die für Euch über jede "..
                " Klinge springen.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [D]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -620,6 +633,8 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
                "@cr Die schwerste Infanterie, die Ihr in die Schlacht werfen "..
                "könnt. Diese Männer fürchten weder Tod noch Teufel.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [F]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -637,13 +652,19 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
                    " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Garnison, Feinschmiede";
         end
 
+    elseif _TextKey == "MenuBarracks/UpgradeSpear2" then
+        -- TODO: Hero special unit 1?
+        Text = "NOT IMPLEMENTED!";
+    elseif _TextKey == "MenuBarracks/UpgradeSpear3" then
+        -- TODO: Hero special unit 2?
+        Text = "NOT IMPLEMENTED!";
     else
         return false;
     end
 
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortcutText);
     return true;
 end
 
@@ -670,7 +691,7 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
-        return false;
+        return true;
     end
 
     local Places = 1;
@@ -792,6 +813,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
     local WidgetID = XGUIEng.GetCurrentWidgetID();
     local EntityID = GUI.GetSelectedEntity();
     local CostsText = "";
+    local ShortcutText = "";
     local Text = "";
 
     if _TextKey == "MenuArchery/UpgradeBow1" then
@@ -801,6 +823,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
                "@cr Diese Männer sind vor allem gegen Speerträger und Reiter "..
                "sehr effektiv.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [A]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -825,6 +849,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
                "@cr Loyale und gut ausgebiltete Schützen. Sie werden Euer "..
                "Heer  hervorragend ergänzen.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [S]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -849,6 +875,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
                "@cr Diese Männer nutzen die neuen Feuerwaffen. Sie sind stark"..
                " gegen gepanzerte Einheiten.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [D]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -873,6 +901,8 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
                "@cr Die verbesserten Gewehre haben eine gewaltige Reichweite. "..
                "Keine Waffe der bekannten Welt trifft aus dieser Distanz.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [F]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
@@ -895,7 +925,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
 
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortcutText);
     return true;
 end
 
@@ -909,14 +939,16 @@ function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
-        return false;
+        return true;
     end
 
     local UnitType = 0;
     local Action = 0;
     if _UpgradeCategory == UpgradeCategories.Scout then
-        UnitType = Entities.PU_Scout;
-        Action = self.SyncEvents.BuyUnit;
+        if Logic.GetPlayerAttractionLimit(PlayerID) >= Logic.GetPlayerAttractionUsage(PlayerID) then
+            UnitType = Entities.PU_Scout;
+            Action = self.SyncEvents.BuyUnit;
+        end
     elseif _UpgradeCategory == UpgradeCategories.Thief then
         if Logic.GetPlayerAttractionLimit(PlayerID) >= Logic.GetPlayerAttractionUsage(PlayerID) +5 then
             UnitType = Entities.PU_Thief;
@@ -1022,7 +1054,6 @@ function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCateg
 
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
     return true;
 end
 
@@ -1049,7 +1080,7 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
-        return false;
+        return true;
     end
 
     local Places = 0;
@@ -1137,6 +1168,8 @@ end
 function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Technology, _TextKey, _ShortCut)
     local WidgetID = XGUIEng.GetCurrentWidgetID();
     local EntityID = GUI.GetSelectedEntity();
+    local CostsText = "";
+    local ShortcutText = "";
     local Text = "";
 
     if _TextKey == "MenuStables/UpgradeCavalryLight1" then
@@ -1145,6 +1178,8 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
                "@cr Der Vorteil der berittenen Armbrustschützen ist ihre hohe "..
                "Flexibelität und Geschwindigkeit.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [A]";
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
@@ -1169,6 +1204,8 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
                "@cr Treue Ritter, die jeden Gegner gnadenlos niedermähen, der "..
                "es wagt, sich Euch entgegenzustallen.";
 
+        -- Hotkey
+        ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [S]";
         -- Costs text
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
@@ -1193,7 +1230,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
 
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortcutText);
     return true;
 end
 
@@ -1219,7 +1256,7 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
-        return false;
+        return true;
     end
 
     local Places = 0;
@@ -1316,8 +1353,8 @@ end
 function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
     local WidgetID = XGUIEng.GetCurrentWidgetID();
     local EntityID = GUI.GetSelectedEntity();
-    local CostsText = "";
     local Text = "";
+    local CostsText = "";
 
     if _KeyNormal == "MenuFoundry/BuyCannon1_normal" then
         local Type = Entities.PV_Cannon1;
@@ -1587,7 +1624,7 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
                 ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]"
         end
 
-        local Text = DefaultText[1] .. DefaultText[2];
+        local Text = DefaultText[1] .. " @cr " .. DefaultText[2];
         if not IsForbidden then
             local EffectText = "";
             local Effects = Stronghold.Economy.Config.Income.Static[_Type +1];
@@ -1664,6 +1701,79 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
         end
         self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
         return false;
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Keybindings
+
+function Stronghold.Building:InitalizeBuyUnitKeybindings()
+    Stronghold_KeyBindings_BuyUnit = function(_Key, _PlayerID, _EntityID)
+        Sound.PlayGUISound(Sounds.klick_rnd_1, 0);
+        Stronghold.Building:ExecuteBuyUnitKeybindForBarracks(_Key, _PlayerID, _EntityID);
+        Stronghold.Building:ExecuteBuyUnitKeybindForArchery(_Key, _PlayerID, _EntityID);
+        Stronghold.Building:ExecuteBuyUnitKeybindForStable(_Key, _PlayerID, _EntityID);
+    end
+
+    Input.KeyBindDown(Keys.A, "Stronghold_KeyBindings_BuyUnit(1, GUI.GetPlayerID(), GUI.GetSelectedEntity())", 2);
+    Input.KeyBindDown(Keys.S, "Stronghold_KeyBindings_BuyUnit(2, GUI.GetPlayerID(), GUI.GetSelectedEntity())", 2);
+    Input.KeyBindDown(Keys.D, "Stronghold_KeyBindings_BuyUnit(3, GUI.GetPlayerID(), GUI.GetSelectedEntity())", 2);
+    Input.KeyBindDown(Keys.F, "Stronghold_KeyBindings_BuyUnit(4, GUI.GetPlayerID(), GUI.GetSelectedEntity())", 2);
+    -- TODO: Hero special units?
+    Input.KeyBindDown(Keys.G, "Stronghold_KeyBindings_BuyUnit(5, GUI.GetPlayerID(), GUI.GetSelectedEntity())", 2);
+    Input.KeyBindDown(Keys.H, "Stronghold_KeyBindings_BuyUnit(6, GUI.GetPlayerID(), GUI.GetSelectedEntity())", 2);
+end
+
+function Stronghold.Building:ExecuteBuyUnitKeybindForBarracks(_Key, _PlayerID, _EntityID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local Type = Logic.GetEntityType(_EntityID);
+        if Type == Entities.PB_Barracks1 or Type == Entities.PB_Barracks2 then
+            if Logic.IsConstructionComplete(_EntityID) == 1 then
+                if _Key == 1 and XGUIEng.IsButtonDisabled("Research_UpgradeSword1") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeSword1);
+                elseif _Key == 2 and XGUIEng.IsButtonDisabled("Research_UpgradeSword2") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeSword2);
+                elseif _Key == 3 and XGUIEng.IsButtonDisabled("Research_UpgradeSword3") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeSword3);
+                elseif _Key == 4 and XGUIEng.IsButtonDisabled("Research_UpgradeSpear1") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeSpear1);
+                end
+            end
+        end
+    end
+end
+
+function Stronghold.Building:ExecuteBuyUnitKeybindForArchery(_Key, _PlayerID, _EntityID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local Type = Logic.GetEntityType(_EntityID);
+        if Type == Entities.PB_Archery1 or Type == Entities.PB_Archery2 then
+            if Logic.IsConstructionComplete(_EntityID) == 1 then
+                if _Key == 1 and XGUIEng.IsButtonDisabled("Research_UpgradeBow1") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeBow1);
+                elseif _Key == 2 and XGUIEng.IsButtonDisabled("Research_UpgradeBow2") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeBow2);
+                elseif _Key == 3 and XGUIEng.IsButtonDisabled("Research_UpgradeBow3") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeBow3);
+                elseif _Key == 4 and XGUIEng.IsButtonDisabled("Research_UpgradeRifle1") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeRifle1);
+                end
+            end
+        end
+    end
+end
+
+function Stronghold.Building:ExecuteBuyUnitKeybindForStable(_Key, _PlayerID, _EntityID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local Type = Logic.GetEntityType(_EntityID);
+        if Type == Entities.PB_Stable1 or Type == Entities.PB_Stable2 then
+            if Logic.IsConstructionComplete(_EntityID) == 1 then
+                if _Key == 1 and XGUIEng.IsButtonDisabled("Research_UpgradeCavalryLight1") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeLightCavalry1);
+                elseif _Key == 2 and XGUIEng.IsButtonDisabled("Research_UpgradeCavalryHeavy1") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeHeavyCavalry1);
+                end
+            end
+        end
     end
 end
 
