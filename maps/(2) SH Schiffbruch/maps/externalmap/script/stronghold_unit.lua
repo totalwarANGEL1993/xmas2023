@@ -71,7 +71,7 @@ Stronghold.Unit = {
                 Costs = {30, 80, 0, 0, 0, 60, 0},
                 Allowed = true,
                 Places = 3,
-                Rank = 8,
+                Rank = 7,
                 Upkeep = 120,
             },
             ---
@@ -93,7 +93,7 @@ Stronghold.Unit = {
                 Costs = {12, 70, 0, 40, 0, 20, 0},
                 Allowed = true,
                 Places = 2,
-                Rank = 4,
+                Rank = 3,
                 Upkeep = 80,
             },
             [Entities.PU_LeaderBow4] = {
@@ -115,21 +115,21 @@ Stronghold.Unit = {
                 Costs = {15, 10, 0, 30, 0, 70, 120},
                 Allowed = true,
                 Places = 10,
-                Rank = 5,
+                Rank = 4,
                 Upkeep = 50,
             },
             [Entities.PV_Cannon3] = {
                 Costs = {25, 300, 0, 50, 0, 500, 250},
                 Allowed = true,
                 Places = 15,
-                Rank = 7,
+                Rank = 6,
                 Upkeep = 100,
             },
             [Entities.PV_Cannon4] = {
                 Costs = {30, 300, 0, 50, 0, 250, 500},
                 Allowed = true,
                 Places = 20,
-                Rank = 9,
+                Rank = 7,
                 Upkeep = 120,
             },
             ---
@@ -152,14 +152,14 @@ Stronghold.Unit = {
                 Costs = {30, 200, 0, 0, 0, 130, 0},
                 Allowed = true,
                 Places = 3,
-                Rank = 7,
+                Rank = 6,
                 Upkeep = 120,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
                 Costs = {40, 230, 0, 0, 0, 180, 0},
                 Allowed = false,
                 Places = 4,
-                Rank = 9,
+                Rank = 7,
                 Upkeep = 150,
             },
             ---
@@ -167,14 +167,14 @@ Stronghold.Unit = {
                 Costs = {20, 90, 0, 10, 0, 0, 40},
                 Allowed = true,
                 Places = 3,
-                Rank = 6,
+                Rank = 5,
                 Upkeep = 70,
             },
             [Entities.PU_LeaderRifle2] = {
                 Costs = {30, 110, 0, 20, 0, 0, 60},
                 Allowed = true,
                 Places = 2,
-                Rank = 8,
+                Rank = 6,
                 Upkeep = 100,
             },
             ---
@@ -189,7 +189,7 @@ Stronghold.Unit = {
                 Costs = {30, 500, 0, 0, 0, 100, 100},
                 Allowed = true,
                 Places = 0,
-                Rank = 5,
+                Rank = 4,
                 Upkeep = 50,
             },
             ---
@@ -628,21 +628,22 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
         local IsForbidden = false;
 
         -- Get default text
-        local Text = XGUIEng.GetStringTableText(_KeyNormal);
-        local LineBreakPos, LineBreakEnd = string.find(Text, " @cr ");
-        local TextHeadline = string.sub(Text, 1, LineBreakPos);
-        local TextBody = string.sub(Text, LineBreakEnd +1);
+        local ForbiddenText = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        local NormalText = GetSeparatedTooltipText(_KeyNormal);
+        local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
+        local DefaultText = NormalText;
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            DefaultText = DisabledText;
+            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
+                DefaultText = ForbiddenText;
+                IsForbidden = true;
+            end
+        end
 
         local CostString = "";
         local ShortCutToolTip = "";
         local Type = Logic.GetBuildingTypeByUpgradeCategory(_UpgradeCategory, PlayerID);
-        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-            Text = XGUIEng.GetStringTableText(_KeyDisabled);
-            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
-                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-                IsForbidden = true;
-            end
-        else
+        if not IsForbidden then
             Logic.FillBuildingCostsTable(Type, InterfaceGlobals.CostTable);
             CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
             if _ShortCut then
@@ -651,13 +652,10 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
             end
         end
 
-        local EffectText = "";
+        local Text = DefaultText[1] .. DefaultText[2];
         if not IsForbidden then
-            -- Text amendments
-            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Farm then
-                Text = Text .. " Ihr erhaltet Beliebtheit und Ehre für jeden Gast.";
-            end
-
+            -- Effect text
+            local EffectText = "";
             local Effects = Stronghold.Economy.Config.Income.Static[Type];
             if Effects then
                 if Effects.Reputation > 0 then
@@ -669,6 +667,11 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
                 if EffectText ~= "" then
                     EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
                 end
+            end
+
+            if Logic.GetUpgradeCategoryByBuildingType(Type) == UpgradeCategories.Tavern then
+                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                             " Beliebtheit für jeden Gast";
             end
 
             -- Limit factor
@@ -684,13 +687,19 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
                 end
             end
 
-            local BuildingMax = math.ceil(GetLimitOfType(Type) * LimitFactor);
+            local BuildingMax = math.floor(GetLimitOfType(Type) * LimitFactor);
             if BuildingMax > -1 then
                 local BuildingCount = GetUsageOfType(PlayerID, Type);
-                Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
+                Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
+            else
+                Text = DefaultText[1] .. " @cr " .. DefaultText[2];
             end
+
+            for i= 3, table.getn(DefaultText) do
+                Text = Text .. " @cr " .. DefaultText[i];
+            end
+            Text = Text .. EffectText;
         end
-        Text = Text .. EffectText;
 
         -- Set text
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
@@ -759,7 +768,7 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
                 LimitFactor = 2.0;
             end
         end
-        LimitReached = math.ceil(Limit * LimitFactor) <= Usage;
+        LimitReached = math.floor(Limit * LimitFactor) <= Usage;
     end
 
     if LimitReached then

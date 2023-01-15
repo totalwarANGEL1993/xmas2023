@@ -1109,11 +1109,15 @@ function Stronghold.Building:OnStableSelected(_EntityID)
     local Blacksmith2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Blacksmith2);
     local Blacksmith3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Blacksmith3);
 
+    local Sawmill1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Sawmill1);
+    local Sawmill2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Sawmill2);
+
     -- Bowmen
     local BowDisabled = 0;
     local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderCavalry2);
     if Config.Allowed == false
-    or Stronghold:GetPlayerRank(PlayerID) < Config.Rank then
+    or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
+    or Sawmill1 + Sawmill2 == 0  then
         BowDisabled = 1;
     end
     XGUIEng.DisableButton("Research_UpgradeCavalryLight1", BowDisabled);
@@ -1156,7 +1160,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. "";
+                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Sägemühle";
         end
 
     elseif _TextKey == "MenuStables/UpgradeCavalryHeavy1" then
@@ -1371,7 +1375,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. "";
+                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Kanonenmanufaktur";
         end
 
     elseif _KeyNormal == "MenuFoundry/BuyCannon4_normal" then
@@ -1391,7 +1395,7 @@ function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCate
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. "";
+                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Kanonenmanufaktur";
         end
 
     else
@@ -1562,40 +1566,30 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         local IsForbidden = false;
 
         -- Get default text
-        local Text = XGUIEng.GetStringTableText(_KeyNormal);
-        local LineBreakPos, LineBreakEnd = string.find(Text, " @cr ");
-        local TextHeadline = string.sub(Text, 1, LineBreakPos);
-        local TextBody = string.sub(Text, LineBreakEnd +1);
+        local ForbiddenText = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        local NormalText = GetSeparatedTooltipText(_KeyNormal);
+        local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
+        local DefaultText = NormalText;
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            DefaultText = DisabledText;
+            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
+                DefaultText = ForbiddenText;
+                IsForbidden = true;
+            end
+        end
 
         local CostString = "";
         local ShortCutToolTip = "";
-        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-            Text = XGUIEng.GetStringTableText(_KeyDisabled);
-            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
-                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-                IsForbidden = true;
-            end
-        else
+        if not IsForbidden then
             Logic.FillBuildingUpgradeCostsTable(_Type, InterfaceGlobals.CostTable);
             CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
             ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
-                ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]";
+                ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]"
         end
 
-        local EffectText = "";
+        local Text = DefaultText[1] .. DefaultText[2];
         if not IsForbidden then
-            -- Text amendments
-            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Farm then
-                Text = Text .. " Das bessere Essen wird Euch zu Ehre gereichen.";
-            end
-            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Residence then
-                Text = Text .. " Die bessere Unterbringung steigert Eure Beliebtheit.";
-            end
-            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Tavern then
-                Text = Text .. " Ihr erhaltet Beliebtheit und Ehre für jeden Gast.";
-            end
-
-            -- Effect text
+            local EffectText = "";
             local Effects = Stronghold.Economy.Config.Income.Static[_Type +1];
             if Effects then
                 if Effects.Reputation > 0 then
@@ -1609,11 +1603,30 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
                 end
             end
 
+            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Tavern then
+                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                             " Beliebtheit für jeden Gast";
+            end
+            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Farm then
+                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                             " Ehre und Beliebtheit für jeden Gast";
+            end
+            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Residence then
+                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                             " Beliebtheit für jeden Gast";
+            end
+
             -- Building limit
             local BuildingMax = GetLimitOfType(_Type +1);
             if BuildingMax > -1 then
                 local BuildingCount = GetUsageOfType(PlayerID, _Type +1);
-                Text = TextHeadline.. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. TextBody;
+                Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
+            else
+                Text = DefaultText[1] .. " @cr " .. DefaultText[2];
+            end
+
+            for i= 3, table.getn(DefaultText) do
+                Text = Text .. " @cr " .. DefaultText[i];
             end
             Text = Text .. EffectText;
         end

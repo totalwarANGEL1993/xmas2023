@@ -56,14 +56,14 @@ Stronghold.Economy = {
             },
 
             Dynamic = {
-                [Entities.PB_Farm2]      = {Honor = 0.15, Reputation = 0,},
-                [Entities.PB_Farm3]      = {Honor = 0.30, Reputation = 0,},
+                [Entities.PB_Farm2]      = {Honor = 0.12, Reputation = 0.03,},
+                [Entities.PB_Farm3]      = {Honor = 0.15, Reputation = 0.06,},
                 ---
-                [Entities.PB_Residence2] = {Honor = 0, Reputation = 0.8,},
-                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.16,},
+                [Entities.PB_Residence2] = {Honor = 0, Reputation = 0.15,},
+                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.21,},
                 ---
-                [Entities.PB_Tavern1]    = {Honor = 0.05, Reputation = 0.25,},
-                [Entities.PB_Tavern2]    = {Honor = 0.10, Reputation = 0.50,},
+                [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.33,},
+                [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.36,},
             },
             Static = {
                 [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
@@ -234,7 +234,7 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
                 local ResidenceID = Logic.GetSettlersResidence(v);
                 if ResidenceID ~= 0 then
                     local Bonus = 0;
-                    local Type = Logic.GetEntityType(FarmID);
+                    local Type = Logic.GetEntityType(ResidenceID);
                     if self.Config.Income.Dynamic[Type] then
                         Bonus = self.Config.Income.Dynamic[Type].Reputation;
                         Bonus = GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, ResidenceID, v, Bonus);
@@ -309,7 +309,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
-            Penalty = Penalty + (_WorkerCount * (0.15 + (0.05 * (Rank -1))));
+            Penalty = Penalty + (_WorkerCount * (0.12 + (0.03 * (Rank -1))));
         end
         return math.floor(Penalty);
     end
@@ -345,7 +345,7 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
                     local ResidenceID = Logic.GetSettlersResidence(v);
                     if ResidenceID ~= 0 then
                         local Bonus = 0;
-                        local Type = Logic.GetEntityType(FarmID);
+                        local Type = Logic.GetEntityType(ResidenceID);
                         if self.Config.Income.Dynamic[Type] then
                             Bonus = self.Config.Income.Dynamic[Type].Honor;
                             Bonus = GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, ResidenceID, v, Bonus);

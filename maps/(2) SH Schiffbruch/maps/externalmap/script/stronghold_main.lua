@@ -62,23 +62,14 @@ Stronghold = {
             },
             [2] = {
                 Text = {"Landvogt", "Landvögtin"},
-                Costs = {10, 50, 0, 0, 0, 0, 0},
-                Description = "15 Arbeiter",
+                Costs = {20, 100, 0, 0, 0, 0, 0},
+                Description = "Kapelle",
                 Condition = function(_PlayerID)
-                    return Logic.GetNumberOfAttractedWorker(_PlayerID) >= 15;
+                    local Chapell = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Monastery1));
+                    return Chapell > 0;
                 end,
             },
             [3] = {
-                Text = {"Edler Lord", "Edle Lady"},
-                Costs = {30, 100, 0, 0, 0, 0, 0},
-                Description = "Kapelle, 30 Arbeiter",
-                Condition = function(_PlayerID)
-                    local Chapell = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Monastery1));
-                    local Workers = Logic.GetNumberOfAttractedWorker(_PlayerID);
-                    return Chapell > 0 and Workers >= 30;
-                end,
-            },
-            [4] = {
                 Text = {"Fürst", "Fürstin"},
                 Costs = {50, 200, 0, 0, 0, 0, 0},
                 Description = "Handelswesen, Festung",
@@ -89,7 +80,7 @@ Stronghold = {
                     return HasTrading and Castle2 + Castle3 > 0;
                 end,
             },
-            [5] = {
+            [4] = {
                 Text = {"Baron", "Baronin"},
                 Costs = {100, 300, 0, 0, 0, 0, 0},
                 Description = "8 Ziergebäude",
@@ -110,7 +101,7 @@ Stronghold = {
                            Beauty07 + Beauty08 + Beauty09 + Beauty10 + Beauty11 + Beauty12 >= 8;
                 end,
             },
-            [6] = {
+            [5] = {
                 Text = {"Graf", "Gräfin"},
                 Costs = {150, 500, 0, 0, 0, 0, 0},
                 Description = "6 Alchemisten, 6 Ziegelbrenner, 6 Sägewerker, 6 Schmiede, 6 Steinmetze",
@@ -123,38 +114,31 @@ Stronghold = {
                     return Workers1 >= 6 and Workers2 >= 6 and Workers3 >= 6 and Workers4 >= 6 and Workers5 >= 6;
                 end,
             },
-            [7] = {
+            [6] = {
                 Text = {"Marktgraf", "Marktgräfin"},
-                Costs = {200, 1000, 0, 0, 0, 0, 0},
+                Costs = {250, 2000, 0, 0, 0, 0, 0},
                 Description = "Kathedrale, 50 Arbeiter",
                 Condition = function(_PlayerID)
-                    local Cathedral = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
-                    return Cathedral > 0 and Logic.GetNumberOfAttractedWorker(_PlayerID) >= 50;
-                end,
-            },
-            [8] = {
-                Text = {"Herzog", "Herzogin"},
-                Costs = {250, 2000, 0, 0, 0, 0, 0},
-                Description = "Zitadelle, 70 Arbeiter",
-                Condition = function(_PlayerID)
                     local Workers = Logic.GetNumberOfAttractedWorker(_PlayerID);
-                    local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2);
-                    return Castle3 > 0 and Workers >= 75;
+                    local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
+                    return Castle3 > 0 and Workers >= 50;
                 end,
             },
-            [9] = {
-                Text = {"Erzherzog", "Erzherzogin"},
+            [7] = {
+                Text = {"Herzog", "Herzogin"},
                 Costs = {300, 3000, 0, 0, 0, 0, 0},
-                Description = "Alle Ziergebäude, 100 Arbeiter",
+                Description = "Alle Ziergebäude, Zitadelle, 75 Arbeiter",
                 Condition = function(_PlayerID)
                     local IsFulfilled = false;
-                    if Logic.GetNumberOfAttractedWorker(_PlayerID) >= 100 then
-                        IsFulfilled = true;
-                        for i= 1, 12 do
-                            local Type = "PB_Beautification" .. ((i < 10 and "0"..i) or i);
-                            if table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities[Type])) < 1 then
-                                IsFulfilled = false;
-                                break;
+                    if Logic.GetNumberOfAttractedWorker(_PlayerID) >= 75 then
+                        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3) > 0 then
+                            IsFulfilled = true;
+                            for i= 1, 12 do
+                                local Type = "PB_Beautification" .. ((i < 10 and "0"..i) or i);
+                                if table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities[Type])) < 1 then
+                                    IsFulfilled = false;
+                                    break;
+                                end
                             end
                         end
                     end
@@ -934,7 +918,7 @@ end
 function Stronghold:CanPlayerBePromoted(_PlayerID)
     if self:IsPlayer(_PlayerID) then
         local Rank = self:GetPlayerRank(_PlayerID);
-        if Rank == 0 or Rank >= 9 then
+        if Rank == 0 or Rank >= 7 then
             return false;
         end
         return self.Config.Ranks[Rank +1].Condition(_PlayerID);
