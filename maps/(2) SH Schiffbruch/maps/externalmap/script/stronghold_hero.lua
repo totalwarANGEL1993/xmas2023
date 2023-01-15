@@ -114,7 +114,7 @@ Stronghold.Hero = {
                               "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
             },
             [Entities.CU_Barbarian_Hero]     = {
-                Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Alle Tavernen produzieren 30% zusätzliche Beliebtheit."..
+                Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Die Effektivität von Tavernen wird um 50% verstärkt."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre Stärke richtet sich nach dem Rang.",
             },
@@ -844,10 +844,10 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         return CurrentAmount;
     end
 
-    self.Orig_GameCallback_Calculate_BuildingReputationIncrease = GameCallback_Calculate_BuildingReputationIncrease;
-    GameCallback_Calculate_BuildingReputationIncrease = function(_PlayerID, _Type, _CurrentAmount)
-        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, _Type, _CurrentAmount);
-        CurrentAmount = Stronghold.Hero:ApplyReputationBuildingBonusPassiveAbility(_PlayerID, _Type, CurrentAmount);
+    self.Orig_GameCallback_Calculate_DynamicReputationIncrease = GameCallback_Calculate_DynamicReputationIncrease;
+    GameCallback_Calculate_DynamicReputationIncrease = function(_PlayerID, _BuildingID, _WorkerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, _BuildingID, _WorkerID, _CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyDynamicReputationBonusPassiveAbility(_PlayerID, _BuildingID, _WorkerID, CurrentAmount);
         return CurrentAmount;
     end
 
@@ -862,6 +862,13 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
     GameCallback_Calculate_HonorIncrease = function(_PlayerID, _CurrentAmount)
         local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_HonorIncrease(_PlayerID, _CurrentAmount);
         CurrentAmount = Stronghold.Hero:ApplyHonorBonusPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_DynamicHonorIncrease = GameCallback_Calculate_DynamicHonorIncrease;
+    GameCallback_Calculate_DynamicHonorIncrease = function(_PlayerID, _BuildingID, _WorkerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, _BuildingID, _WorkerID, _CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyDynamicHonorBonusPassiveAbility(_PlayerID, _BuildingID, _WorkerID, CurrentAmount);
         return CurrentAmount;
     end
 
@@ -957,24 +964,14 @@ function Stronghold.Hero:ResourceProductionBonus(_PlayerID, _Type, _Amount)
     end
 end
 
--- Passive Ability: Increase of reputation
-function Stronghold.Hero:ApplyReputationBuildingBonusPassiveAbility(_PlayerID, _Type, _Amount)
-    local Value = _Amount;
-    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Barbarian_Hero) then
-        if _Type == Entities.PB_Tavern1 or _Type == Entities.PB_Tavern2 then
-            Value = Value * 1.3;
-        end
-    end
-    return Value;
-end
-
 -- Passive Ability: unit costs
 function Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Costs)
     local Costs = _Costs;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-        if Costs[ResourceType.Honor] then
-            Costs[ResourceType.Honor] = math.ceil(Costs[ResourceType.Honor] * 1.30);
-        end
+        -- Honor is not a resource spend when the soldiers are trained.
+        -- if Costs[ResourceType.Honor] then
+        --     Costs[ResourceType.Honor] = math.ceil(Costs[ResourceType.Honor] * 1.30);
+        -- end
         if Costs[ResourceType.Gold] then
             Costs[ResourceType.Gold] = math.ceil(Costs[ResourceType.Gold] * 1.30);
         end
@@ -1042,11 +1039,35 @@ function Stronghold.Hero:ApplyReputationDecreasePassiveAbility(_PlayerID, _Decre
     return Decrease;
 end
 
+-- Passive Ability: Improve dynamic reputation generation
+function Stronghold.Hero:ApplyDynamicReputationBonusPassiveAbility(_PlayerID, _BuildingID, _WorkerID, _Amount)
+    local Value = _Amount;
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Barbarian_Hero) then
+        local Type = Logic.GetEntityType(_BuildingID);
+        if Type == Entities.PB_Tavern1 or Type == Entities.PB_Tavern2 then
+            Value = Value * 1.5;
+        end
+    end
+    return Value;
+end
+
 -- Passive Ability: Honor increase bonus
 function Stronghold.Hero:ApplyHonorBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
     -- do nothing
     return Income;
+end
+
+-- Passive Ability: Improve dynamic honor generation
+function Stronghold.Hero:ApplyDynamicHonorBonusPassiveAbility(_PlayerID, _BuildingID, _WorkerID, _Amount)
+    local Value = _Amount;
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_Barbarian_Hero) then
+        local Type = Logic.GetEntityType(_BuildingID);
+        if Type == Entities.PB_Tavern1 or Type == Entities.PB_Tavern2 then
+            Value = Value * 1.5;
+        end
+    end
+    return Value;
 end
 
 -- Passive Ability: Tax income bonus

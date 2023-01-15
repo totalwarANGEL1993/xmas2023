@@ -653,7 +653,12 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
 
         local EffectText = "";
         if not IsForbidden then
-            local Effects = Stronghold.Economy.Config.Income.Buildings[Type];
+            -- Text amendments
+            if Logic.GetUpgradeCategoryByBuildingType(Type) == UpgradeCategories.Tavern then
+                Text = Text .. " Ihr erhaltet Beliebtheit und Ehre für jeden Gast.";
+            end
+
+            local Effects = Stronghold.Economy.Config.Income.Static[Type];
             if Effects then
                 if Effects.Reputation > 0 then
                     EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";

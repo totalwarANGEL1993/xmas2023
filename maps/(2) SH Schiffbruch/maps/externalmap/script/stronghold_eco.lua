@@ -11,14 +11,23 @@
 --- - <number> GameCallback_Calculate_ReputationIncrease(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the reputation income.
 ---
---- - <number> GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, _Type, _TypeAmount, _CurrentAmount)
----   Allows to overwrite the reputation income.
+--- - <number> GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, _BuildingID, _WorkerID, _CurrentAmount)
+---   Allows to overwrite the reputation income from settlers.
+---
+--- - <number> GameCallback_Calculate_StaticReputationIncrease(_PlayerID, _Type, _CurrentAmount)
+---   Allows to overwrite the reputation income from buildings.
 ---   
 --- - <number> GameCallback_Calculate_ReputationDecrease(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the reputation malus.
 ---   
 --- - <number> GameCallback_Calculate_HonorIncrease(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the honor income.
+---
+--- - <number> GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, _BuildingID, _WorkerID, _CurrentAmount)
+---   Allows to overwrite the honor income from settlers.
+---
+--- - <number> GameCallback_Calculate_StaticHonorIncrease(_PlayerID, _Type, _CurrentAmount)
+---   Allows to overwrite the honor income from buildings.
 ---   
 --- - <number> GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the total money income.
@@ -45,21 +54,18 @@ Stronghold.Economy = {
                 [4] = {Honor = 0, Reputation = -8,},
                 [5] = {Honor = 0, Reputation = -16,},
             },
-            Settlers = {
-                Honor = {
-                    BetterFarmBonus = 0.12,
-                    BetterHouseBonus = 0,
-                    NoFarmPenalty = 0,
-                    NoHousePenalty = 0,
-                },
-                Reputation = {
-                    BetterFarmBonus = 0,
-                    BetterHouseBonus = 0.25,
-                    NoFarmPenalty = 0.25,
-                    NoHousePenalty = 0.25,
-                },
+
+            Dynamic = {
+                [Entities.PB_Farm2]      = {Honor = 0.12, Reputation = 0,},
+                [Entities.PB_Farm3]      = {Honor = 0.24, Reputation = 0,},
+                ---
+                [Entities.PB_Residence2] = {Honor = 0, Reputation = 0.12,},
+                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.24,},
+                ---
+                [Entities.PB_Tavern1]    = {Honor = 0.05, Reputation = 0.25,},
+                [Entities.PB_Tavern2]    = {Honor = 0.10, Reputation = 0.50,},
             },
-            Buildings = {
+            Static = {
                 [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
                 [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
                 [Entities.PB_Beautification09] = {Honor = 1, Reputation = 1,},
@@ -76,15 +82,12 @@ Stronghold.Economy = {
                 [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
                 [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
                 ---
-                [Entities.PB_Headquarters2] = {Honor = 4, Reputation = 0,},
-                [Entities.PB_Headquarters3] = {Honor = 8, Reputation = 0,},
+                [Entities.PB_Headquarters2]    = {Honor = 5, Reputation = 0,},
+                [Entities.PB_Headquarters3]    = {Honor = 10, Reputation = 0,},
                 ---
-                [Entities.PB_Tavern1] = {Honor = 0, Reputation = 3,},
-                [Entities.PB_Tavern2] = {Honor = 0, Reputation = 6,},
-                ---
-                [Entities.PB_Monastery1] = {Honor = 0, Reputation = 5,},
-                [Entities.PB_Monastery2] = {Honor = 0, Reputation = 10,},
-                [Entities.PB_Monastery3] = {Honor = 0, Reputation = 15,},
+                [Entities.PB_Monastery1]       = {Honor = 0, Reputation = 5,},
+                [Entities.PB_Monastery2]       = {Honor = 0, Reputation = 10,},
+                [Entities.PB_Monastery3]       = {Honor = 0, Reputation = 15,},
             },
         }
     }
@@ -116,19 +119,31 @@ function GameCallback_Calculate_ReputationMax(_PlayerID, _Amount)
     return _Amount
 end
 
-function GameCallback_Calculate_ReputationIncrease(_PlayerID, _Amount)
-    return _Amount
-end
-
-function GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, _Type, _Amount)
-    return _Amount
-end
-
 function GameCallback_Calculate_ReputationDecrease(_PlayerID, _Amount)
     return _Amount
 end
 
+function GameCallback_Calculate_ReputationIncrease(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_StaticReputationIncrease(_PlayerID, _Type, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, _BuildingID, _WorkerID, _Amount)
+    return _Amount
+end
+
 function GameCallback_Calculate_HonorIncrease(_PlayerID, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_StaticHonorIncrease(_PlayerID, _Type, _Amount)
+    return _Amount
+end
+
+function GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, _BuildingID, _WorkerID, _Amount)
     return _Amount
 end
 
@@ -208,21 +223,28 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
             for k, v in pairs(WorkerList) do
                 local FarmID = Logic.GetSettlersFarm(v);
                 if FarmID ~= 0 then
-                    local UpgradeCategory = Logic.GetUpgradeCategoryByBuildingType(FarmID);
-                    if UpgradeCategory ~= UpgradeCategories.Tavern then
-                        local Level = Logic.GetUpgradeLevelForBuilding(FarmID);
-                        Income = Income + (Level * self.Config.Income.Settlers.Reputation.BetterFarmBonus);
+                    local Bonus = 0;
+                    local Type = Logic.GetEntityType(FarmID);
+                    if self.Config.Income.Dynamic[Type] then
+                        Bonus = self.Config.Income.Dynamic[Type].Reputation;
+                        Bonus = GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, FarmID, v, Bonus);
+                        Income = Income + Bonus;
                     end
                 end
                 local ResidenceID = Logic.GetSettlersResidence(v);
                 if ResidenceID ~= 0 then
-                    local Level = Logic.GetUpgradeLevelForBuilding(ResidenceID);
-                    Income = Income + (Level * self.Config.Income.Settlers.Reputation.BetterHouseBonus);
+                    local Bonus = 0;
+                    local Type = Logic.GetEntityType(FarmID);
+                    if self.Config.Income.Dynamic[Type] then
+                        Bonus = self.Config.Income.Dynamic[Type].Reputation;
+                        Bonus = GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, ResidenceID, v, Bonus);
+                        Income = Income + Bonus;
+                    end
                 end
             end
 
             -- Building bonuses
-            for k, v in pairs(self.Config.Income.Buildings) do
+            for k, v in pairs(self.Config.Income.Static) do
                 local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
                 for i= table.getn(Buildings), 1, -1 do
                     if Logic.GetBuildingWorkPlaceLimit(Buildings[i]) > 0 then
@@ -232,7 +254,7 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
                     end
                 end
                 Income = Income + (table.getn(Buildings) * v.Reputation);
-                Income = GameCallback_Calculate_BuildingReputationIncrease(_PlayerID, k, Income);
+                Income = GameCallback_Calculate_StaticReputationIncrease(_PlayerID, k, Income);
             end
 
             -- External calculations
@@ -264,11 +286,11 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
             for k, v in pairs(WorkerList) do
                 local FarmID = Logic.GetSettlersFarm(v);
                 if FarmID == 0 then
-                    Decrease = Decrease + self.Config.Income.Settlers.Reputation.NoFarmPenalty;
+                    Decrease = Decrease + 0.25;
                 end
                 local ResidenceID = Logic.GetSettlersResidence(v);
                 if ResidenceID == 0 then
-                    Decrease = Decrease + self.Config.Income.Settlers.Reputation.NoHousePenalty;
+                    Decrease = Decrease + 0.25;
                 end
             end
 
@@ -312,21 +334,28 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
                 for k, v in pairs(WorkerList) do
                     local FarmID = Logic.GetSettlersFarm(v);
                     if FarmID ~= 0 then
-                        local UpgradeCategory = Logic.GetUpgradeCategoryByBuildingType(FarmID);
-                        if UpgradeCategory ~= UpgradeCategories.Tavern then
-                            local Level = Logic.GetUpgradeLevelForBuilding(FarmID);
-                            Income = Income + (Level * self.Config.Income.Settlers.Honor.BetterFarmBonus);
+                        local Bonus = 0;
+                        local Type = Logic.GetEntityType(FarmID);
+                        if self.Config.Income.Dynamic[Type] then
+                            Bonus = self.Config.Income.Dynamic[Type].Honor;
+                            Bonus = GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, FarmID, v, Bonus);
+                            Income = Income + Bonus;
                         end
                     end
                     local ResidenceID = Logic.GetSettlersResidence(v);
                     if ResidenceID ~= 0 then
-                        local Level = Logic.GetUpgradeLevelForBuilding(ResidenceID);
-                        Income = Income + (Level * self.Config.Income.Settlers.Honor.BetterHouseBonus);
+                        local Bonus = 0;
+                        local Type = Logic.GetEntityType(FarmID);
+                        if self.Config.Income.Dynamic[Type] then
+                            Bonus = self.Config.Income.Dynamic[Type].Honor;
+                            Bonus = GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, ResidenceID, v, Bonus);
+                            Income = Income + Bonus;
+                        end
                     end
                 end
 
                 -- Buildings bonuses
-                for k, v in pairs(self.Config.Income.Buildings) do
+                for k, v in pairs(self.Config.Income.Static) do
                     local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
                     for i= table.getn(Buildings), 1, -1 do
                         local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
@@ -336,6 +365,7 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
                             end
                         end
                     end
+                    Income = GameCallback_Calculate_StaticHonorIncrease(_PlayerID, k, Income);
                     Income = Income + (table.getn(Buildings) * v.Honor);
                 end
 

@@ -1591,9 +1591,12 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
             if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Residence then
                 Text = Text .. " Die bessere Unterbringung steigert Eure Beliebtheit.";
             end
+            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Tavern then
+                Text = Text .. " Ihr erhaltet Beliebtheit und Ehre für jeden Gast.";
+            end
 
             -- Effect text
-            local Effects = Stronghold.Economy.Config.Income.Buildings[_Type +1];
+            local Effects = Stronghold.Economy.Config.Income.Static[_Type +1];
             if Effects then
                 if Effects.Reputation > 0 then
                     EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
