@@ -1566,7 +1566,7 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         local IsForbidden = false;
 
         -- Get default text
-        local ForbiddenText = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        local ForbiddenText = GetSeparatedTooltipText("MenuGeneric/BuildingNotAvailable");
         local NormalText = GetSeparatedTooltipText(_KeyNormal);
         local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
         local DefaultText = NormalText;
