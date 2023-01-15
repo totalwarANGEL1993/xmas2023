@@ -4,17 +4,17 @@
 
 Stronghold = Stronghold or {};
 
-Stronghold.AI = {
+Stronghold.AiCamp = {
     Data = {},
     Config = {},
 }
 
-function Stronghold.AI:Install()
+function Stronghold.AiCamp:Install()
     for i= 1, table.getn(Score.Player) do
         self.Data[i] = {};
     end
 end
 
-function Stronghold.AI:OnSaveGameLoaded()
+function Stronghold.AiCamp:OnSaveGameLoaded()
 end
 

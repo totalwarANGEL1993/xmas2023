@@ -460,14 +460,15 @@ function Stronghold.Economy:HonorMenu()
     end
 
     local ScreenSize = {GUI.GetScreenSize()}
+    local WOffset = math.max(145 * (1024/ScreenSize[1]), 135);
     local YOffset = (11 * (ScreenSize[2]/1080));
 	XGUIEng.ShowWidget("GCWindow", 1);
 	XGUIEng.ShowAllSubWidgets("GCWindow", 0);
 	XGUIEng.ShowWidget("GCWindowNew", 1);
 	XGUIEng.ShowAllSubWidgets("GCWindowNew", 0);
     XGUIEng.ShowWidget("GCWindowWelcome", 1);
-	XGUIEng.SetWidgetPositionAndSize("GCWindow", ScreenSize[1], YOffset, 145, 45);
-	XGUIEng.SetWidgetPositionAndSize("GCWindowWelcome", 0, 0, 145, 0);
+	XGUIEng.SetWidgetPositionAndSize("GCWindow", ScreenSize[1], YOffset, WOffset, 45);
+	XGUIEng.SetWidgetPositionAndSize("GCWindowWelcome", 0, 0, WOffset, 0);
 	XGUIEng.SetText("GCWindowWelcome",Rank.. " @cr " ..Honor.."/" ..MaxHonor);
 end
 

@@ -72,64 +72,139 @@ Stronghold.Hero = {
 
         --- 
 
-        HeroSkills = {
+        HeroCV = {
             [Entities.PU_Hero1c]             = {
-                Description = "Passive Fähigkeit: @cr Der Unterhalt Euer Streitkräfte wird von der Krone subventioniert, wodurch der Sold aller Einheiten um 10% sinkt."..
+                Description = "DARIO @cr @cr "..
+                              "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Oft stellen "..
+                              "sich die Menschen in seinem Umfeld nur eine Frage: Hat er oder doch sein Falke "..
+                              "den größeren Vogel?" ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Als König kann Dario Subventionen für den Unterhalt "..
+                              "seiner Streitkräfte beschließen und so den Sold aller Einheiten um 10% senken."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
             },
             [Entities.PU_Hero2]              = {
-                Description = "Passive Fähigkeit: @cr Jedes mal wenn eine Mine Rohstoffe abbaut, wird ein zusätzlicher veredelbarer Rohstoff erzeugt."..
+                Description = "PILGRIM @cr @cr "..
+                              "Pilgrim entstammt einer langen Linie von Bergmännern. Ein Glückliches Schicksal " ..
+                              "verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets zugetan. Es fällt ihm oft "..
+                              "schwer, seine Fahne vom Geruch des Sprengstoffs zu unterscheiden." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Jedes mal wenn in einer Mine Rohstoffe abbaut werden, wird "..
+                              "ein zusätzlicher veredelbarer Rohstoff erzeugt."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
             },
             [Entities.PU_Hero3]              = {
-                Description = "Passive Fähigkeit: @cr Wissen ist Macht! Jedes Mal wenn Ihr eine Technologie erforscht, erhaltet Ihr 5 Ehre."..
+                Description = "SALIM @cr @cr "..
+                              "Ein Schriftgelehrter aus dem nahen Osten. Manche sagen ihm nach, er sei verrückt " ..
+                              "geworden und versuche in seinem Labor ein schwarzes Loch zu erschaffen und so "..
+                              "die Vergangenheit zu verändern." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Wissen ist Macht! Wenn eine Technologie erforscht wird, "..
+                              "erhält Salim 5 Ehre."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann Fallen verstecken, die explodieren, wenn Feinde in der Nähe sind.",
+                              "Aktive Fähigkeit: @cr Kann eine Falle verstecken, die explodiert, sobald der Feind "..
+                              "unvorsichtig an sie heran tritt.",
             },
             [Entities.PU_Hero4]              = {
-                Description = "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, dadurch steigen allerdings ihre Kosten um 30%."..
+                Description = "EREC @cr @cr "..
+                              "Er ist ein echter Ritter. Von Kopf bis Fuß gehüllt in glänzender Rüstung zieht er "..
+                              "aus, seinen Ruhm zu mehren und Jungfrauen in Nöten beizustehen. Seine Anwesenheit " ..
+                              "inspiriert die Truppen zu Höchsleistungen." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, "..
+                              "dadurch steigen allerdings ihre Kosten um 30%."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
             },
             [Entities.PU_Hero5]              = {
-                Description = "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die Steuereinnahmen werden um 30% erhöht."..
+                Description = "ARI @cr @cr "..
+                              "Als Kind wurde Ari von Gesetzlosen adoptiert und wuchs zu einer atemberaubenden " ..
+                              "Lady heran. Aber dies ist mit Nichten ihre einzige Qualität, was sie jeden spüren " ..
+                              "lässt, der sich erdreistet, ihre Augen eine Etage tiefer zu suchen." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die "..
+                              "Steuereinnahmen werden um 50% erhöht."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr Gesetzlose sind es.",
+                              "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr "..
+                              "Gesetzlose sind es.",
             },
             [Entities.PU_Hero6]              = {
-                Description = "Passive Fähigkeit: @cr Für jeden Priester auf der Burg wird zusätzlicher Glauben produziert."..
+                Description = "HELIAS @cr @cr "..
+                              "Einst vorgesehen für die Thronfolge des Alten Reiches war der Ruf Gottes stärker. " ..
+                              "Vor grauen Jahren trat Helias in den geistlichen Stand und überließ seinem jüngerem " ..
+                              "Bruder den Thron des Alten Reiches." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Helias produziert für jeden Priester auf der Burg zusätzlichen "..
+                              "Glauben."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann die Rüstung von verbündeten Einheiten verbessern.",
+                              "Aktive Fähigkeit: @cr Helias kann die Rüstung von verbündeten Einheiten verbessern.",
             },
             [Entities.CU_Mary_de_Mortfichet] = {
-                Description = "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein und verlangen keinen Sold."..
+                Description = "MARY @cr @cr "..
+                              "Die Countess de Mortfichet ist verrufen als ruchloses und ehrloses Miststück. " ..
+                              "Zeigt ihr Gegenüber eine Schwäche, so wird sie nicht zögern, sie auszunutzen. Ihr " ..
+                              "Motto: Ein gut platzierter Dolch erreicht mehr als 1000 Schwerter." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein "..
+                              "und verlangen keinen Sold."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
             },
             [Entities.CU_BlackKnight]        = {
-                Description = "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative Effekte auf die Beliebtheit werden um 40% verringert."..
+                Description = "KERBEROS @cr @cr "..
+                              "Als sein Vater den Thron aufgab um Pfaffe zu werden, brach für Kerberos eine Welt " ..
+                              "zusammen. Seinem Erbe beraubt, verfiel der der Finsternis. Als Scherge eines bösen " ..
+                              " Königs wartet er auf seine Chance." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative "..
+                              "Effekte auf die Beliebtheit werden um 30% verringert."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
             },
             [Entities.CU_Barbarian_Hero]     = {
-                Description = "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Die Effektivität von Tavernen wird um 50% verstärkt."..
+                Description = "VARG @cr @cr "..
+                              "Als er als zwölfjähriger einen Eisbären im Zweikampf besiegte, würde Varg zum " ..
+                              "Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
+                              "er die Macht, mächtige Bestien zu beschwören." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Die Effektivität "..
+                              "von Tavernen wird um 50% verstärkt."..
                               " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre Stärke richtet sich nach dem Rang.",
+                              "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre "..
+                              "Stärke richtet sich nach dem Rang.",
             },
             [Entities.PU_Hero10]             = {
-                Description = "Passive Fähigkeit: @cr Durch effizientere Trainingsmethoden sinken die Kosten für den Unterhalt aller Scharfschützen um 50%."..
+                Description = "DRAKE @cr @cr "..
+                              "Wenn er nicht gerade auf Haselnüsse und Tannenzapfen schießt, jagt Drake als " ..
+                              "\"Der Schakal\" alle die behaupten, er wolle nur etwas kompensieren. Seine Mutter "..
+                              " meint noch heute, er solle das Gewehr zuhause lassen." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Durch effizientere Trainingsmethoden sinken die Kosten "..
+                              "für den Unterhalt aller Scharfschützen um 50%."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
             },
             [Entities.PU_Hero11]             = {
-                Description = "Passive Fähigkeit: @cr Jeder Arbeiter gibt alles für die Einheitspartei! Die maximale Beliebtheit wird auf 300 erhöht."..
+                Description = "YUKI @cr @cr "..
+                              "Schon als kleines Mädchen beschäftigte sich Yuki mit Pyrotechnik. Zusammn mit den " ..
+                              "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
+                              "erlangte und nun eine Burg ihr eigen nennt." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Jeder Arbeiter ist Motiviert, alles für die Einheitspartei "..
+                              "zu geben. Yuki erhöht die maximale Beliebtheit auf 300."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
             },
             [Entities.CU_Evil_Queen] = {
-                Description = "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen Wandel, der Euer Bevölkerungslimit um 15% anhebt."..
+                Description = "KALA @cr @cr "..
+                              "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom Nebelvolk wird " ..
+                              "Kala  wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
+                              "ihrer Untertanen selbst zur Welt gebracht." ..
+                              " @cr @cr " ..
+                              "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen "..
+                              "Wandel, der Euer Bevölkerungslimit um 25% anhebt."..
                               " @cr @cr "..
                               "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
             },
@@ -496,7 +571,7 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
     XGUIEng.ShowWidget("BuyHeroWindow", 1);
     XGUIEng.SetText("BuyHeroWindowHeadline", "Wählt Euren Laird!");
     XGUIEng.SetText("BuyHeroWindowInfoLine", "");
-    XGUIEng.SetWidgetPositionAndSize("BuyHeroWindowInfoLine", 350, 60, 460, 50);
+    XGUIEng.SetWidgetPositionAndSize("BuyHeroWindowInfoLine", 340, 60, 480, 50);
     XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
 
     local PositionX = 20;
@@ -548,7 +623,7 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
             local WidgetName = self.Config.TypeToBuyHeroButton[Type];
             if XGUIEng.IsWidgetShown(WidgetName) == 1 then
                 if (MouseX >= ButtonStartX and MouseX <= ButtonEndX) and (MouseY >= ButtonStartY and MouseY <= ButtonEndY) then
-                    Text = Stronghold.Hero.Config.HeroSkills[Type].Description;
+                    Text = Stronghold.Hero.Config.HeroCV[Type].Description;
                 end
             end
 
@@ -999,7 +1074,7 @@ end
 function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        Value = Value * 1.15;
+        Value = Value * 1.25;
     end
     return Value;
 end
@@ -1035,7 +1110,7 @@ end
 function Stronghold.Hero:ApplyReputationDecreasePassiveAbility(_PlayerID, _Decrease)
     local Decrease = _Decrease;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
-        Decrease = Decrease * 0.6;
+        Decrease = Decrease * 0.7;
     end
     return Decrease;
 end
@@ -1075,7 +1150,7 @@ end
 function Stronghold.Hero:ApplyIncomeBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
-        Income = Income * 1.3;
+        Income = Income * 1.5;
     end
     return Income;
 end

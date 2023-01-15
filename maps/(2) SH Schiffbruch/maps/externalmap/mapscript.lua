@@ -27,7 +27,9 @@ function OnMapStart()
     Script.Load(Path.. "stronghold_unit.lua");
     Script.Load(Path.. "stronghold_hero.lua");
     Script.Load(Path.. "stronghold_province.lua");
-    Script.Load(Path.. "stronghold_ai.lua");
+    Script.Load(Path.. "stronghold_ai_army.lua");
+    Script.Load(Path.. "stronghold_ai_camp.lua");
+    Script.Load(Path.. "stronghold_ai_player.lua");
 
     ---
 

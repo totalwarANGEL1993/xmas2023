@@ -251,7 +251,9 @@ function Stronghold:Init()
     self.Hero:Install();
     self.Unit:Install();
     self.Province:Install();
-    self.AI:Install();
+    self.AiArmy:Install();
+    self.AiCamp:Install();
+    self.AiPlayer:Install();
 
     self:StartTurnDelayTrigger();
     self:StartPlayerPaydayUpdater();
@@ -290,7 +292,9 @@ function Stronghold:OnSaveGameLoaded()
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
     self.Province:OnSaveGameLoaded();
-    self.AI:OnSaveGameLoaded();
+    self.AiArmy:OnSaveGameLoaded();
+    self.AiCamp:OnSaveGameLoaded();
+    self.AiPlayer:OnSaveGameLoaded();
 
     self:OverrideAttraction();
     return true;

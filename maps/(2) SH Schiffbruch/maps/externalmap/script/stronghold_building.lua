@@ -14,34 +14,34 @@ Stronghold.Building = {
 
         Headquarters = {
             Health = {3500, 4500, 5500},
-            Armor  = {8, 10, 12}
+            Armor  = {10, 12, 14}
         },
 
         Monastery = {
             [BlessCategories.Construction] = {
                 Text = "Eure Priester leuten die Glocke zum Gebet.",
-                Reputation = 6,
+                Reputation = 8,
                 Honor = 0,
             },
             [BlessCategories.Research] = {
                 Text = "Eure Priester vergeben die Sünden Eurer Arbeiter.",
                 Reputation = 0,
-                Honor = 6,
+                Honor = 8,
             },
             [BlessCategories.Weapons] = {
                 Text = "Eure Priester predigen Bibeltexte zu ihrer Gemeinde.",
-                Reputation = 12,
+                Reputation = 16,
                 Honor = 0,
             },
             [BlessCategories.Financial] = {
                 Text = "Eure Priester rufen die Siedler auf zur Kollekte.",
                 Reputation = 0,
-                Honor = 12,
+                Honor = 16,
             },
             [BlessCategories.Canonisation] = {
                 Text = "Eure Priester sprechen Eure Taten heilig.",
-                Reputation = 9,
-                Honor = 9,
+                Reputation = 12,
+                Honor = 12,
             },
         },
 

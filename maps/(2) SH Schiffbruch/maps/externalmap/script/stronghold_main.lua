@@ -251,7 +251,9 @@ function Stronghold:Init()
     self.Hero:Install();
     self.Unit:Install();
     self.Province:Install();
-    self.AI:Install();
+    self.AiArmy:Install();
+    self.AiCamp:Install();
+    self.AiPlayer:Install();
 
     self:StartTurnDelayTrigger();
     self:StartPlayerPaydayUpdater();
@@ -290,7 +292,9 @@ function Stronghold:OnSaveGameLoaded()
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
     self.Province:OnSaveGameLoaded();
-    self.AI:OnSaveGameLoaded();
+    self.AiArmy:OnSaveGameLoaded();
+    self.AiCamp:OnSaveGameLoaded();
+    self.AiPlayer:OnSaveGameLoaded();
 
     self:OverrideAttraction();
     return true;
@@ -773,19 +777,10 @@ end
 -- Payday
 
 -- Payday updater
--- The real payday is deactivated. If the payday callback is present the payday
--- is implemented using it. If not we use the good old fashioned way.
+-- The real payday is deactivated. We simultate the payday by using a job the
+-- old fashioned way.
 function Stronghold:StartPlayerPaydayUpdater()
-    -- -- On community server
-    -- if CNetwork then
-    --     GameCallback_PaydayPayed = function(_player, _amount)
-    --         Stronghold.OnPlayerPayday(_player);
-    --         return 0;
-    --     end
-    --     return;
-    -- end
 
-    -- -- In singleplayer
     function Stronghold_Trigger_OnPayday()
         Stronghold.Shared.PaydayTriggerFlag = Stronghold.Shared.PaydayTriggerFlag or {};
         Stronghold.Shared.PaydayOverFlag = Stronghold.Shared.PaydayOverFlag or {};
