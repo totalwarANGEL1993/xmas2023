@@ -361,8 +361,6 @@ function Stronghold:AddPlayer(_PlayerID)
         Rank = 1,
     };
 
-    self.Building:HeadquartersConfigureBuilding(_PlayerID);
-
     if CNetwork then
         SendEvent.SetTaxes(_PlayerID, 0);
     end
@@ -1069,16 +1067,12 @@ function Stronghold:OverwriteCommonCallbacks()
 	self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
 	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
 		Stronghold.Orig_GameCallback_OnBuildingConstructionComplete(_EntityID, _PlayerID);
-        Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID);
         Stronghold:OnSelectionMenuChanged(_EntityID);
 	end
 
 	self.Orig_GameCallback_OnBuildingUpgradeComplete = GameCallback_OnBuildingUpgradeComplete;
 	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
 		Stronghold.Orig_GameCallback_OnBuildingUpgradeComplete(_EntityIDOld, _EntityIDNew);
-        if Logic.IsEntityInCategory(_EntityIDNew, EntityCategories.Headquarters) == 1 then
-            Stronghold.Building:HeadquartersConfigureBuilding(Logic.EntityGetPlayer(_EntityIDNew));
-        end
         Stronghold:OnSelectionMenuChanged(_EntityIDNew);
 	end
 

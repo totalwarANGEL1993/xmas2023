@@ -229,8 +229,16 @@ end
 
 function Stronghold.Hero:OnSaveGameLoaded()
     for i= 1, table.getn(Score.Player) do
-        self:HeadquartersConfigureBuilding(i);
         self:ConfigurePlayersLord(i);
+
+        local Bandits = {Logic.GetPlayerEntities(i, Entities.PU_Hero5_Outlaw, 48)};
+        for j=2, Bandits[1] +1 do
+            self:ConfigurePlayersHeroPet(Bandits[j]);
+        end
+        local Wolves = {Logic.GetPlayerEntities(i, Entities.CU_Barbarian_Hero_wolf, 48)};
+        for j=2, Wolves[1] +1 do
+            self:ConfigurePlayersHeroPet(Wolves[j]);
+        end
     end
 end
 
@@ -266,13 +274,13 @@ function Stronghold.Hero:OverrideLeaderFormationAction()
         local EntityID = GUI.GetSelectedEntity();
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return self.Orig_GUIAction_ChangeFormation(_Index);
+            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
         end
         if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
-            return self.Orig_GUIAction_ChangeFormation(_Index);
+            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
         end
         if _Index > 1 then
-            return self.Orig_GUIAction_ChangeFormation(_Index);
+            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
         end
 
         local Rank = Stronghold:GetPlayerRank(PlayerID);
@@ -300,10 +308,10 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
         local EntityID = GUI.GetSelectedEntity();
         local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return self.Orig_GUITooltip_NormalButton(_Key);
+            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
         end
         if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
-            return self.Orig_GUITooltip_NormalButton(_Key);
+            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
         end
 
         local CostText = "";
@@ -327,7 +335,7 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
                        " Ihr könnt keinen höheren Rang erreichen.";
             end
         else
-            return self.Orig_GUITooltip_NormalButton(_Key);
+            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
         end
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
@@ -341,10 +349,10 @@ function Stronghold.Hero:OverrideLeaderFormationUpdate()
         local EntityID = GUI.GetSelectedEntity();
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return self.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
+            return Stronghold.Hero.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
         end
         if not string.find(_Button, "Formation") then
-            return self.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
+            return Stronghold.Hero.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
         end
         local Disabled = 1;
         if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
@@ -714,12 +722,12 @@ function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
             -- (and getting bigger just for show)
             if Type == Entities.CU_Barbarian_Hero_wolf then
                 local CurrentRank = Stronghold:GetPlayerRank(PlayerID);
-                Logic.SetSpeedFactor(_EntityID, 1.1 + ((CurrentRank -1) * 0.035));
-                SVLib.SetEntitySize(_EntityID, 1.1 + ((CurrentRank -1) * 0.035));
-                Health = Health + math.floor((CurrentRank -1) * 50);
-                Healing = Healing + math.floor((CurrentRank -1) * 2);
-                Armor = Armor + math.floor(CurrentRank/2);
-                Damage = Damage + math.floor(CurrentRank * 2);
+                Logic.SetSpeedFactor(_EntityID, 1.1 + ((CurrentRank -1) * 0.04));
+                SVLib.SetEntitySize(_EntityID, 1.1 + ((CurrentRank -1) * 0.04));
+                Health = Health + math.floor((CurrentRank -1) * 65);
+                Healing = Healing + math.floor((CurrentRank -1) * 2.2);
+                Armor = Armor + math.floor(CurrentRank * 0.6);
+                Damage = Damage + math.floor(CurrentRank * 2.2);
             end
 
             CEntity.SetArmor(_EntityID, Armor);

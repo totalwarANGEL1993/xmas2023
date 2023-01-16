@@ -86,9 +86,13 @@ function GameCallback_OnGameStart()
 	end
 
     AddPeriodicSummer(60);
-    SetupNormalWeatherGfxSet();
+    Mission_InitWeatherGfxSets();
     LocalMusic.UseSet = DARKMOORMUSIC;
 
     OnMapStart();
+end
+
+function Mission_InitWeatherGfxSets()
+    SetupNormalWeatherGfxSet();
 end
 

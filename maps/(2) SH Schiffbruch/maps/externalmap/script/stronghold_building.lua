@@ -73,9 +73,6 @@ function Stronghold.Building:Install()
 end
 
 function Stronghold.Building:OnSaveGameLoaded()
-    for i= 1, table.getn(Score.Player) do
-        self:HeadquartersConfigureBuilding(i);
-    end
     self:OverrideManualButtonUpdate();
     self:OverrideSellBuildingAction();
     self:InitalizeBuyUnitKeybindings();
@@ -111,24 +108,6 @@ end
 -- -------------------------------------------------------------------------- --
 -- Headquarters
 
-function Stronghold.Building:HeadquartersConfigureBuilding(_PlayerID)
-    if Stronghold:IsPlayer(_PlayerID) then
-        local ID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
-        if ID > 0 then
-            local Index = 1;
-            if Logic.GetEntityType(ID) == Entities.PB_Headquarters2 then
-                Index = 2;
-            end
-            if Logic.GetEntityType(ID) == Entities.PB_Headquarters3 then
-                Index = 3;
-            end
-            CEntity.SetArmor(ID, self.Config.Headquarters.Armor[Index]);
-            CEntity.SetMaxHealth(ID, self.Config.Headquarters.Health[Index]);
-            Logic.HealEntity(ID, self.Config.Headquarters.Health[Index]);
-        end
-    end
-end
-
 function Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, _Level)
     if Stronghold:IsPlayer(_PlayerID) then
         Stronghold.Players[_PlayerID].TaxHeight = math.min(math.max(_Level +1, 0), 5);
@@ -136,11 +115,11 @@ function Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, _Level)
 end
 
 function Stronghold.Building:OverrideHeadquarterButtons()
-    GUIAction_SetTaxes_Orig_StrongholdBuilding = GUIAction_SetTaxes;
+    self.Orig_GUIAction_SetTaxes = GUIAction_SetTaxes;
     GUIAction_SetTaxes = function(_Level)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold.Building.Data[PlayerID] then
-            return GUIAction_SetTaxes_Orig_StrongholdBuilding(_Level);
+            return Stronghold.Building.Orig_GUIAction_SetTaxes(_Level);
         end
         Stronghold.Sync:Call(
             Stronghold.Building.NetworkCall,
@@ -150,22 +129,22 @@ function Stronghold.Building:OverrideHeadquarterButtons()
         );
     end
 
-    GUIUpdate_TaxesButtons_Orig_StrongholdBuilding = GUIUpdate_TaxesButtons;
+    self.Orig_GUIUpdate_TaxesButtons = GUIUpdate_TaxesButtons;
     GUIUpdate_TaxesButtons = function()
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold.Building.Data[PlayerID] then
-            return GUIUpdate_TaxesButtons_Orig_StrongholdBuilding();
+            return Stronghold.Building.Orig_GUIUpdate_TaxesButtons();
         end
         local TaxLevel = Stronghold.Players[PlayerID].TaxHeight -1;
         XGUIEng.UnHighLightGroup(gvGUI_WidgetID.InGame, "taxesgroup");
 	    XGUIEng.HighLightButton(gvGUI_WidgetID.TaxesButtons[TaxLevel], 1);
     end
 
-    GUIAction_BuySerf_Orig_StrongholdBuilding = GUIAction_BuySerf;
+    self.Orig_GUIAction_BuySerf = GUIAction_BuySerf;
     GUIAction_BuySerf = function()
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return GUIAction_BuySerf_Orig_StrongholdBuilding();
+            return Stronghold.Building.Orig_GUIAction_BuySerf();
         end
         if Stronghold.Players[PlayerID].BuyUnitLock then
             return;
@@ -1469,11 +1448,11 @@ function Stronghold.Building:MonasteryBlessSettlers(_PlayerID, _BlessCategory)
 end
 
 function Stronghold.Building:OverrideMonasteryButtons()
-    GUIAction_BlessSettlers_Orig_StrongholdBuilding = GUIAction_BlessSettlers;
+    self.Orig_GUIAction_BlessSettlers = GUIAction_BlessSettlers;
     GUIAction_BlessSettlers = function(_BlessCategory)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold.Building.Data[PlayerID] then
-            return GUIAction_BlessSettlers_Orig_StrongholdBuilding(_BlessCategory);
+            return Stronghold.Building.Orig_GUIAction_BlessSettlers(_BlessCategory);
         end
 
         if InterfaceTool_IsBuildingDoingSomething(GUI.GetSelectedEntity()) == true then
@@ -1494,9 +1473,9 @@ function Stronghold.Building:OverrideMonasteryButtons()
         end
     end
 
-    GUITooltip_BlessSettlers_Orig_StrongholdBuilding = GUITooltip_BlessSettlers;
+    self.Orig_GUITooltip_BlessSettlers = GUITooltip_BlessSettlers;
 	GUITooltip_BlessSettlers = function(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
-        GUITooltip_BlessSettlers_Orig_StrongholdBuilding(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
+        Stronghold.Building.Orig_GUITooltip_BlessSettlers(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
 
         local PlayerID = GUI.GetPlayerID();
         local Text = "";
@@ -1594,11 +1573,11 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
         function EMS.RD.Rules.Markets:Evaluate(self) end
     end
 
-    self.GUITooltip_UpgradeBuilding = GUITooltip_UpgradeBuilding;
+    self.Orig_GUITooltip_UpgradeBuilding = GUITooltip_UpgradeBuilding;
     GUITooltip_UpgradeBuilding = function(_Type, _KeyDisabled, _KeyNormal, _Technology)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold:IsPlayer(PlayerID) then
-            return self.GUITooltip_UpgradeBuilding(_Type, _KeyDisabled, _KeyNormal, _Technology);
+            return Stronghold.Building.Orig_GUITooltip_UpgradeBuilding(_Type, _KeyDisabled, _KeyNormal, _Technology);
         end
         local IsForbidden = false;
 
@@ -1680,7 +1659,7 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
     GUIUpdate_UpgradeButtons = function(_Button, _Technology)
         local PlayerID = GUI.GetPlayerID();
         if not Stronghold.Building.Data[PlayerID] then
-            return self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
+            return Stronghold.Building.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
         end
         local LimitReached = false;
         local CheckList = Stronghold.Building.Config.TypesToCheckForUpgrade[_Technology] or {};
@@ -1699,7 +1678,7 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
             XGUIEng.DisableButton(_Button, 1);
             return true;
         end
-        self.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
+        Stronghold.Building.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
         return false;
     end
 end

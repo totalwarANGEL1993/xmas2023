@@ -501,7 +501,7 @@ function Stronghold.Unit:OverrideBuySoldierButtonUpdate()
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUIUpdate_BuySoldierButton();
         end
-        if not self.Config.Units[Type] then
+        if not Stronghold.Unit.Config.Units[Type] then
             XGUIEng.ShowWidget("Buy_Soldier_Button", 0);
         end
         if Logic.IsLeader(EntityID) == 0 then

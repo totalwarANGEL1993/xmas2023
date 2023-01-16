@@ -101,9 +101,13 @@ function GameCallback_OnGameStart()
 
     AddPeriodicSummer(360);
     AddPeriodicRain(90);
-    SetupNormalWeatherGfxSet();
+    Mission_InitWeatherGfxSets();
     LocalMusic.UseSet = HIGHLANDMUSIC;
 
     OnMapStart();
+end
+
+function Mission_InitWeatherGfxSets()
+    SetupNormalWeatherGfxSet();
 end
 
