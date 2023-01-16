@@ -16,7 +16,8 @@ Script.Load(gvBasePath.. "script/lib/entitytracker.lua");
 Script.Load(gvBasePath.. "script/stronghold/main.lua");
 
 Script.Load(gvBasePath.. "script/stronghold/mod/utils.lua");
-Script.Load(gvBasePath.. "script/stronghold/mod/eco.lua");
+Script.Load(gvBasePath.. "script/stronghold/mod/economy.lua");
+Script.Load(gvBasePath.. "script/stronghold/mod/construction.lua");
 Script.Load(gvBasePath.. "script/stronghold/mod/building.lua");
 Script.Load(gvBasePath.. "script/stronghold/mod/unit.lua");
 Script.Load(gvBasePath.. "script/stronghold/mod/hero.lua");

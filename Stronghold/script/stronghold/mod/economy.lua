@@ -104,12 +104,19 @@ function Stronghold.Economy:Install()
         };
     end
 
-    self:InitTradeBalancer();
     self:StartTriggers();
 
     self:OverrideFindViewUpdate();
     self:OverrideTaxAndPayStatistics();
     self:OverridePaydayClockTooltip();
+end
+
+function Stronghold.Economy:GetStaticTypeConfiguration(_Type)
+    return Stronghold.Economy.Config.Income.Static[_Type];
+end
+
+function Stronghold.Economy:GetDynamicTypeConfiguration(_Type)
+    return Stronghold.Economy.Config.Income.Dynamic[_Type];
 end
 
 -- -------------------------------------------------------------------------- --
@@ -157,29 +164,6 @@ end
 
 function GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _Amount)
     return _Amount;
-end
-
--- -------------------------------------------------------------------------- --
--- Trade
-
-function Stronghold.Economy:InitTradeBalancer()
-    local EntityID = Event.GetEntityID();
-    local SellTyp = Event.GetSellResource();
-    local PurchaseTyp = Event.GetBuyResource();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
-
-    if Logic.GetCurrentPrice(PlayerID, SellTyp) > 1.25 then
-        Logic.SetCurrentPrice(PlayerID, SellTyp, 1.25);
-    end
-    if Logic.GetCurrentPrice(PlayerID, SellTyp) < 0.75 then
-        Logic.SetCurrentPrice(PlayerID, SellTyp, 0.75);
-    end
-    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) > 1.25 then
-        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 1.25);
-    end
-    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.75 then
-        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.75);
-    end
 end
 
 -- -------------------------------------------------------------------------- --

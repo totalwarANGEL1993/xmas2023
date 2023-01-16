@@ -254,6 +254,7 @@ function Stronghold:Init()
     ResourceType.Honor = 20;
 
     self.Economy:Install();
+    self.Construction:Install();
     self.Building:Install();
     self.Hero:Install();
     self.Unit:Install();
@@ -276,6 +277,8 @@ function Stronghold:Init()
     self:OverrideTooltipUpgradeSettlersMain();
     self:OverwriteCommonCallbacks();
 
+    self:InitTradeBalancer();
+
     return true;
 end
 
@@ -294,6 +297,7 @@ function Stronghold:OnSaveGameLoaded()
     GUI.ClearSelection();
     ResourceType.Honor = 20;
 
+    self.Construction:OnSaveGameLoaded();
     self.Building:OnSaveGameLoaded();
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
@@ -639,6 +643,29 @@ function Stronghold:PlayerDefeatCondition(_PlayerID)
             local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
             Message(PlayerColor.. " " ..PlayerName.. " @color:180,180,180 wurde besiegt!");
         end
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Trade
+
+function Stronghold:InitTradeBalancer()
+    local EntityID = Event.GetEntityID();
+    local SellTyp = Event.GetSellResource();
+    local PurchaseTyp = Event.GetBuyResource();
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+
+    if Logic.GetCurrentPrice(PlayerID, SellTyp) > 1.25 then
+        Logic.SetCurrentPrice(PlayerID, SellTyp, 1.25);
+    end
+    if Logic.GetCurrentPrice(PlayerID, SellTyp) < 0.75 then
+        Logic.SetCurrentPrice(PlayerID, SellTyp, 0.75);
+    end
+    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) > 1.25 then
+        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 1.25);
+    end
+    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.75 then
+        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.75);
     end
 end
 
