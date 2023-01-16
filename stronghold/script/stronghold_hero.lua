@@ -19,194 +19,197 @@ Stronghold.Hero = {
     SyncEvents = {},
     Data = {},
     Config = {
-        LordStats = {
-            Health = 2500,
-            Armor = 6,
-            Damage = 50,
-            Healing = 1,
-        },
-        PetStats = {
-            [Entities.CU_Barbarian_Hero_wolf] = {
-                Owner = Entities.CU_Barbarian_Hero,
-                Health = 400, Armor = 1, Damage = 20, Healing = 10,
+        Rule = {
+            Lord = {
+                {Entities.PU_Hero1c,             true},
+                {Entities.PU_Hero2,              true},
+                {Entities.PU_Hero3,              true},
+                {Entities.PU_Hero4,              true},
+                {Entities.PU_Hero5,              true},
+                {Entities.PU_Hero6,              true},
+                {Entities.CU_BlackKnight,        true},
+                {Entities.CU_Mary_de_Mortfichet, true},
+                {Entities.CU_Barbarian_Hero,     true},
+                {Entities.PU_Hero10,             true},
+                {Entities.PU_Hero11,             true},
+                {Entities.CU_Evil_Queen,         true},
             },
-            [Entities.PU_Hero5_Outlaw] = {
-                Owner = Entities.PU_Hero5,
-                Health = 150, Armor = 3, Damage = 10, Healing = 5
-            },
-        },
-
-        ---
-
-        TypeToBuyHeroButton = {
-            [Entities.PU_Hero1c]             = "BuyHeroWindowBuyHero1",
-            [Entities.PU_Hero2]              = "BuyHeroWindowBuyHero5",
-            [Entities.PU_Hero3]              = "BuyHeroWindowBuyHero4",
-            [Entities.PU_Hero4]              = "BuyHeroWindowBuyHero3",
-            [Entities.PU_Hero5]              = "BuyHeroWindowBuyHero2",
-            [Entities.PU_Hero6]              = "BuyHeroWindowBuyHero6",
-            [Entities.CU_Mary_de_Mortfichet] = "BuyHeroWindowBuyHero7",
-            [Entities.CU_BlackKnight]        = "BuyHeroWindowBuyHero8",
-            [Entities.CU_Barbarian_Hero]     = "BuyHeroWindowBuyHero9",
-            [Entities.PU_Hero10]             = "BuyHeroWindowBuyHero10",
-            [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
-            [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
-        },
-
-        ---
-
-        LordTypes = {
-            {Entities.PU_Hero1c,             true},
-            {Entities.PU_Hero2,              true},
-            {Entities.PU_Hero3,              true},
-            {Entities.PU_Hero4,              true},
-            {Entities.PU_Hero5,              true},
-            {Entities.PU_Hero6,              true},
-            {Entities.CU_BlackKnight,        true},
-            {Entities.CU_Mary_de_Mortfichet, true},
-            {Entities.CU_Barbarian_Hero,     true},
-            {Entities.PU_Hero10,             true},
-            {Entities.PU_Hero11,             true},
-            {Entities.CU_Evil_Queen,         true},
         },
 
         --- 
 
-        HeroCV = {
-            [Entities.PU_Hero1c]             = {
-                Description = "DARIO @cr @cr "..
-                              "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Oft stellen "..
-                              "sich die Menschen in seinem Umfeld nur eine Frage: Hat er oder doch sein Falke "..
-                              "den größeren Vogel?" ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Als König kann Dario Subventionen für den Unterhalt "..
-                              "seiner Streitkräfte beschließen und so den Sold aller Einheiten um 10% senken."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
+        Unit = {
+            Laird = {
+                Health = 2500,
+                Armor = 6,
+                Damage = 50,
+                Healing = 1,
             },
-            [Entities.PU_Hero2]              = {
-                Description = "PILGRIM @cr @cr "..
-                              "Pilgrim entstammt einer langen Linie von Bergmännern. Ein Glückliches Schicksal " ..
-                              "verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets zugetan. Es fällt ihm oft "..
-                              "schwer, seine Fahne vom Geruch des Sprengstoffs zu unterscheiden." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Jedes mal wenn in einer Mine Rohstoffe abbaut werden, wird "..
-                              "ein zusätzlicher veredelbarer Rohstoff erzeugt."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
+            Pet = {
+                [Entities.CU_Barbarian_Hero_wolf] = {
+                    Owner = Entities.CU_Barbarian_Hero,
+                    Health = 400, Armor = 1, Damage = 20, Healing = 10,
+                },
+                [Entities.PU_Hero5_Outlaw] = {
+                    Owner = Entities.PU_Hero5,
+                    Health = 150, Armor = 3, Damage = 10, Healing = 5
+                },
             },
-            [Entities.PU_Hero3]              = {
-                Description = "SALIM @cr @cr "..
-                              "Ein Schriftgelehrter aus dem nahen Osten. Manche sagen ihm nach, er sei verrückt " ..
-                              "geworden und versuche in seinem Labor ein schwarzes Loch zu erschaffen und so "..
-                              "die Vergangenheit zu verändern." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Wissen ist Macht! Wenn eine Technologie erforscht wird, "..
-                              "erhält Salim 5 Ehre."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann eine Falle verstecken, die explodiert, sobald der Feind "..
-                              "unvorsichtig an sie heran tritt.",
+        },
+
+        ---
+
+        UI = {
+            TypeToBuyHeroButton = {
+                [Entities.PU_Hero1c]             = "BuyHeroWindowBuyHero1",
+                [Entities.PU_Hero2]              = "BuyHeroWindowBuyHero5",
+                [Entities.PU_Hero3]              = "BuyHeroWindowBuyHero4",
+                [Entities.PU_Hero4]              = "BuyHeroWindowBuyHero3",
+                [Entities.PU_Hero5]              = "BuyHeroWindowBuyHero2",
+                [Entities.PU_Hero6]              = "BuyHeroWindowBuyHero6",
+                [Entities.CU_Mary_de_Mortfichet] = "BuyHeroWindowBuyHero7",
+                [Entities.CU_BlackKnight]        = "BuyHeroWindowBuyHero8",
+                [Entities.CU_Barbarian_Hero]     = "BuyHeroWindowBuyHero9",
+                [Entities.PU_Hero10]             = "BuyHeroWindowBuyHero10",
+                [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
+                [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
             },
-            [Entities.PU_Hero4]              = {
-                Description = "EREC @cr @cr "..
-                              "Er ist ein echter Ritter. Von Kopf bis Fuß gehüllt in glänzender Rüstung zieht er "..
-                              "aus, seinen Ruhm zu mehren und Jungfrauen in Nöten beizustehen. Seine Anwesenheit " ..
-                              "inspiriert die Truppen zu Höchsleistungen." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, "..
-                              "dadurch steigen allerdings ihre Kosten um 30%."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
-            },
-            [Entities.PU_Hero5]              = {
-                Description = "ARI @cr @cr "..
-                              "Als Kind wurde Ari von Gesetzlosen adoptiert und wuchs zu einer atemberaubenden " ..
-                              "Lady heran. Aber dies ist mit Nichten ihre einzige Qualität, was sie jeden spüren " ..
-                              "lässt, der sich erdreistet, ihre Augen eine Etage tiefer zu suchen." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die "..
-                              "Steuereinnahmen werden um 50% erhöht."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr "..
-                              "Gesetzlose sind es.",
-            },
-            [Entities.PU_Hero6]              = {
-                Description = "HELIAS @cr @cr "..
-                              "Einst vorgesehen für die Thronfolge des Alten Reiches war der Ruf Gottes stärker. " ..
-                              "Vor grauen Jahren trat Helias in den geistlichen Stand und überließ seinem jüngerem " ..
-                              "Bruder den Thron des Alten Reiches." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Helias produziert für jeden Priester auf der Burg zusätzlichen "..
-                              "Glauben."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Helias kann die Rüstung von verbündeten Einheiten verbessern.",
-            },
-            [Entities.CU_Mary_de_Mortfichet] = {
-                Description = "MARY @cr @cr "..
-                              "Die Countess de Mortfichet ist verrufen als ruchloses und ehrloses Miststück. " ..
-                              "Zeigt ihr Gegenüber eine Schwäche, so wird sie nicht zögern, sie auszunutzen. Ihr " ..
-                              "Motto: Ein gut platzierter Dolch erreicht mehr als 1000 Schwerter." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein "..
-                              "und verlangen keinen Sold."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
-            },
-            [Entities.CU_BlackKnight]        = {
-                Description = "KERBEROS @cr @cr "..
-                              "Als sein Vater den Thron aufgab um Pfaffe zu werden, brach für Kerberos eine Welt " ..
-                              "zusammen. Seinem Erbe beraubt, verfiel der der Finsternis. Als Scherge eines bösen " ..
-                              " Königs wartet er auf seine Chance." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative "..
-                              "Effekte auf die Beliebtheit werden um 30% verringert."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
-            },
-            [Entities.CU_Barbarian_Hero]     = {
-                Description = "VARG @cr @cr "..
-                              "Als er als zwölfjähriger einen Eisbären im Zweikampf besiegte, würde Varg zum " ..
-                              "Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
-                              "er die Macht, mächtige Bestien zu beschwören." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Die Effektivität "..
-                              "von Tavernen wird um 50% verstärkt."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre "..
-                              "Stärke richtet sich nach dem Rang.",
-            },
-            [Entities.PU_Hero10]             = {
-                Description = "DRAKE @cr @cr "..
-                              "Wenn er nicht gerade auf Haselnüsse und Tannenzapfen schießt, jagt Drake als " ..
-                              "\"Der Schakal\" alle die behaupten, er wolle nur etwas kompensieren. Seine Mutter "..
-                              " meint noch heute, er solle das Gewehr zuhause lassen." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Durch effizientere Trainingsmethoden sinken die Kosten "..
-                              "für den Unterhalt aller Scharfschützen um 50%."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
-            },
-            [Entities.PU_Hero11]             = {
-                Description = "YUKI @cr @cr "..
-                              "Schon als kleines Mädchen beschäftigte sich Yuki mit Pyrotechnik. Zusammn mit den " ..
-                              "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
-                              "erlangte und nun eine Burg ihr eigen nennt." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Jeder Arbeiter ist Motiviert, alles für die Einheitspartei "..
-                              "zu geben. Yuki erhöht die maximale Beliebtheit auf 300."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
-            },
-            [Entities.CU_Evil_Queen] = {
-                Description = "KALA @cr @cr "..
-                              "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom Nebelvolk wird " ..
-                              "Kala  wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
-                              "ihrer Untertanen selbst zur Welt gebracht." ..
-                              " @cr @cr " ..
-                              "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen "..
-                              "Wandel, der Euer Bevölkerungslimit um 25% anhebt."..
-                              " @cr @cr "..
-                              "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
+            HeroCV = {
+                [Entities.PU_Hero1c]             = {
+                    Description = "DARIO @cr @cr "..
+                                  "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Oft stellen "..
+                                  "sich die Menschen in seinem Umfeld nur eine Frage: Hat er oder doch sein Falke "..
+                                  "den größeren Vogel?" ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Als König kann Dario Subventionen für den Unterhalt "..
+                                  "seiner Streitkräfte beschließen und so den Sold aller Einheiten um 10% senken."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
+                },
+                [Entities.PU_Hero2]              = {
+                    Description = "PILGRIM @cr @cr "..
+                                  "Pilgrim entstammt einer langen Linie von Bergmännern. Ein Glückliches Schicksal " ..
+                                  "verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets zugetan. Es fällt ihm oft "..
+                                  "schwer, seine Fahne vom Geruch des Sprengstoffs zu unterscheiden." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Jedes mal wenn in einer Mine Rohstoffe abbaut werden, wird "..
+                                  "ein zusätzlicher veredelbarer Rohstoff erzeugt."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
+                },
+                [Entities.PU_Hero3]              = {
+                    Description = "SALIM @cr @cr "..
+                                  "Ein Schriftgelehrter aus dem nahen Osten. Manche sagen ihm nach, er sei verrückt " ..
+                                  "geworden und versuche in seinem Labor ein schwarzes Loch zu erschaffen und so "..
+                                  "die Vergangenheit zu verändern." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Wissen ist Macht! Wenn eine Technologie erforscht wird, "..
+                                  "erhält Salim 5 Ehre."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Kann eine Falle verstecken, die explodiert, sobald der Feind "..
+                                  "unvorsichtig an sie heran tritt.",
+                },
+                [Entities.PU_Hero4]              = {
+                    Description = "EREC @cr @cr "..
+                                  "Er ist ein echter Ritter. Von Kopf bis Fuß gehüllt in glänzender Rüstung zieht er "..
+                                  "aus, seinen Ruhm zu mehren und Jungfrauen in Nöten beizustehen. Seine Anwesenheit " ..
+                                  "inspiriert die Truppen zu Höchsleistungen." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, "..
+                                  "dadurch steigen allerdings ihre Kosten um 30%."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
+                },
+                [Entities.PU_Hero5]              = {
+                    Description = "ARI @cr @cr "..
+                                  "Als Kind wurde Ari von Gesetzlosen adoptiert und wuchs zu einer atemberaubenden " ..
+                                  "Lady heran. Aber dies ist mit Nichten ihre einzige Qualität, was sie jeden spüren " ..
+                                  "lässt, der sich erdreistet, ihre Augen eine Etage tiefer zu suchen." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die "..
+                                  "Steuereinnahmen werden um 50% erhöht."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr "..
+                                  "Gesetzlose sind es.",
+                },
+                [Entities.PU_Hero6]              = {
+                    Description = "HELIAS @cr @cr "..
+                                  "Einst vorgesehen für die Thronfolge des Alten Reiches war der Ruf Gottes stärker. " ..
+                                  "Vor grauen Jahren trat Helias in den geistlichen Stand und überließ seinem jüngerem " ..
+                                  "Bruder den Thron des Alten Reiches." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Helias produziert für jeden Priester auf der Burg zusätzlichen "..
+                                  "Glauben."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Helias kann die Rüstung von verbündeten Einheiten verbessern.",
+                },
+                [Entities.CU_Mary_de_Mortfichet] = {
+                    Description = "MARY @cr @cr "..
+                                  "Die Countess de Mortfichet ist verrufen als ruchloses und ehrloses Miststück. " ..
+                                  "Zeigt ihr Gegenüber eine Schwäche, so wird sie nicht zögern, sie auszunutzen. Ihr " ..
+                                  "Motto: Ein gut platzierter Dolch erreicht mehr als 1000 Schwerter." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein "..
+                                  "und verlangen keinen Sold."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
+                },
+                [Entities.CU_BlackKnight]        = {
+                    Description = "KERBEROS @cr @cr "..
+                                  "Als sein Vater den Thron aufgab um Pfaffe zu werden, brach für Kerberos eine Welt " ..
+                                  "zusammen. Seinem Erbe beraubt, verfiel der der Finsternis. Als Scherge eines bösen " ..
+                                  " Königs wartet er auf seine Chance." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative "..
+                                  "Effekte auf die Beliebtheit werden um 30% verringert."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
+                },
+                [Entities.CU_Barbarian_Hero]     = {
+                    Description = "VARG @cr @cr "..
+                                  "Als er als zwölfjähriger einen Eisbären im Zweikampf besiegte, würde Varg zum " ..
+                                  "Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
+                                  "er die Macht, mächtige Bestien zu beschwören." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Die Effektivität "..
+                                  "von Tavernen wird um 50% verstärkt."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre "..
+                                  "Stärke richtet sich nach dem Rang.",
+                },
+                [Entities.PU_Hero10]             = {
+                    Description = "DRAKE @cr @cr "..
+                                  "Wenn er nicht gerade auf Haselnüsse und Tannenzapfen schießt, jagt Drake als " ..
+                                  "\"Der Schakal\" alle die behaupten, er wolle nur etwas kompensieren. Seine Mutter "..
+                                  " meint noch heute, er solle das Gewehr zuhause lassen." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Durch effizientere Trainingsmethoden sinken die Kosten "..
+                                  "für den Unterhalt aller Scharfschützen um 50%."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
+                },
+                [Entities.PU_Hero11]             = {
+                    Description = "YUKI @cr @cr "..
+                                  "Schon als kleines Mädchen beschäftigte sich Yuki mit Pyrotechnik. Zusammn mit den " ..
+                                  "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
+                                  "erlangte und nun eine Burg ihr eigen nennt." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Jeder Arbeiter ist Motiviert, alles für die Einheitspartei "..
+                                  "zu geben. Yuki erhöht die maximale Beliebtheit auf 300."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
+                },
+                [Entities.CU_Evil_Queen] = {
+                    Description = "KALA @cr @cr "..
+                                  "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom Nebelvolk wird " ..
+                                  "Kala  wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
+                                  "ihrer Untertanen selbst zur Welt gebracht." ..
+                                  " @cr @cr " ..
+                                  "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen "..
+                                  "Wandel, der Euer Bevölkerungslimit um 25% anhebt."..
+                                  " @cr @cr "..
+                                  "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
+                },
             },
         },
     }
@@ -318,7 +321,7 @@ function Stronghold.Hero:OverrideLeaderFormationTooltip()
         local Text = "";
         local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
         if _Key == "MenuCommandsGeneric/formation_group" then
-            if Stronghold.Config.Ranks[NextRank] then
+            if Stronghold.Config.Ranks[NextRank] and NextRank <= Stronghold.Config.Rule.MaxRank then
                 local Config = Stronghold.Config.Ranks[NextRank];
                 Text = "@color:180,180,180 " ..Stronghold:GetPlayerRankName(PlayerID, NextRank)..
                        " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
@@ -585,18 +588,26 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
     local PositionX = 20;
     local PositionY = 20;
     XGUIEng.SetWidgetPosition("BuyHeroLine1", 40, 40);
-    for i= 1, table.getn(self.Config.LordTypes) do
-        local Type = self.Config.LordTypes[i][1];
-        if self.Config.LordTypes[i][2] then
-            local WidgetID = self.Config.TypeToBuyHeroButton[Type];
-            local ButtonW, ButtonH = 60, 90;
-            XGUIEng.ShowWidget(WidgetID, 1);
-            if GuiPlayer ~= _PlayerID then
-                XGUIEng.DisableButton(WidgetID, 1);
-            end
-            XGUIEng.SetWidgetPositionAndSize(WidgetID, PositionX, PositionY, ButtonW, ButtonH);
-            PositionX = PositionX + 65;
+
+    local AllowedLairds = {};
+    for i= 1, table.getn(self.Config.Rule.Lord) do
+        if self.Config.Rule.Lord[i][2] then
+            table.insert(AllowedLairds, self.Config.Rule.Lord[i]);
         end
+    end
+
+    for i= 1, table.getn(self.Config.Rule.Lord) do
+        local Type = self.Config.Rule.Lord[i][1];
+        local WidgetID = self.Config.UI.TypeToBuyHeroButton[Type];
+        local ButtonW, ButtonH = 60, 90;
+        XGUIEng.ShowWidget(WidgetID, 1);
+        if not self.Config.Rule.Lord[i][2]
+        or GuiPlayer ~= _PlayerID then
+            XGUIEng.DisableButton(WidgetID, 1);
+        end
+        XGUIEng.SetWidgetPositionAndSize(WidgetID, PositionX, PositionY, ButtonW, ButtonH);
+        PositionX = PositionX + 65;
+
         if math.mod(i, 4) == 0 then
             PositionY = PositionY + 95;
             PositionX = 20;
@@ -621,17 +632,17 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         local ButtonW, ButtonH = 65, 90;
 
         local Text = "";
-        for i= 1, table.getn(self.Config.LordTypes) do
-            local Type = self.Config.LordTypes[i][1];
+        for i= 1, table.getn(self.Config.Rule.Lord) do
+            local Type = self.Config.Rule.Lord[i][1];
             local ButtonStartX = (RowX + (ButtonW * (math.mod(i-1, 4))));
             local ButtonEndX = ButtonStartX + ButtonW;
             local ButtonStartY = RowY;
             local ButtonEndY = RowY + ButtonH;
 
-            local WidgetName = self.Config.TypeToBuyHeroButton[Type];
+            local WidgetName = self.Config.UI.TypeToBuyHeroButton[Type];
             if XGUIEng.IsWidgetShown(WidgetName) == 1 then
                 if (MouseX >= ButtonStartX and MouseX <= ButtonEndX) and (MouseY >= ButtonStartY and MouseY <= ButtonEndY) then
-                    Text = Stronghold.Hero.Config.HeroCV[Type].Description;
+                    Text = Stronghold.Hero.Config.UI.HeroCV[Type].Description;
                 end
             end
 
@@ -697,12 +708,12 @@ function Stronghold.Hero:ConfigurePlayersLord(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local ID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
         if ID > 0 then
-            CEntity.SetArmor(ID, self.Config.LordStats.Armor);
-            CEntity.SetDamage(ID, self.Config.LordStats.Damage);
-            CEntity.SetHealingPoints(ID, self.Config.LordStats.Healing);
-            CEntity.SetMaxHealth(ID, self.Config.LordStats.Health);
+            CEntity.SetArmor(ID, self.Config.Unit.Laird.Armor);
+            CEntity.SetDamage(ID, self.Config.Unit.Laird.Damage);
+            CEntity.SetHealingPoints(ID, self.Config.Unit.Laird.Healing);
+            CEntity.SetMaxHealth(ID, self.Config.Unit.Laird.Health);
             if Logic.GetEntityHealth(ID) > 0 then
-                Logic.HealEntity(ID, self.Config.LordStats.Health);
+                Logic.HealEntity(ID, self.Config.Unit.Laird.Health);
             end
         end
     end
@@ -711,12 +722,12 @@ end
 function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
     local Type = Logic.GetEntityType(_EntityID);
-    if self.Config.PetStats[Type] then
-        if self:HasValidHeroOfType(PlayerID, self.Config.PetStats[Type].Owner) then
-            local Armor = self.Config.PetStats[Type].Armor;
-            local Damage = self.Config.PetStats[Type].Damage;
-            local Healing = self.Config.PetStats[Type].Healing;
-            local Health = self.Config.PetStats[Type].Health;
+    if self.Config.Unit.Pet[Type] then
+        if self:HasValidHeroOfType(PlayerID, self.Config.Unit.Pet[Type].Owner) then
+            local Armor = self.Config.Unit.Pet[Type].Armor;
+            local Damage = self.Config.Unit.Pet[Type].Damage;
+            local Healing = self.Config.Unit.Pet[Type].Healing;
+            local Health = self.Config.Unit.Pet[Type].Health;
 
             -- Vargs wolves getting stronger with higher rank
             -- (and getting bigger just for show)
@@ -809,8 +820,8 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                     local ID = SetPosition(k, Stronghold.Players[_PlayerID].DoorPos);
                     Logic.HurtEntity(ID, Logic.GetEntityHealth(ID));
                     -- Handle lord
-                    for i= 1, table.getn(self.Config.LordTypes) do
-                        if self.Config.LordTypes[i][1] == HeroType then
+                    for i= 1, table.getn(self.Config.Rule.Lord) do
+                        if self.Config.Rule.Lord[i][1] == HeroType then
                             self:ConfigurePlayersLord(_PlayerID);
                             break;
                         end

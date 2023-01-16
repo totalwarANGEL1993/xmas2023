@@ -37,9 +37,6 @@ function OnMapStart()
     SetupHumanPlayer(1);
     SetupHumanPlayer(2);
 
-    Tools.GiveResouces(1, 450, 2500, 2000, 850, 50, 50);
-    Tools.GiveResouces(2, 450, 2500, 2000, 850, 50, 50);
-
     -- Cut off half of the map in Singleplayer
     if XNetwork.Manager_DoesExist() == 0 then
         Message("@color:255,0,0 SINGLEPLAYER MODUS");

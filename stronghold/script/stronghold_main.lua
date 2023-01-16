@@ -39,8 +39,14 @@ Stronghold = {
     },
     Players = {},
     Config = {
-        HonorLimit = 9000,
-        StartingSerfs = 6,
+        Rule = {
+            MaxHonor = 9000,
+            InitialResources = {0, 450, 2000, 1500, 850, 50, 50},
+            InitialRank = 1,
+            MaxRank = 7,
+            StartingSerfs = 6,
+        },
+
         HQCivilAttraction = {
             [1] = 100,
             [2] = 200,
@@ -317,53 +323,64 @@ function Stronghold:AddPlayer(_PlayerID)
     local LordName = "LordP" .._PlayerID;
     local HQName = "HQ" .._PlayerID;
     local DoorPosName = "DoorP" .._PlayerID;
-    local CampName = "CampP" .._PlayerID;
 
     -- Create door pos
     local DoorPos = GetCirclePosition(HQName, 800, 180);
     local ID = Logic.CreateEntity(Entities.XD_ScriptEntity, DoorPos.X, DoorPos.Y, 0, 0);
     Logic.SetEntityName(ID, DoorPosName);
 
+    -- Create player data
+    self.Players[_PlayerID] = {
+        LordScriptName = LordName,
+        HQScriptName = HQName,
+        DoorPos = DoorPos;
+
+        TaxHeight = 3,
+        Rank = 1,
+
+        ReputationLimit = 200,
+        Reputation = 100,
+        Honor = 0,
+        IncomeHonor = 0,
+
+        InvulnerabilityInfoShown = false,
+        VulnerabilityInfoShown = true,
+        AttackMemory = {},
+    };
+
+    if CNetwork then
+        SendEvent.SetTaxes(_PlayerID, 0);
+    end
+    self:InitalizePlayer(_PlayerID);
+end
+
+function Stronghold:InitalizePlayer(_PlayerID)
+    local CampName = "CampP" .._PlayerID;
+
     -- Create camp Pos
-    local CampPos = GetCirclePosition(HQName, 1200, 180);
+    local CampPos = GetCirclePosition(self.Players[_PlayerID].HQScriptName, 1200, 180);
     ID = Logic.CreateEntity(Entities.XD_Camp_Internal, CampPos.X, CampPos.Y, 0, _PlayerID);
     Logic.SetEntityName(ID, CampName);
 
     -- Create serfs
-    local SerfCount = self.Config.StartingSerfs;
+    local SerfCount = self.Config.Rule.StartingSerfs;
     for i= 1, SerfCount do
         local SerfPos = GetCirclePosition(CampName, 250, (360/SerfCount) * i);
         ID = Logic.CreateEntity(Entities.PU_Serf, SerfPos.X, SerfPos.Y, 360 - ((360/SerfCount) * i), _PlayerID);
         LookAt(ID, CampName);
     end
 
-    -- Deactivate normal upkeep
-    -- (Does not work. Payday clock does not start for soldiers)
-    -- Logic.SetPlayerPaysLeaderFlag(_PlayerID, 0);
-
-    -- Create player data
-    self.Players[_PlayerID] = {
-        InvulnerabilityInfoShown = false,
-        VulnerabilityInfoShown = true,
-        AttackMemory = {},
-
-        LordScriptName = LordName,
-        HQScriptName = HQName,
-        DoorPos = DoorPos;
-
-        ReputationLimit = 200,
-        Reputation = 100,
-
-        Honor = 0,
-        IncomeHonor = 0,
-
-        TaxHeight = 3,
-        Rank = 1,
-    };
-
-    if CNetwork then
-        SendEvent.SetTaxes(_PlayerID, 0);
-    end
+    Tools.GiveResouces(
+        _PlayerID,
+        self.Config.Rule.InitialResources[2],
+        self.Config.Rule.InitialResources[3],
+        self.Config.Rule.InitialResources[4],
+        self.Config.Rule.InitialResources[5],
+        self.Config.Rule.InitialResources[6],
+        self.Config.Rule.InitialResources[7]
+    );
+    self:SetPlayerRank(_PlayerID, self.Config.Rule.InitialRank);
+    self:AddPlayerHonor(_PlayerID, self.Config.Rule.InitialResources[1]);
 end
 
 function Stronghold:GetPlayer(_PlayerID)
@@ -913,7 +930,7 @@ end
 function Stronghold:CanPlayerBePromoted(_PlayerID)
     if self:IsPlayer(_PlayerID) then
         local Rank = self:GetPlayerRank(_PlayerID);
-        if Rank == 0 or Rank >= 7 then
+        if Rank == 0 or Rank >= self.Config.Rule.MaxRank then
             return false;
         end
         return self.Config.Ranks[Rank +1].Condition(_PlayerID);
@@ -927,8 +944,8 @@ end
 function Stronghold:AddPlayerHonor(_PlayerID, _Amount)
     if self:IsPlayer(_PlayerID) then
         self.Players[_PlayerID].Honor = self.Players[_PlayerID].Honor + _Amount;
-        if self.Players[_PlayerID].Honor > self.Config.HonorLimit then
-            self.Players[_PlayerID].Honor = self.Config.HonorLimit;
+        if self.Players[_PlayerID].Honor > self.Config.Rule.MaxHonor then
+            self.Players[_PlayerID].Honor = self.Config.Rule.MaxHonor;
         end
         if self.Players[_PlayerID].Honor < 0 then
             self.Players[_PlayerID].Honor = 0;
