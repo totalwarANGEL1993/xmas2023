@@ -275,7 +275,7 @@ function GameCallback_Calculate_UnitPlaces(_PlayerID, _EntityID, _Type, _Usage)
 end
 
 -- -------------------------------------------------------------------------- --
--- Buy Unit
+-- Buy Unit (Logic)
 
 function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
     if Stronghold:IsPlayer(_PlayerID) then
@@ -371,6 +371,9 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;
     end
 end
+
+-- -------------------------------------------------------------------------- --
+-- Buy Unit (UI)
 
 function Stronghold.Unit:OverrideBuySoldierButtonAction()
     self.Orig_GUIAction_BuySoldier = GUIAction_BuySoldier;
@@ -532,13 +535,20 @@ function Stronghold.Unit:OverrideExpelSettlerButtonAction()
     GUIAction_ExpelSettler = function()
         local GuiPlayer = GUI.GetPlayerID();
         local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Unit.Orig_GUIAction_ExpelSettler();
         end
         if GuiPlayer ~= PlayerID then
             return;
         end
-        if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
+
+        -- Stops the player from expeling workers to get new with full energy.
+        if Logic.IsWorker(EntityID) == 1 and Logic.GetSettlersWorkBuilding(EntityID) ~= 0 then
+            return;
+        end
+
+        if XGUIEng.IsModifierPressed(Keys.ModifierControl) == 1 then
             local Selected = {GUI.GetSelectedEntities()};
             for i= 1, table.getn(Selected) do
                 if Logic.IsHero(Selected[i]) == 0 then
@@ -568,7 +578,7 @@ function Stronghold.Unit:OverrideExpelSettlerButtonTooltip()
             local Text = "@color:180,180,180 Einheit entlassen @color:255,255,255 @cr "..
                          "Entlasst die selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
                          "Soldaten entlasst, geht der Hauptmann zuletzt.";
-            if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
+            if XGUIEng.IsModifierPressed(Keys.ModifierControl) == 1 then
                 Text   = "@color:180,180,180 Alle entlassen @color:255,255,255 @cr "..
                          "Entlasst alle selektierten Einheiten aus ihrem Dienst. Alle "..
                          "Einheiten werden sofort entlassen!";

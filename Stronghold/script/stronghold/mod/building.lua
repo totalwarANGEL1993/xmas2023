@@ -1335,8 +1335,7 @@ function Stronghold.Building:MonasteryBlessSettlers(_PlayerID, _BlessCategory)
     local BlessData = self.Config.Monastery[_BlessCategory];
     if BlessData.Reputation > 0 then
         Stronghold:AddPlayerReputation(_PlayerID, BlessData.Reputation);
-        local Amount = Stronghold:GetPlayerReputation(_PlayerID);
-        Stronghold:UpdateMotivationOfWorkers(_PlayerID, Amount);
+        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
     end
     if BlessData.Honor > 0 then
         Stronghold:AddPlayerHonor(_PlayerID, BlessData.Honor);

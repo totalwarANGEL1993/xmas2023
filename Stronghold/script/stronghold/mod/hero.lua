@@ -77,9 +77,9 @@ Stronghold.Hero = {
             HeroCV = {
                 [Entities.PU_Hero1c]             = {
                     Description = "DARIO @cr @cr "..
-                                  "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Oft stellen "..
-                                  "sich die Menschen in seinem Umfeld nur eine Frage: Hat er oder doch sein Falke "..
-                                  "den größeren Vogel?" ..
+                                  "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Früher wurde er "..
+                                  "oft dabei gesehen, wie er rosa Kleidchen trug. Die tauschte er inzwischen gegen ein "..
+                                  "Schwert ein. Dennoch fragen sich viele, ob er einen Vogel hat."..
                                   " @cr @cr " ..
                                   "Passive Fähigkeit: @cr Als König kann Dario Subventionen für den Unterhalt "..
                                   "seiner Streitkräfte beschließen und so den Sold aller Einheiten um 10% senken."..
@@ -92,8 +92,8 @@ Stronghold.Hero = {
                                   "verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets zugetan. Es fällt ihm oft "..
                                   "schwer, seine Fahne vom Geruch des Sprengstoffs zu unterscheiden." ..
                                   " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Jedes mal wenn in einer Mine Rohstoffe abbaut werden, wird "..
-                                  "ein zusätzlicher veredelbarer Rohstoff erzeugt."..
+                                  "Passive Fähigkeit: @cr Jedes mal wenn in einer Mine Rohstoffe abbaut werden, werden "..
+                                  " zusätzliche veredelbare Rohstoffe erzeugt."..
                                   " @cr @cr "..
                                   "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
                 },
@@ -160,8 +160,8 @@ Stronghold.Hero = {
                                   "zusammen. Seinem Erbe beraubt, verfiel der der Finsternis. Als Scherge eines bösen " ..
                                   " Königs wartet er auf seine Chance." ..
                                   " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative "..
-                                  "Effekte auf die Beliebtheit werden um 30% verringert."..
+                                  "Passive Fähigkeit: @cr Alle Negative Effekte auf die Beliebtheit verringern sich "..
+                                  "um 50%. Die maximale Beliebtheit sinkt auf 150%." ..
                                   " @cr @cr "..
                                   "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
                 },
@@ -194,8 +194,8 @@ Stronghold.Hero = {
                                   "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
                                   "erlangte und nun eine Burg ihr eigen nennt." ..
                                   " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Jeder Arbeiter ist Motiviert, alles für die Einheitspartei "..
-                                  "zu geben. Yuki erhöht die maximale Beliebtheit auf 300."..
+                                  "Passive Fähigkeit: @cr Yuki erhöht die maximale Beliebtheit auf 300. Außerdem "..
+                                  "wird die Beliebtheit einmalig um 50 erhöht."..
                                   " @cr @cr "..
                                   "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
                 },
@@ -369,7 +369,7 @@ function Stronghold.Hero:OverrideLeaderFormationUpdate()
 end
 
 -- -------------------------------------------------------------------------- --
--- Selection Menu
+-- Hero Selection
 
 function Stronghold.Hero:OnSelectLeader(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
@@ -698,6 +698,10 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
         local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
         Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Laird gewählt!");
 
+        if _Type == Entities.PU_Hero11 then
+            Stronghold:AddPlayerReputation(_PlayerID, 50);
+            Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+        end
         if _PlayerID == GUI.GetPlayerID() or GUI.GetPlayerID() == 17 then
             Stronghold.Building:OnHeadquarterSelected(GUI.GetSelectedEntity());
         end
@@ -751,7 +755,7 @@ function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
 end
 
 -- Play a funny comment when the hero is selected.
--- (Yes, it is intendet that every player hears them.)
+-- (Yes, it is intended that every player hears them.)
 function Stronghold.Hero:PlayFunnyComment(_PlayerID)
     local FunnyComment = Sounds.VoicesHero1_HERO1_FunnyComment_rnd_01;
     local LordID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
@@ -1112,7 +1116,9 @@ end
 -- Passive Ability: Increase of reputation
 function Stronghold.Hero:ApplyMaxReputationPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero11) then
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
+        Value = 150;
+    elseif self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero11) then
         Value = 300;
     end
     return Value;
@@ -1129,7 +1135,7 @@ end
 function Stronghold.Hero:ApplyReputationDecreasePassiveAbility(_PlayerID, _Decrease)
     local Decrease = _Decrease;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
-        Decrease = Decrease * 0.7;
+        Decrease = Decrease * 0.5;
     end
     return Decrease;
 end

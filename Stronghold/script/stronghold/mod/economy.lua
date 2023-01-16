@@ -111,6 +111,9 @@ function Stronghold.Economy:Install()
     self:OverridePaydayClockTooltip();
 end
 
+function Stronghold.Economy:OnSaveGameLoaded()
+end
+
 function Stronghold.Economy:GetStaticTypeConfiguration(_Type)
     return Stronghold.Economy.Config.Income.Static[_Type];
 end

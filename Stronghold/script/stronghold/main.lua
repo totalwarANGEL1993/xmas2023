@@ -299,6 +299,7 @@ function Stronghold:OnSaveGameLoaded()
 
     self.Construction:OnSaveGameLoaded();
     self.Building:OnSaveGameLoaded();
+    self.Economy:OnSaveGameLoaded();
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
     self.Province:OnSaveGameLoaded();
@@ -684,7 +685,7 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
                 local Buildings = GetAllWorkplaces(_PlayerID);
                 for i= table.getn(Buildings), 1, -1 do
                     local Used, Limit = self:GetBuildingCurrentAndMaxWorkerAmount(Buildings[i]);
-                    if Used == Limit then
+                    if Used == Limit or Logic.IsOvertimeActiveAtBuilding(Buildings[i]) == 1 then
                         table.remove(Buildings, i);
                     end
                 end
@@ -696,7 +697,11 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
                     local Current = Logic.GetCurrentMaxNumWorkersInBuilding(Buildings[Index]);
                     local Position = self.Players[_PlayerID].DoorPos;
                     self:SetBuildingCurrentWorkerAmount(Buildings[Index], math.min(Used +1, Limit));
-                    self:AddDelayedAction(1, Logic.CreateEntity, Type, Position.X, Position.Y, 0, _PlayerID);
+                    self:AddDelayedAction(1, function(_Type, _X, _Y, _PlayerID)
+                        local ID = Logic.CreateEntity(_Type, _X, _Y, 0, _PlayerID);
+                        local Reputation = Stronghold:GetPlayerReputation(_PlayerID);
+                        CEntity.SetMotivation(ID, Reputation / 100);
+                    end, Type, Position.X, Position.Y, _PlayerID);
 
                     self.Players[_PlayerID].LastBuildingWorkerCreatedIndex = Index +1;
                 else
@@ -835,9 +840,10 @@ function Stronghold:StartPlayerPaydayUpdater()
                 Stronghold.Shared.PaydayOverFlag[i] = false;
             end
 
-            if Logic.GetPlayerPaydayTimeLeft(i) > 119800 then
+            local TimeLeft = Logic.GetPlayerPaydayTimeLeft(i);
+            if TimeLeft > 119900 and TimeLeft <= 120000 then
                 Stronghold.Shared.PaydayTriggerFlag[i] = true;
-            elseif Logic.GetPlayerPaydayTimeLeft(i) > 119600 then
+            elseif TimeLeft > 119600 and TimeLeft <= 119900 then
                 Stronghold.Shared.PaydayTriggerFlag[i] = false;
                 Stronghold.Shared.PaydayOverFlag[i] = false;
             end
@@ -882,9 +888,10 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
         end
 
         -- Motivation
-        local Motivation = math.max(OldReputation + Reputation, 30);
-        self:UpdateMotivationOfWorkers(_PlayerID, Motivation);
-        self:ControlReputationAttractionPenalty(_PlayerID);
+        self:AddDelayedAction(1, function()
+            Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+            Stronghold:ControlReputationAttractionPenalty(_PlayerID);
+        end);
 
         -- Honor
         local Honor = Stronghold.Economy.Data[_PlayerID].IncomeHonor;
@@ -1031,11 +1038,13 @@ end
 
 function Stronghold:UpdateMotivationOfWorkers(_PlayerID, _Amount)
     if self:IsPlayer(_PlayerID) then
-        if _Amount > 0 and _Amount < self.Players[_PlayerID].ReputationLimit then
-            local WorkerList = GetAllWorker(_PlayerID);
-            for i= 1, table.getn(WorkerList) do
-                CEntity.SetMotivation(WorkerList[i], _Amount / 100);
-            end
+        _Amount = _Amount or self:GetPlayerReputation(_PlayerID);
+        _Amount = math.min(_Amount, self.Players[_PlayerID].ReputationLimit);
+        _Amount = math.max(_Amount, 30);
+
+        local WorkerList = GetAllWorker(_PlayerID);
+        for i= 1, table.getn(WorkerList) do
+            CEntity.SetMotivation(WorkerList[i], _Amount / 100);
         end
     end
 end
