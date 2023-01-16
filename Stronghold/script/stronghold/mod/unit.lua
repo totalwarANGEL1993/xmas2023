@@ -249,7 +249,7 @@ function Stronghold.Unit:CreateUnitButtonHandlers()
         BuySoldier = 1,
     };
 
-    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+    self.NetworkCall = Syncer.CreateEvent(
         function(_PlayerID, _Action, ...)
             if _Action == Stronghold.Unit.SyncEvents.BuySoldier then
                 Stronghold.Unit:RefillUnit(_PlayerID, arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8]);
@@ -438,7 +438,7 @@ function Stronghold.Unit:OverrideBuySoldierButtonAction()
         end
 
         Stronghold.Players[PlayerID].BuyUnitLock = true;
-        Stronghold.Sync:Call(
+        Syncer.InvokeEvent(
             Stronghold.Unit.NetworkCall,
             PlayerID,
             Stronghold.Unit.SyncEvents.BuySoldier,
@@ -677,9 +677,9 @@ function Stronghold.Unit:OverrideTooltipConstructionButton()
                 end
             end
 
-            local BuildingMax = math.floor(GetLimitOfType(Type) * LimitFactor);
+            local BuildingMax = math.floor(EntityTracker.GetLimitOfType(Type) * LimitFactor);
             if BuildingMax > -1 then
-                local BuildingCount = GetUsageOfType(PlayerID, Type);
+                local BuildingCount = EntityTracker.GetUsageOfType(PlayerID, Type);
                 Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
             else
                 Text = DefaultText[1] .. " @cr " .. DefaultText[2];
@@ -743,11 +743,11 @@ function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Tech
     local Usage = 0;
     local Limit = -1;
     if CheckList then
-        Limit = GetLimitOfType(CheckList[1]);
+        Limit = EntityTracker.GetLimitOfType(CheckList[1]);
     end
     if Limit > -1 then
         for i= 1, table.getn(CheckList) do
-            Usage = Usage + GetUsageOfType(_PlayerID, CheckList[i]);
+            Usage = Usage + EntityTracker.GetUsageOfType(_PlayerID, CheckList[i]);
         end
         local LimitFactor = 1.0;
         if TechnologyName and string.find(TechnologyName, "^B_Beautification") then

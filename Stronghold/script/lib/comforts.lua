@@ -1,6 +1,6 @@
 ---
---- Comforts
---- @diagnostic disable: undefined-field
+---Comforts
+---@diagnostic disable: undefined-field
 ---
 
 function CopyTable(_Source, _Dest)

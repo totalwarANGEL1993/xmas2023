@@ -255,7 +255,7 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
         BuyLord = 3,
     };
 
-    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+    self.NetworkCall = Syncer.CreateEvent(
         function(_PlayerID, _Action, ...)
             if _Action == Stronghold.Hero.SyncEvents.RankUp then
                 Stronghold:PromotePlayer(_PlayerID);
@@ -296,7 +296,7 @@ function Stronghold.Hero:OverrideLeaderFormationAction()
         end
 
         if Stronghold:CanPlayerBePromoted(PlayerID) then
-            Stronghold.Sync:Call(
+            Syncer.InvokeEvent(
                 Stronghold.Hero.NetworkCall,
                 PlayerID,
                 Stronghold.Hero.SyncEvents.RankUp
@@ -664,7 +664,7 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         if GuiPlayer ~= PlayerID then
             return;
         end
-        Stronghold.Sync:Call(
+        Syncer.InvokeEvent(
             Stronghold.Hero.NetworkCall,
             PlayerID,
             Stronghold.Hero.SyncEvents.BuyLord,
@@ -898,7 +898,7 @@ function Stronghold.Hero:OverrideHero5AbilitySummon()
         if GuiPlayer ~= PlayerID then
             return;
         end
-        Stronghold.Sync:Call(
+        Syncer.InvokeEvent(
             Stronghold.Hero.NetworkCall,
             PlayerID,
             Stronghold.Hero.SyncEvents.Hero5Summon,

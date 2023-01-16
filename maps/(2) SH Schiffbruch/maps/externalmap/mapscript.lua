@@ -13,23 +13,25 @@
 function OnMapStart()
     Player_Teams = {[1] = {1}, [2] = {2}};
 
-    local Path = "maps/externalmap/script/";
+    gvBasePath = "maps/user/Stronghold/";
     if false then
-        Path = "E:/Siedler/Projekte/xmas2023/stronghold/script/";
+        gvBasePath = "E:/Siedler/Projekte/xmas2023/Stronghold/";
     end
-    Script.Load(Path.. "comforts.lua");
-    Script.Load(Path.. "stronghold_main.lua");
-    Script.Load(Path.. "stronghold_utils.lua");
-    Script.Load(Path.. "stronghold_sync.lua");
-    Script.Load(Path.. "stronghold_eco.lua");
-    Script.Load(Path.. "stronghold_limitation.lua");
-    Script.Load(Path.. "stronghold_building.lua");
-    Script.Load(Path.. "stronghold_unit.lua");
-    Script.Load(Path.. "stronghold_hero.lua");
-    Script.Load(Path.. "stronghold_province.lua");
-    Script.Load(Path.. "stronghold_ai_army.lua");
-    Script.Load(Path.. "stronghold_ai_camp.lua");
-    Script.Load(Path.. "stronghold_ai_player.lua");
+
+    Script.Load(gvBasePath.. "script/lib/comforts.lua");
+    Script.Load(gvBasePath.. "script/lib/syncer.lua");
+
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_main.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_utils.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_eco.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_limitation.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_building.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_unit.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_hero.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_province.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_ai_army.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_ai_camp.lua");
+    Script.Load(gvBasePath.. "script/stronghold/stronghold_ai_player.lua");
 
     ---
 

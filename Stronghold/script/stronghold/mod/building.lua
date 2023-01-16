@@ -61,6 +61,7 @@ function Stronghold.Building:Install()
         self.Data[i] = {};
     end
 
+    self:InitBuildingLimits();
     self:CreateBuildingButtonHandlers();
     self:OverrideMonasteryButtons()
     self:OverrideHeadquarterButtons();
@@ -87,7 +88,7 @@ function Stronghold.Building:CreateBuildingButtonHandlers()
         BlessSettlers = 5,
     };
 
-    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+    self.NetworkCall = Syncer.CreateEvent(
         function(_PlayerID, _Action, ...)
             if _Action == Stronghold.Building.SyncEvents.ChangeTax then
                 Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, arg[1]);
@@ -103,6 +104,39 @@ function Stronghold.Building:CreateBuildingButtonHandlers()
             end
         end
     );
+end
+
+-- Setup the building limit for some building types.
+-- (The tracker only handles the tracking and not the UI!)
+function Stronghold.Building:InitBuildingLimits()
+    -- Beautifications
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification04, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification06, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification09, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification01, 3);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification02, 3);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification12, 3);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification05, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification07, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification08, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification03, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification10, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification11, 1);
+
+    -- Civil buildings
+    EntityTracker.SetLimitOfType(Entities.PB_Monastery1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Monastery2, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Monastery3, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Market2, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_PowerPlant1, 1);
+
+    -- Military buildings
+    EntityTracker.SetLimitOfType(Entities.PB_Barracks1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Barracks2, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Stable1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Stable2, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Archery1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Archery2, 1);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -121,7 +155,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
         if not Stronghold.Building.Data[PlayerID] then
             return Stronghold.Building.Orig_GUIAction_SetTaxes(_Level);
         end
-        Stronghold.Sync:Call(
+        Syncer.InvokeEvent(
             Stronghold.Building.NetworkCall,
             PlayerID,
             Stronghold.Building.SyncEvents.ChangeTax,
@@ -161,7 +195,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
         end
 
         Stronghold.Players[PlayerID].BuyUnitLock = true;
-        Stronghold.Sync:Call(
+        Syncer.InvokeEvent(
             Stronghold.Building.NetworkCall,
             PlayerID,
             Stronghold.Building.SyncEvents.BuySerf,
@@ -429,7 +463,7 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Stronghold.Sync:Call(
+            Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
@@ -706,7 +740,7 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Stronghold.Sync:Call(
+            Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
@@ -941,7 +975,7 @@ function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Stronghold.Sync:Call(
+            Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, false
             );
@@ -1087,7 +1121,7 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Stronghold.Sync:Call(
+            Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, AutoFillActive
             );
@@ -1270,7 +1304,7 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
         local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Stronghold.Sync:Call(
+            Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 PlayerID, Action, EntityID, UnitType, false
             );
@@ -1461,7 +1495,7 @@ function Stronghold.Building:OverrideMonasteryButtons()
         local CurrentFaith = Logic.GetPlayersGlobalResource(PlayerID, ResourceType.Faith);
         local BlessCosts = Logic.GetBlessCostByBlessCategory(_BlessCategory);
         if BlessCosts <= CurrentFaith then
-            Stronghold.Sync:Call(
+            Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 PlayerID,
                 Stronghold.Building.SyncEvents.BlessSettlers,
@@ -1633,9 +1667,9 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonTooltip()
             end
 
             -- Building limit
-            local BuildingMax = GetLimitOfType(_Type +1);
+            local BuildingMax = EntityTracker.GetLimitOfType(_Type +1);
             if BuildingMax > -1 then
-                local BuildingCount = GetUsageOfType(PlayerID, _Type +1);
+                local BuildingCount = EntityTracker.GetUsageOfType(PlayerID, _Type +1);
                 Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
             else
                 Text = DefaultText[1] .. " @cr " .. DefaultText[2];
@@ -1665,11 +1699,11 @@ function Stronghold.Building:OverrideBuildingUpgradeButtonUpdate()
         local CheckList = Stronghold.Building.Config.TypesToCheckForUpgrade[_Technology] or {};
 
         local Type = Logic.GetEntityType(GUI.GetSelectedEntity());
-        local Limit = GetLimitOfType(Type);
+        local Limit = EntityTracker.GetLimitOfType(Type);
         local Usage = 0;
         if Limit > -1 then
             for i= 1, table.getn(CheckList) do
-                Usage = Usage + GetUsageOfType(PlayerID, CheckList[i]);
+                Usage = Usage + EntityTracker.GetUsageOfType(PlayerID, CheckList[i]);
             end
             LimitReached = Limit <= Usage;
         end

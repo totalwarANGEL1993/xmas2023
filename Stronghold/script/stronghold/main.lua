@@ -34,7 +34,6 @@
 
 Stronghold = {
     Shared = {
-        UnitqueTributeID = 999,
         DelayedAction = {},
     },
     Players = {},
@@ -236,6 +235,9 @@ end
 
 -- Starts the script
 function Stronghold:Init()
+    Syncer.Install(999);
+    EntityTracker.Install();
+
     if not CMod then
         Message("The S5 Community Server is required!");
         return false;
@@ -252,7 +254,6 @@ function Stronghold:Init()
     ResourceType.Honor = 20;
 
     self.Economy:Install();
-    self.Limitation:Install();
     self.Building:Install();
     self.Hero:Install();
     self.Unit:Install();
@@ -294,7 +295,6 @@ function Stronghold:OnSaveGameLoaded()
     ResourceType.Honor = 20;
 
     self.Building:OnSaveGameLoaded();
-    self.Limitation:OnSaveGameLoaded();
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
     self.Province:OnSaveGameLoaded();
@@ -309,10 +309,10 @@ end
 function Stronghold:LoadGUIDelayed(_PlayerID)
     if GUI.GetPlayerID() == _PlayerID then
         XGUIEng.TransferMaterials("Formation01", "Research_Gilds");
-        XGUIEng.SetMaterialTexture("BackGround_Top", 0, "maps/externalmap/graphics/bg_top.png");
-        XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "maps/externalmap/graphics/bg_bottom_left.png");
-        XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "maps/externalmap/graphics/bg_bottom.png");
-        XGUIEng.SetMaterialTexture("TooltipBackground", 1, "maps/externalmap/graphics/bg_tooltip.png");
+        XGUIEng.SetMaterialTexture("BackGround_Top", 0, gvBasePath.. "graphics/bg_top.png");
+        XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, gvBasePath.. "graphics/bg_bottom_left.png");
+        XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, gvBasePath.. "graphics/bg_bottom.png");
+        XGUIEng.SetMaterialTexture("TooltipBackground", 1, gvBasePath.. "graphics/bg_tooltip.png");
         Camera.ZoomSetFactorMax(2.0);
     end
 end

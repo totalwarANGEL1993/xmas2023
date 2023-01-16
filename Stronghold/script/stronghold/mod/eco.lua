@@ -116,47 +116,47 @@ end
 -- Game Callbacks
 
 function GameCallback_Calculate_ReputationMax(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_ReputationDecrease(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_ReputationIncrease(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_StaticReputationIncrease(_PlayerID, _Type, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, _BuildingID, _WorkerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_HonorIncrease(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_StaticHonorIncrease(_PlayerID, _Type, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, _BuildingID, _WorkerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_TotalPaydayUpkeep(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 -- -------------------------------------------------------------------------- --

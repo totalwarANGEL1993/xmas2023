@@ -34,20 +34,15 @@
 function OnMapStart()
     Player_Teams = {[1] = {1, 2}, [2] = {3, 4}};
 
-    local Path = "E:/Siedler/Projekte/xmas2023/stronghold/script/";
-    Script.Load(Path.. "comforts.lua");
-    Script.Load(Path.. "stronghold_main.lua");
-    Script.Load(Path.. "stronghold_utils.lua");
-    Script.Load(Path.. "stronghold_sync.lua");
-    Script.Load(Path.. "stronghold_eco.lua");
-    Script.Load(Path.. "stronghold_limitation.lua");
-    Script.Load(Path.. "stronghold_building.lua");
-    Script.Load(Path.. "stronghold_unit.lua");
-    Script.Load(Path.. "stronghold_hero.lua");
-    Script.Load(Path.. "stronghold_province.lua");
-    Script.Load(Path.. "stronghold_ai_army.lua");
-    Script.Load(Path.. "stronghold_ai_camp.lua");
-    Script.Load(Path.. "stronghold_ai_player.lua");
+    local Path = "E:/Siedler/Projekte/xmas2023/dev/devload.lua";
+    if false then
+        Path = "maps/user/Stronghold/script/stronghold/loader.lua";
+    end
+    Script.Load(Path);
+
+    if not DetectStronghold or DetectStronghold() == false then
+        return;
+    end
 
     ---
 
