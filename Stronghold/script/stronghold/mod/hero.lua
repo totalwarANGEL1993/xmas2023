@@ -134,7 +134,7 @@ Stronghold.Hero = {
                 },
                 [Entities.PU_Hero6]              = {
                     Description = "HELIAS @cr @cr "..
-                                  "Einst vorgesehen für die Thronfolge des Alten Reiches war der Ruf Gottes stärker. " ..
+                                  "Einst vorgesehen für die Thronfolge des Alten Reiches, war der Ruf Gottes stärker. " ..
                                   "Vor grauen Jahren trat Helias in den geistlichen Stand und überließ seinem jüngerem " ..
                                   "Bruder den Thron des Alten Reiches." ..
                                   " @cr @cr " ..
@@ -167,8 +167,8 @@ Stronghold.Hero = {
                 },
                 [Entities.CU_Barbarian_Hero]     = {
                     Description = "VARG @cr @cr "..
-                                  "Als er als zwölfjähriger einen Eisbären im Zweikampf besiegte, würde Varg zum " ..
-                                  "Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
+                                  "Als er als zwölfjähriger Junge einen Eisbären im Zweikampf besiegte, wurde Varg " ..
+                                  "zum Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
                                   "er die Macht, mächtige Bestien zu beschwören." ..
                                   " @cr @cr " ..
                                   "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Die Effektivität "..
@@ -192,7 +192,7 @@ Stronghold.Hero = {
                     Description = "YUKI @cr @cr "..
                                   "Schon als kleines Mädchen beschäftigte sich Yuki mit Pyrotechnik. Zusammn mit den " ..
                                   "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
-                                  "erlangte und nun eine Burg ihr eigen nennt." ..
+                                  "erlangte und nun eine Burg ihr Eigen nennt." ..
                                   " @cr @cr " ..
                                   "Passive Fähigkeit: @cr Yuki erhöht die maximale Beliebtheit auf 300. Außerdem "..
                                   "wird die Beliebtheit einmalig um 50 erhöht."..
@@ -202,7 +202,7 @@ Stronghold.Hero = {
                 [Entities.CU_Evil_Queen] = {
                     Description = "KALA @cr @cr "..
                                   "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom Nebelvolk wird " ..
-                                  "Kala  wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
+                                  "Kala wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
                                   "ihrer Untertanen selbst zur Welt gebracht." ..
                                   " @cr @cr " ..
                                   "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen "..

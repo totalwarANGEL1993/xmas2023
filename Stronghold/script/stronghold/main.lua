@@ -91,7 +91,7 @@ Stronghold = {
             [4] = {
                 Text = {"Baron", "Baronin"},
                 Costs = {100, 300, 0, 0, 0, 0, 0},
-                Description = "8 Ziergebäude",
+                Description = "12 Ziergebäude",
                 Condition = function(_PlayerID)
                     local Beauty01 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification01));
                     local Beauty02 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification02));
@@ -106,7 +106,7 @@ Stronghold = {
                     local Beauty11 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification11));
                     local Beauty12 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification12));
                     return Beauty01 + Beauty02 + Beauty03 + Beauty04 + Beauty05 + Beauty06 +
-                           Beauty07 + Beauty08 + Beauty09 + Beauty10 + Beauty11 + Beauty12 >= 8;
+                           Beauty07 + Beauty08 + Beauty09 + Beauty10 + Beauty11 + Beauty12 >= 12;
                 end,
             },
             [5] = {
@@ -128,8 +128,8 @@ Stronghold = {
                 Description = "Kathedrale, 50 Arbeiter",
                 Condition = function(_PlayerID)
                     local Workers = Logic.GetNumberOfAttractedWorker(_PlayerID);
-                    local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
-                    return Castle3 > 0 and Workers >= 50;
+                    local Chapell3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
+                    return Chapell3 > 0 and Workers >= 50;
                 end,
             },
             [7] = {
@@ -1058,7 +1058,7 @@ function Stronghold:ControlReputationAttractionPenalty(_PlayerID)
     -- Restore reputation when workers are all gone
     if  self.Players[_PlayerID].HasHadRegularPayday
     and Logic.GetNumberOfAttractedWorker(_PlayerID) == 0 then
-        self:SetPlayerReputation(_PlayerID, math.min(Reputation +9, 75));
+        self:SetPlayerReputation(_PlayerID, math.min(Reputation +12, 75));
         return;
     end
 
@@ -1072,7 +1072,7 @@ function Stronghold:ControlReputationAttractionPenalty(_PlayerID)
 
         -- Make workers leave
         WorkerAmount = table.getn(WorkerList);
-        LeaveAmount = math.ceil(WorkerAmount * 0.3);
+        LeaveAmount = math.ceil(WorkerAmount * 0.75);
         while LeaveAmount > 0 do
             if table.getn(WorkerList) == 0 then
                 break;

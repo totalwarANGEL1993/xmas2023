@@ -116,20 +116,7 @@ function Stronghold.Construction:OverrideTooltipConstructionButton()
                              " Beliebtheit für jeden Gast";
             end
 
-            -- Limit factor
-            -- (Only for beautification)
-            local LimitFactor = 1.0;
-            local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
-            if UpgradeCategoryName and string.find(UpgradeCategoryName, "Beautification") then
-                if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
-                    LimitFactor = 1.5;
-                end
-                if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
-                    LimitFactor = 2.0;
-                end
-            end
-
-            local BuildingMax = math.floor(EntityTracker.GetLimitOfType(Type) * LimitFactor);
+            local BuildingMax = EntityTracker.GetLimitOfType(Type);
             if BuildingMax > -1 then
                 local BuildingCount = EntityTracker.GetUsageOfType(PlayerID, Type);
                 Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
@@ -218,16 +205,7 @@ function Stronghold.Construction:UpdateSerfConstructionButtons(_PlayerID, _Butto
         for i= 1, table.getn(CheckList) do
             Usage = Usage + EntityTracker.GetUsageOfType(_PlayerID, CheckList[i]);
         end
-        local LimitFactor = 1.0;
-        if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2) > 0 then
-                LimitFactor = 1.5;
-            end
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3) > 0 then
-                LimitFactor = 2.0;
-            end
-        end
-        LimitReached = math.floor(Limit * LimitFactor) <= Usage;
+        LimitReached = Limit <= Usage;
     end
 
     if LimitReached then
@@ -420,18 +398,18 @@ end
 -- (The tracker only handles the tracking and not the UI!)
 function Stronghold.Construction:InitBuildingLimits()
     -- Beautifications
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification04, 4);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification06, 4);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification09, 4);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification01, 3);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification02, 3);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification12, 3);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification05, 2);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification07, 2);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification08, 2);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification03, 1);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification10, 1);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification11, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification04, 8);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification06, 8);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification09, 8);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification01, 6);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification02, 6);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification12, 6);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification05, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification07, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification08, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification03, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification10, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification11, 2);
 
     -- Civil buildings
     EntityTracker.SetLimitOfType(Entities.PB_Monastery1, 1);

@@ -70,17 +70,17 @@ Stronghold.Economy = {
                 [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
                 [Entities.PB_Beautification09] = {Honor = 1, Reputation = 1,},
                 ---
-                [Entities.PB_Beautification01] = {Honor = 1, Reputation = 2,},
-                [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
-                [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
+                [Entities.PB_Beautification01] = {Honor = 2, Reputation = 1,},
+                [Entities.PB_Beautification02] = {Honor = 2, Reputation = 1,},
+                [Entities.PB_Beautification12] = {Honor = 2, Reputation = 1,},
                 ---
-                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
-                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
-                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification05] = {Honor = 3, Reputation = 1,},
+                [Entities.PB_Beautification07] = {Honor = 3, Reputation = 1,},
+                [Entities.PB_Beautification08] = {Honor = 3, Reputation = 1,},
                 ---
-                [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification03] = {Honor = 4, Reputation = 1,},
+                [Entities.PB_Beautification10] = {Honor = 4, Reputation = 1,},
+                [Entities.PB_Beautification11] = {Honor = 4, Reputation = 1,},
                 ---
                 [Entities.PB_Headquarters2]    = {Honor = 5, Reputation = 0,},
                 [Entities.PB_Headquarters3]    = {Honor = 10, Reputation = 0,},
@@ -296,7 +296,11 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
-            Penalty = Penalty + (_WorkerCount * (0.12 + (0.03 * (Rank -1))));
+            local WorkerEffect = _WorkerCount * 0.25;
+            for i= 1, (Rank -1) do
+                WorkerEffect = WorkerEffect * 1.11;
+            end
+            Penalty = Penalty + WorkerEffect;
         end
         return math.floor(Penalty);
     end

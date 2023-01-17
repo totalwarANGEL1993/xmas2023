@@ -149,14 +149,14 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderHeavyCavalry1] = {
-                Costs = {30, 200, 0, 0, 0, 130, 0},
+                Costs = {35, 200, 0, 0, 0, 130, 0},
                 Allowed = true,
                 Places = 3,
                 Rank = 6,
                 Upkeep = 70,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
-                Costs = {40, 230, 0, 0, 0, 180, 0},
+                Costs = {50, 230, 0, 0, 0, 180, 0},
                 Allowed = false,
                 Places = 4,
                 Rank = 7,
@@ -548,7 +548,7 @@ function Stronghold.Unit:OverrideExpelSettlerButtonAction()
             return;
         end
 
-        if XGUIEng.IsModifierPressed(Keys.ModifierControl) == 1 then
+        if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
             local Selected = {GUI.GetSelectedEntities()};
             for i= 1, table.getn(Selected) do
                 if Logic.IsHero(Selected[i]) == 0 then
@@ -578,7 +578,7 @@ function Stronghold.Unit:OverrideExpelSettlerButtonTooltip()
             local Text = "@color:180,180,180 Einheit entlassen @color:255,255,255 @cr "..
                          "Entlasst die selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
                          "Soldaten entlasst, geht der Hauptmann zuletzt.";
-            if XGUIEng.IsModifierPressed(Keys.ModifierControl) == 1 then
+            if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
                 Text   = "@color:180,180,180 Alle entlassen @color:255,255,255 @cr "..
                          "Entlasst alle selektierten Einheiten aus ihrem Dienst. Alle "..
                          "Einheiten werden sofort entlassen!";
