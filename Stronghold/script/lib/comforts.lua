@@ -264,6 +264,16 @@ function GetUpgradeLevelByEntityType(_Type)
     return 0;
 end
 
+function IsBuildingBeingUpgraded(_Entity)
+    local BuildingID = GetID(_Entity);
+    if Logic.IsBuilding(BuildingID) == 0 then
+        return false;
+    end
+    local Value = Logic.GetRemainingUpgradeTimeForBuilding(BuildingID);
+    local Limit = Logic.GetTotalUpgradeTimeForBuilding(BuildingID);
+    return Limit - Value > 0;
+end
+
 function IsEntityValid(_Entity)
     local ID = GetID(_Entity);
     if IsExisting(ID) then

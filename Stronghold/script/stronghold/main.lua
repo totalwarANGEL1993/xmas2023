@@ -128,8 +128,8 @@ Stronghold = {
                 Description = "Kathedrale, 50 Arbeiter",
                 Condition = function(_PlayerID)
                     local Workers = Logic.GetNumberOfAttractedWorker(_PlayerID);
-                    local Chapell3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
-                    return Chapell3 > 0 and Workers >= 50;
+                    local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
+                    return Castle3 > 0 and Workers >= 50;
                 end,
             },
             [7] = {
@@ -685,7 +685,9 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
                 local Buildings = GetAllWorkplaces(_PlayerID);
                 for i= table.getn(Buildings), 1, -1 do
                     local Used, Limit = self:GetBuildingCurrentAndMaxWorkerAmount(Buildings[i]);
-                    if Used == Limit or Logic.IsOvertimeActiveAtBuilding(Buildings[i]) == 1 then
+                    if Logic.IsOvertimeActiveAtBuilding(Buildings[i]) == 1
+                    or IsBuildingBeingUpgraded(Buildings[i])
+                    or Used == Limit then
                         table.remove(Buildings, i);
                     end
                 end
@@ -729,8 +731,9 @@ function Stronghold:GetBuildingCurrentAndMaxWorkerAmount(_EntityID)
     local PlacesLimit = 0;
     local PlacesUsed = 0;
     if Logic.IsBuilding(_EntityID) == 1 then
+        local Workers = {Logic.GetAttachedWorkersToBuilding(_EntityID)};
         PlacesLimit = Logic.GetBuildingWorkPlaceLimit(_EntityID);
-        PlacesUsed = Logic.GetBuildingWorkPlaceUsage(_EntityID);
+        PlacesUsed = math.max(Logic.GetBuildingWorkPlaceUsage(_EntityID), Workers[1]);
     end
     return PlacesUsed, PlacesLimit;
 end
@@ -1102,6 +1105,7 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
     self.Hero:OnSelectHero(SelectedID);
 
     self.Building:OnHeadquarterSelected(SelectedID);
+    self.Building:OnMonasterySelected(SelectedID);
     self.Building:OnBarracksSelected(SelectedID);
     self.Building:OnArcherySelected(SelectedID);
     self.Building:OnStableSelected(SelectedID);
@@ -1160,6 +1164,7 @@ function Stronghold:OverrideTooltipGenericMain()
     self.Orig_GUITooltip_Generic = GUITooltip_Generic;
     GUITooltip_Generic = function(_Key)
         local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Orig_GUITooltip_Generic(_Key);
         end
@@ -1172,7 +1177,10 @@ function Stronghold:OverrideTooltipGenericMain()
             TooltipSet = Stronghold.Economy:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
         end
         if not TooltipSet then
-            TooltipSet = Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, _Key);
+            TooltipSet = Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, EntityID, _Key);
+        end
+        if not TooltipSet then
+            TooltipSet = Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(PlayerID, EntityID, _Key);
         end
         if not TooltipSet then
             Stronghold.Orig_GUITooltip_Generic(_Key);

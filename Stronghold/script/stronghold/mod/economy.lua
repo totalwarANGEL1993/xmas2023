@@ -38,12 +38,16 @@
 --- - <number> GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _CurrentAmount)
 ---   Allows to overwite the upkeep of a unit type.
 ---
+--- - <number> GameCallback_Calculate_MeasureIncrease(_PlayerID, _CurrentAmount)
+---   Allows to overwrite the measure points income.
+---
 
 Stronghold = Stronghold or {};
 
 Stronghold.Economy = {
     Data = {},
     Config = {
+        MaxMeasurePoints = 5000,
         MaxReputation = 200,
         TaxPerWorker = 5,
         Income = {
@@ -96,6 +100,7 @@ Stronghold.Economy = {
 function Stronghold.Economy:Install()
     for i= 1, table.getn(Score.Player) do
         self.Data[i] = {
+            MeasurePoints = 0;
             IncomeMoney = 0;
             UpkeepMoney = 0;
             UpkeepDetails = {};
@@ -120,6 +125,21 @@ end
 
 function Stronghold.Economy:GetDynamicTypeConfiguration(_Type)
     return Stronghold.Economy.Config.Income.Dynamic[_Type];
+end
+
+--- Gives measure points to the player.
+function AddPlayerMeasrue(_PlayerID, _Amount)
+    Stronghold.Economy:AddPlayerMeasure(_PlayerID, _Amount)
+end
+
+--- Returns the measure points of the player.
+function GetPlayerMeasrue(_PlayerID)
+    return Stronghold.Economy:GetPlayerMeasure(_PlayerID);
+end
+
+--- Returns the max measure points of the player.
+function GetPlayerMaxMeasrue(_PlayerID)
+    return Stronghold.Economy:GetPlayerMeasureLimit(_PlayerID);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -166,6 +186,10 @@ function GameCallback_Calculate_TotalPaydayUpkeep(_PlayerID, _Amount)
 end
 
 function GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _Amount)
+    return _Amount;
+end
+
+function GameCallback_Calculate_MeasureIncrease(_PlayerID, _Amount)
     return _Amount;
 end
 
@@ -413,6 +437,42 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
         return math.floor(Upkeep + 0.5);
     end
     return 0;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Measure Points
+
+function Stronghold.Economy:AddPlayerMeasure(_PlayerID, _Amount)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local MeasurePoints = self:GetPlayerMeasure(_PlayerID);
+        MeasurePoints = math.max(MeasurePoints + _Amount, 0);
+        MeasurePoints = math.min(MeasurePoints, self.Config.MaxMeasurePoints);
+        self.Data[_PlayerID].MeasurePoints = MeasurePoints;
+    end
+end
+
+function Stronghold.Economy:GetPlayerMeasure(_PlayerID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        return self.Data[_PlayerID].MeasurePoints;
+    end
+    return 0;
+end
+
+function Stronghold.Economy:GetPlayerMeasureLimit(_PlayerID)
+    return self.Config.MaxMeasurePoints;
+end
+
+function Stronghold.Economy:GainMeasurePoints(_PlayerID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local MeasurePoints = 0;
+        for k, v in pairs(GetAllWorker(_PlayerID, 0)) do
+            if Logic.IsSettlerAtWork(v) == 1 then
+                MeasurePoints = MeasurePoints + 0.5;
+            end
+        end
+        MeasurePoints = GameCallback_Calculate_MeasureIncrease(_PlayerID, MeasurePoints);
+        self:AddPlayerMeasure(_PlayerID, MeasurePoints);
+    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -692,5 +752,6 @@ function Stronghold_Economy_Trigger_OnEveryTurn()
     local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), Players);
 
     Stronghold.Economy:UpdateIncomeAndUpkeep(PlayerID);
+    Stronghold.Economy:GainMeasurePoints(PlayerID);
 end
 

@@ -14,7 +14,33 @@ Stronghold.Building = {
 
         Headquarters = {
             Health = {3500, 4500, 5500},
-            Armor  = {10, 12, 14}
+            Armor  = {10, 12, 14},
+
+            [BlessCategories.Construction] = {
+                Text = "Ihr sprecht Recht und bestraft Kriminelle. Das Volk begrüßt dies!",
+                Reputation = 5,
+                Honor = 5,
+            },
+            [BlessCategories.Research] = {
+                Text = "Die Siedler werden zur Kasse gebeten, was sie sehr verärgert!",
+                Reputation = -12,
+                Honor = 0,
+            },
+            [BlessCategories.Weapons] = {
+                Text = "Eure Migrationspolitik wird von den zugezogenen Siedlern begrüßt.",
+                Reputation = 100,
+                Honor = 0,
+            },
+            [BlessCategories.Financial] = {
+                Text = "Das Volksfest erfreut die Siedler und steigert Eure Beliebtheit.",
+                Reputation = 18,
+                Honor = 0,
+            },
+            [BlessCategories.Canonisation] = {
+                Text = "Ein Bankett gereicht Euch an Ehre, aber verärgert das Volk!",
+                Reputation = -25,
+                Honor = 50,
+            },
         },
 
         Monastery = {
@@ -52,15 +78,29 @@ function Stronghold.Building:Install()
         self.Data[i] = {};
     end
 
+    XGUIEng.TransferMaterials("BlessSettlers1", "Research_PickAxe");
+    XGUIEng.TransferMaterials("BlessSettlers2", "Research_LightBricks");
+    XGUIEng.TransferMaterials("BlessSettlers3", "Research_Taxation");
+    XGUIEng.TransferMaterials("BlessSettlers4", "Research_Debenture");
+    XGUIEng.TransferMaterials("BlessSettlers5", "Research_Scale");
+
     self:CreateBuildingButtonHandlers();
-    self:OverrideMonasteryButtons()
+    self:OverrideMonasteryInterface()
     self:OverrideHeadquarterButtons();
     self:OverrideManualButtonUpdate();
     self:OverrideSellBuildingAction();
+    self:OverrideUpdateConstructionButton();
+    self:OverrideChangeBuildingMenuButton();
     self:InitalizeBuyUnitKeybindings();
 end
 
 function Stronghold.Building:OnSaveGameLoaded()
+    XGUIEng.TransferMaterials("BlessSettlers1", "Research_PickAxe");
+    XGUIEng.TransferMaterials("BlessSettlers2", "Research_LightBricks");
+    XGUIEng.TransferMaterials("BlessSettlers3", "Research_Taxation");
+    XGUIEng.TransferMaterials("BlessSettlers4", "Research_Debenture");
+    XGUIEng.TransferMaterials("BlessSettlers5", "Research_Scale");
+
     self:OverrideManualButtonUpdate();
     self:OverrideSellBuildingAction();
     self:InitalizeBuyUnitKeybindings();
@@ -73,6 +113,7 @@ function Stronghold.Building:CreateBuildingButtonHandlers()
         BuySerf = 3,
         BuyUnit = 4,
         BlessSettlers = 5,
+        MeasureTaken = 6,
     };
 
     self.NetworkCall = Syncer.CreateEvent(
@@ -89,6 +130,9 @@ function Stronghold.Building:CreateBuildingButtonHandlers()
             if _Action == Stronghold.Building.SyncEvents.BlessSettlers then
                 Stronghold.Building:MonasteryBlessSettlers(_PlayerID, arg[1]);
             end
+            if _Action == Stronghold.Building.SyncEvents.MeasureTaken then
+                Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, arg[1]);
+            end
         end
     );
 end
@@ -101,6 +145,8 @@ function Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, _Level)
         Stronghold.Players[_PlayerID].TaxHeight = math.min(math.max(_Level +1, 0), 5);
     end
 end
+
+-- Regulas Headquarters
 
 function Stronghold.Building:OverrideHeadquarterButtons()
     self.Orig_GUIAction_SetTaxes = GUIAction_SetTaxes;
@@ -177,26 +223,18 @@ function Stronghold.Building:OnHeadquarterSelected(_EntityID)
         return;
     end
 
-    XGUIEng.ShowWidget("Buy_Hero", 0);
-    XGUIEng.ShowWidget("HQ_Militia", 1);
-    XGUIEng.SetWidgetPosition("HQ_Militia", 35, 0);
-    XGUIEng.TransferMaterials("Buy_Hero", "HQ_CallMilitia");
-    XGUIEng.TransferMaterials("Statistics_SubSettlers_Motivation", "HQ_BackToWork");
-
-    if not Stronghold.Players[PlayerID].LordChosen then
-        XGUIEng.ShowWidget("HQ_CallMilitia", 1);
-        XGUIEng.ShowWidget("HQ_BackToWork", 0);
-    else
-        XGUIEng.ShowWidget("HQ_CallMilitia", 0);
-        XGUIEng.ShowWidget("HQ_BackToWork", 0);
-    end
+    XGUIEng.ShowWidget("BuildingTabs", 1);
+    self:HeadquartersChangeBuildingTabsGuiAction(PlayerID, _EntityID, gvGUI_WidgetID.ToBuildingCommandMenu);
 end
 
-function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
+function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _EntityID, _Key)
+    if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
+        return false;
+    end
     local Text = XGUIEng.GetStringTableText(_Key);
     local EffectText = "";
 
-    if _Key == "MenuHeadquarter/SetVeryLowTaxes" then        
+    if _Key == "MenuHeadquarter/SetVeryLowTaxes" then
         Text = "@color:180,180,180 Keine Steuer @color:255,255,255 @cr "..
                "Keine Steuern. Aber wie wollt Ihr zu Talern kommen?"
 
@@ -267,6 +305,272 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Key)
     end
 
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text.. " " ..EffectText);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    return true;
+end
+
+function Stronghold.Building:HeadquartersShowNormalControls(_PlayerID, _EntityID, _WidgetID)
+    XGUIEng.HighLightButton("ToBuildingCommandMenu", 0);
+    XGUIEng.HighLightButton("ToBuildingSettlersMenu", 1);
+    XGUIEng.ShowWidget("Headquarter", 1);
+    XGUIEng.ShowWidget("Monastery", 0);
+    XGUIEng.ShowWidget("WorkerInBuilding", 0);
+
+    XGUIEng.SetWidgetPosition("TaxesAndPayStatistics", 105, 35);
+    XGUIEng.SetWidgetPosition("HQTaxes", 143, 5);
+
+    XGUIEng.ShowWidget("Buy_Hero", 0);
+    XGUIEng.ShowWidget("HQ_Militia", 1);
+    XGUIEng.SetWidgetPosition("HQ_Militia", 35, 0);
+    XGUIEng.TransferMaterials("Buy_Hero", "HQ_CallMilitia");
+    XGUIEng.TransferMaterials("Statistics_SubSettlers_Motivation", "HQ_BackToWork");
+
+    if not Stronghold.Players[_PlayerID].LordChosen then
+        XGUIEng.ShowWidget("HQ_CallMilitia", 1);
+        XGUIEng.ShowWidget("HQ_BackToWork", 0);
+    else
+        XGUIEng.ShowWidget("HQ_CallMilitia", 0);
+        XGUIEng.ShowWidget("HQ_BackToWork", 0);
+    end
+end
+
+-- Mesures (Blessings)
+
+function Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, _BlessCategory)
+    local MeasurePoints = Stronghold.Economy:GetPlayerMeasure(_PlayerID);
+    -- Prevent click spamming
+    if MeasurePoints == 0 then
+        return;
+    end
+    Stronghold.Economy:AddPlayerMeasure(_PlayerID, (-1) * MeasurePoints);
+    local Msg = self.Config.Headquarters[_BlessCategory].Text;
+    Message(Msg);
+
+    local Effects = Stronghold.Building.Config.Headquarters[_BlessCategory];
+    if _BlessCategory == BlessCategories.Construction then
+        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
+        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+        Stronghold:AddPlayerHonor(_PlayerID, Effects.Honor);
+
+    elseif _BlessCategory == BlessCategories.Research then
+        local RandomTax = 0;
+        for i= 1, Logic.GetNumberOfAttractedWorker(_PlayerID) do
+            RandomTax = RandomTax + math.random(1, 5);
+        end
+        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
+        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+
+        Message("Ihr habt " ..RandomTax.. " Taler erhalten!");
+        Sound.PlayGUISound(Sounds.LevyTaxes, 100);
+        AddGold(_PlayerID, RandomTax);
+    elseif _BlessCategory == BlessCategories.Weapons then
+        local WorkerList = GetAllWorker(_PlayerID, 0);
+        table.sort(WorkerList, function(a, b) return a > b; end);
+        for i= 1, table.getn(WorkerList) do
+            local MotivationBonus = 100 - ((i-1) * 3);
+            if MotivationBonus <= 0 then
+                break;
+            end
+            local Motivation = Logic.GetSettlersMotivation(WorkerList[i]);
+            CEntity.SetMotivation(WorkerList[i], Motivation + (MotivationBonus/100));
+        end
+
+    elseif _BlessCategory == BlessCategories.Financial then
+        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
+        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+
+    elseif _BlessCategory == BlessCategories.Canonisation then
+        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
+        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+        Stronghold:AddPlayerHonor(_PlayerID, Effects.Honor);
+    end
+end
+
+function Stronghold.Building:HeadquartersBlessSettlersGuiAction(_PlayerID, _EntityID, _BlessCategory)
+    if GUI.GetPlayerID() ~= _PlayerID then
+        return false;
+    end
+    if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
+        return false;
+    end
+    if Stronghold.Economy:GetPlayerMeasure(_PlayerID) < Stronghold.Economy:GetPlayerMeasureLimit(_PlayerID) then
+        Sound.PlayQueuedFeedbackSound(Sounds.VoicesMentor_COMMENT_BadPlay_rnd_01, 127);
+        Message("Ihr könnt noch keine neue Maßnahme beschließen, Milord!");
+        return true;
+    end
+
+    Syncer.InvokeEvent(
+        Stronghold.Building.NetworkCall,
+        _PlayerID,
+        Stronghold.Building.SyncEvents.MeasureTaken,
+        _BlessCategory
+    );
+    return true;
+end
+
+function Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(_PlayerID, _EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
+    if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
+        return false;
+    end
+    local Text = "";
+    local EffectText = "";
+    local Effects;
+
+    if _TooltipNormal == "AOMenuMonastery/BlessSettlers1_normal" then
+        Text = "@color:180,180,180 Öffentlicher Prozess @color:255,255,255 @cr "..
+               "Haltet einen öffentlichen Schaupozess ab. Recht und Ordnung "..
+               " steigert die Zufriedenheit des Pöbel.";
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   Stronghold:GetPlayerRankName(_PlayerID, 2) .. "";
+        end
+        EffectText = EffectText .. " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
+        Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Construction];
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers2_normal" then
+        Text = "@color:180,180,180 Zwangsabgabe @color:255,255,255 @cr "..
+               "Treibt eine Sondersteuer ein von Eurem Volke ein. Ihren Ertrag "..
+               "vermag jedoch niemand vorherzusehen!";
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   Stronghold:GetPlayerRankName(_PlayerID, 3) .. "";
+        end
+        EffectText = EffectText .. " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
+        Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Research];
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers3_normal" then
+        Text = "@color:180,180,180 Willkommenskultur @color:255,255,255 @cr "..
+               "Eure Migrationspolitik wird Neuankömmlinge sehr zufrieden machen, "..
+               " bis die Realität des ersten Zahltags sie einholt...";
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   Stronghold:GetPlayerRankName(_PlayerID, 4) .. ", Festung";
+        end
+        EffectText = EffectText .. " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
+        Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Weapons];
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers4_normal" then
+        Text = "@color:180,180,180 Folklorefest @color:255,255,255 @cr "..
+               "Ihr beglückt eure Siedler mit einem rauschenden Fest, dass "..
+               "sie  sehr glücklich machen wird.";
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   Stronghold:GetPlayerRankName(_PlayerID, 5) .. ", Festung";
+        end
+        EffectText = EffectText .. " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
+        Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Financial];
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers5_normal" then
+        Text = "@color:180,180,180 Gelage @color:255,255,255 @cr "..
+               "Erhaltet Ehre durch ein verschwenderisches Gelage. Aber Ihr "..
+               " zieht ebenso den Zorn des Volkes auf Euch!";
+        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                   Stronghold:GetPlayerRankName(_PlayerID, 7) .. ", Zitadelle";
+        end
+        EffectText = EffectText .. " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
+        Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Canonisation];
+    else
+        return false;
+    end
+
+    if Effects.Reputation > 0 then
+        EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+    elseif Effects.Reputation < 0 then
+        EffectText = EffectText .. Effects.Reputation.. " Beliebtheit ";
+    end
+    if Effects.Honor > 0 then
+        EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
+    end
+
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text .. EffectText);
+    return true;
+end
+
+function Stronghold.Building:HeadquartersBlessSettlersGuiUpdate(_PlayerID, _EntityID, _Button)
+    if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
+        return false;
+    end
+
+    local Level = Logic.GetUpgradeLevelForBuilding(_EntityID);
+    local Rank = Stronghold:GetPlayerRank(_PlayerID);
+    local ButtonDisabled = 0;
+    if _Button == "BlessSettlers1" then
+        ButtonDisabled = (Rank < 2 and 1) or 0;
+    elseif _Button == "BlessSettlers2" then
+        ButtonDisabled = (Rank < 3 and 1) or 0;
+    elseif _Button == "BlessSettlers3" then
+        ButtonDisabled = ((Rank < 4 or Level < 1) and 1) or 0;
+    elseif _Button == "BlessSettlers4" then
+        ButtonDisabled = ((Rank < 5 or Level < 1) and 1) or 0;
+    elseif _Button == "BlessSettlers5" then
+        ButtonDisabled = ((Rank < 7 or Level < 2) and 1) or 0;
+    end
+    XGUIEng.DisableButton(_Button, ButtonDisabled);
+    return true;
+end
+
+function Stronghold.Building:HeadquartersFaithProgressGuiUpdate(_PlayerID, _EntityID, _WidgetID)
+    if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
+        return false;
+    end
+    local ValueMax = Stronghold.Economy:GetPlayerMeasureLimit(_PlayerID);
+    local Value = Stronghold.Economy:GetPlayerMeasure(_PlayerID);
+    XGUIEng.SetProgressBarValues(_WidgetID, Value, ValueMax);
+    return true;
+end
+
+function Stronghold.Building:HeadquartersShowMonasteryControls(_PlayerID, _EntityID, _WidgetID)
+    XGUIEng.HighLightButton("ToBuildingCommandMenu", 1);
+    XGUIEng.HighLightButton("ToBuildingSettlersMenu", 0);
+    XGUIEng.ShowWidget("Headquarter", 0);
+    XGUIEng.ShowWidget("Monastery", 1);
+    XGUIEng.ShowWidget("WorkerInBuilding", 0);
+    XGUIEng.ShowWidget("Upgrade_Monastery1", 0);
+    XGUIEng.ShowWidget("Upgrade_Monastery2", 0);
+
+    XGUIEng.TransferMaterials("Research_Laws", "BlessSettlers1");
+    XGUIEng.TransferMaterials("Levy_Duties", "BlessSettlers2");
+    XGUIEng.TransferMaterials("Statistics_SubSettlers_Worker", "BlessSettlers3");
+    XGUIEng.TransferMaterials("Statistics_SubSettlers_Motivation", "BlessSettlers4");
+    XGUIEng.TransferMaterials("Build_Tavern", "BlessSettlers5");
+
+    self:HeadquartersBlessSettlersGuiUpdate(_PlayerID, _EntityID, "BlessSettlers1");
+    self:HeadquartersBlessSettlersGuiUpdate(_PlayerID, _EntityID, "BlessSettlers2");
+    self:HeadquartersBlessSettlersGuiUpdate(_PlayerID, _EntityID, "BlessSettlers3");
+    self:HeadquartersBlessSettlersGuiUpdate(_PlayerID, _EntityID, "BlessSettlers4");
+    self:HeadquartersBlessSettlersGuiUpdate(_PlayerID, _EntityID, "BlessSettlers5");
+end
+
+-- Sub menu
+
+function Stronghold.Building:HeadquartersChangeBuildingTabsGuiAction(_PlayerID, _EntityID, _WidgetID)
+    if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
+        return false;
+    end
+    if _WidgetID == gvGUI_WidgetID.ToBuildingCommandMenu then
+        self:HeadquartersShowNormalControls(_PlayerID, _EntityID, _WidgetID);
+    elseif _WidgetID == gvGUI_WidgetID.ToBuildingSettlersMenu then
+        self:HeadquartersShowMonasteryControls(_PlayerID, _EntityID, _WidgetID);
+    end
+    return true;
+end
+
+function Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(_PlayerID, _EntityID, _Key)
+    if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
+        return false;
+    end
+    local Text = "";
+    if _Key == "MenuBuildingGeneric/ToBuildingcommandmenu" then
+        Text = "@color:180,180,180 Schatzkammer @cr @color:255,255,255 "..
+               "Hier könnt Ihr Leibeigene kaufen, Euren Laird wählen, den "..
+               "Alarm ausrufen und später sogar die Steuern einstellen.";
+    elseif _Key == "MenuBuildingGeneric/tobuildingsettlersmenu" then
+        Text = "@color:180,180,180 Regularien @cr @color:255,255,255 "..
+               "Hier könnt Ihr Maßnahmen erlassen. Jede Maßnahme hat "..
+               "individuelle Konsequenzen. Überlegt gut, ob und wann "..
+               "Ihr sie einsetzt.";
+    else
+        return false;
+    end
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
     return true;
@@ -1348,29 +1652,48 @@ function Stronghold.Building:MonasteryBlessSettlers(_PlayerID, _BlessCategory)
     end
 end
 
-function Stronghold.Building:OverrideMonasteryButtons()
+function Stronghold.Building:OnMonasterySelected(_EntityID)
+    local PlayerID = Logic.EntityGetPlayer(_EntityID);
+    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+        return;
+    end
+    local Type = Logic.GetEntityType(_EntityID);
+    if Logic.GetUpgradeCategoryByBuildingType(Type) ~= UpgradeCategories.Monastery then
+        return;
+    end
+
+    local Level = Logic.GetUpgradeLevelForBuilding(_EntityID);
+    if Level < 2 then
+        XGUIEng.ShowWidget("Upgrade_Monastery2", 1);
+    end
+    if Level < 1 then
+        XGUIEng.ShowWidget("Upgrade_Monastery1", 1);
+    end
+    XGUIEng.TransferMaterials("Research_PickAxe", "BlessSettlers1");
+    XGUIEng.TransferMaterials("Research_LightBricks", "BlessSettlers2");
+    XGUIEng.TransferMaterials("Research_Taxation", "BlessSettlers3");
+    XGUIEng.TransferMaterials("Research_Debenture", "BlessSettlers4");
+    XGUIEng.TransferMaterials("Research_Scale", "BlessSettlers5");
+end
+
+function Stronghold.Building:OverrideMonasteryInterface()
     self.Orig_GUIAction_BlessSettlers = GUIAction_BlessSettlers;
     GUIAction_BlessSettlers = function(_BlessCategory)
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
         if not Stronghold.Building.Data[PlayerID] then
             return Stronghold.Building.Orig_GUIAction_BlessSettlers(_BlessCategory);
         end
 
-        if InterfaceTool_IsBuildingDoingSomething(GUI.GetSelectedEntity()) == true then
+        if InterfaceTool_IsBuildingDoingSomething(EntityID) == true then
             return;
         end
-        local CurrentFaith = Logic.GetPlayersGlobalResource(PlayerID, ResourceType.Faith);
-        local BlessCosts = Logic.GetBlessCostByBlessCategory(_BlessCategory);
-        if BlessCosts <= CurrentFaith then
-            Syncer.InvokeEvent(
-                Stronghold.Building.NetworkCall,
-                PlayerID,
-                Stronghold.Building.SyncEvents.BlessSettlers,
-                _BlessCategory
-            );
-        else
-            GUI.AddNote(XGUIEng.GetStringTableText("InGameMessages/GUI_NotEnoughFaith"));
-            Sound.PlayFeedbackSound(Sounds.VoicesMentor_INFO_MonksNeedMoreTime_rnd_01, 0);
+
+        if Stronghold.Building:HeadquartersBlessSettlersGuiAction(PlayerID, EntityID, _BlessCategory) then
+            return;
+        end
+        if Stronghold.Building:MonasteryBlessSettlersGuiAction(PlayerID, EntityID, _BlessCategory) then
+            return;
         end
     end
 
@@ -1379,90 +1702,148 @@ function Stronghold.Building:OverrideMonasteryButtons()
         Stronghold.Building.Orig_GUITooltip_BlessSettlers(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
 
         local PlayerID = GUI.GetPlayerID();
-        local Text = "";
-        if _TooltipNormal == "AOMenuMonastery/BlessSettlers1_normal" then
-            if Logic.GetTechnologyState(PlayerID, Technologies.T_BlessSettlers1) == 0 then
-                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-            else
-                Text = "@color:180,180,180 Gebetsmesse @color:255,255,255 @cr ";
-                Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Construction];
-                if Effects.Reputation > 0 then
-                    Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    Text = Text.. "+" ..Effects.Honor.." Ehre";
-                end
+        local EntityID = GUI.GetSelectedEntity();
+        if Stronghold:IsPlayer(PlayerID) then
+            if Stronghold.Building:MonasteryBlessSettlersGuiTooltip(PlayerID, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut) then
+                return;
             end
-		elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers2_normal" then
-			if Logic.GetTechnologyState(PlayerID, Technologies.T_BlessSettlers2) == 0 then
-                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-            else
-                Text = "@color:180,180,180 Ablassbriefe @color:255,255,255 @cr ";
-                Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Research];
-                if Effects.Reputation > 0 then
-                    Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    Text = Text.. "+" ..Effects.Honor.." Ehre";
-                end
+            if Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(PlayerID, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut) then
+                return;
             end
-		elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers3_normal" then
-			if Logic.GetTechnologyState(PlayerID, Technologies.T_BlessSettlers3) == 0 then
-                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-            else
-                Text = "@color:180,180,180 Bibeln @color:255,255,255 @cr ";
-                if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-                    Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
-                end
-                Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Weapons];
-                if Effects.Reputation > 0 then
-                    Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    Text = Text.. "+" ..Effects.Honor.." Ehre";
-                end
-            end
-		elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers4_normal" then
-			if Logic.GetTechnologyState(PlayerID, Technologies.T_BlessSettlers4) == 0 then
-                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-            else
-                Text = "@color:180,180,180 Kollekte @color:255,255,255 @cr ";
-                if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-                    Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
-                end
-                Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Financial];
-                if Effects.Reputation > 0 then
-                    Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    Text = Text.. "+" ..Effects.Honor.." Ehre";
-                end
-            end
-		elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers5_normal" then
-			if Logic.GetTechnologyState(PlayerID, Technologies.T_BlessSettlers5) == 0 then
-                Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-            else
-                Text = "@color:180,180,180 Heiligsprechung @color:255,255,255 @cr ";
-                if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-                    Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kathedrale @cr";
-                end
-                Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
-                local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Canonisation];
-                if Effects.Reputation > 0 then
-                    Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    Text = Text.. "+" ..Effects.Honor.." Ehre";
-                end
-            end
-		end
-
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+        end
     end
+
+    self.Orig_GUIUpdate_FaithProgress = GUIUpdate_FaithProgress;
+    GUIUpdate_FaithProgress = function()
+        local WidgetID = XGUIEng.GetCurrentWidgetID();
+        local PlayerID = GUI.GetPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        if Stronghold:IsPlayer(PlayerID) then
+            if Stronghold.Building:HeadquartersFaithProgressGuiUpdate(PlayerID, EntityID, WidgetID) then
+                return;
+            end
+        end
+        Stronghold.Building.Orig_GUIUpdate_FaithProgress();
+    end
+end
+
+function Stronghold.Building:MonasteryBlessSettlersGuiAction(_PlayerID, _EntityID, _BlessCategory)
+    if GUI.GetPlayerID() ~= _PlayerID then
+        return;
+    end
+    local Type = Logic.GetEntityType(_EntityID);
+    if Logic.GetUpgradeCategoryByBuildingType(Type) ~= UpgradeCategories.Monastery then
+        return false;
+    end
+
+    local CurrentFaith = Logic.GetPlayersGlobalResource(_PlayerID, ResourceType.Faith);
+    local BlessCosts = Logic.GetBlessCostByBlessCategory(_BlessCategory);
+    if BlessCosts <= CurrentFaith then
+        Syncer.InvokeEvent(
+            Stronghold.Building.NetworkCall,
+            _PlayerID,
+            Stronghold.Building.SyncEvents.BlessSettlers,
+            _BlessCategory
+        );
+    else
+        GUI.AddNote(XGUIEng.GetStringTableText("InGameMessages/GUI_NotEnoughFaith"));
+        Sound.PlayFeedbackSound(Sounds.VoicesMentor_INFO_MonksNeedMoreTime_rnd_01, 0);
+    end
+    return true;
+end
+
+function Stronghold.Building:MonasteryBlessSettlersGuiTooltip(_PlayerID, _EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
+    local Type = Logic.GetEntityType(_EntityID);
+    if Logic.GetUpgradeCategoryByBuildingType(Type) ~= UpgradeCategories.Monastery then
+        return false;
+    end
+    local Text = "";
+
+    if _TooltipNormal == "AOMenuMonastery/BlessSettlers1_normal" then
+        if Logic.GetTechnologyState(_PlayerID, Technologies.T_BlessSettlers1) == 0 then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        else
+            Text = "@color:180,180,180 Gebetsmesse @color:255,255,255 @cr ";
+            Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
+            local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Construction];
+            if Effects.Reputation > 0 then
+                Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                Text = Text.. "+" ..Effects.Honor.." Ehre";
+            end
+        end
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers2_normal" then
+        if Logic.GetTechnologyState(_PlayerID, Technologies.T_BlessSettlers2) == 0 then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        else
+            Text = "@color:180,180,180 Ablassbriefe @color:255,255,255 @cr ";
+            Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
+            local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Research];
+            if Effects.Reputation > 0 then
+                Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                Text = Text.. "+" ..Effects.Honor.." Ehre";
+            end
+        end
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers3_normal" then
+        if Logic.GetTechnologyState(_PlayerID, Technologies.T_BlessSettlers3) == 0 then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        else
+            Text = "@color:180,180,180 Bibeln @color:255,255,255 @cr ";
+            if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+                Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
+            end
+            Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
+            local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Weapons];
+            if Effects.Reputation > 0 then
+                Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                Text = Text.. "+" ..Effects.Honor.." Ehre";
+            end
+        end
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers4_normal" then
+        if Logic.GetTechnologyState(_PlayerID, Technologies.T_BlessSettlers4) == 0 then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        else
+            Text = "@color:180,180,180 Kollekte @color:255,255,255 @cr ";
+            if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+                Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kirche @cr";
+            end
+            Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
+            local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Financial];
+            if Effects.Reputation > 0 then
+                Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                Text = Text.. "+" ..Effects.Honor.." Ehre";
+            end
+        end
+    elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers5_normal" then
+        if Logic.GetTechnologyState(_PlayerID, Technologies.T_BlessSettlers5) == 0 then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
+        else
+            Text = "@color:180,180,180 Heiligsprechung @color:255,255,255 @cr ";
+            if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+                Text = Text .. " @color:244,184,0 benötigt: @color:255,255,255 Kathedrale @cr";
+            end
+            Text = Text .. " @color:244,184,0 bewirkt: @color:255,255,255 ";
+            local Effects = Stronghold.Building.Config.Monastery[BlessCategories.Canonisation];
+            if Effects.Reputation > 0 then
+                Text = Text.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                Text = Text.. "+" ..Effects.Honor.." Ehre";
+            end
+        end
+    else
+        return false;
+    end
+
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    return true;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -1539,9 +1920,40 @@ function Stronghold.Building:ExecuteBuyUnitKeybindForStable(_Key, _PlayerID, _En
 end
 
 -- -------------------------------------------------------------------------- --
--- UI Stuff
+-- General
 
--- HACK: Prevent nasty update when toggle groups is used.
+function Stronghold.Building:OverrideChangeBuildingMenuButton()
+    self.Orig_GUIAction_ChangeBuildingMenu = GUIAction_ChangeBuildingMenu;
+    GUIAction_ChangeBuildingMenu = function(_WidgetID)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        if Stronghold:IsPlayer(PlayerID) then
+            if Stronghold.Building:HeadquartersChangeBuildingTabsGuiAction(PlayerID, EntityID, _WidgetID) then
+                return;
+            end
+        end
+        Stronghold.Building.Orig_GUIAction_ChangeBuildingMenu(_WidgetID);
+    end
+end
+
+function Stronghold.Building:OverrideUpdateConstructionButton()
+    self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
+    GUIUpdate_BuildingButtons = function(_Button, _Technology)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetPlayerID();
+        if Stronghold:IsPlayer(PlayerID) then
+            if Stronghold.Building:HeadquartersBlessSettlersGuiUpdate(PlayerID, EntityID, _Button) then
+                return;
+            end
+        end
+        Stronghold.Building.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
+    end
+end
+
+-- -------------------------------------------------------------------------- --
+-- Dirty Hacks
+
+-- Prevent nasty update when toggle groups is used.
 function Stronghold.Building:OverrideManualButtonUpdate()
     self.Orig_XGUIEng_DoManualButtonUpdate = XGUIEng.DoManualButtonUpdate;
     XGUIEng.DoManualButtonUpdate = function(_WidgetID)
@@ -1554,7 +1966,7 @@ function Stronghold.Building:OverrideManualButtonUpdate()
     end
 end
 
--- HACK: Deselect building on demolition to prevent click spamming.
+-- Deselect building on demolition to prevent click spamming.
 function Stronghold.Building:OverrideSellBuildingAction()
     self.Orig_GUI_SellBuilding = GUI.SellBuilding;
     GUI.SellBuilding = function(_EntityID)
