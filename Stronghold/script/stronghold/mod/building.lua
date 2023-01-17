@@ -151,7 +151,11 @@ end
 function Stronghold.Building:OverrideHeadquarterButtons()
     self.Orig_GUIAction_SetTaxes = GUIAction_SetTaxes;
     GUIAction_SetTaxes = function(_Level)
+        local GuiPlayer = Stronghold:GetLocalPlayerID();
         local PlayerID = GUI.GetPlayerID();
+        if GuiPlayer ~= PlayerID then
+            return Stronghold.Building.Orig_GUIAction_SetTaxes(_Level);
+        end
         if not Stronghold.Building.Data[PlayerID] then
             return Stronghold.Building.Orig_GUIAction_SetTaxes(_Level);
         end
@@ -165,7 +169,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
 
     self.Orig_GUIUpdate_TaxesButtons = GUIUpdate_TaxesButtons;
     GUIUpdate_TaxesButtons = function()
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Building.Data[PlayerID] then
             return Stronghold.Building.Orig_GUIUpdate_TaxesButtons();
         end
@@ -176,8 +180,9 @@ function Stronghold.Building:OverrideHeadquarterButtons()
 
     self.Orig_GUIAction_BuySerf = GUIAction_BuySerf;
     GUIAction_BuySerf = function()
+        local GuiPlayer = Stronghold:GetLocalPlayerID();
         local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
+        if GuiPlayer ~= PlayerID or not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Building.Orig_GUIAction_BuySerf();
         end
         if Stronghold.Players[PlayerID].BuyUnitLock then
@@ -206,7 +211,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
     end
 
     GUIAction_CallMilitia = function()
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         Stronghold.Hero:OpenBuyHeroWindowForLordSelection(PlayerID);
     end
 
@@ -216,7 +221,7 @@ end
 
 function Stronghold.Building:OnHeadquarterSelected(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if not Stronghold:IsPlayer(PlayerID) then
         return;
     end
     if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
@@ -326,13 +331,10 @@ function Stronghold.Building:HeadquartersShowNormalControls(_PlayerID, _EntityID
     XGUIEng.TransferMaterials("Buy_Hero", "HQ_CallMilitia");
     XGUIEng.TransferMaterials("Statistics_SubSettlers_Motivation", "HQ_BackToWork");
 
-    if not Stronghold.Players[_PlayerID].LordChosen then
-        XGUIEng.ShowWidget("HQ_CallMilitia", 1);
-        XGUIEng.ShowWidget("HQ_BackToWork", 0);
-    else
-        XGUIEng.ShowWidget("HQ_CallMilitia", 0);
-        XGUIEng.ShowWidget("HQ_BackToWork", 0);
-    end
+    -- TODO: Proper disable in singleplayer!
+    -- local ShowBuyHero = XNetwork.Manager_DoesExist()
+    XGUIEng.ShowWidget("HQ_CallMilitia", 1);
+    XGUIEng.ShowWidget("HQ_BackToWork", 0);
 end
 
 -- Mesures (Blessings)
@@ -388,9 +390,6 @@ function Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, _BlessCategory
 end
 
 function Stronghold.Building:HeadquartersBlessSettlersGuiAction(_PlayerID, _EntityID, _BlessCategory)
-    if GUI.GetPlayerID() ~= _PlayerID then
-        return false;
-    end
     if Logic.IsEntityInCategory(_EntityID, EntityCategories.Headquarters) == 0 then
         return false;
     end
@@ -579,23 +578,12 @@ end
 -- -------------------------------------------------------------------------- --
 -- Barracks
 
--- This function is called for each unit type individually.
-function Stronghold.Building:ApplyUpkeepDiscountBarracks(_PlayerID, _Upkeep)
-    local Upkeep = _Upkeep;
-    if Stronghold:IsPlayer(_PlayerID) and Upkeep > 0 then
-        local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Barracks2);
-        if Barracks > 0 then
-            Upkeep = Upkeep * 0.85;
-        end
-    end
-    return Upkeep;
-end
-
 function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    local PlayerID = GUI.GetPlayerID();
     local AutoFillActive = Logic.IsAutoFillActive(EntityID) == 1;
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if PlayerID ~= GuiPlayer or not Stronghold:IsPlayer(PlayerID) then
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
@@ -646,10 +634,8 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
 end
 
 function Stronghold.Building:OnBarracksSelected(_EntityID)
-    local GuiPlayer = Stronghold:GetLocalPlayerID();
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if (PlayerID ~= GuiPlayer and GuiPlayer ~= 17)
-    or not Stronghold:IsPlayer(PlayerID) then
+    if not Stronghold:IsPlayer(PlayerID) then
         return;
     end
     local Type = Logic.GetEntityType(_EntityID);
@@ -856,23 +842,12 @@ end
 -- -------------------------------------------------------------------------- --
 -- Archery
 
--- This function is called for each unit type individually.
-function Stronghold.Building:ApplyUpkeepDiscountArchery(_PlayerID, _Upkeep)
-    local Upkeep = _Upkeep;
-    if Stronghold:IsPlayer(_PlayerID) and Upkeep > 0 then
-        local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Archery2);
-        if Barracks > 0 then
-            Upkeep = Upkeep * 0.85;
-        end
-    end
-    return Upkeep;
-end
-
 function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    local PlayerID = GUI.GetPlayerID();
     local AutoFillActive = Logic.IsAutoFillActive(EntityID) == 1;
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if PlayerID ~= GuiPlayer or not Stronghold:IsPlayer(PlayerID) then
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
@@ -924,7 +899,7 @@ end
 
 function Stronghold.Building:OnArcherySelected(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if not Stronghold:IsPlayer(PlayerID) then
         return;
     end
     local Type = Logic.GetEntityType(_EntityID);
@@ -1118,9 +1093,10 @@ end
 -- Tavern
 
 function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    local PlayerID = GUI.GetPlayerID();
+    if PlayerID ~= GuiPlayer or not Stronghold:IsPlayer(PlayerID) then
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
@@ -1159,7 +1135,7 @@ end
 
 function Stronghold.Building:OnTavernSelected(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if not Stronghold:IsPlayer(PlayerID) then
         return;
     end
     local Type = Logic.GetEntityType(_EntityID);
@@ -1191,7 +1167,6 @@ end
 
 function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
     local WidgetID = XGUIEng.GetCurrentWidgetID();
-    local EntityID = GUI.GetSelectedEntity();
     local CostsText = "";
     local Text = "";
 
@@ -1245,23 +1220,12 @@ end
 -- -------------------------------------------------------------------------- --
 -- Stable
 
--- This function is called for each unit type individually.
-function Stronghold.Building:ApplyUpkeepDiscountStable(_PlayerID, _Upkeep)
-    local Upkeep = _Upkeep;
-    if Stronghold:IsPlayer(_PlayerID) and Upkeep > 0 then
-        local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Stable2);
-        if Barracks > 0 then
-            Upkeep = Upkeep * 0.85;
-        end
-    end
-    return Upkeep;
-end
-
 function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    local PlayerID = GUI.GetPlayerID();
     local AutoFillActive = Logic.IsAutoFillActive(EntityID) == 1;
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if PlayerID ~= GuiPlayer or not Stronghold:IsPlayer(PlayerID) then
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
@@ -1305,7 +1269,7 @@ end
 
 function Stronghold.Building:OnStableSelected(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if not Stronghold:IsPlayer(PlayerID) then
         return;
     end
     local Type = Logic.GetEntityType(_EntityID);
@@ -1422,22 +1386,11 @@ end
 -- -------------------------------------------------------------------------- --
 -- Foundry
 
--- This function is called for each unit type individually.
-function Stronghold.Building:ApplyUpkeepDiscountFoundry(_PlayerID, _Upkeep)
-    local Upkeep = _Upkeep;
-    if Stronghold:IsPlayer(_PlayerID) and Upkeep > 0 then
-        local Barracks = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Foundry2);
-        if Barracks > 0 then
-            Upkeep = Upkeep * 0.85;
-        end
-    end
-    return Upkeep;
-end
-
 function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    local PlayerID = GUI.GetPlayerID();
+    if GuiPlayer ~= PlayerID or not Stronghold:IsPlayer(PlayerID) then
         return false;
     end
     if Stronghold.Players[PlayerID].BuyUnitLock then
@@ -1537,7 +1490,6 @@ end
 
 function Stronghold.Building:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
     local WidgetID = XGUIEng.GetCurrentWidgetID();
-    local EntityID = GUI.GetSelectedEntity();
     local Text = "";
     local CostsText = "";
 
@@ -1654,7 +1606,7 @@ end
 
 function Stronghold.Building:OnMonasterySelected(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if PlayerID ~= GUI.GetPlayerID() or not Stronghold:IsPlayer(PlayerID) then
+    if not Stronghold:IsPlayer(PlayerID) then
         return;
     end
     local Type = Logic.GetEntityType(_EntityID);
@@ -1679,21 +1631,22 @@ end
 function Stronghold.Building:OverrideMonasteryInterface()
     self.Orig_GUIAction_BlessSettlers = GUIAction_BlessSettlers;
     GUIAction_BlessSettlers = function(_BlessCategory)
-        local PlayerID = Stronghold:GetLocalPlayerID();
+        local GuiPlayer = Stronghold:GetLocalPlayerID();
         local EntityID = GUI.GetSelectedEntity();
-        if not Stronghold.Building.Data[PlayerID] then
+        local PlayerID = GUI.GetPlayerID();
+        if not Stronghold.Building.Data[GuiPlayer] then
             return Stronghold.Building.Orig_GUIAction_BlessSettlers(_BlessCategory);
         end
-
         if InterfaceTool_IsBuildingDoingSomething(EntityID) == true then
             return;
         end
-
-        if Stronghold.Building:HeadquartersBlessSettlersGuiAction(PlayerID, EntityID, _BlessCategory) then
-            return;
-        end
-        if Stronghold.Building:MonasteryBlessSettlersGuiAction(PlayerID, EntityID, _BlessCategory) then
-            return;
+        if GuiPlayer == PlayerID then
+            if Stronghold.Building:HeadquartersBlessSettlersGuiAction(GuiPlayer, EntityID, _BlessCategory) then
+                return;
+            end
+            if Stronghold.Building:MonasteryBlessSettlersGuiAction(GuiPlayer, EntityID, _BlessCategory) then
+                return;
+            end
         end
     end
 
@@ -1701,13 +1654,13 @@ function Stronghold.Building:OverrideMonasteryInterface()
 	GUITooltip_BlessSettlers = function(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
         Stronghold.Building.Orig_GUITooltip_BlessSettlers(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
 
-        local PlayerID = GUI.GetPlayerID();
+        local GuiPlayer = Stronghold:GetLocalPlayerID();
         local EntityID = GUI.GetSelectedEntity();
-        if Stronghold:IsPlayer(PlayerID) then
-            if Stronghold.Building:MonasteryBlessSettlersGuiTooltip(PlayerID, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut) then
+        if Stronghold:IsPlayer(GuiPlayer) then
+            if Stronghold.Building:MonasteryBlessSettlersGuiTooltip(GuiPlayer, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut) then
                 return;
             end
-            if Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(PlayerID, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut) then
+            if Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(GuiPlayer, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut) then
                 return;
             end
         end
@@ -1716,7 +1669,7 @@ function Stronghold.Building:OverrideMonasteryInterface()
     self.Orig_GUIUpdate_FaithProgress = GUIUpdate_FaithProgress;
     GUIUpdate_FaithProgress = function()
         local WidgetID = XGUIEng.GetCurrentWidgetID();
-        local PlayerID = GUI.GetPlayerID();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         local EntityID = GUI.GetSelectedEntity();
         if Stronghold:IsPlayer(PlayerID) then
             if Stronghold.Building:HeadquartersFaithProgressGuiUpdate(PlayerID, EntityID, WidgetID) then
@@ -1728,9 +1681,6 @@ function Stronghold.Building:OverrideMonasteryInterface()
 end
 
 function Stronghold.Building:MonasteryBlessSettlersGuiAction(_PlayerID, _EntityID, _BlessCategory)
-    if GUI.GetPlayerID() ~= _PlayerID then
-        return;
-    end
     local Type = Logic.GetEntityType(_EntityID);
     if Logic.GetUpgradeCategoryByBuildingType(Type) ~= UpgradeCategories.Monastery then
         return false;
@@ -1925,8 +1875,8 @@ end
 function Stronghold.Building:OverrideChangeBuildingMenuButton()
     self.Orig_GUIAction_ChangeBuildingMenu = GUIAction_ChangeBuildingMenu;
     GUIAction_ChangeBuildingMenu = function(_WidgetID)
-        local PlayerID = Stronghold:GetLocalPlayerID();
         local EntityID = GUI.GetSelectedEntity();
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if Stronghold:IsPlayer(PlayerID) then
             if Stronghold.Building:HeadquartersChangeBuildingTabsGuiAction(PlayerID, EntityID, _WidgetID) then
                 return;
@@ -1940,7 +1890,7 @@ function Stronghold.Building:OverrideUpdateConstructionButton()
     self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
     GUIUpdate_BuildingButtons = function(_Button, _Technology)
         local PlayerID = Stronghold:GetLocalPlayerID();
-        local EntityID = GUI.GetPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
         if Stronghold:IsPlayer(PlayerID) then
             if Stronghold.Building:HeadquartersBlessSettlersGuiUpdate(PlayerID, EntityID, _Button) then
                 return;

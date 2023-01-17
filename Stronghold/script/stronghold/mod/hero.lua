@@ -579,8 +579,12 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
     if not Stronghold:IsPlayer(_PlayerID) then
         return;
     end
+
+    local LairdID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
+    local LairdType = Logic.GetEntityType(LairdID);
+    local Caption = (LairdID ~= 0 and "Alea Iacta Est!") or "Wählt Euren Laird!";
     XGUIEng.ShowWidget("BuyHeroWindow", 1);
-    XGUIEng.SetText("BuyHeroWindowHeadline", "Wählt Euren Laird!");
+    XGUIEng.SetText("BuyHeroWindowHeadline", Caption);
     XGUIEng.SetText("BuyHeroWindowInfoLine", "");
     XGUIEng.SetWidgetPositionAndSize("BuyHeroWindowInfoLine", 340, 60, 480, 50);
     XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
@@ -601,9 +605,14 @@ function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
         local WidgetID = self.Config.UI.TypeToBuyHeroButton[Type];
         local ButtonW, ButtonH = 60, 90;
         XGUIEng.ShowWidget(WidgetID, 1);
-        if not self.Config.Rule.Lord[i][2]
-        or GuiPlayer ~= _PlayerID then
-            XGUIEng.DisableButton(WidgetID, 1);
+        if LairdID == 0 then
+            local Disabled = 0;
+            if not self.Config.Rule.Lord[i][2] or GuiPlayer ~= _PlayerID then
+                Disabled = 1;
+            end
+            XGUIEng.DisableButton(WidgetID, Disabled);
+        else
+            XGUIEng.DisableButton(WidgetID, (Type ~= LairdType and 1) or 0);
         end
         XGUIEng.SetWidgetPositionAndSize(WidgetID, PositionX, PositionY, ButtonW, ButtonH);
         PositionX = PositionX + 65;
@@ -661,7 +670,7 @@ function Stronghold.Hero:OverrideBuyHeroWindow()
         if not Stronghold:IsPlayer(PlayerID) then
             return Stronghold.Hero.Orig_BuyHeroWindow_Action_BuyHero(_Type);
         end
-        if GuiPlayer ~= PlayerID then
+        if GuiPlayer ~= PlayerID or Stronghold.Players[PlayerID].LordChosen then
             return;
         end
         Syncer.InvokeEvent(
