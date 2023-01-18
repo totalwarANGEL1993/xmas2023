@@ -189,7 +189,8 @@
         "CLogic",
         "IncludeGlobals",
         "gvGUI_StateID",
-        "SendEvent"
+        "SendEvent",
+        "Lib"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

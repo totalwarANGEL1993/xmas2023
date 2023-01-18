@@ -1,3 +1,22 @@
+local LibPath = "maps\\user\\cerberus\\loader.lua";
+-- local LibPath = "maps\\externalmap\\cerberus\\loader.lua";
+Script.Load(LibPath);
+assert(Lib ~= nil);
+
+Lib.Require("comfort/KeyOf");
+Lib.Require("comfort/GetAllWorker");
+Lib.Require("comfort/GetAllWorkplaces");
+Lib.Require("comfort/GetSeparatedTooltipText");
+Lib.Require("comfort/GetValidEntitiesOfType");
+Lib.Require("comfort/IsValidEntity");
+
+Lib.Require("module/buyhero/BuyHero");
+Lib.Require("module/entitytracker/EntityTracker");
+Lib.Require("module/svlib/SVLib");
+Lib.Require("module/syncer/Syncer");
+
+-- ---------- --
+
 DetectStronghold = function()
     return false;
 end
@@ -9,22 +28,19 @@ if not DetectStronghold() then
     return false;
 end
 
-Script.Load(gvBasePath.. "script/lib/comforts.lua");
-Script.Load(gvBasePath.. "script/lib/syncer.lua");
-Script.Load(gvBasePath.. "script/lib/entitytracker.lua");
-Script.Load(gvBasePath.. "script/lib/buyHero.lua");
+-- ---------- --
 
-Script.Load(gvBasePath.. "script/stronghold/main.lua");
+Script.Load(gvBasePath.. "main.lua");
 
-Script.Load(gvBasePath.. "script/stronghold/mod/utils.lua");
-Script.Load(gvBasePath.. "script/stronghold/mod/economy.lua");
-Script.Load(gvBasePath.. "script/stronghold/mod/construction.lua");
-Script.Load(gvBasePath.. "script/stronghold/mod/building.lua");
-Script.Load(gvBasePath.. "script/stronghold/mod/unit.lua");
-Script.Load(gvBasePath.. "script/stronghold/mod/hero.lua");
-Script.Load(gvBasePath.. "script/stronghold/mod/province.lua");
+Script.Load(gvBasePath.. "script/utils.lua");
+Script.Load(gvBasePath.. "script/economy.lua");
+Script.Load(gvBasePath.. "script/construction.lua");
+Script.Load(gvBasePath.. "script/building.lua");
+Script.Load(gvBasePath.. "script/unit.lua");
+Script.Load(gvBasePath.. "script/hero.lua");
+Script.Load(gvBasePath.. "script/province.lua");
 
-Script.Load(gvBasePath.. "script/stronghold/ai/ai_army.lua");
-Script.Load(gvBasePath.. "script/stronghold/ai/ai_camp.lua");
-Script.Load(gvBasePath.. "script/stronghold/ai/ai_player.lua");
+Script.Load(gvBasePath.. "script/ai_army.lua");
+Script.Load(gvBasePath.. "script/ai_camp.lua");
+Script.Load(gvBasePath.. "script/ai_player.lua");
 
