@@ -237,6 +237,7 @@ end
 function Stronghold:Init()
     Syncer.Install(999);
     EntityTracker.Install();
+    BuyHero.Install();
 
     if not CMod then
         Message("The S5 Community Server is required!");
@@ -353,6 +354,7 @@ function Stronghold:AddPlayer(_PlayerID)
         AttackMemory = {},
     };
 
+    BuyHero.SetNumberOfBuyableHeroes(_PlayerID, 1);
     if CNetwork then
         SendEvent.SetTaxes(_PlayerID, 0);
     end

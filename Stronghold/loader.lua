@@ -12,6 +12,7 @@ end
 Script.Load(gvBasePath.. "script/lib/comforts.lua");
 Script.Load(gvBasePath.. "script/lib/syncer.lua");
 Script.Load(gvBasePath.. "script/lib/entitytracker.lua");
+Script.Load(gvBasePath.. "script/lib/buyHero.lua");
 
 Script.Load(gvBasePath.. "script/stronghold/main.lua");
 

@@ -109,7 +109,6 @@ end
 function Stronghold.Building:CreateBuildingButtonHandlers()
     self.SyncEvents = {
         ChangeTax = 1,
-        BuyLord = 2,
         BuySerf = 3,
         BuyUnit = 4,
         BlessSettlers = 5,
@@ -211,8 +210,7 @@ function Stronghold.Building:OverrideHeadquarterButtons()
     end
 
     GUIAction_CallMilitia = function()
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        Stronghold.Hero:OpenBuyHeroWindowForLordSelection(PlayerID);
+        XGUIEng.ShowWidget("BuyHeroWindow", 1);
     end
 
     GUIAction_BackToWork = function()

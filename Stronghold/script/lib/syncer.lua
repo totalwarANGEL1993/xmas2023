@@ -1,33 +1,28 @@
----Synchronizer script
+--- 
+--- Synchronizer script
+--- 
+--- This script provides synchronized calls for Multiplayer.
+--- 
+--- If the map is played in Singleplayer then each call is executed directly.
+--- 
+--- If played in Multiplayer the script automatically reconizes the community
+--- server and uses its API. If the server methods are not defined the script
+--- uses tributes and messages for synchronization.
+--- 
+--- TODO: Not compatiple with EMS unless on community server!
+--- 
+--- @author totalwarANGEL
+--- @version 1.0.0
 ---
----This script provides synchronized calls for Multiplayer.
----
----If the map is played in Singleplayer then each call is executed directly.
----
----If played in Multiplayer the script automatically reconizes the community
----server and uses its API. If the server methods are not defined the script
----uses tributes and messages for synchronization.
----
----TODO: Not compatiple with EMS unless on community server!
 
-Syncer = {
-    Internal = {
-        Data = {},
-        Transaction = {
-            TributeIdSequence = 0,
-            Transactions = {},
-            TransactionParameter = {},
-            UniqueActionCounter = 1,
-        },
-    },
-};
+Syncer = {};
 
 -- -------------------------------------------------------------------------- --
 -- API
 
 ---Installs the syncer.
 ---(Must be called on game start!)
----@param _TributeIdSequence number Starting value for tribute IDs
+---@param _TributeIdSequence number (Optional) Starting value for tribute IDs
 function Syncer.Install(_TributeIdSequence)
     Syncer.Internal:Install(_TributeIdSequence);
 end
@@ -105,6 +100,16 @@ end
 
 -- -------------------------------------------------------------------------- --
 -- Internal
+
+Syncer.Internal = {
+    Data = {},
+    Transaction = {
+        TributeIdSequence = 0,
+        Transactions = {},
+        TransactionParameter = {},
+        UniqueActionCounter = 1,
+    },
+};
 
 function Syncer.Internal:Install(_TributeIdSequence)
     if not self.IsInstalled then

@@ -2,7 +2,7 @@
 ---
 ---Any entity type can be tracked whit this. The script only tracks the types
 ---configured in the limits table. Changes in the UI aka disableing buttons
----ect. must be done by the scripts using this.
+---ect. must be done by the user.
 ---
 ---GameCallback_GUI_SelectionChanged is called by code if an configured type
 ---is created/destroyed or an building upgrade is started/canceled.
@@ -64,7 +64,6 @@ end
 -- -------------------------------------------------------------------------- --
 -- Internal
 
--- Must be called to setup tracking
 function EntityTracker.Internal:Install()
     if not self.IsInstalled then
         self.IsInstalled = true;

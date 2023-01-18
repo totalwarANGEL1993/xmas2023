@@ -220,7 +220,7 @@ function Stronghold.Hero:Install()
         self.Data[i] = {};
     end
 
-    self:OverrideBuyHeroWindow();
+    self:ConfigureBuyHero();
     self:OverrideCalculationCallbacks();
     self:OverrideLeaderFormationAction();
     self:OverrideLeaderFormationTooltip();
@@ -245,14 +245,10 @@ function Stronghold.Hero:OnSaveGameLoaded()
     end
 end
 
--- -------------------------------------------------------------------------- --
--- Rank Up
-
 function Stronghold.Hero:CreateHeroButtonHandlers()
     self.SyncEvents = {
         RankUp = 1,
         Hero5Summon = 2,
-        BuyLord = 3,
     };
 
     self.NetworkCall = Syncer.CreateEvent(
@@ -263,13 +259,12 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
             if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
                 Stronghold.Hero:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
             end
-            if _Action == Stronghold.Hero.SyncEvents.BuyLord then
-                Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
-                Stronghold.Hero:PlayFunnyComment(_PlayerID);
-            end
         end
     );
 end
+
+-- -------------------------------------------------------------------------- --
+-- Rank Up
 
 function Stronghold.Hero:OverrideLeaderFormationAction()
     self.Orig_GUIAction_ChangeFormation = GUIAction_ChangeFormation;
@@ -574,132 +569,39 @@ end
 -- -------------------------------------------------------------------------- --
 -- Buy Hero
 
-function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
-    local GuiPlayer = Stronghold:GetLocalPlayerID();
-    if not Stronghold:IsPlayer(_PlayerID) then
-        return;
-    end
-
-    local LairdID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
-    local LairdType = Logic.GetEntityType(LairdID);
-    local Caption = (LairdID ~= 0 and "Alea Iacta Est!") or "Wählt Euren Laird!";
-    XGUIEng.ShowWidget("BuyHeroWindow", 1);
-    XGUIEng.SetText("BuyHeroWindowHeadline", Caption);
-    XGUIEng.SetText("BuyHeroWindowInfoLine", "");
-    XGUIEng.SetWidgetPositionAndSize("BuyHeroWindowInfoLine", 340, 60, 480, 50);
-    XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
-
-    local PositionX = 20;
-    local PositionY = 20;
-    XGUIEng.SetWidgetPosition("BuyHeroLine1", 40, 40);
-
-    local AllowedLairds = {};
-    for i= 1, table.getn(self.Config.Rule.Lord) do
-        if self.Config.Rule.Lord[i][2] then
-            table.insert(AllowedLairds, self.Config.Rule.Lord[i]);
-        end
-    end
-
-    for i= 1, table.getn(self.Config.Rule.Lord) do
-        local Type = self.Config.Rule.Lord[i][1];
-        local WidgetID = self.Config.UI.TypeToBuyHeroButton[Type];
-        local ButtonW, ButtonH = 60, 90;
-        XGUIEng.ShowWidget(WidgetID, 1);
-        if LairdID == 0 then
-            local Disabled = 0;
-            if not self.Config.Rule.Lord[i][2] or GuiPlayer ~= _PlayerID then
-                Disabled = 1;
-            end
-            XGUIEng.DisableButton(WidgetID, Disabled);
-        else
-            XGUIEng.DisableButton(WidgetID, (Type ~= LairdType and 1) or 0);
-        end
-        XGUIEng.SetWidgetPositionAndSize(WidgetID, PositionX, PositionY, ButtonW, ButtonH);
-        PositionX = PositionX + 65;
-
-        if math.mod(i, 4) == 0 then
-            PositionY = PositionY + 95;
-            PositionX = 20;
-        end
-    end
-end
-
-function Stronghold.Hero:OverrideBuyHeroWindow()
-    self.Orig_BuyHeroWindow_UpdateInfoLine = BuyHeroWindow_UpdateInfoLine;
-    BuyHeroWindow_UpdateInfoLine = function()
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_BuyHeroWindow_UpdateInfoLine();
-        end
-
-        local ScreenX, ScreenY = GUI.GetScreenSize();
-        local MouseX, MouseY = GUI.GetMousePosition();
-        MouseX = MouseX * (1024/ScreenX);
-        MouseY = MouseY * (768/ScreenY);
-
-        local RowX, RowY = 122, 155;
-        local ButtonW, ButtonH = 65, 90;
-
-        local Text = "";
-        for i= 1, table.getn(self.Config.Rule.Lord) do
-            local Type = self.Config.Rule.Lord[i][1];
-            local ButtonStartX = (RowX + (ButtonW * (math.mod(i-1, 4))));
-            local ButtonEndX = ButtonStartX + ButtonW;
-            local ButtonStartY = RowY;
-            local ButtonEndY = RowY + ButtonH;
-
-            local WidgetName = self.Config.UI.TypeToBuyHeroButton[Type];
-            if XGUIEng.IsWidgetShown(WidgetName) == 1 then
-                if (MouseX >= ButtonStartX and MouseX <= ButtonEndX) and (MouseY >= ButtonStartY and MouseY <= ButtonEndY) then
-                    Text = Stronghold.Hero.Config.UI.HeroCV[Type].Description;
-                end
-            end
-
-            if math.mod(i, 4) == 0 then
-                RowY = RowY + 95;
-                RowX = 122;
-            end
-        end
-        XGUIEng.SetText("BuyHeroWindowInfoLine", Text);
-    end
-
-    self.Orig_BuyHeroWindow_Action_BuyHero = BuyHeroWindow_Action_BuyHero;
-    BuyHeroWindow_Action_BuyHero = function(_Type)
-        local GuiPlayer = GUI.GetPlayerID()
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_BuyHeroWindow_Action_BuyHero(_Type);
-        end
-        if GuiPlayer ~= PlayerID or Stronghold.Players[PlayerID].LordChosen then
+function Stronghold.Hero:ConfigureBuyHero()
+    self.Orig_GameCallback_Logic_BuyHero_OnHeroSelected = GameCallback_Logic_BuyHero_OnHeroSelected;
+    GameCallback_Logic_BuyHero_OnHeroSelected = function(_PlayerID, _ID, _Type)
+        if Stronghold:IsPlayer(_PlayerID) then
+            Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type);
+            Stronghold.Hero:PlayFunnyComment(_PlayerID);
             return;
         end
-        Syncer.InvokeEvent(
-            Stronghold.Hero.NetworkCall,
-            PlayerID,
-            Stronghold.Hero.SyncEvents.BuyLord,
-            _Type
-        );
-        XGUIEng.ShowWidget("BuyHeroWindow", 0);
+        return Stronghold.Hero.Orig_GameCallback_Logic_BuyHero_OnHeroSelected(_PlayerID, _ID, _Type);
     end
 
-    self.Orig_BuyHeroWindow_Update_BuyHero = BuyHeroWindow_Update_BuyHero;
-    BuyHeroWindow_Update_BuyHero = function(_Type)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_BuyHeroWindow_Update_BuyHero(_Type);
+    self.Orig_GameCallback_GUI_BuyHero_GetHeadline = GameCallback_GUI_BuyHero_GetHeadline;
+    GameCallback_GUI_BuyHero_GetHeadline = function(_PlayerID)
+        if Stronghold:IsPlayer(_PlayerID) then
+            local LairdID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
+            local Caption = (LairdID ~= 0 and "Alea Iacta Est!") or "Wählt Euren Laird!";
+            return Caption;
         end
+        return Stronghold.Hero.Orig_GameCallback_GUI_BuyHero_GetHeadline(_PlayerID);
+    end
+
+    self.Orig_GameCallback_GUI_BuyHero_GetMessage = GameCallback_GUI_BuyHero_GetMessage;
+    GameCallback_GUI_BuyHero_GetMessage = function(_PlayerID, _Type)
+        if Stronghold:IsPlayer(_PlayerID) then
+            return Stronghold.Hero.Config.UI.HeroCV[_Type].Description;
+        end
+        return Stronghold.Hero.Orig_GameCallback_GUI_BuyHero_GetMessage(_PlayerID, _Type);
     end
 end
 
-function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
+function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
     if Stronghold:IsPlayer(_PlayerID) then
-        Stronghold.Players[_PlayerID].LordChosen = true;
-        local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
-        local Orientation = Logic.GetEntityOrientation(CastleID);
-        local Position = Stronghold.Players[_PlayerID].DoorPos;
-        ID = Logic.CreateEntity(_Type, Position.X, Position.Y, 0, _PlayerID);
-        Logic.SetEntityName(ID, Stronghold.Players[_PlayerID].LordScriptName);
-        Logic.RotateEntity(ID, Orientation +180);
+        Logic.SetEntityName(_ID, Stronghold.Players[_PlayerID].LordScriptName);
         self:ConfigurePlayersLord(_PlayerID);
 
         local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
