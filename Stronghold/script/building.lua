@@ -437,7 +437,7 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(_PlayerID, _Ent
         Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Construction];
     elseif _TooltipNormal == "AOMenuMonastery/BlessSettlers2_normal" then
         Text = "@color:180,180,180 Zwangsabgabe @color:255,255,255 @cr "..
-               "Treibt eine Sondersteuer ein von Eurem Volke ein. Ihren Ertrag "..
+               "Treibt eine Sondersteuer von Eurem Volke ein. Ihren Ertrag "..
                "vermag jedoch niemand vorherzusehen!";
         if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
@@ -571,9 +571,9 @@ function Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(_PlayerID, _Enti
                "Hier könnt Ihr Leibeigene kaufen, Euren Laird wählen, den "..
                "Alarm ausrufen und später sogar die Steuern einstellen.";
     elseif _Key == "MenuBuildingGeneric/tobuildingsettlersmenu" then
-        Text = "@color:180,180,180 Regularien @cr @color:255,255,255 "..
-               "Hier könnt Ihr Maßnahmen erlassen. Jede Maßnahme hat "..
-               "individuelle Konsequenzen. Überlegt gut, ob und wann "..
+        Text = "@color:180,180,180 Maßnahmen @cr @color:255,255,255 "..
+               "Hier könnt Ihr Regularien beschließen. Jede dieser Maßnahmen "..
+               "hat individuelle Konsequenzen. Überlegt gut, ob und wann "..
                "Ihr sie einsetzt.";
     else
         return false;
