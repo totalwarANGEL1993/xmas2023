@@ -48,115 +48,132 @@ function Stronghold.Construction:Install()
 
     self:InitBuildingLimits();
     self:OverridePlaceBuildingAction();
-    self:OverrideUpdateUpgradeButton();
-    self:OverrideTooltipConstructionButton();
-    self:OverrideUpdateConstructionButton();
-    self:OverrideBuildingUpgradeButtonTooltip();
+    self:OverrideGUI();
 end
 
 function Stronghold.Construction:OnSaveGameLoaded()
 end
 
 -- -------------------------------------------------------------------------- --
+-- UI
+
+function Stronghold.Construction:OverrideGUI()
+    -- Don't let EMS fuck with my script...
+    if EMS then
+        function EMS.RD.Rules.Markets:Evaluate(self) end
+    end
+
+    UiHacker.CreateHack(
+        "GUITooltip_UpgradeBuilding",
+        function(_Name, _WidgetID, _Type, _KeyDisabled, _KeyNormal, _Technology)
+            return Stronghold.Construction:PrintBuildingUpgradeButtonTooltip(_Type, _KeyDisabled, _KeyNormal, _Technology);
+        end
+    );
+
+    UiHacker.CreateHack(
+        "GUITooltip_ConstructBuilding",
+        function(_Name, _WidgetID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+            return Stronghold.Construction:PrintTooltipConstructionButton(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
+        end
+    );
+
+    UiHacker.CreateHack(
+        "GUIUpdate_BuildingButtons",
+        function(_Name, _WidgetID, _Button, _Technology)
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            return Stronghold.Construction:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
+        end
+    );
+
+    UiHacker.CreateHack(
+        "GUIUpdate_UpgradeButtons",
+        function(_Name, _WidgetID, _Button, _Technology)
+            return Stronghold.Construction:UpdateSerfUpgradeButtons(_Button, _Technology);
+        end
+    );
+end
+
+-- -------------------------------------------------------------------------- --
 -- Construction
 
-function Stronghold.Construction:OverrideTooltipConstructionButton()
-    self.Orig_GUITooltip_ConstructBuilding = GUITooltip_ConstructBuilding;
-    GUITooltip_ConstructBuilding = function(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Construction.Orig_GUITooltip_ConstructBuilding(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
-        end
-        local IsForbidden = false;
-
-        -- Get default text
-        local ForbiddenText = GetSeparatedTooltipText("MenuGeneric/BuildingNotAvailable")
-        local NormalText = GetSeparatedTooltipText(_KeyNormal);
-        local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
-        local DefaultText = NormalText;
-        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-            DefaultText = DisabledText;
-            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
-                DefaultText = ForbiddenText;
-                IsForbidden = true;
-            end
-        end
-
-        local CostString = "";
-        local ShortCutToolTip = "";
-        local Type = Logic.GetBuildingTypeByUpgradeCategory(_UpgradeCategory, PlayerID);
-        if not IsForbidden then
-            Logic.FillBuildingCostsTable(Type, InterfaceGlobals.CostTable);
-            CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
-            if _ShortCut then
-                ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
-                    ": [" .. XGUIEng.GetStringTableText(_ShortCut) .. "]"
-            end
-        end
-
-        local Text = DefaultText[1] .. " @cr " .. DefaultText[2];
-        if not IsForbidden then
-            -- Effect text
-            local EffectText = "";
-            local Effects = Stronghold.Economy:GetStaticTypeConfiguration(Type);
-            if Effects then
-                if Effects.Reputation > 0 then
-                    EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-                end
-                if EffectText ~= "" then
-                    EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
-                end
-            end
-
-            if Logic.GetUpgradeCategoryByBuildingType(Type) == UpgradeCategories.Tavern then
-                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
-                             " Beliebtheit für jeden Gast";
-            end
-
-            local BuildingMax = EntityTracker.GetLimitOfType(Type);
-            if BuildingMax > -1 then
-                local BuildingCount = EntityTracker.GetUsageOfType(PlayerID, Type);
-                Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
-            else
-                Text = DefaultText[1] .. " @cr " .. DefaultText[2];
-            end
-
-            for i= 3, table.getn(DefaultText) do
-                Text = Text .. " @cr " .. DefaultText[i];
-            end
-            Text = Text .. EffectText;
-        end
-
-        -- Set text
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
+function Stronghold.Construction:PrintTooltipConstructionButton(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return false;
     end
-end
+    local IsForbidden = false;
 
-function Stronghold.Construction:OverrideUpdateConstructionButton()
-    self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
-    GUIUpdate_BuildingButtons = function(_Button, _Technology)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Construction.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
-        end
-        if not Stronghold.Construction:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology) then
-            Stronghold.Construction.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
+    -- Get default text
+    local ForbiddenText = GetSeparatedTooltipText("MenuGeneric/BuildingNotAvailable")
+    local NormalText = GetSeparatedTooltipText(_KeyNormal);
+    local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
+    local DefaultText = NormalText;
+    if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+        DefaultText = DisabledText;
+        if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
+            DefaultText = ForbiddenText;
+            IsForbidden = true;
         end
     end
+
+    local CostString = "";
+    local ShortCutToolTip = "";
+    local Type = Logic.GetBuildingTypeByUpgradeCategory(_UpgradeCategory, PlayerID);
+    if not IsForbidden then
+        Logic.FillBuildingCostsTable(Type, InterfaceGlobals.CostTable);
+        CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
+        if _ShortCut then
+            ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
+                ": [" .. XGUIEng.GetStringTableText(_ShortCut) .. "]"
+        end
+    end
+
+    local Text = DefaultText[1] .. " @cr " .. DefaultText[2];
+    if not IsForbidden then
+        -- Effect text
+        local EffectText = "";
+        local Effects = Stronghold.Economy:GetStaticTypeConfiguration(Type);
+        if Effects then
+            if Effects.Reputation > 0 then
+                EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
+            end
+            if EffectText ~= "" then
+                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
+            end
+        end
+
+        if Logic.GetUpgradeCategoryByBuildingType(Type) == UpgradeCategories.Tavern then
+            EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                            " Beliebtheit für jeden Gast";
+        end
+
+        local BuildingMax = EntityTracker.GetLimitOfType(Type);
+        if BuildingMax > -1 then
+            local BuildingCount = EntityTracker.GetUsageOfType(PlayerID, Type);
+            Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
+        else
+            Text = DefaultText[1] .. " @cr " .. DefaultText[2];
+        end
+
+        for i= 3, table.getn(DefaultText) do
+            Text = Text .. " @cr " .. DefaultText[i];
+        end
+        Text = Text .. EffectText;
+    end
+
+    -- Set text
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
+    return true;
 end
 
-function Stronghold.Construction:OverrideUpdateUpgradeButton()
-    self.Orig_GUIUpdate_UpgradeButtons = GUIUpdate_UpgradeButtons;
-    GUIUpdate_UpgradeButtons = function(_Button, _Technology)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Construction.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
-        end
+function Stronghold.Construction:UpdateSerfUpgradeButtons(_Button, _Technology)
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    if Stronghold:IsPlayer(PlayerID) then
         if not Stronghold.Construction:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology) then
             local LimitReached = false;
             local CheckList = Stronghold.Construction.Config.TypesToCheckForUpgrade[_Technology] or {};
@@ -173,11 +190,11 @@ function Stronghold.Construction:OverrideUpdateUpgradeButton()
 
             if LimitReached then
                 XGUIEng.DisableButton(_Button, 1);
-                return;
+                return true;
             end
-            Stronghold.Construction.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
         end
     end
+    return false;
 end
 
 -- Update buttons in serf menu
@@ -185,8 +202,6 @@ end
 -- upgrade button instead of the construction button. A classical case of the
 -- infamos "BB-Logic".... To avoid boilerplate we outsource the changes.
 function Stronghold.Construction:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technology)
-    local TechnologyName = KeyOf(_Technology, Technologies);
-
     -- No village centers
     if _Technology == Technologies.B_Village then
         XGUIEng.ShowWidget(_Button, 0);
@@ -218,91 +233,84 @@ end
 -- -------------------------------------------------------------------------- --
 -- Upgrade Button
 
-function Stronghold.Construction:OverrideBuildingUpgradeButtonTooltip()
-    -- Don't let EMS fuck with my script...
-    if EMS then
-        function EMS.RD.Rules.Markets:Evaluate(self) end
+function Stronghold.Construction:PrintBuildingUpgradeButtonTooltip(_Type, _KeyDisabled, _KeyNormal, _Technology)
+    local PlayerID = GUI.GetPlayerID();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return false;
+    end
+    local IsForbidden = false;
+
+    -- Get default text
+    local ForbiddenText = GetSeparatedTooltipText("MenuGeneric/BuildingNotAvailable");
+    local NormalText = GetSeparatedTooltipText(_KeyNormal);
+    local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
+    local DefaultText = NormalText;
+    if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
+        DefaultText = DisabledText;
+        if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
+            DefaultText = ForbiddenText;
+            IsForbidden = true;
+        end
     end
 
-    self.Orig_GUITooltip_UpgradeBuilding = GUITooltip_UpgradeBuilding;
-    GUITooltip_UpgradeBuilding = function(_Type, _KeyDisabled, _KeyNormal, _Technology)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Construction.Orig_GUITooltip_UpgradeBuilding(_Type, _KeyDisabled, _KeyNormal, _Technology);
-        end
-        local IsForbidden = false;
-
-        -- Get default text
-        local ForbiddenText = GetSeparatedTooltipText("MenuGeneric/BuildingNotAvailable");
-        local NormalText = GetSeparatedTooltipText(_KeyNormal);
-        local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
-        local DefaultText = NormalText;
-        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-            DefaultText = DisabledText;
-            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
-                DefaultText = ForbiddenText;
-                IsForbidden = true;
-            end
-        end
-
-        local CostString = "";
-        local ShortCutToolTip = "";
-        if not IsForbidden then
-            Logic.FillBuildingUpgradeCostsTable(_Type, InterfaceGlobals.CostTable);
-            CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
-            ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
-                ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]"
-        end
-
-        local Text = DefaultText[1] .. " @cr " .. DefaultText[2];
-        if not IsForbidden then
-            local EffectText = "";
-            local Effects = Stronghold.Economy:GetStaticTypeConfiguration(_Type +1);
-            if Effects then
-                if Effects.Reputation > 0 then
-                    EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-                end
-                if EffectText ~= "" then
-                    EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
-                end
-            end
-
-            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Tavern then
-                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
-                             " Beliebtheit für jeden Gast";
-            end
-            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Farm then
-                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
-                             " Ehre und Beliebtheit für jeden Gast";
-            end
-            if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Residence then
-                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
-                             " Beliebtheit für jeden Gast";
-            end
-
-            -- Building limit
-            local BuildingMax = EntityTracker.GetLimitOfType(_Type +1);
-            if BuildingMax > -1 then
-                local BuildingCount = EntityTracker.GetUsageOfType(PlayerID, _Type +1);
-                Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
-            else
-                Text = DefaultText[1] .. " @cr " .. DefaultText[2];
-            end
-
-            for i= 3, table.getn(DefaultText) do
-                Text = Text .. " @cr " .. DefaultText[i];
-            end
-            Text = Text .. EffectText;
-        end
-
-        -- Set text
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
+    local CostString = "";
+    local ShortCutToolTip = "";
+    if not IsForbidden then
+        Logic.FillBuildingUpgradeCostsTable(_Type, InterfaceGlobals.CostTable);
+        CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
+        ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
+            ": [" .. XGUIEng.GetStringTableText("KeyBindings/UpgradeBuilding") .. "]"
     end
+
+    local Text = DefaultText[1] .. " @cr " .. DefaultText[2];
+    if not IsForbidden then
+        local EffectText = "";
+        local Effects = Stronghold.Economy:GetStaticTypeConfiguration(_Type +1);
+        if Effects then
+            if Effects.Reputation > 0 then
+                EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+            end
+            if Effects.Honor > 0 then
+                EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
+            end
+            if EffectText ~= "" then
+                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
+            end
+        end
+
+        if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Tavern then
+            EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                         " Beliebtheit für jeden Gast";
+        end
+        if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Farm then
+            EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                         " Ehre und Beliebtheit für jeden Gast";
+        end
+        if Logic.GetUpgradeCategoryByBuildingType(_Type) == UpgradeCategories.Residence then
+            EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
+                         " Beliebtheit für jeden Gast";
+        end
+
+        -- Building limit
+        local BuildingMax = EntityTracker.GetLimitOfType(_Type +1);
+        if BuildingMax > -1 then
+            local BuildingCount = EntityTracker.GetUsageOfType(PlayerID, _Type +1);
+            Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
+        else
+            Text = DefaultText[1] .. " @cr " .. DefaultText[2];
+        end
+
+        for i= 3, table.getn(DefaultText) do
+            Text = Text .. " @cr " .. DefaultText[i];
+        end
+        Text = Text .. EffectText;
+    end
+
+    -- Set text
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
+    return true;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -343,26 +351,27 @@ function Stronghold.Construction:OverridePlaceBuildingAction()
         return;
     end
 
-    self.Orig_GUIAction_PlaceBuilding = GUIAction_PlaceBuilding;
-    GUIAction_PlaceBuilding = function(_UpgradeCategory)
-        Stronghold.Construction.Orig_GUIAction_PlaceBuilding(_UpgradeCategory);
-        local PlayerID = GUI.GetPlayerID();
-        if Stronghold:IsPlayer(PlayerID) then
+    UiHacker.CreateHack(
+        "GUIAction_PlaceBuilding",
+        function(_Name, _WidgetID, _UpgradeCategory)
+            local PlayerID = Stronghold:GetLocalPlayerID();
             Stronghold.Construction.Data[PlayerID].LastPlacedUpgradeCategory = _UpgradeCategory;
+            return false;
         end
-    end
+    );
 
-    self.Orig_GUIUpdate_FindView = GUIUpdate_FindView;
-    GUIUpdate_FindView = function()
-        Stronghold.Construction.Orig_GUIUpdate_FindView();
-        local PlayerID = GUI.GetPlayerID();
-        if Stronghold:IsPlayer(PlayerID) then
+    UiHacker.CreateHack(
+        "GUIUpdate_FindView",
+        function(_Name, _WidgetID)
+            UiHacker.Internal:ExecuteOriginal(_Name, _WidgetID)
+            local PlayerID = Stronghold:GetLocalPlayerID();
             Stronghold.Construction:CancelBuildingPlacementForUpgradeCategory(
                 PlayerID,
                 Stronghold.Construction.Data[PlayerID].LastPlacedUpgradeCategory
             );
+            return false;
         end
-	end
+    );
 end
 
 function Stronghold.Construction:CancelBuildingPlacementForUpgradeCategory(_PlayerID, _UpgradeCategory)

@@ -6,14 +6,17 @@ assert(Lib ~= nil);
 Lib.Require("comfort/KeyOf");
 Lib.Require("comfort/GetAllWorker");
 Lib.Require("comfort/GetAllWorkplaces");
+Lib.Require("comfort/GetPlayerEntities");
 Lib.Require("comfort/GetSeparatedTooltipText");
 Lib.Require("comfort/GetValidEntitiesOfType");
+Lib.Require("comfort/IsBuildingBeingUpgraded");
 Lib.Require("comfort/IsValidEntity");
 
 Lib.Require("module/buyhero/BuyHero");
 Lib.Require("module/entitytracker/EntityTracker");
 Lib.Require("module/svlib/SVLib");
 Lib.Require("module/syncer/Syncer");
+Lib.Require("module/uihacker/UiHacker");
 
 -- ---------- --
 

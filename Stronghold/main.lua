@@ -238,6 +238,7 @@ function Stronghold:Init()
     Syncer.Install(999);
     EntityTracker.Install();
     BuyHero.Install();
+    UiHacker.Install();
 
     if not CMod then
         Message("The S5 Community Server is required!");
@@ -1163,103 +1164,111 @@ end
 
 -- Tooptip Generic Override
 function Stronghold:OverrideTooltipGenericMain()
-    self.Orig_GUITooltip_Generic = GUITooltip_Generic;
-    GUITooltip_Generic = function(_Key)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        local EntityID = GUI.GetSelectedEntity();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Orig_GUITooltip_Generic(_Key);
-        end
+    UiHacker.CreateHack(
+        "GUITooltip_Generic",
+        function(_Name, _WidgetID, _Key)
+            -- Call this here once to make the tooltip work.
+            UiHacker.Internal:ExecuteOriginal(_Name, _Key);
 
-        local TooltipSet = false;
-        if not TooltipSet then
-            TooltipSet = Stronghold.Economy:PrintTooltipGenericForFindView(PlayerID, _Key);
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            local EntityID = GUI.GetSelectedEntity();
+            return Stronghold.Economy:PrintTooltipGenericForFindView(PlayerID, _Key);
         end
-        if not TooltipSet then
-            TooltipSet = Stronghold.Economy:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
+    );
+
+    UiHacker.CreateHack(
+        "GUITooltip_Generic",
+        function(_Name, _WidgetID, _Key)
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            local EntityID = GUI.GetSelectedEntity();
+            return Stronghold.Economy:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
         end
-        if not TooltipSet then
-            TooltipSet = Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, EntityID, _Key);
+    );
+
+    UiHacker.CreateHack(
+        "GUITooltip_Generic",
+        function(_Name, _WidgetID, _Key)
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            local EntityID = GUI.GetSelectedEntity();
+            return Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, EntityID, _Key);
         end
-        if not TooltipSet then
-            TooltipSet = Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(PlayerID, EntityID, _Key);
+    );
+
+    UiHacker.CreateHack(
+        "GUITooltip_Generic",
+        function(_Name, _WidgetID, _Key)
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            local EntityID = GUI.GetSelectedEntity();
+            return Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(PlayerID, EntityID, _Key);
         end
-        if not TooltipSet then
-            Stronghold.Orig_GUITooltip_Generic(_Key);
-        end
-    end
+    );
 end
 
 -- Action research technology Override
 function Stronghold:OverrideActionResearchTechnologyMain()
-    self.Orig_GUIAction_ReserachTechnology = GUIAction_ReserachTechnology;
-    GUIAction_ReserachTechnology = function(_Technology)
-        if Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
-            return;
+    UiHacker.CreateHack(
+        "GUIAction_ReserachTechnology",
+        function(_Name, _WidgetID, _Technology)
+            return Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology);
         end
-        if Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
-            return;
+    );
+
+    UiHacker.CreateHack(
+        "GUIAction_ReserachTechnology",
+        function(_Name, _WidgetID, _Technology)
+            return Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology);
         end
-        if Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
-            return;
+    );
+
+    UiHacker.CreateHack(
+        "GUIAction_ReserachTechnology",
+        function(_Name, _WidgetID, _Technology)
+            return Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology);
         end
-        Stronghold.Orig_GUIAction_ReserachTechnology(_Technology);
-    end
+    );
 end
 
 -- Tooptip Upgrade Settlers Override
 function Stronghold:OverrideTooltipUpgradeSettlersMain()
-    self.Orig_GUITooltip_ResearchTechnologies = GUITooltip_ResearchTechnologies;
-    GUITooltip_ResearchTechnologies = function(_Technology, _TextKey, _ShortCut)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Orig_GUITooltip_ResearchTechnologies(_Technology, _TextKey, _ShortCut);
+    UiHacker.CreateHack(
+        "GUITooltip_ResearchTechnologies",
+        function(_Name, _WidgetID, _Technology, _TextKey, _ShortCut)
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            return Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
         end
+    );
 
-        local TooltipSet = false;
-        if not TooltipSet then
-            TooltipSet = Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+    UiHacker.CreateHack(
+        "GUITooltip_ResearchTechnologies",
+        function(_Name, _WidgetID, _Technology, _TextKey, _ShortCut)
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            return Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
         end
-        if not TooltipSet then
-            TooltipSet = Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+    );
+
+    UiHacker.CreateHack(
+        "GUITooltip_ResearchTechnologies",
+        function(_Name, _WidgetID, _Technology, _TextKey, _ShortCut)
+            local PlayerID = Stronghold:GetLocalPlayerID();
+            return Stronghold.Building:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
         end
-        if not TooltipSet then
-            TooltipSet = Stronghold.Building:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
-        end
-        if not TooltipSet then
-            Stronghold.Orig_GUITooltip_ResearchTechnologies(_Technology, _TextKey, _ShortCut);
-        end
-    end
+    );
 end
 
 function Stronghold:OverrideActionBuyMilitaryUnitMain()
-    self.Orig_GUIAction_BuyMilitaryUnit = GUIAction_BuyMilitaryUnit;
-    GUIAction_BuyMilitaryUnit = function(_UpgradeCategory)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Orig_GUIAction_BuyMilitaryUnit(_UpgradeCategory);
+    UiHacker.CreateHack(
+        "GUIAction_BuyMilitaryUnit",
+        function(_Name, _WidgetID, _UpgradeCategory)
+            return Stronghold.Building:BuyMilitaryUnitFromTavernAction(_UpgradeCategory);
         end
-        local EntityID = GUI.GetSelectedEntity();
-        local Type = Logic.GetEntityType(EntityID);
-        if Type == Entities.PB_Tavern1 or Type == Entities.PB_Tavern2 then
-            return Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory);
-        end
-        Stronghold.Orig_GUIAction_BuyMilitaryUnit(_UpgradeCategory);
-    end
+    );
 
-    self.Orig_GUIAction_BuyCannon = GUIAction_BuyCannon;
-    GUIAction_BuyCannon = function(_Type, _UpgradeCategory)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Orig_GUIAction_BuyCannon(_Type, _UpgradeCategory);
+    UiHacker.CreateHack(
+        "GUIAction_BuyCannon",
+        function(_Name, _WidgetID, _Type, _UpgradeCategory)
+            return Stronghold.Building:BuyMilitaryUnitFromFoundryAction(_Type, _UpgradeCategory);
         end
-        local EntityID = GUI.GetSelectedEntity();
-        local Type = Logic.GetEntityType(EntityID);
-        if Type == Entities.PB_Foundry1 or Type == Entities.PB_Foundry2 then
-            return Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory);
-        end
-        Stronghold.Orig_GUIAction_BuyCannon(_Type, _UpgradeCategory);
-    end
+    );
 end
 
 function Stronghold:OverrideTooltipBuyMilitaryUnitMain()

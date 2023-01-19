@@ -190,7 +190,11 @@
         "IncludeGlobals",
         "gvGUI_StateID",
         "SendEvent",
-        "Lib"
+        "Lib",
+        "Syncer",
+        "EntityTracker",
+        "BuyHero",
+        "UiHacker"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

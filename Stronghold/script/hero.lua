@@ -222,12 +222,10 @@ function Stronghold.Hero:Install()
 
     self:ConfigureBuyHero();
     self:OverrideCalculationCallbacks();
-    self:OverrideLeaderFormationAction();
-    self:OverrideLeaderFormationTooltip();
-    self:OverrideLeaderFormationUpdate();
     self:CreateHeroButtonHandlers();
     self:OverrideHero5AbilitySummon();
     self:StartTriggers();
+    self:OverrideGUI();
 end
 
 function Stronghold.Hero:OnSaveGameLoaded()
@@ -266,101 +264,92 @@ end
 -- -------------------------------------------------------------------------- --
 -- Rank Up
 
-function Stronghold.Hero:OverrideLeaderFormationAction()
-    self.Orig_GUIAction_ChangeFormation = GUIAction_ChangeFormation;
-    GUIAction_ChangeFormation = function(_Index)
-        local EntityID = GUI.GetSelectedEntity();
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
-        end
-        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
-            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
-        end
-        if _Index > 1 then
-            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
-        end
+function Stronghold.Hero:LeaderChangeFormationAction(_Index)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = GUI.GetPlayerID();
+    if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+        return false;
+    end
+    if _Index > 1 then
+        return false;
+    end
 
-        local Rank = Stronghold:GetPlayerRank(PlayerID);
-        local NextRank = Stronghold.Config.Ranks[Rank+1];
-        if NextRank then
-            local Costs = Stronghold:CreateCostTable(unpack(NextRank.Costs));
-            if not HasPlayerEnoughResourcesFeedback(Costs) then
-                return;
-            end
-        end
-
-        if Stronghold:CanPlayerBePromoted(PlayerID) then
-            Syncer.InvokeEvent(
-                Stronghold.Hero.NetworkCall,
-                PlayerID,
-                Stronghold.Hero.SyncEvents.RankUp
-            );
+    local Rank = Stronghold:GetPlayerRank(PlayerID);
+    local NextRank = Stronghold.Config.Ranks[Rank+1];
+    if NextRank then
+        local Costs = Stronghold:CreateCostTable(unpack(NextRank.Costs));
+        if not HasPlayerEnoughResourcesFeedback(Costs) then
+            return true;
         end
     end
+
+    if Stronghold:CanPlayerBePromoted(PlayerID) then
+        Syncer.InvokeEvent(
+            Stronghold.Hero.NetworkCall,
+            PlayerID,
+            Stronghold.Hero.SyncEvents.RankUp
+        );
+    end
+    return true;
 end
 
-function Stronghold.Hero:OverrideLeaderFormationTooltip()
-    self.Orig_GUITooltip_NormalButton = GUITooltip_NormalButton;
-    GUITooltip_NormalButton = function(_Key)
-        local EntityID = GUI.GetSelectedEntity();
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
-        end
-        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
-            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
-        end
+function Stronghold.Hero:LeaderFormationTooltip(_Key)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return false;
+    end
+    if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+        return false;
+    end
 
-        local CostText = "";
-        local Text = "";
-        local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
-        if _Key == "MenuCommandsGeneric/formation_group" then
-            if Stronghold.Config.Ranks[NextRank] and NextRank <= Stronghold.Config.Rule.MaxRank then
-                local Config = Stronghold.Config.Ranks[NextRank];
-                Text = "@color:180,180,180 " ..Stronghold:GetPlayerRankName(PlayerID, NextRank)..
-                       " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
-                       " erheben, um Euer Heer besser aufzustellen.";
-                if Config.Description ~= "" then
-                    Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                           Config.Description;
-                end
-
-                local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
-                CostText = Stronghold:FormatCostString(PlayerID, Costs);
-            else
-                Text = "@color:180,180,180 Höchster Rang @color:255,255,255 @cr "..
-                       " Ihr könnt keinen höheren Rang erreichen.";
+    local CostText = "";
+    local Text = "";
+    local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
+    if _Key == "MenuCommandsGeneric/formation_group" then
+        if Stronghold.Config.Ranks[NextRank] and NextRank <= Stronghold.Config.Rule.MaxRank then
+            local Config = Stronghold.Config.Ranks[NextRank];
+            Text = "@color:180,180,180 " ..Stronghold:GetPlayerRankName(PlayerID, NextRank)..
+                    " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
+                    " erheben, um Euer Heer besser aufzustellen.";
+            if Config.Description ~= "" then
+                Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                        Config.Description;
             end
+
+            local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
+            CostText = Stronghold:FormatCostString(PlayerID, Costs);
         else
-            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
+            Text = "@color:180,180,180 Höchster Rang @color:255,255,255 @cr "..
+                    " Ihr könnt keinen höheren Rang erreichen.";
         end
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    else
+        return false;
     end
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    return true;
 end
 
-function Stronghold.Hero:OverrideLeaderFormationUpdate()
-    self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
-    GUIUpdate_BuildingButtons = function(_Button, _Technology)
-        local EntityID = GUI.GetSelectedEntity();
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
-        end
-        if not string.find(_Button, "Formation") then
-            return Stronghold.Hero.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
-        end
-        local Disabled = 1;
-        if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
-            Disabled = 0;
-        end
-        if GetID(Stronghold.Players[PlayerID].LordScriptName) == EntityID then
-            Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
-        end
-        XGUIEng.DisableButton(_Button, Disabled);
+function Stronghold.Hero:LeaderFormationUpdate(_Button, _Technology)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = GUI.GetPlayerID();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return true;
     end
+    if not string.find(_Button, "Formation") then
+        return false;
+    end
+    local Disabled = 1;
+    if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
+        Disabled = 0;
+    end
+    if GetID(Stronghold.Players[PlayerID].LordScriptName) == EntityID then
+        Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
+    end
+    XGUIEng.DisableButton(_Button, Disabled);
+    return true;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -1129,5 +1118,31 @@ function Stronghold.Hero:ApplyMeasurePointsPassiveAbility(_PlayerID, _Value)
         Value = Value * 1.5;
     end
     return Value;
+end
+
+-- -------------------------------------------------------------------------- --
+-- UI
+
+function Stronghold.Hero:OverrideGUI()
+    UiHacker.CreateHack(
+        "GUIUpdate_BuildingButtons",
+        function(_Name, _WidgetID, _Button, _Technology)
+            return Stronghold.Hero:LeaderFormationUpdate(_Button, _Technology);
+        end
+    );
+
+    UiHacker.CreateHack(
+        "GUITooltip_NormalButton",
+        function(_Name, _WidgetID, _Key)
+            return Stronghold.Hero:LeaderFormationTooltip(_Key);
+        end
+    );
+
+    UiHacker.CreateHack(
+        "GUIAction_ChangeFormation",
+        function(_Name, _WidgetID, _Index)
+            return Stronghold.Hero:LeaderChangeFormationAction(_Index);
+        end
+    );
 end
 
