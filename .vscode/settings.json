@@ -194,7 +194,10 @@
         "Syncer",
         "EntityTracker",
         "BuyHero",
-        "UiHacker"
+        "UiHacker",
+        "Archive",
+        "Cinematic",
+        "NonPlayerCharacter"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

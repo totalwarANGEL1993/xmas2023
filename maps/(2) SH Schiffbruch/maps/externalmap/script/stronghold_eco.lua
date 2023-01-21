@@ -163,23 +163,34 @@ end
 -- Trade
 
 function Stronghold.Economy:InitTradeBalancer()
-    local EntityID = Event.GetEntityID();
-    local SellTyp = Event.GetSellResource();
-    local PurchaseTyp = Event.GetBuyResource();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    function TransactionDetails()
+        local EntityID = Event.GetEntityID();
+        local SellTyp = Event.GetSellResource();
+        local PurchaseTyp = Event.GetBuyResource();
+        local PlayerID = Logic.EntityGetPlayer(EntityID);
 
-    if Logic.GetCurrentPrice(PlayerID, SellTyp) > 1.25 then
-        Logic.SetCurrentPrice(PlayerID, SellTyp, 1.25);
+        if Logic.GetCurrentPrice(PlayerID, SellTyp) > 1.25 then
+            Logic.SetCurrentPrice(PlayerID, SellTyp, 1.25);
+        end
+        if Logic.GetCurrentPrice(PlayerID, SellTyp) < 0.75 then
+            Logic.SetCurrentPrice(PlayerID, SellTyp, 0.75);
+        end
+        if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) > 1.25 then
+            Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 1.25);
+        end
+        if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.75 then
+            Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.75);
+        end
     end
-    if Logic.GetCurrentPrice(PlayerID, SellTyp) < 0.75 then
-        Logic.SetCurrentPrice(PlayerID, SellTyp, 0.75);
-    end
-    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) > 1.25 then
-        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 1.25);
-    end
-    if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.75 then
-        Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.75);
-    end
+
+    Trigger.RequestTrigger(
+        Events.LOGIC_EVENT_GOODS_TRADED,
+        nil,
+        "TransactionDetails",
+        1,
+        nil,
+        nil
+    );
 end
 
 -- -------------------------------------------------------------------------- --
