@@ -197,7 +197,11 @@
         "UiHacker",
         "Archive",
         "Cinematic",
-        "NonPlayerCharacter"
+        "NonPlayerCharacter",
+        "BriefingSystem",
+        "NonPlayerMerchant",
+        "AiArmyController",
+        "AiArmy"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

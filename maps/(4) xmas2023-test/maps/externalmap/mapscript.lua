@@ -33,6 +33,8 @@ function OnMapStart()
         Tools.GiveResouces(i, 999999, 999999, 999999, 999999, 999999, 999999);
         AddPlayerHonor(i, 1000);
     end
+
+    StartTestStuff();
 end
 
 -- -------------------------------------------------------------------------- --
@@ -43,6 +45,8 @@ function GameCallback_OnGameStart()
 	Script.Load("Data\\Script\\MapTools\\Tools.lua");
 	Script.Load("Data\\Script\\MapTools\\WeatherSets.lua");
 	IncludeGlobals("Comfort");
+
+	Script.Load("E:/Siedler/Projekte/xmas2023/maps/(4) xmas2023-test/maps/externalmap/script/main.lua");
 
 	MultiplayerTools.InitCameraPositionsForPlayers();
 	MultiplayerTools.SetUpGameLogicOnMPGameConfig();

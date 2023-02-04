@@ -12,11 +12,11 @@ Lib.Require("comfort/GetValidEntitiesOfType");
 Lib.Require("comfort/IsBuildingBeingUpgraded");
 Lib.Require("comfort/IsValidEntity");
 
-Lib.Require("module/buyhero/BuyHero");
-Lib.Require("module/entitytracker/EntityTracker");
-Lib.Require("module/svlib/SVLib");
-Lib.Require("module/syncer/Syncer");
-Lib.Require("module/uihacker/UiHacker");
+Lib.Require("module/ui/BuyHero");
+Lib.Require("module/entity/EntityTracker");
+Lib.Require("module/entity/SVLib");
+Lib.Require("module/mp/Syncer");
+Lib.Require("module/lua/Overwrite");
 
 -- ---------- --
 

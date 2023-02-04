@@ -10,8 +10,6 @@ Stronghold.Building = {
     SyncEvents = {},
     Data = {},
     Config = {
-        TowerDistance = 1500,
-
         Headquarters = {
             Health = {3500, 4500, 5500},
             Armor  = {10, 12, 14},
@@ -148,28 +146,27 @@ end
 -- Regulas Headquarters
 
 function Stronghold.Building:OverrideHeadquarterButtons()
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_SetTaxes",
-        function(_Name, _WidgetID, _Level)
-            return Stronghold.Building:AdjustTax(_Level);
+        function(_Level)
+            Stronghold.Building:AdjustTax(_Level);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_TaxesButtons",
-        function(_Name, _WidgetID)
+        function()
             local PlayerID = Stronghold:GetLocalPlayerID();
             local TaxLevel = Stronghold.Players[PlayerID].TaxHeight -1;
             XGUIEng.UnHighLightGroup(gvGUI_WidgetID.InGame, "taxesgroup");
             XGUIEng.HighLightButton(gvGUI_WidgetID.TaxesButtons[TaxLevel], 1);
-            return true;
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_BuySerf",
-        function(_Name, _WidgetID)
-            return Stronghold.Building:HeadquartersBuySerf();
+        function()
+            Stronghold.Building:HeadquartersBuySerf();
         end
     );
 
@@ -192,7 +189,6 @@ function Stronghold.Building:AdjustTax(_Level)
     end
     Syncer.InvokeEvent(
         Stronghold.Building.NetworkCall,
-        PlayerID,
         Stronghold.Building.SyncEvents.ChangeTax,
         _Level
     );
@@ -219,7 +215,6 @@ function Stronghold.Building:HeadquartersBuySerf()
     Stronghold.Players[PlayerID].BuyUnitLock = true;
     Syncer.InvokeEvent(
         Stronghold.Building.NetworkCall,
-        PlayerID,
         Stronghold.Building.SyncEvents.BuySerf,
         GetID(Stronghold.Players[PlayerID].HQScriptName),
         Entities.PU_Serf,
@@ -410,7 +405,6 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiAction(_PlayerID, _Enti
 
     Syncer.InvokeEvent(
         Stronghold.Building.NetworkCall,
-        _PlayerID,
         Stronghold.Building.SyncEvents.MeasureTaken,
         _BlessCategory
     );
@@ -634,7 +628,7 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
-                PlayerID, Action, EntityID, UnitType, AutoFillActive
+                Action, EntityID, UnitType, AutoFillActive
             );
         end
         return true;
@@ -898,7 +892,7 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
-                PlayerID, Action, EntityID, UnitType, AutoFillActive
+                Action, EntityID, UnitType, AutoFillActive
             );
         end
         return true;
@@ -1146,7 +1140,7 @@ function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
-                PlayerID, Action, EntityID, UnitType, false
+                Action, EntityID, UnitType, false
             );
         end
         return true;
@@ -1280,7 +1274,7 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
-                PlayerID, Action, EntityID, UnitType, AutoFillActive
+                Action, EntityID, UnitType, AutoFillActive
             );
         end
         return true;
@@ -1464,7 +1458,7 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
             Stronghold.Players[PlayerID].BuyUnitLock = true;
             Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
-                PlayerID, Action, EntityID, UnitType, false
+                Action, EntityID, UnitType, false
             );
         end
         return true;
@@ -1662,56 +1656,62 @@ function Stronghold.Building:OnMonasterySelected(_EntityID)
 end
 
 function Stronghold.Building:OverrideMonasteryInterface()
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_BlessSettlers",
-        function(_Name, _WidgetID, _BlessCategory)
+        function(_BlessCategory)
             local GuiPlayer = Stronghold:GetLocalPlayerID();
             local EntityID = GUI.GetSelectedEntity();
             if InterfaceTool_IsBuildingDoingSomething(EntityID) == true then
                 return true;
             end
-            return Stronghold.Building:HeadquartersBlessSettlersGuiAction(GuiPlayer, EntityID, _BlessCategory);
+            if not Stronghold.Building:HeadquartersBlessSettlersGuiAction(GuiPlayer, EntityID, _BlessCategory) then
+                Overwrite.CallOriginal();
+            end
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_BlessSettlers",
-        function(_Name, _WidgetID, _BlessCategory)
+        function(_BlessCategory)
             local GuiPlayer = Stronghold:GetLocalPlayerID();
             local EntityID = GUI.GetSelectedEntity();
             if InterfaceTool_IsBuildingDoingSomething(EntityID) == true then
                 return true;
             end
-            return Stronghold.Building:MonasteryBlessSettlersGuiAction(GuiPlayer, EntityID, _BlessCategory);
+            if not Stronghold.Building:MonasteryBlessSettlersGuiAction(GuiPlayer, EntityID, _BlessCategory) then
+                Overwrite.CallOriginal();
+            end
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUITooltip_BlessSettlers",
-        function(_Name, _WidgetID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
-            UiHacker.Internal:ExecuteOriginal(_Name, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
+        function(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
             local GuiPlayer = Stronghold:GetLocalPlayerID();
             local EntityID = GUI.GetSelectedEntity();
-            return Stronghold.Building:MonasteryBlessSettlersGuiTooltip(GuiPlayer, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
+            Overwrite.CallOriginal();
+            Stronghold.Building:MonasteryBlessSettlersGuiTooltip(GuiPlayer, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUITooltip_BlessSettlers",
-        function(_Name, _WidgetID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
-            UiHacker.Internal:ExecuteOriginal(_Name, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
+        function(_TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut)
             local GuiPlayer = Stronghold:GetLocalPlayerID();
             local EntityID = GUI.GetSelectedEntity();
-            return Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(GuiPlayer, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
+            Overwrite.CallOriginal();
+            Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(GuiPlayer, EntityID, _TooltipDisabled, _TooltipNormal, _TooltipResearched, _ShortCut);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_FaithProgress",
-        function(_Name, _WidgetID)
+        function()
+            local WidgetID = XGUIEng.GetCurrentWidgetID();
             local PlayerID = Stronghold:GetLocalPlayerID();
             local EntityID = GUI.GetSelectedEntity();
-            return Stronghold.Building:HeadquartersFaithProgressGuiUpdate(PlayerID, EntityID, _WidgetID);
+            Overwrite.CallOriginal();
+            Stronghold.Building:HeadquartersFaithProgressGuiUpdate(PlayerID, EntityID, WidgetID);
         end
     );
 end
@@ -1727,7 +1727,6 @@ function Stronghold.Building:MonasteryBlessSettlersGuiAction(_PlayerID, _EntityI
     if BlessCosts <= CurrentFaith then
         Syncer.InvokeEvent(
             Stronghold.Building.NetworkCall,
-            _PlayerID,
             Stronghold.Building.SyncEvents.BlessSettlers,
             _BlessCategory
         );
@@ -1909,23 +1908,26 @@ end
 -- General
 
 function Stronghold.Building:OverrideChangeBuildingMenuButton()
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_ChangeBuildingMenu",
-        function(_Name, _WidgetID)
+        function(_WidgetID)
             local EntityID = GUI.GetSelectedEntity();
             local PlayerID = Stronghold:GetLocalPlayerID();
-            return Stronghold.Building:HeadquartersChangeBuildingTabsGuiAction(PlayerID, EntityID, _WidgetID);
+            if not Stronghold.Building:HeadquartersChangeBuildingTabsGuiAction(PlayerID, EntityID, _WidgetID) then
+                Overwrite.CallOriginal();
+            end
         end
     );
 end
 
 function Stronghold.Building:OverrideUpdateConstructionButton()
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_BuildingButtons",
-        function(_Name, _WidgetID, _Button, _Technology)
+        function(_Button, _Technology)
             local PlayerID = Stronghold:GetLocalPlayerID();
             local EntityID = GUI.GetSelectedEntity();
-            return Stronghold.Building:HeadquartersBlessSettlersGuiUpdate(PlayerID, EntityID, _Button);
+            Overwrite.CallOriginal();
+            Stronghold.Building:HeadquartersBlessSettlersGuiUpdate(PlayerID, EntityID, _Button);
         end
     );
 end

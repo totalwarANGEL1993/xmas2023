@@ -413,7 +413,6 @@ function Stronghold.Unit:BuySoldierButtonAction()
     Stronghold.Players[PlayerID].BuyUnitLock = true;
     Syncer.InvokeEvent(
         Stronghold.Unit.NetworkCall,
-        PlayerID,
         Stronghold.Unit.SyncEvents.BuySoldier,
         EntityID,
         BuyAmount,
@@ -577,38 +576,45 @@ end
 -- UI
 
 function Stronghold.Unit:OverrideGUI()
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_BuySoldier",
-        function(_Name, _WidgetID)
-            return Stronghold.Unit:BuySoldierButtonAction();
+        function()
+            if not Stronghold.Unit:BuySoldierButtonAction() then
+                Overwrite.CallOriginal();
+            end
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_BuySoldierButton",
-        function(_Name, _WidgetID)
+        function()
+            Overwrite.CallOriginal();
             return Stronghold.Unit:BuySoldierButtonUpdate();
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUITooltip_NormalButton",
-        function(_Name, _WidgetID, _Key)
-            return Stronghold.Unit:ExpelSettlerButtonTooltip(_Key);
+        function(_Key)
+            Overwrite.CallOriginal();
+            Stronghold.Unit:ExpelSettlerButtonTooltip(_Key);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_ExpelSettler",
-        function(_Name, _WidgetID)
-            return Stronghold.Unit:ExpelSettlerButtonAction();
+        function()
+            if not Stronghold.Unit:ExpelSettlerButtonAction() then
+                Overwrite.CallOriginal();
+            end
         end
     );
 
-    UiHacker.Internal:CreateHack(
+    Overwrite.CreateOverwrite(
         "GUITooltip_BuySoldier",
-        function(_Name, _WidgetID, _KeyNormal, _KeyDisabled, _ShortCut)
-            return Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _ShortCut);
+        function(_KeyNormal, _KeyDisabled, _ShortCut)
+            Overwrite.CallOriginal();
+            Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _ShortCut);
         end
     );
 end

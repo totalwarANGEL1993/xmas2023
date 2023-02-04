@@ -74,7 +74,7 @@ Stronghold.Hero = {
                 [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
                 [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
             },
-            HeroCV = {
+HeroCV = {
                 [Entities.PU_Hero1c]             = {
                     "DARIO @cr @cr @color:180,180,180 "..
                     "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Früher wurde er "..
@@ -310,7 +310,6 @@ function Stronghold.Hero:LeaderChangeFormationAction(_Index)
     if Stronghold:CanPlayerBePromoted(PlayerID) then
         Syncer.InvokeEvent(
             Stronghold.Hero.NetworkCall,
-            PlayerID,
             Stronghold.Hero.SyncEvents.RankUp
         );
     end
@@ -828,7 +827,6 @@ function Stronghold.Hero:OverrideHero5AbilitySummon()
         end
         Syncer.InvokeEvent(
             Stronghold.Hero.NetworkCall,
-            PlayerID,
             Stronghold.Hero.SyncEvents.Hero5Summon,
             EntityID,
             x,y
@@ -1148,24 +1146,28 @@ end
 -- UI
 
 function Stronghold.Hero:OverrideGUI()
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_BuildingButtons",
-        function(_Name, _WidgetID, _Button, _Technology)
+        function(_Button, _Technology)
+            Overwrite.CallOriginal();
             return Stronghold.Hero:LeaderFormationUpdate(_Button, _Technology);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUITooltip_NormalButton",
-        function(_Name, _WidgetID, _Key)
-            return Stronghold.Hero:LeaderFormationTooltip(_Key);
+        function(_Key)
+            Overwrite.CallOriginal();
+            Stronghold.Hero:LeaderFormationTooltip(_Key);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_ChangeFormation",
-        function(_Name, _WidgetID, _Index)
-            return Stronghold.Hero:LeaderChangeFormationAction(_Index);
+        function(_Index)
+            if not Stronghold.Hero:LeaderChangeFormationAction(_Index) then
+                Overwrite.CallOriginal();
+            end
         end
     );
 end

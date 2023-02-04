@@ -10,6 +10,7 @@ Stronghold = Stronghold or {};
 Stronghold.Construction = {
     Data = {},
     Config = {
+        TowerDistance = 1500,
         TypesToCheckForConstruction = {
             [Technologies.B_Beautification01] = {Entities.PB_Beautification01},
             [Technologies.B_Beautification02] = {Entities.PB_Beautification02},
@@ -63,32 +64,36 @@ function Stronghold.Construction:OverrideGUI()
         function EMS.RD.Rules.Markets:Evaluate(self) end
     end
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUITooltip_UpgradeBuilding",
-        function(_Name, _WidgetID, _Type, _KeyDisabled, _KeyNormal, _Technology)
-            return Stronghold.Construction:PrintBuildingUpgradeButtonTooltip(_Type, _KeyDisabled, _KeyNormal, _Technology);
+        function(_Type, _KeyDisabled, _KeyNormal, _Technology)
+            Overwrite.CallOriginal();
+            Stronghold.Construction:PrintBuildingUpgradeButtonTooltip(_Type, _KeyDisabled, _KeyNormal, _Technology);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUITooltip_ConstructBuilding",
-        function(_Name, _WidgetID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
-            return Stronghold.Construction:PrintTooltipConstructionButton(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
+        function( _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+            Overwrite.CallOriginal();
+            Stronghold.Construction:PrintTooltipConstructionButton(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_BuildingButtons",
-        function(_Name, _WidgetID, _Button, _Technology)
+        function(_Button, _Technology)
             local PlayerID = Stronghold:GetLocalPlayerID();
-            return Stronghold.Construction:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
+            Overwrite.CallOriginal();
+            Stronghold.Construction:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology);
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_UpgradeButtons",
-        function(_Name, _WidgetID, _Button, _Technology)
-            return Stronghold.Construction:UpdateSerfUpgradeButtons(_Button, _Technology);
+        function(_Button, _Technology)
+            Overwrite.CallOriginal();
+            Stronghold.Construction:UpdateSerfUpgradeButtons(_Button, _Technology);
         end
     );
 end
@@ -351,25 +356,25 @@ function Stronghold.Construction:OverridePlaceBuildingAction()
         return;
     end
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIAction_PlaceBuilding",
-        function(_Name, _WidgetID, _UpgradeCategory)
+        function(_UpgradeCategory)
             local PlayerID = Stronghold:GetLocalPlayerID();
+            Overwrite.CallOriginal();
             Stronghold.Construction.Data[PlayerID].LastPlacedUpgradeCategory = _UpgradeCategory;
             return false;
         end
     );
 
-    UiHacker.CreateHack(
+    Overwrite.CreateOverwrite(
         "GUIUpdate_FindView",
-        function(_Name, _WidgetID)
-            UiHacker.Internal:ExecuteOriginal(_Name, _WidgetID)
+        function()
             local PlayerID = Stronghold:GetLocalPlayerID();
+            Overwrite.CallOriginal();
             Stronghold.Construction:CancelBuildingPlacementForUpgradeCategory(
                 PlayerID,
                 Stronghold.Construction.Data[PlayerID].LastPlacedUpgradeCategory
             );
-            return false;
         end
     );
 end
