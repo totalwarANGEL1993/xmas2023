@@ -38,12 +38,16 @@
 --- - <number> GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _CurrentAmount)
 ---   Allows to overwite the upkeep of a unit type.
 ---
+--- - <number> GameCallback_Calculate_MeasureIncrease(_PlayerID, _CurrentAmount)
+---   Allows to overwrite the measure points income.
+---
 
 Stronghold = Stronghold or {};
 
 Stronghold.Economy = {
     Data = {},
     Config = {
+        MaxMeasurePoints = 5000,
         MaxReputation = 200,
         TaxPerWorker = 5,
         Income = {
@@ -51,43 +55,46 @@ Stronghold.Economy = {
                 [1] = {Honor = 4, Reputation = 10,},
                 [2] = {Honor = 2, Reputation = -2,},
                 [3] = {Honor = 1, Reputation = -4,},
-                [4] = {Honor = 0, Reputation = -8,},
-                [5] = {Honor = 0, Reputation = -16,},
+                [4] = {Honor = 0, Reputation = -12,},
+                [5] = {Honor = 0, Reputation = -36,},
             },
 
             Dynamic = {
                 [Entities.PB_Farm2]      = {Honor = 0.12, Reputation = 0.03,},
-                [Entities.PB_Farm3]      = {Honor = 0.15, Reputation = 0.06,},
+                [Entities.PB_Farm3]      = {Honor = 0.18, Reputation = 0.06,},
                 ---
                 [Entities.PB_Residence2] = {Honor = 0, Reputation = 0.15,},
-                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.21,},
+                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.24,},
                 ---
-                [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.33,},
-                [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.36,},
+                [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.35,},
+                [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.45,},
             },
             Static = {
                 [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
                 [Entities.PB_Beautification06] = {Honor = 1, Reputation = 1,},
                 [Entities.PB_Beautification09] = {Honor = 1, Reputation = 1,},
                 ---
-                [Entities.PB_Beautification01] = {Honor = 1, Reputation = 2,},
-                [Entities.PB_Beautification02] = {Honor = 1, Reputation = 2,},
-                [Entities.PB_Beautification12] = {Honor = 1, Reputation = 2,},
+                [Entities.PB_Beautification01] = {Honor = 2, Reputation = 1,},
+                [Entities.PB_Beautification02] = {Honor = 2, Reputation = 1,},
+                [Entities.PB_Beautification12] = {Honor = 2, Reputation = 1,},
                 ---
-                [Entities.PB_Beautification05] = {Honor = 1, Reputation = 3,},
-                [Entities.PB_Beautification07] = {Honor = 1, Reputation = 3,},
-                [Entities.PB_Beautification08] = {Honor = 1, Reputation = 3,},
+                [Entities.PB_Beautification05] = {Honor = 3, Reputation = 1,},
+                [Entities.PB_Beautification07] = {Honor = 3, Reputation = 1,},
+                [Entities.PB_Beautification08] = {Honor = 3, Reputation = 1,},
                 ---
-                [Entities.PB_Beautification03] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification10] = {Honor = 1, Reputation = 4,},
-                [Entities.PB_Beautification11] = {Honor = 1, Reputation = 4,},
+                [Entities.PB_Beautification03] = {Honor = 4, Reputation = 1,},
+                [Entities.PB_Beautification10] = {Honor = 4, Reputation = 1,},
+                [Entities.PB_Beautification11] = {Honor = 4, Reputation = 1,},
                 ---
-                [Entities.PB_Headquarters2]    = {Honor = 5, Reputation = 0,},
-                [Entities.PB_Headquarters3]    = {Honor = 10, Reputation = 0,},
+                [Entities.PB_Headquarters2]    = {Honor =  6, Reputation = 0,},
+                [Entities.PB_Headquarters3]    = {Honor = 12, Reputation = 0,},
                 ---
-                [Entities.PB_Monastery1]       = {Honor = 0, Reputation = 5,},
-                [Entities.PB_Monastery2]       = {Honor = 0, Reputation = 10,},
-                [Entities.PB_Monastery3]       = {Honor = 0, Reputation = 15,},
+                [Entities.PB_VillageCenter2]   = {Honor = 0, Reputation = 3,},
+                [Entities.PB_VillageCenter3]   = {Honor = 0, Reputation = 6,},
+                ---
+                [Entities.PB_Monastery1]       = {Honor = 0, Reputation = 6,},
+                [Entities.PB_Monastery2]       = {Honor = 0, Reputation = 9,},
+                [Entities.PB_Monastery3]       = {Honor = 0, Reputation = 12,},
             },
         }
     }
@@ -96,6 +103,7 @@ Stronghold.Economy = {
 function Stronghold.Economy:Install()
     for i= 1, table.getn(Score.Player) do
         self.Data[i] = {
+            MeasurePoints = 0;
             IncomeMoney = 0;
             UpkeepMoney = 0;
             UpkeepDetails = {};
@@ -104,7 +112,6 @@ function Stronghold.Economy:Install()
         };
     end
 
-    self:InitTradeBalancer();
     self:StartTriggers();
 
     self:OverrideFindViewUpdate();
@@ -112,85 +119,81 @@ function Stronghold.Economy:Install()
     self:OverridePaydayClockTooltip();
 end
 
+function Stronghold.Economy:OnSaveGameLoaded()
+end
+
+function Stronghold.Economy:GetStaticTypeConfiguration(_Type)
+    return Stronghold.Economy.Config.Income.Static[_Type];
+end
+
+function Stronghold.Economy:GetDynamicTypeConfiguration(_Type)
+    return Stronghold.Economy.Config.Income.Dynamic[_Type];
+end
+
+--- Gives measure points to the player.
+function AddPlayerMeasrue(_PlayerID, _Amount)
+    Stronghold.Economy:AddPlayerMeasure(_PlayerID, _Amount)
+end
+
+--- Returns the measure points of the player.
+function GetPlayerMeasrue(_PlayerID)
+    return Stronghold.Economy:GetPlayerMeasure(_PlayerID);
+end
+
+--- Returns the max measure points of the player.
+function GetPlayerMaxMeasrue(_PlayerID)
+    return Stronghold.Economy:GetPlayerMeasureLimit(_PlayerID);
+end
+
 -- -------------------------------------------------------------------------- --
 -- Game Callbacks
 
 function GameCallback_Calculate_ReputationMax(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_ReputationDecrease(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_ReputationIncrease(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_StaticReputationIncrease(_PlayerID, _Type, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, _BuildingID, _WorkerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_HonorIncrease(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_StaticHonorIncrease(_PlayerID, _Type, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, _BuildingID, _WorkerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_TotalPaydayUpkeep(_PlayerID, _Amount)
-    return _Amount
+    return _Amount;
 end
 
 function GameCallback_Calculate_PaydayUpkeep(_PlayerID, _UnitType, _Amount)
-    return _Amount
+    return _Amount;
 end
 
--- -------------------------------------------------------------------------- --
--- Trade
-
-function Stronghold.Economy:InitTradeBalancer()
-    function TransactionDetails()
-        local EntityID = Event.GetEntityID();
-        local SellTyp = Event.GetSellResource();
-        local PurchaseTyp = Event.GetBuyResource();
-        local PlayerID = Logic.EntityGetPlayer(EntityID);
-
-        if Logic.GetCurrentPrice(PlayerID, SellTyp) > 1.25 then
-            Logic.SetCurrentPrice(PlayerID, SellTyp, 1.25);
-        end
-        if Logic.GetCurrentPrice(PlayerID, SellTyp) < 0.75 then
-            Logic.SetCurrentPrice(PlayerID, SellTyp, 0.75);
-        end
-        if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) > 1.25 then
-            Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 1.25);
-        end
-        if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.75 then
-            Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.75);
-        end
-    end
-
-    Trigger.RequestTrigger(
-        Events.LOGIC_EVENT_GOODS_TRADED,
-        nil,
-        "TransactionDetails",
-        1,
-        nil,
-        nil
-    );
+function GameCallback_Calculate_MeasureIncrease(_PlayerID, _Amount)
+    return _Amount;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -256,7 +259,7 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
 
             -- Building bonuses
             for k, v in pairs(self.Config.Income.Static) do
-                local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
+                local Buildings = GetValidEntitiesOfType(_PlayerID, k);
                 for i= table.getn(Buildings), 1, -1 do
                     if Logic.GetBuildingWorkPlaceLimit(Buildings[i]) > 0 then
                         if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) == 0 then
@@ -320,7 +323,11 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local TaxEffect = self.Config.Income.TaxEffect;
             Penalty = TaxEffect[_TaxtHeight].Reputation * -1
-            Penalty = Penalty + (_WorkerCount * (0.12 + (0.03 * (Rank -1))));
+            local WorkerEffect = _WorkerCount * 0.25;
+            for i= 1, (Rank -1) do
+                WorkerEffect = WorkerEffect * 1.11;
+            end
+            Penalty = Penalty + WorkerEffect;
         end
         return math.floor(Penalty);
     end
@@ -367,7 +374,7 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
 
                 -- Buildings bonuses
                 for k, v in pairs(self.Config.Income.Static) do
-                    local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
+                    local Buildings = GetValidEntitiesOfType(_PlayerID, k);
                     for i= table.getn(Buildings), 1, -1 do
                         local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
                         if WorkplaceLimit then
@@ -410,7 +417,7 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local Upkeep = 0;
         for k, v in pairs(Stronghold.Unit.Config.Units) do
-            local Military = GetCompletedEntitiesOfType(_PlayerID, k);
+            local Military = GetValidEntitiesOfType(_PlayerID, k);
             -- Calculate regular upkeep
             local TypeUpkeep = 0;
             for i= 1, table.getn(Military) do
@@ -433,6 +440,42 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
         return math.floor(Upkeep + 0.5);
     end
     return 0;
+end
+
+-- -------------------------------------------------------------------------- --
+-- Measure Points
+
+function Stronghold.Economy:AddPlayerMeasure(_PlayerID, _Amount)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local MeasurePoints = self:GetPlayerMeasure(_PlayerID);
+        MeasurePoints = math.max(MeasurePoints + _Amount, 0);
+        MeasurePoints = math.min(MeasurePoints, self.Config.MaxMeasurePoints);
+        self.Data[_PlayerID].MeasurePoints = MeasurePoints;
+    end
+end
+
+function Stronghold.Economy:GetPlayerMeasure(_PlayerID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        return self.Data[_PlayerID].MeasurePoints;
+    end
+    return 0;
+end
+
+function Stronghold.Economy:GetPlayerMeasureLimit(_PlayerID)
+    return self.Config.MaxMeasurePoints;
+end
+
+function Stronghold.Economy:GainMeasurePoints(_PlayerID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local MeasurePoints = 0;
+        for k, v in pairs(GetAllWorker(_PlayerID, 0)) do
+            if Logic.IsSettlerAtWork(v) == 1 then
+                MeasurePoints = MeasurePoints + 0.5;
+            end
+        end
+        MeasurePoints = GameCallback_Calculate_MeasureIncrease(_PlayerID, MeasurePoints);
+        self:AddPlayerMeasure(_PlayerID, MeasurePoints);
+    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -464,7 +507,7 @@ function Stronghold.Economy:HonorMenu()
 
     local Rank = "Fußvolk";
     local Honor = 0;
-    local MaxHonor = Stronghold.Config.HonorLimit;
+    local MaxHonor = Stronghold.Config.Rule.MaxHonor;
     if Stronghold:IsPlayer(PlayerID) then
         Rank = Stronghold:GetPlayerRankName(PlayerID) or Rank;
         Honor = Stronghold.Players[PlayerID].Honor;
@@ -712,5 +755,6 @@ function Stronghold_Economy_Trigger_OnEveryTurn()
     local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), Players);
 
     Stronghold.Economy:UpdateIncomeAndUpkeep(PlayerID);
+    Stronghold.Economy:GainMeasurePoints(PlayerID);
 end
 

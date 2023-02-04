@@ -74,141 +74,165 @@ Stronghold.Hero = {
                 [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
                 [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
             },
-            HeroCV = {
+HeroCV = {
                 [Entities.PU_Hero1c]             = {
-                    Description = "DARIO @cr @cr "..
-                                  "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Oft stellen "..
-                                  "sich die Menschen in seinem Umfeld nur eine Frage: Hat er oder doch sein Falke "..
-                                  "den größeren Vogel?" ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Als König kann Dario Subventionen für den Unterhalt "..
-                                  "seiner Streitkräfte beschließen und so den Sold aller Einheiten um 10% senken."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
+                    "DARIO, der König @cr @cr @color:180,180,180 "..
+                    "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Früher wurde er "..
+                    "oft dabei gesehen, wie er rosa Kleidchen trug. Die tauschte er inzwischen gegen ein "..
+                    "Schwert ein. Dennoch fragen sich viele, ob er einen Vogel hat. "..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Als König hat Dario die Autorität, schneller Maßnahmen zu "..
+                    "ergreifen. Eure Maßnahmen sind 50% schneller wieder einsetzbar. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
                 },
                 [Entities.PU_Hero2]              = {
-                    Description = "PILGRIM @cr @cr "..
-                                  "Pilgrim entstammt einer langen Linie von Bergmännern. Ein Glückliches Schicksal " ..
-                                  "verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets zugetan. Es fällt ihm oft "..
-                                  "schwer, seine Fahne vom Geruch des Sprengstoffs zu unterscheiden." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Jedes mal wenn in einer Mine Rohstoffe abbaut werden, wird "..
-                                  "ein zusätzlicher veredelbarer Rohstoff erzeugt."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
+                    "PILGRIM, der Geologe @cr @cr @color:180,180,180 "..
+                    "Pilgrim entstammt einer langen Linie von Bergmännern. Ein Glückliches Schicksal " ..
+                    "verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets zugetan. Es fällt ihm oft "..
+                    "schwer, seine Fahne vom Geruch des Sprengstoffs zu unterscheiden. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Jedes mal wenn in einer Mine Rohstoffe abbaut werden, werden "..
+                    " zusätzliche veredelbare Rohstoffe erzeugt. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
                 },
                 [Entities.PU_Hero3]              = {
-                    Description = "SALIM @cr @cr "..
-                                  "Ein Schriftgelehrter aus dem nahen Osten. Manche sagen ihm nach, er sei verrückt " ..
-                                  "geworden und versuche in seinem Labor ein schwarzes Loch zu erschaffen und so "..
-                                  "die Vergangenheit zu verändern." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Wissen ist Macht! Wenn eine Technologie erforscht wird, "..
-                                  "erhält Salim 5 Ehre."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Kann eine Falle verstecken, die explodiert, sobald der Feind "..
-                                  "unvorsichtig an sie heran tritt.",
+                    "SALIM, der Gelehrte @cr @cr @color:180,180,180 "..
+                    "Ein Schriftgelehrter aus dem nahen Osten. Manche sagen ihm nach, er sei verrückt " ..
+                    "geworden und versuche in seinem Labor ein schwarzes Loch zu erschaffen und so "..
+                    "die Vergangenheit zu verändern. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Wissen ist Macht! Wenn eine Technologie erforscht wird, "..
+                    "erhält Salim 5 Ehre. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Kann eine Falle verstecken, die explodiert, sobald der Feind "..
+                    "unvorsichtig an sie heran tritt.",
                 },
                 [Entities.PU_Hero4]              = {
-                    Description = "EREC @cr @cr "..
-                                  "Er ist ein echter Ritter. Von Kopf bis Fuß gehüllt in glänzender Rüstung zieht er "..
-                                  "aus, seinen Ruhm zu mehren und Jungfrauen in Nöten beizustehen. Seine Anwesenheit " ..
-                                  "inspiriert die Truppen zu Höchsleistungen." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Soldaten werden mit der maximalen Erfahrung rekrutiert, "..
-                                  "dadurch steigen allerdings ihre Kosten um 30%."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
+                    "EREC, der Ritter @cr @cr @color:180,180,180 "..
+                    "Er ist ein echter Ritter. Von Kopf bis Fuß gehüllt in glänzender Rüstung zieht er "..
+                    "aus, seinen Ruhm zu mehren und Jungfrauen in Nöten beizustehen. Seine Anwesenheit " ..
+                    "inspiriert die Truppen zu Höchsleistungen. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Soldaten werden mit der maximalen Erfahrung rekrutiert, "..
+                    "dadurch steigen allerdings ihre Kosten um 30%. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
                 },
                 [Entities.PU_Hero5]              = {
-                    Description = "ARI @cr @cr "..
-                                  "Als Kind wurde Ari von Gesetzlosen adoptiert und wuchs zu einer atemberaubenden " ..
-                                  "Lady heran. Aber dies ist mit Nichten ihre einzige Qualität, was sie jeden spüren " ..
-                                  "lässt, der sich erdreistet, ihre Augen eine Etage tiefer zu suchen." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die "..
-                                  "Steuereinnahmen werden um 50% erhöht."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr "..
-                                  "Gesetzlose sind es.",
+                    "ARI, die Vogelfreie @cr @cr @color:180,180,180 "..
+                    "Als Kind wurde Ari von Gesetzlosen adoptiert und wuchs zu einer atemberaubenden " ..
+                    "Lady heran. Aber dies ist mit Nichten ihre einzige Qualität, was sie jeden spüren " ..
+                    "lässt, der sich erdreistet, ihre Augen eine Etage tiefer zu suchen. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Als Banditenfürstin kennt sie alle Tricks, um an Gold zu "..
+                    "kommen. Die Steuereinnahmen werden um 50% erhöht. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr "..
+                    "Gesetzlose sind es.",
                 },
                 [Entities.PU_Hero6]              = {
-                    Description = "HELIAS @cr @cr "..
-                                  "Einst vorgesehen für die Thronfolge des Alten Reiches war der Ruf Gottes stärker. " ..
-                                  "Vor grauen Jahren trat Helias in den geistlichen Stand und überließ seinem jüngerem " ..
-                                  "Bruder den Thron des Alten Reiches." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Helias produziert für jeden Priester auf der Burg zusätzlichen "..
-                                  "Glauben."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Helias kann die Rüstung von verbündeten Einheiten verbessern.",
+                    "HELIAS, der Pfaffe @cr @cr @color:180,180,180 "..
+                    "Einst vorgesehen für die Thronfolge des Alten Reiches, war der Ruf des Herrn " ..
+                    "stärker. Wenn er nicht gerade Wasser predigt und Wein trinkt, erfreut er sich an "..
+                    "den lieblichen Klängen der Chorknaben. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Helias göttliche Verbindung produziert für jeden Priester "..
+                    "auf der Burg zusätzlichen Glauben. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Helias kann die Rüstung von verbündeten Einheiten verbessern.",
                 },
                 [Entities.CU_Mary_de_Mortfichet] = {
-                    Description = "MARY @cr @cr "..
-                                  "Die Countess de Mortfichet ist verrufen als ruchloses und ehrloses Miststück. " ..
-                                  "Zeigt ihr Gegenüber eine Schwäche, so wird sie nicht zögern, sie auszunutzen. Ihr " ..
-                                  "Motto: Ein gut platzierter Dolch erreicht mehr als 1000 Schwerter." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein "..
-                                  "und verlangen keinen Sold."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Kann die Angriffskraft von nahestehenden Feinden senken.",
+                    "MARY, die Schlange @cr @cr @color:180,180,180 "..
+                    "Die Countess de Mortfichet ist verrufen als ruchloses und ehrloses Miststück. " ..
+                    "Zeigt ihr Gegenüber eine Schwäche, so wird sie nicht zögern, sie auszunutzen. Ihr " ..
+                    "Motto: Ein gut platzierter Dolch erreicht mehr als 1000 Schwerter. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein "..
+                    "und verlangen keinen Sold. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Kann die Angriffskraft von nahestehenden Feinden senken.",
                 },
                 [Entities.CU_BlackKnight]        = {
-                    Description = "KERBEROS @cr @cr "..
-                                  "Als sein Vater den Thron aufgab um Pfaffe zu werden, brach für Kerberos eine Welt " ..
-                                  "zusammen. Seinem Erbe beraubt, verfiel der der Finsternis. Als Scherge eines bösen " ..
-                                  " Königs wartet er auf seine Chance." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Der Pöbel ist so leicht einzuschüchtern... Alle negative "..
-                                  "Effekte auf die Beliebtheit werden um 30% verringert."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Kann die Rüstung von nahestehenden Feinden halbieren.",
+                    "KERBEROS, der Schrecken @cr @cr @color:180,180,180 "..
+                    "Als sein Vater den Thron aufgab um Pfaffe zu werden, brach für Kerberos eine Welt " ..
+                    "zusammen. Seinem Erbe beraubt, verfiel der der Finsternis. Als Scherge eines bösen " ..
+                    " Königs wartet er auf seine Chance. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Alle Negative Effekte auf die Beliebtheit verringern sich "..
+                    "um 30%. Die maximale Beliebtheit sinkt auf 175. " ..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Kann die Rüstung von nahestehenden Feinden halbieren.",
                 },
                 [Entities.CU_Barbarian_Hero]     = {
-                    Description = "VARG @cr @cr "..
-                                  "Als er als zwölfjähriger einen Eisbären im Zweikampf besiegte, würde Varg zum " ..
-                                  "Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
-                                  "er die Macht, mächtige Bestien zu beschwören." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Einen Sieg muss man zu feiern wissen! Die Effektivität "..
-                                  "von Tavernen wird um 50% verstärkt."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre "..
-                                  "Stärke richtet sich nach dem Rang.",
+                    "VARG, das Wolfsblut @cr @cr @color:180,180,180 "..
+                    "Als er als zwölfjähriger Junge einen Eisbären im Zweikampf besiegte, wurde Varg " ..
+                    "zum Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
+                    "er die Macht, mächtige Bestien zu beschwören. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Einen Sieg muss man zu feiern wissen! Die Effektivität "..
+                    "von Tavernen wird um 50% verstärkt. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre "..
+                    "Stärke richtet sich nach dem Rang.",
                 },
                 [Entities.PU_Hero10]             = {
-                    Description = "DRAKE @cr @cr "..
-                                  "Wenn er nicht gerade auf Haselnüsse und Tannenzapfen schießt, jagt Drake als " ..
-                                  "\"Der Schakal\" alle die behaupten, er wolle nur etwas kompensieren. Seine Mutter "..
-                                  " meint noch heute, er solle das Gewehr zuhause lassen." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Durch effizientere Trainingsmethoden sinken die Kosten "..
-                                  "für den Unterhalt aller Scharfschützen um 50%."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
+                    "DRAKE, der Schakal @cr @cr @color:180,180,180 "..
+                    "Wenn er nicht gerade auf Haselnüsse und Tannenzapfen schießt, jagt Drake als " ..
+                    "\"Der Schakal\" alle die behaupten, er wolle nur etwas kompensieren. Seine Mutter "..
+                    "meint noch heute, er solle das Gewehr zuhause lassen. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Durch effizientere Trainingsmethoden sinken die Kosten "..
+                    "für den Unterhalt aller Scharfschützen um 50%. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
                 },
                 [Entities.PU_Hero11]             = {
-                    Description = "YUKI @cr @cr "..
-                                  "Schon als kleines Mädchen beschäftigte sich Yuki mit Pyrotechnik. Zusammn mit den " ..
-                                  "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
-                                  "erlangte und nun eine Burg ihr eigen nennt." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Jeder Arbeiter ist Motiviert, alles für die Einheitspartei "..
-                                  "zu geben. Yuki erhöht die maximale Beliebtheit auf 300."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
+                    "YUKI, die Söldnerin @cr @cr @color:180,180,180 "..
+                    "Schon als kleines Mädchen beschäftigte sich Yuki mit Pyrotechnik. Zusammn mit den " ..
+                    "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
+                    "erlangte und nun eine Burg ihr Eigen nennt. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Yuki erhöht die maximale Beliebtheit auf 300. Außerdem "..
+                    "wird die Beliebtheit einmalig um 50 erhöht. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
                 },
                 [Entities.CU_Evil_Queen] = {
-                    Description = "KALA @cr @cr "..
-                                  "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom Nebelvolk wird " ..
-                                  "Kala  wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
-                                  "ihrer Untertanen selbst zur Welt gebracht." ..
-                                  " @cr @cr " ..
-                                  "Passive Fähigkeit: @cr Die gesteigerte Geburtenrate sorgt für einen demographischen "..
-                                  "Wandel, der Euer Bevölkerungslimit um 25% anhebt."..
-                                  " @cr @cr "..
-                                  "Aktive Fähigkeit: @cr Kann nahestehende Feinde mit Gift schädigen.",
+                    "KALA, die Hexe @cr @cr @color:180,180,180 "..
+                    "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom Nebelvolk wird " ..
+                    "Kala wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
+                    "ihrer Untertanen selbst zur Welt gebracht. " ..
+                    "@cr @cr @color:255,255,255 " ..
+                    "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
+                    "@cr Die gesteigerte Geburtenrate sorgt für einen demographischen "..
+                    "Wandel, der Euer Bevölkerungslimit um 25% anhebt. "..
+                    "@cr @cr "..
+                    "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
+                    "@cr Kann nahestehende Feinde mit Gift schädigen.",
                 },
             },
         },
@@ -220,14 +244,12 @@ function Stronghold.Hero:Install()
         self.Data[i] = {};
     end
 
-    self:OverrideBuyHeroWindow();
+    self:ConfigureBuyHero();
     self:OverrideCalculationCallbacks();
-    self:OverrideLeaderFormationAction();
-    self:OverrideLeaderFormationTooltip();
-    self:OverrideLeaderFormationUpdate();
     self:CreateHeroButtonHandlers();
     self:OverrideHero5AbilitySummon();
     self:StartTriggers();
+    self:OverrideGUI();
 end
 
 function Stronghold.Hero:OnSaveGameLoaded()
@@ -245,17 +267,13 @@ function Stronghold.Hero:OnSaveGameLoaded()
     end
 end
 
--- -------------------------------------------------------------------------- --
--- Rank Up
-
 function Stronghold.Hero:CreateHeroButtonHandlers()
     self.SyncEvents = {
         RankUp = 1,
         Hero5Summon = 2,
-        BuyLord = 3,
     };
 
-    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+    self.NetworkCall = Syncer.CreateEvent(
         function(_PlayerID, _Action, ...)
             if _Action == Stronghold.Hero.SyncEvents.RankUp then
                 Stronghold:PromotePlayer(_PlayerID);
@@ -263,113 +281,102 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
             if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
                 Stronghold.Hero:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
             end
-            if _Action == Stronghold.Hero.SyncEvents.BuyLord then
-                Stronghold.Hero:BuyHeroCreateLord(_PlayerID, arg[1]);
-                Stronghold.Hero:PlayFunnyComment(_PlayerID);
-            end
         end
     );
 end
 
-function Stronghold.Hero:OverrideLeaderFormationAction()
-    self.Orig_GUIAction_ChangeFormation = GUIAction_ChangeFormation;
-    GUIAction_ChangeFormation = function(_Index)
-        local EntityID = GUI.GetSelectedEntity();
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
-        end
-        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
-            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
-        end
-        if _Index > 1 then
-            return Stronghold.Hero.Orig_GUIAction_ChangeFormation(_Index);
-        end
+-- -------------------------------------------------------------------------- --
+-- Rank Up
 
-        local Rank = Stronghold:GetPlayerRank(PlayerID);
-        local NextRank = Stronghold.Config.Ranks[Rank+1];
-        if NextRank then
-            local Costs = Stronghold:CreateCostTable(unpack(NextRank.Costs));
-            if not HasPlayerEnoughResourcesFeedback(Costs) then
-                return;
-            end
-        end
+function Stronghold.Hero:LeaderChangeFormationAction(_Index)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = GUI.GetPlayerID();
+    if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+        return false;
+    end
+    if _Index > 1 then
+        return false;
+    end
 
-        if Stronghold:CanPlayerBePromoted(PlayerID) then
-            Stronghold.Sync:Call(
-                Stronghold.Hero.NetworkCall,
-                PlayerID,
-                Stronghold.Hero.SyncEvents.RankUp
-            );
+    local Rank = Stronghold:GetPlayerRank(PlayerID);
+    local NextRank = Stronghold.Config.Ranks[Rank+1];
+    if NextRank then
+        local Costs = Stronghold:CreateCostTable(unpack(NextRank.Costs));
+        if not HasPlayerEnoughResourcesFeedback(Costs) then
+            return true;
         end
     end
+
+    if Stronghold:CanPlayerBePromoted(PlayerID) then
+        Syncer.InvokeEvent(
+            Stronghold.Hero.NetworkCall,
+            Stronghold.Hero.SyncEvents.RankUp
+        );
+    end
+    return true;
 end
 
-function Stronghold.Hero:OverrideLeaderFormationTooltip()
-    self.Orig_GUITooltip_NormalButton = GUITooltip_NormalButton;
-    GUITooltip_NormalButton = function(_Key)
-        local EntityID = GUI.GetSelectedEntity();
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
-        end
-        if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
-            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
-        end
+function Stronghold.Hero:LeaderFormationTooltip(_Key)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return false;
+    end
+    if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+        return false;
+    end
 
-        local CostText = "";
-        local Text = "";
-        local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
-        if _Key == "MenuCommandsGeneric/formation_group" then
-            if Stronghold.Config.Ranks[NextRank] then
-                local Config = Stronghold.Config.Ranks[NextRank];
-                Text = "@color:180,180,180 " ..Stronghold:GetPlayerRankName(PlayerID, NextRank)..
-                       " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
-                       " erheben, um Euer Heer besser aufzustellen.";
-                if Config.Description ~= "" then
-                    Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                           Config.Description;
-                end
-
-                local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
-                CostText = Stronghold:FormatCostString(PlayerID, Costs);
-            else
-                Text = "@color:180,180,180 Höchster Rang @color:255,255,255 @cr "..
-                       " Ihr könnt keinen höheren Rang erreichen.";
+    local CostText = "";
+    local Text = "";
+    local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
+    if _Key == "MenuCommandsGeneric/formation_group" then
+        if Stronghold.Config.Ranks[NextRank] and NextRank <= Stronghold.Config.Rule.MaxRank then
+            local Config = Stronghold.Config.Ranks[NextRank];
+            Text = "@color:180,180,180 " ..Stronghold:GetPlayerRankName(PlayerID, NextRank)..
+                    " @color:255,255,255 @cr Lasst Euch in einen höheren Adelsstand "..
+                    " erheben, um Euer Heer besser aufzustellen.";
+            if Config.Description ~= "" then
+                Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
+                        Config.Description;
             end
+
+            local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
+            CostText = Stronghold:FormatCostString(PlayerID, Costs);
         else
-            return Stronghold.Hero.Orig_GUITooltip_NormalButton(_Key);
+            Text = "@color:180,180,180 Höchster Rang @color:255,255,255 @cr "..
+                    " Ihr könnt keinen höheren Rang erreichen.";
         end
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    else
+        return false;
     end
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
+    return true;
 end
 
-function Stronghold.Hero:OverrideLeaderFormationUpdate()
-    self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
-    GUIUpdate_BuildingButtons = function(_Button, _Technology)
-        local EntityID = GUI.GetSelectedEntity();
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
-        end
-        if not string.find(_Button, "Formation") then
-            return Stronghold.Hero.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
-        end
-        local Disabled = 1;
-        if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
-            Disabled = 0;
-        end
-        if GetID(Stronghold.Players[PlayerID].LordScriptName) == EntityID then
-            Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
-        end
-        XGUIEng.DisableButton(_Button, Disabled);
+function Stronghold.Hero:LeaderFormationUpdate(_Button, _Technology)
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = GUI.GetPlayerID();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return true;
     end
+    if not string.find(_Button, "Formation") then
+        return false;
+    end
+    local Disabled = 1;
+    if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
+        Disabled = 0;
+    end
+    if GetID(Stronghold.Players[PlayerID].LordScriptName) == EntityID then
+        Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
+    end
+    XGUIEng.DisableButton(_Button, Disabled);
+    return true;
 end
 
 -- -------------------------------------------------------------------------- --
--- Selection Menu
+-- Hero Selection
 
 function Stronghold.Hero:OnSelectLeader(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
@@ -574,123 +581,39 @@ end
 -- -------------------------------------------------------------------------- --
 -- Buy Hero
 
-function Stronghold.Hero:OpenBuyHeroWindowForLordSelection(_PlayerID)
-    local GuiPlayer = Stronghold:GetLocalPlayerID();
-    if not Stronghold:IsPlayer(_PlayerID) then
-        return;
-    end
-    XGUIEng.ShowWidget("BuyHeroWindow", 1);
-    XGUIEng.SetText("BuyHeroWindowHeadline", "Wählt Euren Laird!");
-    XGUIEng.SetText("BuyHeroWindowInfoLine", "");
-    XGUIEng.SetWidgetPositionAndSize("BuyHeroWindowInfoLine", 340, 60, 480, 50);
-    XGUIEng.ShowAllSubWidgets("BuyHeroLine1", 0);
-
-    local PositionX = 20;
-    local PositionY = 20;
-    XGUIEng.SetWidgetPosition("BuyHeroLine1", 40, 40);
-
-    local AllowedLairds = {};
-    for i= 1, table.getn(self.Config.Rule.Lord) do
-        if self.Config.Rule.Lord[i][2] then
-            table.insert(AllowedLairds, self.Config.Rule.Lord[i]);
-        end
-    end
-
-    for i= 1, table.getn(self.Config.Rule.Lord) do
-        local Type = self.Config.Rule.Lord[i][1];
-        local WidgetID = self.Config.UI.TypeToBuyHeroButton[Type];
-        local ButtonW, ButtonH = 60, 90;
-        XGUIEng.ShowWidget(WidgetID, 1);
-        if not self.Config.Rule.Lord[i][2]
-        or GuiPlayer ~= _PlayerID then
-            XGUIEng.DisableButton(WidgetID, 1);
-        end
-        XGUIEng.SetWidgetPositionAndSize(WidgetID, PositionX, PositionY, ButtonW, ButtonH);
-        PositionX = PositionX + 65;
-
-        if math.mod(i, 4) == 0 then
-            PositionY = PositionY + 95;
-            PositionX = 20;
-        end
-    end
-end
-
-function Stronghold.Hero:OverrideBuyHeroWindow()
-    self.Orig_BuyHeroWindow_UpdateInfoLine = BuyHeroWindow_UpdateInfoLine;
-    BuyHeroWindow_UpdateInfoLine = function()
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_BuyHeroWindow_UpdateInfoLine();
-        end
-
-        local ScreenX, ScreenY = GUI.GetScreenSize();
-        local MouseX, MouseY = GUI.GetMousePosition();
-        MouseX = MouseX * (1024/ScreenX);
-        MouseY = MouseY * (768/ScreenY);
-
-        local RowX, RowY = 122, 155;
-        local ButtonW, ButtonH = 65, 90;
-
-        local Text = "";
-        for i= 1, table.getn(self.Config.Rule.Lord) do
-            local Type = self.Config.Rule.Lord[i][1];
-            local ButtonStartX = (RowX + (ButtonW * (math.mod(i-1, 4))));
-            local ButtonEndX = ButtonStartX + ButtonW;
-            local ButtonStartY = RowY;
-            local ButtonEndY = RowY + ButtonH;
-
-            local WidgetName = self.Config.UI.TypeToBuyHeroButton[Type];
-            if XGUIEng.IsWidgetShown(WidgetName) == 1 then
-                if (MouseX >= ButtonStartX and MouseX <= ButtonEndX) and (MouseY >= ButtonStartY and MouseY <= ButtonEndY) then
-                    Text = Stronghold.Hero.Config.UI.HeroCV[Type].Description;
-                end
-            end
-
-            if math.mod(i, 4) == 0 then
-                RowY = RowY + 95;
-                RowX = 122;
-            end
-        end
-        XGUIEng.SetText("BuyHeroWindowInfoLine", Text);
-    end
-
-    self.Orig_BuyHeroWindow_Action_BuyHero = BuyHeroWindow_Action_BuyHero;
-    BuyHeroWindow_Action_BuyHero = function(_Type)
-        local GuiPlayer = GUI.GetPlayerID()
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_BuyHeroWindow_Action_BuyHero(_Type);
-        end
-        if GuiPlayer ~= PlayerID then
+function Stronghold.Hero:ConfigureBuyHero()
+    self.Orig_GameCallback_Logic_BuyHero_OnHeroSelected = GameCallback_Logic_BuyHero_OnHeroSelected;
+    GameCallback_Logic_BuyHero_OnHeroSelected = function(_PlayerID, _ID, _Type)
+        if Stronghold:IsPlayer(_PlayerID) then
+            Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type);
+            Stronghold.Hero:PlayFunnyComment(_PlayerID);
             return;
         end
-        Stronghold.Sync:Call(
-            Stronghold.Hero.NetworkCall,
-            PlayerID,
-            Stronghold.Hero.SyncEvents.BuyLord,
-            _Type
-        );
-        XGUIEng.ShowWidget("BuyHeroWindow", 0);
+        return Stronghold.Hero.Orig_GameCallback_Logic_BuyHero_OnHeroSelected(_PlayerID, _ID, _Type);
     end
 
-    self.Orig_BuyHeroWindow_Update_BuyHero = BuyHeroWindow_Update_BuyHero;
-    BuyHeroWindow_Update_BuyHero = function(_Type)
-        local PlayerID = GUI.GetPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Hero.Orig_BuyHeroWindow_Update_BuyHero(_Type);
+    self.Orig_GameCallback_GUI_BuyHero_GetHeadline = GameCallback_GUI_BuyHero_GetHeadline;
+    GameCallback_GUI_BuyHero_GetHeadline = function(_PlayerID)
+        if Stronghold:IsPlayer(_PlayerID) then
+            local LairdID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
+            local Caption = (LairdID ~= 0 and "Alea Iacta Est!") or "Wählt Euren Laird!";
+            return Caption;
         end
+        return Stronghold.Hero.Orig_GameCallback_GUI_BuyHero_GetHeadline(_PlayerID);
+    end
+
+    self.Orig_GameCallback_GUI_BuyHero_GetMessage = GameCallback_GUI_BuyHero_GetMessage;
+    GameCallback_GUI_BuyHero_GetMessage = function(_PlayerID, _Type)
+        if Stronghold:IsPlayer(_PlayerID) then
+            return Stronghold.Hero.Config.UI.HeroCV[_Type][1];
+        end
+        return Stronghold.Hero.Orig_GameCallback_GUI_BuyHero_GetMessage(_PlayerID, _Type);
     end
 end
 
-function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
+function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
     if Stronghold:IsPlayer(_PlayerID) then
-        Stronghold.Players[_PlayerID].LordChosen = true;
-        local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
-        local Orientation = Logic.GetEntityOrientation(CastleID);
-        local Position = Stronghold.Players[_PlayerID].DoorPos;
-        ID = Logic.CreateEntity(_Type, Position.X, Position.Y, 0, _PlayerID);
-        Logic.SetEntityName(ID, Stronghold.Players[_PlayerID].LordScriptName);
-        Logic.RotateEntity(ID, Orientation +180);
+        Logic.SetEntityName(_ID, Stronghold.Players[_PlayerID].LordScriptName);
         self:ConfigurePlayersLord(_PlayerID);
 
         local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
@@ -698,6 +621,10 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _Type)
         local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
         Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Laird gewählt!");
 
+        if _Type == Entities.PU_Hero11 then
+            Stronghold:AddPlayerReputation(_PlayerID, 50);
+            Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+        end
         if _PlayerID == GUI.GetPlayerID() or GUI.GetPlayerID() == 17 then
             Stronghold.Building:OnHeadquarterSelected(GUI.GetSelectedEntity());
         end
@@ -751,7 +678,7 @@ function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
 end
 
 -- Play a funny comment when the hero is selected.
--- (Yes, it is intendet that every player hears them.)
+-- (Yes, it is intended that every player hears them.)
 function Stronghold.Hero:PlayFunnyComment(_PlayerID)
     local FunnyComment = Sounds.VoicesHero1_HERO1_FunnyComment_rnd_01;
     local LordID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
@@ -898,9 +825,8 @@ function Stronghold.Hero:OverrideHero5AbilitySummon()
         if GuiPlayer ~= PlayerID then
             return;
         end
-        Stronghold.Sync:Call(
+        Syncer.InvokeEvent(
             Stronghold.Hero.NetworkCall,
-            PlayerID,
             Stronghold.Hero.SyncEvents.Hero5Summon,
             EntityID,
             x,y
@@ -1001,6 +927,13 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         CurrentAmount = Stronghold.Hero:ApplyAttractionPassiveAbility(_PlayerID, CurrentAmount);
         return CurrentAmount;
     end
+
+    self.Orig_GameCallback_Calculate_MeasureIncrease = GameCallback_Calculate_MeasureIncrease;
+    GameCallback_Calculate_MeasureIncrease = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_MeasureIncrease(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyMeasurePointsPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
 end
 
 function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)
@@ -1031,10 +964,11 @@ function Stronghold.Hero:FaithProductionBonus(_PlayerID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
         local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
         if Amount > 0 then
-            local Building1 = GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Monastery1);
+            local Building1 = GetValidEntitiesOfType(_PlayerID, Entities.PB_Monastery1);
             local Building2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
             local Building3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
             if table.getn(Building1) + Building2 + Building3 > 0 then
+                ---@diagnostic disable-next-line: undefined-field
                 if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
                     Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount);
                 end
@@ -1112,7 +1046,9 @@ end
 -- Passive Ability: Increase of reputation
 function Stronghold.Hero:ApplyMaxReputationPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
-    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero11) then
+    if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
+        Value = 175;
+    elseif self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero11) then
         Value = 300;
     end
     return Value;
@@ -1177,9 +1113,7 @@ end
 -- Passive Ability: Upkeep discount
 function Stronghold.Hero:ApplyUpkeepDiscountPassiveAbility(_PlayerID, _Upkeep)
     local Upkeep = _Upkeep;
-    if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
-        Upkeep = Upkeep * 0.9;
-    end
+    -- do nothing
     return Upkeep;
 end
 
@@ -1198,5 +1132,44 @@ function Stronghold.Hero:ApplyUnitUpkeepDiscountPassiveAbility(_PlayerID, _Type,
         end
     end
     return Upkeep;
+end
+
+-- Passive Ability: Generating measure points
+function Stronghold.Hero:ApplyMeasurePointsPassiveAbility(_PlayerID, _Value)
+    local Value = _Value;
+    if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
+        Value = Value * 1.5;
+    end
+    return Value;
+end
+
+-- -------------------------------------------------------------------------- --
+-- UI
+
+function Stronghold.Hero:OverrideGUI()
+    Overwrite.CreateOverwrite(
+        "GUIUpdate_BuildingButtons",
+        function(_Button, _Technology)
+            Overwrite.CallOriginal();
+            return Stronghold.Hero:LeaderFormationUpdate(_Button, _Technology);
+        end
+    );
+
+    Overwrite.CreateOverwrite(
+        "GUITooltip_NormalButton",
+        function(_Key)
+            Overwrite.CallOriginal();
+            Stronghold.Hero:LeaderFormationTooltip(_Key);
+        end
+    );
+
+    Overwrite.CreateOverwrite(
+        "GUIAction_ChangeFormation",
+        function(_Index)
+            if not Stronghold.Hero:LeaderChangeFormationAction(_Index) then
+                Overwrite.CallOriginal();
+            end
+        end
+    );
 end
 

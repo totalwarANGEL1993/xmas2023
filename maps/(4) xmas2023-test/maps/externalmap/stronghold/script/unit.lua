@@ -149,14 +149,14 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderHeavyCavalry1] = {
-                Costs = {30, 200, 0, 0, 0, 130, 0},
+                Costs = {35, 200, 0, 0, 0, 130, 0},
                 Allowed = true,
                 Places = 3,
                 Rank = 6,
                 Upkeep = 70,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
-                Costs = {40, 230, 0, 0, 0, 180, 0},
+                Costs = {50, 230, 0, 0, 0, 180, 0},
                 Allowed = false,
                 Places = 4,
                 Rank = 7,
@@ -201,27 +201,6 @@ Stronghold.Unit = {
                 Upkeep = 0,
             },
         },
-
-        TypesToCheckForConstruction = {
-            [Technologies.B_Beautification01] = {Entities.PB_Beautification01},
-            [Technologies.B_Beautification02] = {Entities.PB_Beautification02},
-            [Technologies.B_Beautification03] = {Entities.PB_Beautification03},
-            [Technologies.B_Beautification04] = {Entities.PB_Beautification04},
-            [Technologies.B_Beautification05] = {Entities.PB_Beautification05},
-            [Technologies.B_Beautification06] = {Entities.PB_Beautification06},
-            [Technologies.B_Beautification07] = {Entities.PB_Beautification07},
-            [Technologies.B_Beautification08] = {Entities.PB_Beautification08},
-            [Technologies.B_Beautification09] = {Entities.PB_Beautification09},
-            [Technologies.B_Beautification10] = {Entities.PB_Beautification10},
-            [Technologies.B_Beautification11] = {Entities.PB_Beautification11},
-            [Technologies.B_Beautification12] = {Entities.PB_Beautification12},
-
-            [Technologies.B_Barracks]         = {Entities.PB_Barracks1, Entities.PB_Barracks2,},
-            [Technologies.B_Archery]          = {Entities.PB_Archery1, Entities.PB_Archery2,},
-            [Technologies.B_Stables]          = {Entities.PB_Stable1, Entities.PB_Stable2,},
-            [Technologies.B_Monastery]        = {Entities.PB_Monastery1, Entities.PB_Monastery2, Entities.PB_Monastery3},
-            [Technologies.B_PowerPlant]       = {Entities.PB_PowerPlant1},
-        },
     },
 }
 
@@ -230,15 +209,8 @@ function Stronghold.Unit:Install()
         self.Data[i] = {};
     end
 
-    self:OverrideTooltipConstructionButton();
-    self:OverrideUpdateConstructionButton();
-    self:OverrideUpdateUpgradeButton();
-    self:OverrideBuySoldierButtonAction();
-    self:OverrideBuySoldierButtonTooltip();
-    self:OverrideBuySoldierButtonUpdate();
-    self:OverrideExpelSettlerButtonAction();
-    self:OverrideExpelSettlerButtonTooltip();
     self:CreateUnitButtonHandlers();
+    self:OverrideGUI();
 end
 
 function Stronghold.Unit:OnSaveGameLoaded()
@@ -249,7 +221,7 @@ function Stronghold.Unit:CreateUnitButtonHandlers()
         BuySoldier = 1,
     };
 
-    self.NetworkCall = Stronghold.Sync:CreateSyncEvent(
+    self.NetworkCall = Syncer.CreateEvent(
         function(_PlayerID, _Action, ...)
             if _Action == Stronghold.Unit.SyncEvents.BuySoldier then
                 Stronghold.Unit:RefillUnit(_PlayerID, arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], arg[8]);
@@ -274,7 +246,7 @@ end
 function Stronghold.Unit:GetMillitarySize(_PlayerID)
     local Size = 0;
     for k,v in pairs(self.Config.Units) do
-        local UnitList = GetEntitiesOfType(_PlayerID, k);
+        local UnitList = GetPlayerEntities(_PlayerID, k);
         for i= 1, table.getn(UnitList) do
             -- Get unit size
             local Usage = v.Places;
@@ -299,7 +271,7 @@ function GameCallback_Calculate_UnitPlaces(_PlayerID, _EntityID, _Type, _Usage)
 end
 
 -- -------------------------------------------------------------------------- --
--- Buy Unit
+-- Buy Unit (Logic)
 
 function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
     if Stronghold:IsPlayer(_PlayerID) then
@@ -396,111 +368,105 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
     end
 end
 
-function Stronghold.Unit:OverrideBuySoldierButtonAction()
-    self.Orig_GUIAction_BuySoldier = GUIAction_BuySoldier;
-    GUIAction_BuySoldier = function()
-        local GuiPlayer = GUI.GetPlayerID();
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        local EntityID = GUI.GetSelectedEntity();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUIAction_BuySoldier();
-        end
-        if GuiPlayer ~= PlayerID then
-            return;
-        end
+-- -------------------------------------------------------------------------- --
+-- Buy Unit (UI)
 
-        local BuyAmount = 1;
-        if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
-            local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
-            local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
-            BuyAmount = MaxSoldiers - CurrentSoldiers;
-        end
-        if BuyAmount < 1 then
-            return;
-        end
-        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
-            Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
-            Message("Euer Heer ist bereits groß genug!");
-            return;
-        end
-
-        local Type = Logic.GetEntityType(EntityID);
-        local Costs = self.Config.Units[Type].Costs;
-        Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
-        Costs[ResourceType.Honor] = 0;
-        if not HasPlayerEnoughResourcesFeedback(Costs) then
-            return;
-        end
-
-        local Task = Logic.GetCurrentTaskList(EntityID);
-        if Task and (string.find(Task, "BATTLE") or string.find(Task, "DIE")) then
-            return;
-        end
-
-        Stronghold.Players[PlayerID].BuyUnitLock = true;
-        Stronghold.Sync:Call(
-            Stronghold.Unit.NetworkCall,
-            PlayerID,
-            Stronghold.Unit.SyncEvents.BuySoldier,
-            EntityID,
-            BuyAmount,
-            Costs[ResourceType.Gold],
-            Costs[ResourceType.Clay],
-            Costs[ResourceType.Wood],
-            Costs[ResourceType.Stone],
-            Costs[ResourceType.Iron],
-            Costs[ResourceType.Sulfur]
-        );
+function Stronghold.Unit:BuySoldierButtonAction()
+    local GuiPlayer = GUI.GetPlayerID();
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    local EntityID = GUI.GetSelectedEntity();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return true;
     end
+    if GuiPlayer ~= PlayerID then
+        return true;
+    end
+
+    local BuyAmount = 1;
+    if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
+        local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
+        local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
+        BuyAmount = MaxSoldiers - CurrentSoldiers;
+    end
+    if BuyAmount < 1 then
+        return true;
+    end
+    if not Stronghold:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
+        Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
+        Message("Euer Heer ist bereits groß genug!");
+        return true;
+    end
+
+    local Type = Logic.GetEntityType(EntityID);
+    local Costs = self.Config.Units[Type].Costs;
+    Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
+    Costs[ResourceType.Honor] = 0;
+    if not HasPlayerEnoughResourcesFeedback(Costs) then
+        return true;
+    end
+
+    local Task = Logic.GetCurrentTaskList(EntityID);
+    if Task and (string.find(Task, "BATTLE") or string.find(Task, "DIE")) then
+        return true;
+    end
+
+    Stronghold.Players[PlayerID].BuyUnitLock = true;
+    Syncer.InvokeEvent(
+        Stronghold.Unit.NetworkCall,
+        Stronghold.Unit.SyncEvents.BuySoldier,
+        EntityID,
+        BuyAmount,
+        Costs[ResourceType.Gold],
+        Costs[ResourceType.Clay],
+        Costs[ResourceType.Wood],
+        Costs[ResourceType.Stone],
+        Costs[ResourceType.Iron],
+        Costs[ResourceType.Sulfur]
+    );
+    return true;
 end
 
-function Stronghold.Unit:OverrideBuySoldierButtonTooltip()
-    self.Orig_GUITooltip_BuySoldier = GUITooltip_BuySoldier;
-    GUITooltip_BuySoldier = function(_KeyNormal, _KeyDisabled, _ShortCut)
-        local GuiPlayer = GUI.GetPlayerID();
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        local EntityID = GUI.GetSelectedEntity();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUITooltip_BuySoldier(_KeyNormal, _KeyDisabled, _ShortCut);
-        end
-        if GuiPlayer ~= PlayerID then
-            return;
-        end
-
-        local BuyAmount = 1;
-        if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
-            local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
-            local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
-            BuyAmount = MaxSoldiers - CurrentSoldiers;
-        end
-
-        local Type = Logic.GetEntityType(EntityID);
-        local Costs = self.Config.Units[Type].Costs;
-        Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
-        Costs[ResourceType.Honor] = nil;
-
-        local Text = "@color:180,180,180 Soldat rekrutieren @color:255,255,255 @cr ";
-        if BuyAmount > 1 then
-            Text = "@color:180,180,180 Soldaten rekrutieren @color:255,255,255 @cr ";
-        end
-        Text = Text .. "Heuert Gruppenmitglieder an, um den Hauptmann zu verstärken.";
-        local CostText = FormatCostString(PlayerID, Costs);
-        if _KeyNormal == "MenuCommandsGeneric/Buy_Soldier" then
-            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
-        end
+function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _ShortCut)
+    local GuiPlayer = GUI.GetPlayerID();
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    local EntityID = GUI.GetSelectedEntity();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return false;
     end
+    if GuiPlayer ~= PlayerID then
+        return true;
+    end
+
+    local BuyAmount = 1;
+    if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
+        local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
+        local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
+        BuyAmount = MaxSoldiers - CurrentSoldiers;
+    end
+
+    local Type = Logic.GetEntityType(EntityID);
+    local Costs = self.Config.Units[Type].Costs;
+    Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
+    Costs[ResourceType.Honor] = nil;
+
+    local Text = "@color:180,180,180 Soldat rekrutieren @color:255,255,255 @cr ";
+    if BuyAmount > 1 then
+        Text = "@color:180,180,180 Soldaten rekrutieren @color:255,255,255 @cr ";
+    end
+    Text = Text .. "Heuert Gruppenmitglieder an, um den Hauptmann zu verstärken.";
+    local CostText = FormatCostString(PlayerID, Costs);
+    if _KeyNormal == "MenuCommandsGeneric/Buy_Soldier" then
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
+    end
+    return true;
 end
 
-function Stronghold.Unit:OverrideBuySoldierButtonUpdate()
-    self.Orig_GUIUpdate_BuySoldierButton = GUIUpdate_BuySoldierButton;
-    GUIUpdate_BuySoldierButton = function()
-        local PlayerID = GUI.GetPlayerID();
-        local EntityID = GUI.GetSelectedEntity();
-        local Type = Logic.GetEntityType(EntityID);
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUIUpdate_BuySoldierButton();
-        end
+function Stronghold.Unit:BuySoldierButtonUpdate()
+    local PlayerID = GUI.GetPlayerID();
+    local EntityID = GUI.GetSelectedEntity();
+    local Type = Logic.GetEntityType(EntityID);
+    if Stronghold:IsPlayer(PlayerID) then
         if not Stronghold.Unit.Config.Units[Type] then
             XGUIEng.ShowWidget("Buy_Soldier_Button", 0);
         end
@@ -512,10 +478,12 @@ function Stronghold.Unit:OverrideBuySoldierButtonUpdate()
         local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
         if BarracksID == 0 or CurrentSoldiers == MaxSoldiers then
             XGUIEng.DisableButton("Buy_Soldier_Button", 1);
-            return;
+        else
+            XGUIEng.DisableButton("Buy_Soldier_Button", 0);
         end
-        XGUIEng.DisableButton("Buy_Soldier_Button", 0);
+        return true;
     end
+    return false;
 end
 
 function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
@@ -551,220 +519,103 @@ end
 -- -------------------------------------------------------------------------- --
 -- Expel
 
-function Stronghold.Unit:OverrideExpelSettlerButtonAction()
-    self.Orig_GUIAction_ExpelSettler = GUIAction_ExpelSettler;
-    GUIAction_ExpelSettler = function()
-        local GuiPlayer = GUI.GetPlayerID();
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUIAction_ExpelSettler();
-        end
-        if GuiPlayer ~= PlayerID then
-            return;
-        end
-        if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
-            local Selected = {GUI.GetSelectedEntities()};
-            for i= 1, table.getn(Selected) do
-                if Logic.IsHero(Selected[i]) == 0 then
-                    if Logic.IsLeader(Selected[i]) == 1 then
-                        local Soldiers = {Logic.GetSoldiersAttachedToLeader(Selected[i])};
-                        for j= 2, Soldiers[1] +1 do
-                            GUI.ExpelSettler(Soldiers[j]);
-                        end
-                    end
-                    GUI.ExpelSettler(Selected[i]);
-                end
-            end
-            return;
-        end
-        Stronghold.Unit.Orig_GUIAction_ExpelSettler();
-    end
-end
-
-function Stronghold.Unit:OverrideExpelSettlerButtonTooltip()
-    self.Orig_GUITooltip_NormalButton = GUITooltip_NormalButton;
-    GUITooltip_NormalButton = function(_Key)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUITooltip_NormalButton(_Key);
-        end
+function Stronghold.Unit:ExpelSettlerButtonTooltip(_Key)
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    if Stronghold:IsPlayer(PlayerID) then
         if _Key == "MenuCommandsGeneric/expel" then
             local Text = "@color:180,180,180 Einheit entlassen @color:255,255,255 @cr "..
-                         "Entlasst die selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
-                         "Soldaten entlasst, geht der Hauptmann zuletzt.";
-            if XGUIEng.IsModifierPressed(Keys.ModifierShift)== 1 then
+                            "Entlasst die selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
+                            "Soldaten entlasst, geht der Hauptmann zuletzt.";
+            if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
                 Text   = "@color:180,180,180 Alle entlassen @color:255,255,255 @cr "..
-                         "Entlasst alle selektierten Einheiten aus ihrem Dienst. Alle "..
-                         "Einheiten werden sofort entlassen!";
+                            "Entlasst alle selektierten Einheiten aus ihrem Dienst. Alle "..
+                            "Einheiten werden sofort entlassen!";
             end
             XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-            return;
-        end
-        Stronghold.Unit.Orig_GUITooltip_NormalButton(_Key);
-    end
-end
-
-
--- -------------------------------------------------------------------------- --
--- Construction
-
-function Stronghold.Unit:OverrideTooltipConstructionButton()
-    self.Orig_GUITooltip_ConstructBuilding = GUITooltip_ConstructBuilding;
-    GUITooltip_ConstructBuilding = function(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUITooltip_ConstructBuilding(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
-        end
-        local IsForbidden = false;
-
-        -- Get default text
-        local ForbiddenText = GetSeparatedTooltipText("MenuGeneric/BuildingNotAvailable")
-        local NormalText = GetSeparatedTooltipText(_KeyNormal);
-        local DisabledText = GetSeparatedTooltipText(_KeyDisabled);
-        local DefaultText = NormalText;
-        if XGUIEng.IsButtonDisabled(XGUIEng.GetCurrentWidgetID()) == 1 then
-            DefaultText = DisabledText;
-            if _Technology and Logic.GetTechnologyState(PlayerID, _Technology) == 0 then
-                DefaultText = ForbiddenText;
-                IsForbidden = true;
-            end
-        end
-
-        local CostString = "";
-        local ShortCutToolTip = "";
-        local Type = Logic.GetBuildingTypeByUpgradeCategory(_UpgradeCategory, PlayerID);
-        if not IsForbidden then
-            Logic.FillBuildingCostsTable(Type, InterfaceGlobals.CostTable);
-            CostString = InterfaceTool_CreateCostString(InterfaceGlobals.CostTable);
-            if _ShortCut then
-                ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
-                    ": [" .. XGUIEng.GetStringTableText(_ShortCut) .. "]"
-            end
-        end
-
-        local Text = DefaultText[1] .. " @cr " .. DefaultText[2];
-        if not IsForbidden then
-            -- Effect text
-            local EffectText = "";
-            local Effects = Stronghold.Economy.Config.Income.Static[Type];
-            if Effects then
-                if Effects.Reputation > 0 then
-                    EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
-                end
-                if Effects.Honor > 0 then
-                    EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
-                end
-                if EffectText ~= "" then
-                    EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
-                end
-            end
-
-            if Logic.GetUpgradeCategoryByBuildingType(Type) == UpgradeCategories.Tavern then
-                EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 "..
-                             " Beliebtheit für jeden Gast";
-            end
-
-            -- Limit factor
-            -- (Only for beautification)
-            local LimitFactor = 1.0;
-            local UpgradeCategoryName = KeyOf(_UpgradeCategory, UpgradeCategories);
-            if UpgradeCategoryName and string.find(UpgradeCategoryName, "Beautification") then
-                if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters2) > 0 then
-                    LimitFactor = 1.5;
-                end
-                if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Headquarters3) > 0 then
-                    LimitFactor = 2.0;
-                end
-            end
-
-            local BuildingMax = math.floor(GetLimitOfType(Type) * LimitFactor);
-            if BuildingMax > -1 then
-                local BuildingCount = GetUsageOfType(PlayerID, Type);
-                Text = DefaultText[1].. " (" ..BuildingCount.. "/" ..BuildingMax.. ") @cr " .. DefaultText[2];
-            else
-                Text = DefaultText[1] .. " @cr " .. DefaultText[2];
-            end
-
-            for i= 3, table.getn(DefaultText) do
-                Text = Text .. " @cr " .. DefaultText[i];
-            end
-            Text = Text .. EffectText;
-        end
-
-        -- Set text
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostString);
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
-    end
-end
-
-function Stronghold.Unit:OverrideUpdateConstructionButton()
-    self.Orig_GUIUpdate_BuildingButtons = GUIUpdate_BuildingButtons;
-    GUIUpdate_BuildingButtons = function(_Button, _Technology)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
-        end
-        if not Stronghold.Unit:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology) then
-            Stronghold.Unit.Orig_GUIUpdate_BuildingButtons(_Button, _Technology);
+            return true;
         end
     end
+    return false;
 end
 
-function Stronghold.Unit:OverrideUpdateUpgradeButton()
-    self.Orig_GUIUpdate_UpgradeButtons = GUIUpdate_UpgradeButtons;
-    GUIUpdate_UpgradeButtons = function(_Button, _Technology)
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold:IsPlayer(PlayerID) then
-            return Stronghold.Unit.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
-        end
-        if not Stronghold.Unit:UpdateSerfConstructionButtons(PlayerID, _Button, _Technology) then
-            Stronghold.Unit.Orig_GUIUpdate_UpgradeButtons(_Button, _Technology);
-        end
+function Stronghold.Unit:ExpelSettlerButtonAction()
+    local GuiPlayer = GUI.GetPlayerID();
+    local PlayerID = Stronghold:GetLocalPlayerID();
+    local EntityID = GUI.GetSelectedEntity();
+    if not Stronghold:IsPlayer(PlayerID) then
+        return true;
     end
-end
-
--- Update buttons in serf menu
--- for some reason most of the beautification buttons call the update of the
--- upgrade button instead of the construction button. A classical case of the
--- infamos "BB-Logic".... To avoid boilerplate we outsource the changes.
-function Stronghold.Unit:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technology)
-    local TechnologyName = KeyOf(_Technology, Technologies);
-
-    -- No village centers
-    if _Technology == Technologies.B_Village then
-        XGUIEng.ShowWidget(_Button, 0);
+    if GuiPlayer ~= PlayerID then
         return true;
     end
 
-    local LimitReached = false;
-    local CheckList = Stronghold.Unit.Config.TypesToCheckForConstruction[_Technology];
-
-    local Usage = 0;
-    local Limit = -1;
-    if CheckList then
-        Limit = GetLimitOfType(CheckList[1]);
+    -- Stops the player from expeling workers to get new with full energy.
+    if Logic.IsWorker(EntityID) == 1 and Logic.GetSettlersWorkBuilding(EntityID) ~= 0 then
+        return true;
     end
-    if Limit > -1 then
-        for i= 1, table.getn(CheckList) do
-            Usage = Usage + GetUsageOfType(_PlayerID, CheckList[i]);
-        end
-        local LimitFactor = 1.0;
-        if TechnologyName and string.find(TechnologyName, "^B_Beautification") then
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters2) > 0 then
-                LimitFactor = 1.5;
-            end
-            if Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Headquarters3) > 0 then
-                LimitFactor = 2.0;
+    if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
+        local Selected = {GUI.GetSelectedEntities()};
+        GUI.ClearSelection();
+        for i= 1, table.getn(Selected) do
+            if Logic.IsHero(Selected[i]) == 0 then
+                if Logic.IsLeader(Selected[i]) == 1 then
+                    local Soldiers = {Logic.GetSoldiersAttachedToLeader(Selected[i])};
+                    for j= 2, Soldiers[1] +1 do
+                        GUI.ExpelSettler(Soldiers[j]);
+                    end
+                end
+                GUI.ExpelSettler(Selected[i]);
             end
         end
-        LimitReached = math.floor(Limit * LimitFactor) <= Usage;
-    end
-
-    if LimitReached then
-        XGUIEng.DisableButton(_Button, 1);
         return true;
     end
     return false;
+end
+
+-- -------------------------------------------------------------------------- --
+-- UI
+
+function Stronghold.Unit:OverrideGUI()
+    Overwrite.CreateOverwrite(
+        "GUIAction_BuySoldier",
+        function()
+            if not Stronghold.Unit:BuySoldierButtonAction() then
+                Overwrite.CallOriginal();
+            end
+        end
+    );
+
+    Overwrite.CreateOverwrite(
+        "GUIUpdate_BuySoldierButton",
+        function()
+            Overwrite.CallOriginal();
+            return Stronghold.Unit:BuySoldierButtonUpdate();
+        end
+    );
+
+    Overwrite.CreateOverwrite(
+        "GUITooltip_NormalButton",
+        function(_Key)
+            Overwrite.CallOriginal();
+            Stronghold.Unit:ExpelSettlerButtonTooltip(_Key);
+        end
+    );
+
+    Overwrite.CreateOverwrite(
+        "GUIAction_ExpelSettler",
+        function()
+            if not Stronghold.Unit:ExpelSettlerButtonAction() then
+                Overwrite.CallOriginal();
+            end
+        end
+    );
+
+    Overwrite.CreateOverwrite(
+        "GUITooltip_BuySoldier",
+        function(_KeyNormal, _KeyDisabled, _ShortCut)
+            Overwrite.CallOriginal();
+            Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _ShortCut);
+        end
+    );
 end
 

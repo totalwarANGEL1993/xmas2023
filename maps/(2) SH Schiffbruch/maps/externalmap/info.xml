@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
- <NameKey></NameKey>
- <DescKey></DescKey>
+ <NameKey>MapDescription/Peaceful_Land_name</NameKey>
+ <DescKey>MapDescription/Peaceful_Land_desc</DescKey>
  <Name>(2) @color:255,225,95 SH @color:255,255,255 Schiffbruch</Name>
  <Desc>@color:255,225,95 von totalwarANGEL @cr @cr @color:255,255,255 Ihr seid gestranded. Und Ihr seid nicht alein.... Könnt Ihr Euch gegen den Feind behaupten und diese gottverlassene Insel als Sieger verlassen?</Desc>
  <SizeX>417</SizeX>
@@ -12,6 +12,6 @@
  <MiniMapTextureName>data\graphics\Textures\GUI\MapPics\externalmap</MiniMapTextureName>
  <Key>2</Key>
  <GUID>
-  <Data>b9740b2a-8ecb-4910-9e73-5d79e732510c</Data>
+  <Data>3fbe3553-4971-41b8-b2a8-3b3d5ffd6174</Data>
  </GUID>
 </root>
