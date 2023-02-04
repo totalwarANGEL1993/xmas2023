@@ -47,9 +47,9 @@ Stronghold = {
         },
 
         HQCivilAttraction = {
-            [1] = 50,
-            [2] = 75,
-            [3] = 100
+            [1] = 75,
+            [2] = 100,
+            [3] = 125
         },
         HQMilitaryAttraction = {
             [1] = 800,
@@ -57,9 +57,9 @@ Stronghold = {
             [3] = 1200
         },
         VCCivilAttraction = {
-            [1] = 40,
-            [2] = 65,
-            [3] = 90
+            [1] = 35,
+            [2] = 45,
+            [3] = 55
         },
 
         Ranks = {
@@ -296,10 +296,10 @@ function Stronghold:OnSaveGameLoaded()
         Message("The S5 Community Server is required!");
         return false;
     end
+    Archive.ReloadEntities();
 
     Stronghold:AddDelayedAction(1, function(_PlayerID)
         Stronghold:LoadGUIDelayed(_PlayerID);
-        Archive.ReloadEntities();
     end, GUI.GetPlayerID());
     GUI.ClearSelection();
     ResourceType.Honor = 20;
@@ -698,9 +698,9 @@ function Stronghold:OverrideAttraction()
         if not Stronghold:IsPlayer(_PlayerID) then
             return Stronghold.Orig_GetPlayerAttractionLimit(_PlayerID);
         end
-        local HeadquarterID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
 
         -- HQ limit
+        local HeadquarterID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
         local HQLimit = Stronghold.Config.HQCivilAttraction[1];
         if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters2 then
             HQLimit = Stronghold.Config.HQCivilAttraction[2];
@@ -1074,42 +1074,38 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
 end
 
 function Stronghold:OverwriteCommonCallbacks()
-    self.Orig_GameCallback_GUI_SelectionChanged = GameCallback_GUI_SelectionChanged;
-	GameCallback_GUI_SelectionChanged = function()
-		Stronghold.Orig_GameCallback_GUI_SelectionChanged();
+    Overwrite.CreateOverwrite("GameCallback_GUI_SelectionChanged", function()
+        Overwrite.CallOriginal();
         local EntityID = GUI.GetSelectedEntity();
         Stronghold:OnSelectionMenuChanged(EntityID);
-	end
+    end);
 
-	self.Orig_GameCallback_OnBuildingConstructionComplete = GameCallback_OnBuildingConstructionComplete;
-	GameCallback_OnBuildingConstructionComplete = function(_EntityID, _PlayerID)
-		Stronghold.Orig_GameCallback_OnBuildingConstructionComplete(_EntityID, _PlayerID);
+    Overwrite.CreateOverwrite("GameCallback_OnBuildingConstructionComplete", function(_EntityID, _PlayerID)
+        Overwrite.CallOriginal();
         Stronghold:OnSelectionMenuChanged(_EntityID);
-	end
+    end);
 
-	self.Orig_GameCallback_OnBuildingUpgradeComplete = GameCallback_OnBuildingUpgradeComplete;
-	GameCallback_OnBuildingUpgradeComplete = function(_EntityIDOld, _EntityIDNew)
-		Stronghold.Orig_GameCallback_OnBuildingUpgradeComplete(_EntityIDOld, _EntityIDNew);
+    Overwrite.CreateOverwrite("GameCallback_OnBuildingUpgradeComplete", function(_EntityIDOld, _EntityIDNew)
+        Overwrite.CallOriginal();
         Stronghold:OnSelectionMenuChanged(_EntityIDNew);
-	end
+    end);
 
-	self.Orig_GameCallback_OnTechnologyResearched = GameCallback_OnTechnologyResearched;
-	GameCallback_OnTechnologyResearched = function(_PlayerID, _Technology, _EntityID)
-		Stronghold.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
+    Overwrite.CreateOverwrite("GameCallback_OnTechnologyResearched", function(_PlayerID, _Technology, _EntityID)
+        Overwrite.CallOriginal();
         Stronghold:OnSelectionMenuChanged(_EntityID);
-	end
+    end);
 
-    self.Orig_GameCallback_OnCannonConstructionComplete = GameCallback_OnCannonConstructionComplete;
-    GameCallback_OnCannonConstructionComplete = function(_BuildingID, _null)
-        Stronghold.Orig_GameCallback_OnCannonConstructionComplete(_BuildingID, _null);
+    Overwrite.CreateOverwrite("GameCallback_OnCannonConstructionComplete", function(_BuildingID)
+        Overwrite.CallOriginal();
         Stronghold:OnSelectionMenuChanged(_BuildingID);
-    end
+    end);
 
-    self.Orig_GameCallback_OnTransactionComplete = GameCallback_OnTransactionComplete;
-    GameCallback_OnTransactionComplete = function(_BuildingID, _null)
-        Stronghold.Orig_GameCallback_OnTransactionComplete(_BuildingID, _null);
+    Overwrite.CreateOverwrite("GameCallback_OnTransactionComplete", function(_BuildingID)
+        Overwrite.CallOriginal();
         Stronghold:OnSelectionMenuChanged(_BuildingID);
-    end
+    end);
+
+    ---
 
 	self.Orig_Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded;
 	Mission_OnSaveGameLoaded = function()

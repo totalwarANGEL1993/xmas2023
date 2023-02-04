@@ -36,27 +36,6 @@ Stronghold.Hero = {
             },
         },
 
-        --- 
-
-        Unit = {
-            Laird = {
-                Health = 2500,
-                Armor = 6,
-                Damage = 50,
-                Healing = 1,
-            },
-            Pet = {
-                [Entities.CU_Barbarian_Hero_wolf] = {
-                    Owner = Entities.CU_Barbarian_Hero,
-                    Health = 400, Armor = 1, Damage = 20, Healing = 10,
-                },
-                [Entities.PU_Hero5_Outlaw] = {
-                    Owner = Entities.PU_Hero5,
-                    Health = 150, Armor = 3, Damage = 10, Healing = 5
-                },
-            },
-        },
-
         ---
 
         UI = {
@@ -229,7 +208,7 @@ HeroCV = {
                     "@cr @cr @color:255,255,255 " ..
                     "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
                     "@cr Die gesteigerte Geburtenrate sorgt für einen demographischen "..
-                    "Wandel, der Euer Bevölkerungslimit um 25% anhebt. "..
+                    "Wandel. Eure Dorfzentren können mehr Siedlern Platz bieten. "..
                     "@cr @cr "..
                     "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
                     "@cr Kann nahestehende Feinde mit Gift schädigen.",
@@ -254,12 +233,6 @@ end
 
 function Stronghold.Hero:OnSaveGameLoaded()
     for i= 1, table.getn(Score.Player) do
-        self:ConfigurePlayersLord(i);
-
-        local Bandits = {Logic.GetPlayerEntities(i, Entities.PU_Hero5_Outlaw, 48)};
-        for j=2, Bandits[1] +1 do
-            self:ConfigurePlayersHeroPet(Bandits[j]);
-        end
         local Wolves = {Logic.GetPlayerEntities(i, Entities.CU_Barbarian_Hero_wolf, 48)};
         for j=2, Wolves[1] +1 do
             self:ConfigurePlayersHeroPet(Wolves[j]);
@@ -614,7 +587,6 @@ end
 function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
     if Stronghold:IsPlayer(_PlayerID) then
         Logic.SetEntityName(_ID, Stronghold.Players[_PlayerID].LordScriptName);
-        self:ConfigurePlayersLord(_PlayerID);
 
         local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
         local TypeName = Logic.GetEntityTypeName(_Type);
@@ -631,48 +603,19 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
     end
 end
 
-function Stronghold.Hero:ConfigurePlayersLord(_PlayerID)
-    if Stronghold:IsPlayer(_PlayerID) then
-        local ID = GetID(Stronghold.Players[_PlayerID].LordScriptName);
-        if ID > 0 then
-            CEntity.SetArmor(ID, self.Config.Unit.Laird.Armor);
-            CEntity.SetDamage(ID, self.Config.Unit.Laird.Damage);
-            CEntity.SetHealingPoints(ID, self.Config.Unit.Laird.Healing);
-            CEntity.SetMaxHealth(ID, self.Config.Unit.Laird.Health);
-            if Logic.GetEntityHealth(ID) > 0 then
-                Logic.HealEntity(ID, self.Config.Unit.Laird.Health);
-            end
-        end
-    end
-end
-
+-- The wolves of Varg becoming stronger when he gets higher titles.
 function Stronghold.Hero:ConfigurePlayersHeroPet(_EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
     local Type = Logic.GetEntityType(_EntityID);
-    if self.Config.Unit.Pet[Type] then
-        if self:HasValidHeroOfType(PlayerID, self.Config.Unit.Pet[Type].Owner) then
-            local Armor = self.Config.Unit.Pet[Type].Armor;
-            local Damage = self.Config.Unit.Pet[Type].Damage;
-            local Healing = self.Config.Unit.Pet[Type].Healing;
-            local Health = self.Config.Unit.Pet[Type].Health;
-
-            -- Vargs wolves getting stronger with higher rank
-            -- (and getting bigger just for show)
-            if Type == Entities.CU_Barbarian_Hero_wolf then
-                local CurrentRank = Stronghold:GetPlayerRank(PlayerID);
-                Logic.SetSpeedFactor(_EntityID, 1.1 + ((CurrentRank -1) * 0.04));
-                SVLib.SetEntitySize(_EntityID, 1.1 + ((CurrentRank -1) * 0.04));
-                Health = Health + math.floor((CurrentRank -1) * 65);
-                Healing = Healing + math.floor((CurrentRank -1) * 2.2);
-                Armor = Armor + math.floor(CurrentRank * 0.6);
-                Damage = Damage + math.floor(CurrentRank * 2.2);
-            end
-
+    if Type == Entities.CU_Barbarian_Hero_wolf then
+        if self:HasValidHeroOfType(PlayerID, Entities.CU_Barbarian_Hero) then
+            local CurrentRank = Stronghold:GetPlayerRank(PlayerID);
+            local Armor = 1 + math.floor(CurrentRank * 1.0);
+            local Damage = 30 + math.floor(CurrentRank * 5);
+            Logic.SetSpeedFactor(_EntityID, 1.1 + ((CurrentRank -1) * 0.04));
+            SVLib.SetEntitySize(_EntityID, 1.1 + ((CurrentRank -1) * 0.04));
             CEntity.SetArmor(_EntityID, Armor);
             CEntity.SetDamage(_EntityID, Damage);
-            CEntity.SetHealingPoints(_EntityID, Healing);
-            CEntity.SetMaxHealth(_EntityID, Health);
-            Logic.HealEntity(_EntityID, Health);
         end
     end
 end
@@ -746,13 +689,6 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                     Logic.CreateEffect(GGL_Effects.FXDieHero, x, y, _PlayerID);
                     local ID = SetPosition(k, Stronghold.Players[_PlayerID].DoorPos);
                     Logic.HurtEntity(ID, Logic.GetEntityHealth(ID));
-                    -- Handle lord
-                    for i= 1, table.getn(self.Config.Rule.Lord) do
-                        if self.Config.Rule.Lord[i][1] == HeroType then
-                            self:ConfigurePlayersLord(_PlayerID);
-                            break;
-                        end
-                    end
                 end
             end
 
@@ -997,10 +933,6 @@ end
 function Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Costs)
     local Costs = _Costs;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-        -- Honor is not a resource spend when the soldiers are trained.
-        -- if Costs[ResourceType.Honor] then
-        --     Costs[ResourceType.Honor] = math.ceil(Costs[ResourceType.Honor] * 1.30);
-        -- end
         if Costs[ResourceType.Gold] then
             Costs[ResourceType.Gold] = math.ceil(Costs[ResourceType.Gold] * 1.30);
         end
@@ -1027,7 +959,15 @@ end
 function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        Value = Value * 1.25;
+        local VCLimit = 0;
+        local VCLevel1 = GetValidEntitiesOfType(_PlayerID, Entities.PB_VillageCenter1);
+        VCLimit = VCLimit + (table.getn(VCLevel1) * 15);
+        local VCLevel2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_VillageCenter2);
+        VCLimit = VCLimit + (VCLevel2 * 20);
+        local VCLevel3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_VillageCenter3);
+        VCLimit = VCLimit + (VCLevel3 * 25);
+
+        Value = Value + VCLimit;
     end
     return Value;
 end
