@@ -12,6 +12,7 @@ Lib.Require("comfort/GetValidEntitiesOfType");
 Lib.Require("comfort/IsBuildingBeingUpgraded");
 Lib.Require("comfort/IsValidEntity");
 
+Lib.Require("module/archive/Archive");
 Lib.Require("module/ui/BuyHero");
 Lib.Require("module/entity/EntityTracker");
 Lib.Require("module/entity/SVLib");

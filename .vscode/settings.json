@@ -201,7 +201,17 @@
         "BriefingSystem",
         "NonPlayerMerchant",
         "AiArmyController",
-        "AiArmy"
+        "AiArmy",
+        "GetValidEntitiesOfType",
+        "Overwrite",
+        "GetSeparatedTooltipText",
+        "CopyTable",
+        "GetValidEntitiesOfType",
+        "GetAllWorker",
+        "SVLib",
+        "IsEntityValid",
+        "GetPlayerEntities",
+        "GetCirclePosition"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

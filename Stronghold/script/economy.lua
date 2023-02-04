@@ -55,19 +55,19 @@ Stronghold.Economy = {
                 [1] = {Honor = 4, Reputation = 10,},
                 [2] = {Honor = 2, Reputation = -2,},
                 [3] = {Honor = 1, Reputation = -4,},
-                [4] = {Honor = 0, Reputation = -8,},
-                [5] = {Honor = 0, Reputation = -16,},
+                [4] = {Honor = 0, Reputation = -12,},
+                [5] = {Honor = 0, Reputation = -36,},
             },
 
             Dynamic = {
                 [Entities.PB_Farm2]      = {Honor = 0.12, Reputation = 0.03,},
-                [Entities.PB_Farm3]      = {Honor = 0.15, Reputation = 0.06,},
+                [Entities.PB_Farm3]      = {Honor = 0.18, Reputation = 0.06,},
                 ---
                 [Entities.PB_Residence2] = {Honor = 0, Reputation = 0.15,},
-                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.21,},
+                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.24,},
                 ---
-                [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.33,},
-                [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.36,},
+                [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.35,},
+                [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.45,},
             },
             Static = {
                 [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
@@ -86,12 +86,15 @@ Stronghold.Economy = {
                 [Entities.PB_Beautification10] = {Honor = 4, Reputation = 1,},
                 [Entities.PB_Beautification11] = {Honor = 4, Reputation = 1,},
                 ---
-                [Entities.PB_Headquarters2]    = {Honor = 5, Reputation = 0,},
-                [Entities.PB_Headquarters3]    = {Honor = 10, Reputation = 0,},
+                [Entities.PB_Headquarters2]    = {Honor =  6, Reputation = 0,},
+                [Entities.PB_Headquarters3]    = {Honor = 12, Reputation = 0,},
                 ---
-                [Entities.PB_Monastery1]       = {Honor = 0, Reputation = 5,},
-                [Entities.PB_Monastery2]       = {Honor = 0, Reputation = 10,},
-                [Entities.PB_Monastery3]       = {Honor = 0, Reputation = 15,},
+                [Entities.PB_VillageCenter2]   = {Honor = 0, Reputation = 3,},
+                [Entities.PB_VillageCenter3]   = {Honor = 0, Reputation = 6,},
+                ---
+                [Entities.PB_Monastery1]       = {Honor = 0, Reputation = 6,},
+                [Entities.PB_Monastery2]       = {Honor = 0, Reputation = 9,},
+                [Entities.PB_Monastery3]       = {Honor = 0, Reputation = 12,},
             },
         }
     }
@@ -256,7 +259,7 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
 
             -- Building bonuses
             for k, v in pairs(self.Config.Income.Static) do
-                local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
+                local Buildings = GetValidEntitiesOfType(_PlayerID, k);
                 for i= table.getn(Buildings), 1, -1 do
                     if Logic.GetBuildingWorkPlaceLimit(Buildings[i]) > 0 then
                         if Logic.GetBuildingWorkPlaceUsage(Buildings[i]) == 0 then
@@ -371,7 +374,7 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
 
                 -- Buildings bonuses
                 for k, v in pairs(self.Config.Income.Static) do
-                    local Buildings = GetCompletedEntitiesOfType(_PlayerID, k);
+                    local Buildings = GetValidEntitiesOfType(_PlayerID, k);
                     for i= table.getn(Buildings), 1, -1 do
                         local WorkplaceLimit = Logic.GetBuildingWorkPlaceLimit(Buildings[i]);
                         if WorkplaceLimit then
@@ -414,7 +417,7 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local Upkeep = 0;
         for k, v in pairs(Stronghold.Unit.Config.Units) do
-            local Military = GetCompletedEntitiesOfType(_PlayerID, k);
+            local Military = GetValidEntitiesOfType(_PlayerID, k);
             -- Calculate regular upkeep
             local TypeUpkeep = 0;
             for i= 1, table.getn(Military) do

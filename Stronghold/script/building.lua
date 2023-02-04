@@ -666,11 +666,11 @@ function Stronghold.Building:OnBarracksSelected(_EntityID)
     XGUIEng.ShowWidget("Research_UpgradeSpear2", 0);
     XGUIEng.ShowWidget("Research_UpgradeSpear3", 0);
 
-    local Blacksmith1 = table.getn(GetCompletedEntitiesOfType(PlayerID, Entities.PB_Blacksmith1));
+    local Blacksmith1 = table.getn(GetValidEntitiesOfType(PlayerID, Entities.PB_Blacksmith1));
     local Blacksmith2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Blacksmith2);
     local Blacksmith3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Blacksmith3);
 
-    local Sawmill1 = table.getn(GetCompletedEntitiesOfType(PlayerID, Entities.PB_Sawmill1));
+    local Sawmill1 = table.getn(GetValidEntitiesOfType(PlayerID, Entities.PB_Sawmill1));
     local Sawmill2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Sawmill2);
 
     -- Spearmen
@@ -924,10 +924,10 @@ function Stronghold.Building:OnArcherySelected(_EntityID)
     XGUIEng.ShowWidget("Research_UpgradeBow3", 1);
     XGUIEng.ShowWidget("Research_UpgradeRifle1", 1);
 
-    local Gunsmith1 = table.getn(GetCompletedEntitiesOfType(PlayerID, Entities.PB_GunsmithWorkshop1));
+    local Gunsmith1 = table.getn(GetValidEntitiesOfType(PlayerID, Entities.PB_GunsmithWorkshop1));
     local Gunsmith2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_GunsmithWorkshop2);
 
-    local Sawmill1 = table.getn(GetCompletedEntitiesOfType(PlayerID, Entities.PB_Sawmill1));
+    local Sawmill1 = table.getn(GetValidEntitiesOfType(PlayerID, Entities.PB_Sawmill1));
     local Sawmill2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Sawmill2);
 
     -- Bowmen
@@ -1300,7 +1300,7 @@ function Stronghold.Building:OnStableSelected(_EntityID)
     XGUIEng.ShowWidget("Buy_LeaderCavalryLight", 0);
     XGUIEng.ShowWidget("Buy_LeaderCavalryHeavy", 0);
 
-    local Blacksmith1 = table.getn(GetCompletedEntitiesOfType(PlayerID, Entities.PB_Blacksmith1));
+    local Blacksmith1 = table.getn(GetValidEntitiesOfType(PlayerID, Entities.PB_Blacksmith1));
     local Blacksmith2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Blacksmith2);
     local Blacksmith3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PB_Blacksmith3);
 

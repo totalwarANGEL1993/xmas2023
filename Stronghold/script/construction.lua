@@ -207,12 +207,6 @@ end
 -- upgrade button instead of the construction button. A classical case of the
 -- infamos "BB-Logic".... To avoid boilerplate we outsource the changes.
 function Stronghold.Construction:UpdateSerfConstructionButtons(_PlayerID, _Button, _Technology)
-    -- No village centers
-    if _Technology == Technologies.B_Village then
-        XGUIEng.ShowWidget(_Button, 0);
-        return true;
-    end
-
     local LimitReached = false;
     local CheckList = Stronghold.Construction.Config.TypesToCheckForConstruction[_Technology];
 

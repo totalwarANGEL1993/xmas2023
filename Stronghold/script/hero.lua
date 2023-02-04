@@ -76,7 +76,7 @@ Stronghold.Hero = {
             },
 HeroCV = {
                 [Entities.PU_Hero1c]             = {
-                    "DARIO @cr @cr @color:180,180,180 "..
+                    "DARIO, der König @cr @cr @color:180,180,180 "..
                     "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. Früher wurde er "..
                     "oft dabei gesehen, wie er rosa Kleidchen trug. Die tauschte er inzwischen gegen ein "..
                     "Schwert ein. Dennoch fragen sich viele, ob er einen Vogel hat. "..
@@ -89,7 +89,7 @@ HeroCV = {
                     "@cr Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
                 },
                 [Entities.PU_Hero2]              = {
-                    "PILGRIM @cr @cr @color:180,180,180 "..
+                    "PILGRIM, der Geologe @cr @cr @color:180,180,180 "..
                     "Pilgrim entstammt einer langen Linie von Bergmännern. Ein Glückliches Schicksal " ..
                     "verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets zugetan. Es fällt ihm oft "..
                     "schwer, seine Fahne vom Geruch des Sprengstoffs zu unterscheiden. " ..
@@ -102,7 +102,7 @@ HeroCV = {
                     "@cr Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
                 },
                 [Entities.PU_Hero3]              = {
-                    "SALIM @cr @cr @color:180,180,180 "..
+                    "SALIM, der Gelehrte @cr @cr @color:180,180,180 "..
                     "Ein Schriftgelehrter aus dem nahen Osten. Manche sagen ihm nach, er sei verrückt " ..
                     "geworden und versuche in seinem Labor ein schwarzes Loch zu erschaffen und so "..
                     "die Vergangenheit zu verändern. " ..
@@ -116,7 +116,7 @@ HeroCV = {
                     "unvorsichtig an sie heran tritt.",
                 },
                 [Entities.PU_Hero4]              = {
-                    "EREC @cr @cr @color:180,180,180 "..
+                    "EREC, der Ritter @cr @cr @color:180,180,180 "..
                     "Er ist ein echter Ritter. Von Kopf bis Fuß gehüllt in glänzender Rüstung zieht er "..
                     "aus, seinen Ruhm zu mehren und Jungfrauen in Nöten beizustehen. Seine Anwesenheit " ..
                     "inspiriert die Truppen zu Höchsleistungen. " ..
@@ -129,21 +129,21 @@ HeroCV = {
                     "@cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
                 },
                 [Entities.PU_Hero5]              = {
-                    "ARI @cr @cr @color:180,180,180 "..
+                    "ARI, die Vogelfreie @cr @cr @color:180,180,180 "..
                     "Als Kind wurde Ari von Gesetzlosen adoptiert und wuchs zu einer atemberaubenden " ..
                     "Lady heran. Aber dies ist mit Nichten ihre einzige Qualität, was sie jeden spüren " ..
                     "lässt, der sich erdreistet, ihre Augen eine Etage tiefer zu suchen. " ..
                     "@cr @cr @color:255,255,255 " ..
                     "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
-                    "@cr Beim Volke ist mehr zu holen, als so mancher vermutet. Die "..
-                    "Steuereinnahmen werden um 50% erhöht. "..
+                    "@cr Als Banditenfürstin kennt sie alle Tricks, um an Gold zu "..
+                    "kommen. Die Steuereinnahmen werden um 50% erhöht. "..
                     "@cr @cr "..
                     "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
                     "@cr Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr "..
                     "Gesetzlose sind es.",
                 },
                 [Entities.PU_Hero6]              = {
-                    "HELIAS @cr @cr @color:180,180,180 "..
+                    "HELIAS, der Pfaffe @cr @cr @color:180,180,180 "..
                     "Einst vorgesehen für die Thronfolge des Alten Reiches, war der Ruf des Herrn " ..
                     "stärker. Wenn er nicht gerade Wasser predigt und Wein trinkt, erfreut er sich an "..
                     "den lieblichen Klängen der Chorknaben. " ..
@@ -156,7 +156,7 @@ HeroCV = {
                     "@cr Helias kann die Rüstung von verbündeten Einheiten verbessern.",
                 },
                 [Entities.CU_Mary_de_Mortfichet] = {
-                    "MARY @cr @cr @color:180,180,180 "..
+                    "MARY, die Schlange @cr @cr @color:180,180,180 "..
                     "Die Countess de Mortfichet ist verrufen als ruchloses und ehrloses Miststück. " ..
                     "Zeigt ihr Gegenüber eine Schwäche, so wird sie nicht zögern, sie auszunutzen. Ihr " ..
                     "Motto: Ein gut platzierter Dolch erreicht mehr als 1000 Schwerter. " ..
@@ -169,20 +169,20 @@ HeroCV = {
                     "@cr Kann die Angriffskraft von nahestehenden Feinden senken.",
                 },
                 [Entities.CU_BlackKnight]        = {
-                    "KERBEROS @cr @cr @color:180,180,180 "..
+                    "KERBEROS, der Schrecken @cr @cr @color:180,180,180 "..
                     "Als sein Vater den Thron aufgab um Pfaffe zu werden, brach für Kerberos eine Welt " ..
                     "zusammen. Seinem Erbe beraubt, verfiel der der Finsternis. Als Scherge eines bösen " ..
                     " Königs wartet er auf seine Chance. " ..
                     "@cr @cr @color:255,255,255 " ..
                     "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
                     "@cr Alle Negative Effekte auf die Beliebtheit verringern sich "..
-                    "um 50%. Die maximale Beliebtheit sinkt auf 150. " ..
+                    "um 30%. Die maximale Beliebtheit sinkt auf 175. " ..
                     "@cr @cr "..
                     "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
                     "@cr Kann die Rüstung von nahestehenden Feinden halbieren.",
                 },
                 [Entities.CU_Barbarian_Hero]     = {
-                    "VARG @cr @cr @color:180,180,180 "..
+                    "VARG, das Wolfsblut @cr @cr @color:180,180,180 "..
                     "Als er als zwölfjähriger Junge einen Eisbären im Zweikampf besiegte, wurde Varg " ..
                     "zum Anführer aller Barbaren gekrönt. Als Baby gesäugt von einer Alphawölfin, besitzt " ..
                     "er die Macht, mächtige Bestien zu beschwören. " ..
@@ -196,7 +196,7 @@ HeroCV = {
                     "Stärke richtet sich nach dem Rang.",
                 },
                 [Entities.PU_Hero10]             = {
-                    "DRAKE @cr @cr @color:180,180,180 "..
+                    "DRAKE, der Schakal @cr @cr @color:180,180,180 "..
                     "Wenn er nicht gerade auf Haselnüsse und Tannenzapfen schießt, jagt Drake als " ..
                     "\"Der Schakal\" alle die behaupten, er wolle nur etwas kompensieren. Seine Mutter "..
                     "meint noch heute, er solle das Gewehr zuhause lassen. " ..
@@ -209,7 +209,7 @@ HeroCV = {
                     "@cr Kann den Schaden von verbündeten Fernkämpfern verbessern.",
                 },
                 [Entities.PU_Hero11]             = {
-                    "YUKI @cr @cr @color:180,180,180 "..
+                    "YUKI, die Söldnerin @cr @cr @color:180,180,180 "..
                     "Schon als kleines Mädchen beschäftigte sich Yuki mit Pyrotechnik. Zusammn mit den " ..
                     "drei Chinesen und deren Kontrabass verschlug es sie in den Westen, wo sie Reichtum " ..
                     "erlangte und nun eine Burg ihr Eigen nennt. " ..
@@ -222,7 +222,7 @@ HeroCV = {
                     "@cr Kann befreundete Arbeiter mit Feuerwerk motivieren.",
                 },
                 [Entities.CU_Evil_Queen] = {
-                    "KALA @cr @cr @color:180,180,180 "..
+                    "KALA, die Hexe @cr @cr @color:180,180,180 "..
                     "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom Nebelvolk wird " ..
                     "Kala wie eine Göttin verehrt. Böse Zungen behaupten, sie hätte jeden Einzelnen " ..
                     "ihrer Untertanen selbst zur Welt gebracht. " ..
@@ -964,10 +964,11 @@ function Stronghold.Hero:FaithProductionBonus(_PlayerID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
         local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
         if Amount > 0 then
-            local Building1 = GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Monastery1);
+            local Building1 = GetValidEntitiesOfType(_PlayerID, Entities.PB_Monastery1);
             local Building2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
             local Building3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
             if table.getn(Building1) + Building2 + Building3 > 0 then
+                ---@diagnostic disable-next-line: undefined-field
                 if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
                     Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount);
                 end
@@ -1046,7 +1047,7 @@ end
 function Stronghold.Hero:ApplyMaxReputationPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
-        Value = 150;
+        Value = 175;
     elseif self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero11) then
         Value = 300;
     end
@@ -1064,7 +1065,7 @@ end
 function Stronghold.Hero:ApplyReputationDecreasePassiveAbility(_PlayerID, _Decrease)
     local Decrease = _Decrease;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_BlackKnight) then
-        Decrease = Decrease * 0.5;
+        Decrease = Decrease * 0.7;
     end
     return Decrease;
 end

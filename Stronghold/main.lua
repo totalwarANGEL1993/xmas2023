@@ -47,14 +47,19 @@ Stronghold = {
         },
 
         HQCivilAttraction = {
-            [1] = 100,
-            [2] = 200,
-            [3] = 300
+            [1] = 50,
+            [2] = 75,
+            [3] = 100
         },
         HQMilitaryAttraction = {
-            [1] = 200,
-            [2] = 400,
-            [3] = 600
+            [1] = 800,
+            [2] = 1000,
+            [3] = 1200
+        },
+        VCCivilAttraction = {
+            [1] = 40,
+            [2] = 65,
+            [3] = 90
         },
 
         Ranks = {
@@ -71,8 +76,10 @@ Stronghold = {
                 Costs = {20, 100, 0, 0, 0, 0, 0},
                 Description = "Kapelle",
                 Condition = function(_PlayerID)
-                    local Chapell = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Monastery1));
-                    return Chapell > 0;
+                    local Chapell1 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Monastery1));
+                    local Chapell2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
+                    local Chapell3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
+                    return Chapell1 + Chapell2 + Chapell3 > 0;
                 end,
             },
             [3] = {
@@ -93,18 +100,18 @@ Stronghold = {
                 Costs = {100, 300, 0, 0, 0, 0, 0},
                 Description = "12 Ziergebäude",
                 Condition = function(_PlayerID)
-                    local Beauty01 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification01));
-                    local Beauty02 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification02));
-                    local Beauty03 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification03));
-                    local Beauty04 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification04));
-                    local Beauty05 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification05));
-                    local Beauty06 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification06));
-                    local Beauty07 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification07));
-                    local Beauty08 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification08));
-                    local Beauty09 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification09));
-                    local Beauty10 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification10));
-                    local Beauty11 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification11));
-                    local Beauty12 = table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities.PB_Beautification12));
+                    local Beauty01 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification01));
+                    local Beauty02 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification02));
+                    local Beauty03 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification03));
+                    local Beauty04 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification04));
+                    local Beauty05 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification05));
+                    local Beauty06 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification06));
+                    local Beauty07 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification07));
+                    local Beauty08 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification08));
+                    local Beauty09 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification09));
+                    local Beauty10 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification10));
+                    local Beauty11 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification11));
+                    local Beauty12 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification12));
                     return Beauty01 + Beauty02 + Beauty03 + Beauty04 + Beauty05 + Beauty06 +
                            Beauty07 + Beauty08 + Beauty09 + Beauty10 + Beauty11 + Beauty12 >= 12;
                 end,
@@ -144,7 +151,7 @@ Stronghold = {
                             IsFulfilled = true;
                             for i= 1, 12 do
                                 local Type = "PB_Beautification" .. ((i < 10 and "0"..i) or i);
-                                if table.getn(GetCompletedEntitiesOfType(_PlayerID, Entities[Type])) < 1 then
+                                if table.getn(GetValidEntitiesOfType(_PlayerID, Entities[Type])) < 1 then
                                     IsFulfilled = false;
                                     break;
                                 end
@@ -235,6 +242,9 @@ end
 
 -- Starts the script
 function Stronghold:Init()
+    Archive.Install();
+    Archive.ReloadEntities();
+
     Syncer.Install(999);
     EntityTracker.Install();
     BuyHero.Install();
@@ -243,9 +253,6 @@ function Stronghold:Init()
         Message("The S5 Community Server is required!");
         return false;
     end
-    self:LoadMapArchive();
-    self:InitAutomaticMapArchiveUnload();
-    self:OverrideFrameworkRestartMap();
 
     Stronghold:AddDelayedAction(1, function(_PlayerID)
         Stronghold:LoadGUIDelayed(_PlayerID);
@@ -289,11 +296,10 @@ function Stronghold:OnSaveGameLoaded()
         Message("The S5 Community Server is required!");
         return false;
     end
-    self:LoadMapArchive();
-    self:OverrideFrameworkRestartMap();
 
     Stronghold:AddDelayedAction(1, function(_PlayerID)
         Stronghold:LoadGUIDelayed(_PlayerID);
+        Archive.ReloadEntities();
     end, GUI.GetPlayerID());
     GUI.ClearSelection();
     ResourceType.Honor = 20;
@@ -463,64 +469,6 @@ function Stronghold:StartTurnDelayTrigger()
         Stronghold:DelayedActionController();
     end
     StartSimpleHiResJob("Stronghold_Trigger_TurnDelay");
-end
-
--- -------------------------------------------------------------------------- --
--- Achive Loading
-
-function Stronghold:LoadMapArchive()
-    local ArchiveName = Framework.GetCurrentMapName() .. ".s5x";
-    local TopArchive = CMod.GetAllArchives();
-    if not TopArchive or not string.find(TopArchive, "s5x") then
-        CMod.PushArchive(ArchiveName);
-    end
-end
-
-function Stronghold:UnloadMapArchive()
-    local TopArchive = CMod.GetAllArchives();
-    if TopArchive and string.find(TopArchive, "s5x") then
-        CMod.PopArchive();
-    end
-end
-
-function Stronghold:OverrideFrameworkRestartMap()
-    self.Orig_FrameworkRestartMap = Framework.RestartMap;
-    Framework.RestartMap = function()
-        Stronghold:UnloadMapArchive();
-        Stronghold.Orig_FrameworkRestartMap();
-    end
-end
-
-function Stronghold:InitAutomaticMapArchiveUnload()
-    self.Orig_GUIAction_RestartMap = GUIAction_RestartMap;
-    GUIAction_RestartMap = function()
-        Stronghold:UnloadMapArchive();
-        Stronghold.Orig_GUIAction_RestartMap();
-    end
-
-    self.Orig_QuitGame = QuitGame;
-    QuitGame = function()
-        Stronghold:UnloadMapArchive();
-        Stronghold.Orig_QuitGame();
-    end
-
-    self.Orig_QuitApplication = QuitApplication;
-    QuitApplication = function()
-        Stronghold:UnloadMapArchive();
-        Stronghold.Orig_QuitApplication();
-    end
-
-    self.Orig_QuickLoad = QuickLoad;
-    QuickLoad = function()
-        Stronghold:UnloadMapArchive();
-        Stronghold.Orig_QuickLoad();
-    end
-
-    self.Orig_MainWindow_LoadGame_DoLoadGame = MainWindow_LoadGame_DoLoadGame;
-    MainWindow_LoadGame_DoLoadGame = function(_Slot)
-        Stronghold:UnloadMapArchive();
-        Stronghold.Orig_MainWindow_LoadGame_DoLoadGame(_Slot);
-    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -752,14 +700,24 @@ function Stronghold:OverrideAttraction()
         end
         local HeadquarterID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
 
-        -- Attraction limit
-        Limit = Stronghold.Config.HQCivilAttraction[1];
+        -- HQ limit
+        local HQLimit = Stronghold.Config.HQCivilAttraction[1];
         if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters2 then
-            Limit = Stronghold.Config.HQCivilAttraction[2];
+            HQLimit = Stronghold.Config.HQCivilAttraction[2];
         end
         if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters3 then
-            Limit = Stronghold.Config.HQCivilAttraction[3];
+            HQLimit = Stronghold.Config.HQCivilAttraction[3];
         end
+        Limit = Limit + HQLimit;
+        -- VC limit
+        local VCLimit = 0;
+        local VCLevel1 = GetValidEntitiesOfType(_PlayerID, Entities.PB_VillageCenter1);
+        VCLimit = VCLimit + (table.getn(VCLevel1) * Stronghold.Config.VCCivilAttraction[1]);
+        local VCLevel2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_VillageCenter2);
+        VCLimit = VCLimit + (VCLevel2 * Stronghold.Config.VCCivilAttraction[2]);
+        local VCLevel3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_VillageCenter3);
+        VCLimit = VCLimit + (VCLevel3 * Stronghold.Config.VCCivilAttraction[3]);
+        Limit = Limit + VCLimit;
         -- External
         Limit = GameCallback_Calculate_CivilAttrationLimit(_PlayerID, Limit);
 
@@ -1153,7 +1111,6 @@ function Stronghold:OverwriteCommonCallbacks()
         Stronghold:OnSelectionMenuChanged(_BuildingID);
     end
 
-    Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded or function() end
 	self.Orig_Mission_OnSaveGameLoaded = Mission_OnSaveGameLoaded;
 	Mission_OnSaveGameLoaded = function()
 		Stronghold.Orig_Mission_OnSaveGameLoaded();
