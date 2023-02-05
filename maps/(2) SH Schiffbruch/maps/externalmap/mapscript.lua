@@ -19,6 +19,8 @@ function OnMapStart()
     end
     Script.Load(gvBasePath.. "loader.lua");
 
+    Lib.Require("comfort/CreateWoodPile");
+
     ---
 
     SetupStronghold();
