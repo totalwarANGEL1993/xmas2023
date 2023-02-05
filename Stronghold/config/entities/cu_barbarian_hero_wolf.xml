@@ -29,7 +29,7 @@
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassNone</ArmorClass>
 		  <ArmorAmount>2</ArmorAmount> 
-		  <DodgeChance>10</DodgeChance> 
+		  <DodgeChance>30</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>10</ExperiencePoints>
     	

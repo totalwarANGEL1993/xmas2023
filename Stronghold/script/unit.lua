@@ -18,28 +18,28 @@ Stronghold.Unit = {
     Config = {
         Units = {
             [Entities.PU_LeaderPoleArm1] = {
-                Costs = {0, 35, 0, 25, 0, 0, 0},
+                Costs = {0, 18, 0, 12, 0, 0, 0},
                 Allowed = true,
                 Places = 1,
                 Rank = 1,
                 Upkeep = 15,
             },
             [Entities.PU_LeaderPoleArm2] = {
-                Costs = {5, 40, 0, 30, 0, 0, 0},
+                Costs = {5, 20, 0, 15, 0, 0, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderPoleArm3] = {
-                Costs = {10, 30, 0, 40, 0, 10, 0},
+                Costs = {10, 45, 0, 35, 0, 10, 0},
                 Allowed = true,
                 Places = 2,
                 Rank = 3,
                 Upkeep = 40
             },
             [Entities.PU_LeaderPoleArm4] = {
-                Costs = {15, 35, 0, 50, 0, 20, 0},
+                Costs = {15, 55, 0, 40, 0, 20, 0},
                 Allowed = false,
                 Places = 2,
                 Rank = 0,
@@ -47,21 +47,21 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderSword1] = {
-                Costs = {6, 20, 0, 0, 0, 40, 0},
+                Costs = {6, 35, 0, 0, 0, 30, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderSword2] = {
-                Costs = {10, 30, 0, 0, 0, 40, 0},
+                Costs = {10, 40, 0, 0, 0, 35, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
                 Upkeep = 35,
             },
             [Entities.PU_LeaderSword3] = {
-                Costs = {20, 45, 0, 0, 0, 35, 0},
+                Costs = {20, 50, 0, 0, 0, 40, 0},
                 Allowed = true,
                 Places = 2,
                 Rank = 5,
@@ -76,28 +76,28 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderBow1] = {
-                Costs = {2, 35, 0, 25, 0, 0, 0},
+                Costs = {2, 25, 0, 20, 0, 0, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
                 Upkeep = 15,
             },
             [Entities.PU_LeaderBow2] = {
-                Costs = {6, 40, 0, 30, 0, 0, 0},
+                Costs = {6, 30, 0, 25, 0, 0, 0},
                 Allowed = true,
                 Places = 1,
                 Rank = 2,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderBow3] = {
-                Costs = {12, 35, 0, 25, 0, 10, 0},
+                Costs = {12, 40, 0, 30, 0, 10, 0},
                 Allowed = true,
                 Places = 1,
                 Rank = 3,
                 Upkeep = 35,
             },
             [Entities.PU_LeaderBow4] = {
-                Costs = {15, 40, 0, 30, 0, 15, 0},
+                Costs = {15, 50, 0, 35, 0, 15, 0},
                 Allowed = false,
                 Places = 2,
                 Rank = 0,
@@ -134,14 +134,14 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderCavalry1] = {
-                Costs = {6, 85, 0, 40, 0, 0, 0},
+                Costs = {6, 50, 0, 25, 0, 0, 0},
                 Allowed = false,
                 Places = 1,
                 Rank = 0,
                 Upkeep = 25,
             },
             [Entities.PU_LeaderCavalry2] = {
-                Costs = {10, 95, 0, 40, 0, 20, 0},
+                Costs = {10, 60, 0, 30, 0, 10, 0},
                 Allowed = true,
                 Places = 1,
                 Rank = 4,
@@ -149,14 +149,14 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderHeavyCavalry1] = {
-                Costs = {35, 200, 0, 0, 0, 130, 0},
+                Costs = {35, 155, 0, 0, 0, 105, 0},
                 Allowed = true,
                 Places = 3,
                 Rank = 6,
                 Upkeep = 70,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
-                Costs = {50, 230, 0, 0, 0, 180, 0},
+                Costs = {50, 185, 0, 0, 0, 120, 0},
                 Allowed = false,
                 Places = 4,
                 Rank = 7,
@@ -164,14 +164,14 @@ Stronghold.Unit = {
             },
             ---
             [Entities.PU_LeaderRifle1] = {
-                Costs = {20, 90, 0, 10, 0, 0, 60},
+                Costs = {20, 55, 0, 10, 0, 0, 35},
                 Allowed = true,
                 Places = 3,
                 Rank = 5,
                 Upkeep = 50,
             },
             [Entities.PU_LeaderRifle2] = {
-                Costs = {30, 105, 0, 20, 0, 0, 65},
+                Costs = {30, 85, 0, 20, 0, 0, 55},
                 Allowed = true,
                 Places = 1,
                 Rank = 6,

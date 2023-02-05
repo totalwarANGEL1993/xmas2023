@@ -36,7 +36,7 @@
 		  <Exploration>22</Exploration>
 		  <ArmorClass>ArmorClassHero</ArmorClass>
 		  <ArmorAmount>6</ArmorAmount> 
-		  <DodgeChance>10</DodgeChance> 
+		  <DodgeChance>30</DodgeChance> 
         <IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
         <ExperiencePoints>20</ExperiencePoints>
 		<Fearless>true</Fearless>

@@ -734,7 +734,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 5; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 13; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -991,7 +991,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 5; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -1043,7 +1043,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 5; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -1348,7 +1348,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 4; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
