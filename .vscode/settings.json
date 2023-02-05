@@ -211,7 +211,8 @@
         "SVLib",
         "IsEntityValid",
         "GetPlayerEntities",
-        "GetCirclePosition"
+        "GetCirclePosition",
+        "GetLanguage"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

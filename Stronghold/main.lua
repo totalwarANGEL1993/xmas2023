@@ -52,9 +52,9 @@ Stronghold = {
             [3] = 125
         },
         HQMilitaryAttraction = {
-            [1] = 800,
-            [2] = 1000,
-            [3] = 1200
+            [1] = 300,
+            [2] = 400,
+            [3] = 500
         },
         VCCivilAttraction = {
             [1] = 35,
@@ -66,7 +66,7 @@ Stronghold = {
             [1] = {
                 Text = {"Edelmann", "Edelfrau"},
                 Costs = {0, 0, 0, 0, 0, 0, 0},
-                Description = "",
+                Description = nil,
                 Condition = function(_PlayerID)
                     return true;
                 end,
@@ -884,7 +884,13 @@ function Stronghold:GetPlayerRankName(_PlayerID, _Rank)
         if LairdID ~= 0 then
             Gender = self:GetLairdGender(Logic.GetEntityType(LairdID)) or 1;
         end
-        return self.Config.Ranks[Rank].Text[Gender];
+
+        local Text = self.Config.Ranks[Rank].Text[Gender];
+        if type (Text) == "table" then
+            local Language = GetLanguage();
+            Text = Text[Language];
+        end
+        return Text;
     end
     return "Fußvolk";
 end

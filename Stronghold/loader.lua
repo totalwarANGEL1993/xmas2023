@@ -7,6 +7,7 @@ Lib.Require("comfort/KeyOf");
 Lib.Require("comfort/GetAllWorker");
 Lib.Require("comfort/GetAllWorkplaces");
 Lib.Require("comfort/GetPlayerEntities");
+Lib.Require("comfort/GetLanguage");
 Lib.Require("comfort/GetSeparatedTooltipText");
 Lib.Require("comfort/GetValidEntitiesOfType");
 Lib.Require("comfort/IsBuildingBeingUpgraded");
