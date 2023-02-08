@@ -4,6 +4,8 @@ Script.Load(LibPath);
 assert(Lib ~= nil);
 
 Lib.Require("comfort/KeyOf");
+Lib.Require("comfort/GetAllCannons");
+Lib.Require("comfort/GetAllLeader");
 Lib.Require("comfort/GetAllWorker");
 Lib.Require("comfort/GetAllWorkplaces");
 Lib.Require("comfort/GetDistance");
@@ -20,6 +22,7 @@ Lib.Require("module/entity/EntityTracker");
 Lib.Require("module/entity/SVLib");
 Lib.Require("module/mp/Syncer");
 Lib.Require("module/lua/Overwrite");
+Lib.Require("module/trigger/Job");
 
 -- ---------- --
 
@@ -39,6 +42,7 @@ end
 Script.Load(gvBasePath.. "main.lua");
 
 Script.Load(gvBasePath.. "script/utils.lua");
+Script.Load(gvBasePath.. "script/attraction.lua");
 Script.Load(gvBasePath.. "script/economy.lua");
 Script.Load(gvBasePath.. "script/construction.lua");
 Script.Load(gvBasePath.. "script/building.lua");
