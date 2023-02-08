@@ -6,6 +6,7 @@ assert(Lib ~= nil);
 Lib.Require("comfort/KeyOf");
 Lib.Require("comfort/GetAllWorker");
 Lib.Require("comfort/GetAllWorkplaces");
+Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/GetPlayerEntities");
 Lib.Require("comfort/GetLanguage");
 Lib.Require("comfort/GetSeparatedTooltipText");

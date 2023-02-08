@@ -17,11 +17,11 @@ Stronghold.Building = {
             [BlessCategories.Construction] = {
                 Text = "Ihr sprecht Recht und bestraft Kriminelle. Das Volk begrüßt dies!",
                 Reputation = 5,
-                Honor = 5,
+                Honor = 10,
             },
             [BlessCategories.Research] = {
                 Text = "Die Siedler werden zur Kasse gebeten, was sie sehr verärgert!",
-                Reputation = -12,
+                Reputation = -18,
                 Honor = 0,
             },
             [BlessCategories.Weapons] = {
@@ -31,13 +31,13 @@ Stronghold.Building = {
             },
             [BlessCategories.Financial] = {
                 Text = "Das Volksfest erfreut die Siedler und steigert Eure Beliebtheit.",
-                Reputation = 18,
+                Reputation = 22,
                 Honor = 0,
             },
             [BlessCategories.Canonisation] = {
                 Text = "Ein Bankett gereicht Euch an Ehre, aber verärgert das Volk!",
-                Reputation = -25,
-                Honor = 50,
+                Reputation = -40,
+                Honor = 100,
             },
         },
 
@@ -259,8 +259,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         Text = "@color:180,180,180 Niedrige Steuer @color:255,255,255 @cr "..
                "Ihr seid großzügig und entlastet Eure Untertanen.";
 
-        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 2, WorkerCount);
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 2);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[2];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
@@ -271,8 +270,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         Text = "@color:180,180,180 Faire Steuer @color:255,255,255 @cr "..
                "Ihr verlangt die übliche Steuer von Eurem Volk.";
 
-        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 3, WorkerCount);
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 3);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[3];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
@@ -283,8 +281,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         Text = "@color:180,180,180 Hohe Steuer @color:255,255,255 @cr "..
                "Ihr dreht an der Steuerschraube. Wenn das mal gut geht...";
 
-        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 4, WorkerCount);
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 4);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[4];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
@@ -295,8 +292,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         Text = "@color:180,180,180 Grausame Steuer @color:255,255,255 @cr "..
                "Ihr zieht Euren Untertanen das letzte Hemd aus!";
 
-        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
-        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 5, WorkerCount);
+        local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 5);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[5];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
         EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";

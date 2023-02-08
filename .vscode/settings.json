@@ -212,7 +212,9 @@
         "IsEntityValid",
         "GetPlayerEntities",
         "GetCirclePosition",
-        "GetLanguage"
+        "GetLanguage",
+        "GetAllWorkplaces",
+        "IsBuildingBeingUpgraded"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

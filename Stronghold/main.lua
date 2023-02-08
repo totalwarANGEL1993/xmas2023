@@ -646,11 +646,12 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
                 if Buildings[Index] then
                     local Type = Logic.GetWorkerTypeByBuilding(Buildings[Index]);
                     local Used, Limit = self:GetBuildingCurrentAndMaxWorkerAmount(Buildings[Index]);
-                    local Current = Logic.GetCurrentMaxNumWorkersInBuilding(Buildings[Index]);
-                    local Position = self.Players[_PlayerID].DoorPos;
+                    local BuildingID = self:GetClostestAttractionBuilding(Buildings[Index])
+                    local Position = Stronghold.Unit:GetBarracksDoorPosition(BuildingID);
                     self:SetBuildingCurrentWorkerAmount(Buildings[Index], math.min(Used +1, Limit));
                     self:AddDelayedAction(1, function(_Type, _X, _Y, _PlayerID)
-                        local ID = Logic.CreateEntity(_Type, _X, _Y, 0, _PlayerID);
+                        local ID = AI.Entity_CreateFormation(_PlayerID, Entities.PU_Serf, nil, 0, _X, _Y, 0, 0, 0, 0);
+                        ID = ReplaceEntity(ID, _Type);
                         local Reputation = Stronghold:GetPlayerReputation(_PlayerID);
                         CEntity.SetMotivation(ID, Reputation / 100);
                     end, Type, Position.X, Position.Y, _PlayerID);
@@ -662,6 +663,35 @@ function Stronghold:CreateWorkersForPlayer(_PlayerID)
             end
         end
     end
+end
+
+function Stronghold:GetClostestAttractionBuilding(_BuildingID)
+    local PlayerID = Logic.EntityGetPlayer(_BuildingID);
+    local BuildingID = 0;
+    local LastDistance = Logic.WorldGetSize();
+    for k, v in pairs(self:GetAttractionBuildings(PlayerID)) do
+        local Distance = GetDistance(v, _BuildingID);
+        if LastDistance > Distance then
+            LastDistance = Distance;
+            BuildingID = v;
+        end
+    end
+    return BuildingID;
+end
+
+function Stronghold:GetAttractionBuildings(_PlayerID)
+    local AttractionBuildings = {};
+    for k, v in pairs(GetValidEntitiesOfType(_PlayerID, Entities.PB_VillageCenter1)) do
+        table.insert(AttractionBuildings, v);
+    end
+    for k, v in pairs(GetValidEntitiesOfType(_PlayerID, Entities.PB_VillageCenter2)) do
+        table.insert(AttractionBuildings, v);
+    end
+    for k, v in pairs(GetValidEntitiesOfType(_PlayerID, Entities.PB_VillageCenter3)) do
+        table.insert(AttractionBuildings, v);
+    end
+    table.insert(AttractionBuildings, GetID(self.Players[_PlayerID].HQScriptName));
+    return AttractionBuildings;
 end
 
 -- Set the current amount of workplaces in the building.
@@ -1093,6 +1123,12 @@ function Stronghold:OverwriteCommonCallbacks()
 
     Overwrite.CreateOverwrite("GameCallback_OnBuildingUpgradeComplete", function(_EntityIDOld, _EntityIDNew)
         Overwrite.CallOriginal();
+        -- Fixes the problem with the building attraction. The currend amount
+        -- will be red and then set. After that all workers are reattached.
+        local PlayerID = Logic.EntityGetPlayer(_EntityIDNew);
+        local Workers = {Logic.GetAttachedWorkersToBuilding(_EntityIDNew)};
+        Stronghold:SetBuildingCurrentWorkerAmount(_EntityIDNew, Workers[1]);
+        Logic.PlayerReAttachAllWorker(PlayerID);
         Stronghold:OnSelectionMenuChanged(_EntityIDNew);
     end);
 

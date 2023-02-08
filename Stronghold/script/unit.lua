@@ -501,6 +501,10 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
         Position = GetCirclePosition(_BarracksID, 800, 270);
     elseif BarracksType == Entities.PB_Tavern1 or BarracksType == Entities.PB_Tavern2 then
         Position = GetCirclePosition(_BarracksID, 600, 180);
+    elseif BarracksType == Entities.PB_VillageCenter1 or
+           BarracksType == Entities.PB_VillageCenter2 or
+           BarracksType == Entities.PB_VillageCenter3 then
+        Position = GetCirclePosition(_BarracksID, 650, 270);
     -- TODO: Add more positions if needed
     end
     return Position;

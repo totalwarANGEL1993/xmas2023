@@ -55,8 +55,8 @@ Stronghold.Economy = {
                 [1] = {Honor = 4, Reputation = 10,},
                 [2] = {Honor = 2, Reputation = -2,},
                 [3] = {Honor = 1, Reputation = -4,},
-                [4] = {Honor = 0, Reputation = -12,},
-                [5] = {Honor = 0, Reputation = -36,},
+                [4] = {Honor = 0, Reputation = -8,},
+                [5] = {Honor = 0, Reputation = -12,},
             },
 
             Dynamic = {
@@ -286,27 +286,21 @@ end
 function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local Decrease = 0;
-        local WorkerList = GetAllWorker(_PlayerID, 0);
-        if table.getn(WorkerList) > 0 then
+        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
+        if WorkerCount > 0 then
             -- Tax height
             local TaxPenalty = self:CalculateReputationTaxPenaltyAmount(
                 _PlayerID,
-                Stronghold.Players[_PlayerID].TaxHeight,
-                table.getn(WorkerList)
+                Stronghold.Players[_PlayerID].TaxHeight
             );
             Decrease = TaxPenalty;
 
             -- Care for the settlers
-            for k, v in pairs(WorkerList) do
-                local FarmID = Logic.GetSettlersFarm(v);
-                if FarmID == 0 then
-                    Decrease = Decrease + 0.30;
-                end
-                local ResidenceID = Logic.GetSettlersResidence(v);
-                if ResidenceID == 0 then
-                    Decrease = Decrease + 0.20;
-                end
-            end
+            local NoFarm = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID);
+            local NoFarmPenalty = 15 * ((1.005 ^ NoFarm) -1);
+            local NoHouse = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID);
+            local NoHousePenalty = 10 * ((1.005 ^ NoHouse) -1);
+            Decrease = Decrease + NoFarmPenalty + NoHousePenalty;
 
             -- External calculations
             Decrease = GameCallback_Calculate_ReputationDecrease(_PlayerID, Decrease);
@@ -316,18 +310,14 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
     return 0;
 end
 
-function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _TaxtHeight, _WorkerCount)
+function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _TaxtHeight)
     if Stronghold.Players[_PlayerID] then
-        local Rank = Stronghold.Players[_PlayerID].Rank;
+        local WorkerCount = Logic.GetNumberOfAttractedWorker(_PlayerID);
         local Penalty = 0;
         if _TaxtHeight > 1 then
-            local TaxEffect = self.Config.Income.TaxEffect;
-            Penalty = TaxEffect[_TaxtHeight].Reputation * -1
-            local WorkerEffect = _WorkerCount * 0.25;
-            for i= 1, (Rank -1) do
-                WorkerEffect = WorkerEffect * 1.11;
-            end
-            Penalty = Penalty + WorkerEffect;
+            local Rank = Stronghold.Players[_PlayerID].Rank;
+            local TaxEffect = self.Config.Income.TaxEffect[_TaxtHeight].Reputation * -1;
+            Penalty = TaxEffect * ((1.016 + (0.002 * (Rank-1))) ^ WorkerCount);
         end
         return math.floor(Penalty);
     end
@@ -651,8 +641,8 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
         end
         XGUIEng.SetMaterialTexture("IconMotivation", 0, TexturePath);
         -- Text
-        XGUIEng.SetWidgetPosition("AverageMotivation", 38, 118);
-		XGUIEng.SetText("AverageMotivation", Reputation.. "/" ..ReputationLimit);
+        XGUIEng.SetWidgetPosition("AverageMotivation", 40, 118);
+		XGUIEng.SetText("AverageMotivation", "@center " ..Reputation.. "/" ..ReputationLimit);
 	end
 end
 
