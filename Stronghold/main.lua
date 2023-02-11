@@ -745,7 +745,7 @@ function Stronghold:PromotePlayer(_PlayerID)
 
         local MsgText = "Erhebt Euch, " ..RankName.. "!";
         if GUI.GetPlayerID() == _PlayerID then
-            Stronghold.Hero:OnSelectHero(GUI.GetSelectedEntity());
+            Sound.PlayGUISound(Sounds.OnKlick_Select_pilgrim, 100);
         else
             local PlayerName = UserTool_GetPlayerName(_PlayerID);
             local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
@@ -758,11 +758,13 @@ end
 
 function Stronghold:CanPlayerBePromoted(_PlayerID)
     if self:IsPlayer(_PlayerID) then
-        local Rank = self:GetPlayerRank(_PlayerID);
-        if Rank == 0 or Rank >= self.Config.Rule.MaxRank then
-            return false;
+        if IsExisting(self.Players[_PlayerID].LordScriptName) then
+            local Rank = self:GetPlayerRank(_PlayerID);
+            if Rank == 0 or Rank >= self.Config.Rule.MaxRank then
+                return false;
+            end
+            return self.Config.Ranks[Rank +1].Condition(_PlayerID);
         end
-        return self.Config.Ranks[Rank +1].Condition(_PlayerID);
     end
     return false;
 end

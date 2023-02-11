@@ -523,11 +523,13 @@ end
 function Stronghold.Economy:HonorMenu()
     local PlayerID = Stronghold:GetLocalPlayerID();
 
-    local Rank = "Fußvolk";
+    local Reputation = 100;
+    local ReputationLimit = 200;
     local Honor = 0;
     local MaxHonor = Stronghold.Config.Rule.MaxHonor;
     if Stronghold:IsPlayer(PlayerID) then
-        Rank = Stronghold:GetPlayerRankName(PlayerID) or Rank;
+        Reputation = Stronghold:GetPlayerReputation(PlayerID);
+        ReputationLimit = Stronghold:GetPlayerReputationLimit(PlayerID);
         Honor = Stronghold.Players[PlayerID].Honor;
     end
 
@@ -541,7 +543,10 @@ function Stronghold.Economy:HonorMenu()
     XGUIEng.ShowWidget("GCWindowWelcome", 1);
 	XGUIEng.SetWidgetPositionAndSize("GCWindow", ScreenSize[1], YOffset, WOffset, 45);
 	XGUIEng.SetWidgetPositionAndSize("GCWindowWelcome", 0, 0, WOffset, 0);
-	XGUIEng.SetText("GCWindowWelcome",Rank.. " @cr " ..Honor.."/" ..MaxHonor);
+	XGUIEng.SetText(
+        "GCWindowWelcome",
+        Honor.. "/" ..MaxHonor.. " @cr " ..Reputation.. "/" ..ReputationLimit
+    );
 end
 
 function Stronghold.Economy:OverridePaydayClockTooltip()

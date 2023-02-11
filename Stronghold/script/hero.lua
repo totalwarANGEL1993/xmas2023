@@ -426,6 +426,7 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
         function(_PlayerID, _Action, ...)
             if _Action == Stronghold.Hero.SyncEvents.RankUp then
                 Stronghold:PromotePlayer(_PlayerID);
+                Stronghold.Hero:OnlineHelpUpdate("OnlineHelpButton", Technologies.T_OnlineHelp);
             end
             if _Action == Stronghold.Hero.SyncEvents.Hero5Summon then
                 Stronghold.Hero:OnHero5SummonSelected(_PlayerID, arg[1], arg[2], arg[3]);
@@ -437,16 +438,11 @@ end
 -- -------------------------------------------------------------------------- --
 -- Rank Up
 
-function Stronghold.Hero:LeaderChangeFormationAction(_Index)
-    local EntityID = GUI.GetSelectedEntity();
+function Stronghold.Hero:OnlineHelpAction()
     local PlayerID = GUI.GetPlayerID();
-    if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
+    if not Stronghold:IsPlayer(PlayerID) then
         return false;
     end
-    if _Index > 1 then
-        return false;
-    end
-
     local Rank = Stronghold:GetPlayerRank(PlayerID);
     local NextRank = Stronghold.Config.Ranks[Rank+1];
     if NextRank then
@@ -455,7 +451,6 @@ function Stronghold.Hero:LeaderChangeFormationAction(_Index)
             return true;
         end
     end
-
     if Stronghold:CanPlayerBePromoted(PlayerID) then
         Syncer.InvokeEvent(
             Stronghold.Hero.NetworkCall,
@@ -465,22 +460,15 @@ function Stronghold.Hero:LeaderChangeFormationAction(_Index)
     return true;
 end
 
-function Stronghold.Hero:LeaderFormationTooltip(_Key)
-    local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = Stronghold:GetLocalPlayerID();
-    if not Stronghold:IsPlayer(PlayerID) then
-        return false;
-    end
-    if GetID(Stronghold.Players[PlayerID].LordScriptName) ~= EntityID then
-        return false;
-    end
-
-    local CostText = "";
-    local Text = "";
-    local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
-    if _Key == "MenuCommandsGeneric/formation_group" then
+function Stronghold.Hero:OnlineHelpTooltip(_Key)
+    if _Key == "MenuMap/OnlineHelp" then
         local Language = GetLanguage();
-        if Stronghold.Config.Ranks[NextRank] and NextRank <= Stronghold.Config.Rule.MaxRank then
+        local CostText = "";
+        local Text = "";
+
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local NextRank = Stronghold:GetPlayerRank(PlayerID) +1;
+        if PlayerID ~= 17 and Stronghold.Config.Ranks[NextRank] and NextRank <= Stronghold.Config.Rule.MaxRank then
             local Config = Stronghold.Config.Ranks[NextRank];
             local Costs = Stronghold:CreateCostTable(unpack(Config.Costs));
             Text = string.format(
@@ -490,35 +478,35 @@ function Stronghold.Hero:LeaderFormationTooltip(_Key)
             );
             CostText = Stronghold:FormatCostString(PlayerID, Costs);
         else
-            Text = Stronghold.Hero.Config.UI.Promotion[1][Language];
+            Text = Stronghold.Hero.Config.UI.Promotion[2][Language];
         end
-    else
-        return false;
-    end
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
-    return true;
-end
 
-function Stronghold.Hero:LeaderFormationUpdate(_Button, _Technology)
-    local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = GUI.GetPlayerID();
-    if not Stronghold:IsPlayer(PlayerID) then
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostText);
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
         return true;
     end
-    if not string.find(_Button, "Formation") then
-        return false;
+    return false;
+end
+
+function Stronghold.Hero:OnlineHelpUpdate(_PlayerID, _Button, _Technology)
+    if _Button == "OnlineHelpButton" then
+        local Texture = gvBasePath.. "graphics/b_rank_f2.png";
+        local Disabled = 1;
+        if GUI.GetPlayerID() == _PlayerID and Stronghold:IsPlayer(_PlayerID) then
+            local Rank = Stronghold:GetPlayerRank(_PlayerID);
+            Texture = gvBasePath.. "graphics/b_rank_" ..Rank.. ".png";
+            if Stronghold:CanPlayerBePromoted(_PlayerID) then
+                Disabled = 0;
+            end
+        end
+        for i= 0, 6 do
+            XGUIEng.SetMaterialTexture(_Button, i, Texture);
+        end
+        XGUIEng.DisableButton(_Button, Disabled);
+        return true;
     end
-    local Disabled = 1;
-    if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
-        Disabled = 0;
-    end
-    if GetID(Stronghold.Players[PlayerID].LordScriptName) == EntityID then
-        Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
-    end
-    XGUIEng.DisableButton(_Button, Disabled);
-    return true;
+    return false;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -541,12 +529,6 @@ function Stronghold.Hero:OnSelectLeader(_EntityID)
     XGUIEng.ShowWidget("Selection_Leader", 1);
 
     local ShowFormations = 0;
-    -- if  Logic.IsEntityInCategory(_EntityID, EntityCategories.Leader) == 1
-    -- and Logic.IsEntityInCategory(_EntityID, EntityCategories.Cannon) == 0
-    -- and Logic.IsEntityInCategory(_EntityID, EntityCategories.Scout) == 0
-    -- and Logic.IsEntityInCategory(_EntityID, EntityCategories.Thief) == 0 then
-    --     ShowFormations = 1;
-    -- end
     XGUIEng.ShowWidget("Commands_Leader", ShowFormations);
     for i= 1, 4 do
         XGUIEng.ShowWidget("Formation0" ..i, 1);
@@ -570,18 +552,7 @@ function Stronghold.Hero:OnSelectHero(_EntityID)
     XGUIEng.SetWidgetPosition("Command_Patrol", 106, 4);
     XGUIEng.SetWidgetPosition("Command_Guard", 140, 4);
     XGUIEng.SetWidgetPosition("Formation01", 404, 4);
-
-    local Formation1Visible = 0;
-    local Formation1Disabled = 0;
-    if GetID(Stronghold.Players[PlayerID].LordScriptName) == _EntityID then
-        Formation1Disabled = (Stronghold:CanPlayerBePromoted(PlayerID) and 0) or 1;
-        Formation1Visible = 1;
-        XGUIEng.TransferMaterials("Upgrade_Foundry1", "Formation01");
-        XGUIEng.ShowWidget("Selection_Leader", 1);
-        XGUIEng.ShowWidget("Commands_Leader", 1);
-    end
-    XGUIEng.ShowWidget("Formation01", Formation1Visible);
-    XGUIEng.DisableButton("Formation01", Formation1Disabled);
+    XGUIEng.ShowWidget("Formation01", 0);
     XGUIEng.ShowWidget("Formation02", 0);
     XGUIEng.ShowWidget("Formation03", 0);
     XGUIEng.ShowWidget("Formation04", 0);
@@ -1252,28 +1223,31 @@ end
 
 function Stronghold.Hero:OverrideGUI()
     Overwrite.CreateOverwrite(
+        "GUIAction_OnlineHelp",
+        function()
+            Stronghold.Hero:OnlineHelpAction();
+        end
+    );
+
+    Overwrite.CreateOverwrite(
+        "GUITooltip_Generic",
+        function(_Key)
+            Overwrite.CallOriginal();
+            Stronghold.Hero:OnlineHelpTooltip(_Key);
+        end
+    );
+
+    Overwrite.CreateOverwrite(
         "GUIUpdate_BuildingButtons",
         function(_Button, _Technology)
             Overwrite.CallOriginal();
-            return Stronghold.Hero:LeaderFormationUpdate(_Button, _Technology);
+            local PlayerID = GUI.GetPlayerID();
+            return Stronghold.Hero:OnlineHelpUpdate(PlayerID, _Button, _Technology);
         end
     );
-
-    Overwrite.CreateOverwrite(
-        "GUITooltip_NormalButton",
-        function(_Key)
-            Overwrite.CallOriginal();
-            Stronghold.Hero:LeaderFormationTooltip(_Key);
-        end
-    );
-
-    Overwrite.CreateOverwrite(
-        "GUIAction_ChangeFormation",
-        function(_Index)
-            if not Stronghold.Hero:LeaderChangeFormationAction(_Index) then
-                Overwrite.CallOriginal();
-            end
-        end
-    );
+    Job.Second(function()
+        local PlayerID = GUI.GetPlayerID();
+        Stronghold.Hero:OnlineHelpUpdate(PlayerID, "OnlineHelpButton", Technologies.T_OnlineHelp);
+    end);
 end
 
