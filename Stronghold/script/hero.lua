@@ -207,8 +207,8 @@ Stronghold.Hero = {
                          "erfreut er sich an den lieblichen Klängen der Chorknaben. " ..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
-                         "Helias göttliche Verbindung produziert für jeden Priester "..
-                         "auf der Burg zusätzlichen Glauben. "..
+                         "Helias nimmt Euren Arbeitern die Beichte ab. Dadurch werden sie seltener "..
+                         "das Gesetz brechen. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Helias kann die Rüstung von verbündeten Einheiten verbessern.",
@@ -219,8 +219,8 @@ Stronghold.Hero = {
                          "the lovely sounds of the choirboys. "..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
-                         "Helias spiritual connection to god produces extra faith for all "..
-                         "priests at the castle. "..
+                         "Helias hears the confessions of your workers. This will make them less "..
+                         "likely to break the law. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can bless the armor of allied troops.",
@@ -319,7 +319,7 @@ Stronghold.Hero = {
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Durch effizientere Trainingsmethoden sinken die Kosten "..
                          "für den Unterhalt aller Scharfschützen um 50%. "..
-                         "@cr @cr "..
+                         "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann den Schaden von verbündeten Fernkämpfern verbessern. ",
                     en = "DRAKE, the jackal "..
@@ -346,7 +346,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Yuki erhöht die maximale Beliebtheit auf 300. Außerdem "..
-                         "wird die Beliebtheit einmalig um 50 erhöht. "..
+                         "wird die Beliebtheit einmalig um 50 erhöht, sobald sie erscheint. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann befreundete Arbeiter mit Feuerwerk motivieren.",
@@ -358,12 +358,12 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
                          "Yuki raises the reputation maximum to 300. The current reputation "..
-                         "is increased by 50 only once."..
+                         "is increased by 50 only once after she appears."..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can motivate workers with her pyrotechnics.",
                 },
-                [Entities.CU_Evil_Queen] = {
+                [Entities.CU_Evil_Queen]         = {
                     de = "KALA, die hexe "..
                          "@cr @cr @color:180,180,180 "..
                          "Um ihre Herkunft ranken sich Mysterien und düstere Legenden. Vom "..
@@ -372,7 +372,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Die gesteigerte Geburtenrate sorgt für einen demographischen "..
-                         "Wandel. Eure Dorfzentren können mehr Siedlern Platz bieten. "..
+                         "Wandel. Euer Bevölkerungslimit wird um 30% erhöht. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann nahestehende Feinde mit Gift schädigen.",
@@ -383,8 +383,8 @@ Stronghold.Hero = {
                          "of the shrouded pepole herself. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
-                         "The increased birth rate is causing demographic change. Your village "..
-                         "centers can accommodate more settlers. "..
+                         "The increased birth rate is causing demographic change. Your attraction "..
+                         "limit is increased by 30%. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can inflict poison damage to enemies.",
@@ -874,35 +874,19 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
 end
 
 function Stronghold.Hero:StartTriggers()
-    Trigger.RequestTrigger(
-        Events.LOGIC_EVENT_EVERY_TURN,
-        nil,
-        "Stronghold_Hero_Trigger_OnEveryTurn",
-        1
-    );
+    Job.Turn(function()
+        for i= 1, table.getn(Score.Player) do
+            Stronghold.Hero:EntityAttackedController(i);
+        end
+    end);
 
-    Trigger.RequestTrigger(
-        Events.LOGIC_EVENT_ENTITY_CREATED,
-        nil,
-        "Stronghold_Hero_Trigger_EntityCreated",
-        1
-    );
-end
-
-function Stronghold_Hero_Trigger_EntityCreated()
-    local EntityID = Event.GetEntityID();
-    local PlayerID = Logic.EntityGetPlayer(EntityID);
-
-    if Logic.IsSettler(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
-        Stronghold.Hero:ConfigurePlayersHeroPet(EntityID);
-    end
-end
-
-function Stronghold_Hero_Trigger_OnEveryTurn()
-    for i= 1, table.getn(Score.Player) do
-        Stronghold.Hero:EntityAttackedController(i);
-        Stronghold.Hero:FaithProductionBonus(i);
-    end
+    Job.Create(function()
+        local EntityID = Event.GetEntityID();
+        local PlayerID = Logic.EntityGetPlayer(EntityID);
+        if Logic.IsSettler(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
+            Stronghold.Hero:ConfigurePlayersHeroPet(EntityID);
+        end
+    end);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -1044,6 +1028,20 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         CurrentAmount = Stronghold.Hero:ApplyMeasurePointsPassiveAbility(_PlayerID, CurrentAmount);
         return CurrentAmount;
     end
+
+    self.Orig_GameCallback_Calculate_CrimeRate = GameCallback_Calculate_CrimeRate;
+    GameCallback_Calculate_CrimeRate = function(_PlayerID, _Rate)
+        local CrimeRate = Stronghold.Hero.Orig_GameCallback_Calculate_CrimeRate(_PlayerID, _Rate);
+        CrimeRate = Stronghold.Hero:ApplyCrimeRatePassiveAbility(_PlayerID, CrimeRate);
+        return CrimeRate;
+    end
+
+    self.Orig_GameCallback_Calculate_CrimeChance = GameCallback_Calculate_CrimeChance;
+    GameCallback_Calculate_CrimeChance = function(_PlayerID, _CrimeChance)
+        local CrimeChance = Stronghold.Hero.Orig_GameCallback_Calculate_CrimeChance(_PlayerID, _CrimeChance);
+        CrimeChance = Stronghold.Hero:ApplyCrimeChancePassiveAbility(_PlayerID, CrimeChance);
+        return CrimeChance;
+    end
 end
 
 function Stronghold.Hero:HasValidHeroOfType(_PlayerID, _Type)
@@ -1066,24 +1064,6 @@ end
 function Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
         Stronghold:AddPlayerHonor(_PlayerID, 5);
-    end
-end
-
--- Passive Ability: Faith production bonus
-function Stronghold.Hero:FaithProductionBonus(_PlayerID)
-    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
-        local Amount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Priest);
-        if Amount > 0 then
-            local Building1 = GetValidEntitiesOfType(_PlayerID, Entities.PB_Monastery1);
-            local Building2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
-            local Building3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
-            if table.getn(Building1) + Building2 + Building3 > 0 then
-                ---@diagnostic disable-next-line: undefined-field
-                if math.mod(math.floor(Logic.GetTime() * 10), 2) == 0 then
-                    Logic.AddToPlayersGlobalResource(_PlayerID, ResourceType.Faith, Amount);
-                end
-            end
-        end
     end
 end
 
@@ -1133,15 +1113,7 @@ end
 function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        local VCLimit = 0;
-        local VCLevel1 = GetValidEntitiesOfType(_PlayerID, Entities.PB_VillageCenter1);
-        VCLimit = VCLimit + (table.getn(VCLevel1) * 15);
-        local VCLevel2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_VillageCenter2);
-        VCLimit = VCLimit + (VCLevel2 * 20);
-        local VCLevel3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_VillageCenter3);
-        VCLimit = VCLimit + (VCLevel3 * 25);
-
-        Value = Value + VCLimit;
+        Value = Value * 1.3;
     end
     return Value;
 end
@@ -1253,6 +1225,24 @@ function Stronghold.Hero:ApplyMeasurePointsPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
         Value = Value * 1.5;
+    end
+    return Value;
+end
+
+-- Passive Ability: Change factor of becoming a criminal
+function Stronghold.Hero:ApplyCrimeRatePassiveAbility(_PlayerID, _Value)
+    local Value = _Value;
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
+        Value = Value * 1.75;
+    end
+    return Value;
+end
+
+-- Passive Ability: Chance the chance of becoming a criminal
+function Stronghold.Hero:ApplyCrimeChancePassiveAbility(_PlayerID, _Chance)
+    local Value = _Chance;
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero6) then
+        Value = Value * 0.75;
     end
     return Value;
 end

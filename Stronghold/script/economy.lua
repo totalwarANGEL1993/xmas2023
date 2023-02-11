@@ -759,20 +759,12 @@ end
 -- Trigger
 
 function Stronghold.Economy:StartTriggers()
-    Trigger.RequestTrigger(
-        Events.LOGIC_EVENT_EVERY_TURN,
-        nil,
-        "Stronghold_Economy_Trigger_OnEveryTurn",
-        1
-    );
-end
-
-function Stronghold_Economy_Trigger_OnEveryTurn()
-    local Players = table.getn(Score.Player);
-    ---@diagnostic disable-next-line: undefined-field
-    local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), Players);
-
-    Stronghold.Economy:UpdateIncomeAndUpkeep(PlayerID);
-    Stronghold.Economy:GainMeasurePoints(PlayerID);
+    Job.Turn(function()
+        local Players = table.getn(Score.Player);
+        ---@diagnostic disable-next-line: undefined-field
+        local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), Players);
+        Stronghold.Economy:UpdateIncomeAndUpkeep(PlayerID);
+        Stronghold.Economy:GainMeasurePoints(PlayerID);
+    end);
 end
 

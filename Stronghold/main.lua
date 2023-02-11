@@ -46,22 +46,6 @@ Stronghold = {
             StartingSerfs = 6,
         },
 
-        HQCivilAttraction = {
-            [1] = 75,
-            [2] = 100,
-            [3] = 125
-        },
-        HQMilitaryAttraction = {
-            [1] = 300,
-            [2] = 400,
-            [3] = 500
-        },
-        VCCivilAttraction = {
-            [1] = 35,
-            [2] = 45,
-            [3] = 55
-        },
-
         Ranks = {
             [1] = {
                 Text = {"Edelmann", "Edelfrau"},
