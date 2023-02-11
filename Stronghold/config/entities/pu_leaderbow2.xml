@@ -122,19 +122,19 @@
 	        <HitAnim>PU_LeaderBow2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Pierce</DamageClass>
-	        <DamageAmount>5</DamageAmount>
-	        <MaxRandomDamageBonus>0</MaxRandomDamageBonus>
+	        <DamageAmount>4</DamageAmount>
+	        <MaxRandomDamageBonus>1</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MissChance>9</MissChance>
+	        <MissChance>12</MissChance>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        <MaxRange>2500</MaxRange>
 	        <MinRange>500.0f</MinRange>
 	        <AutoAttackRange>2500</AutoAttackRange>
 	        
-			  <HealingPoints>5</HealingPoints>
+			<HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>
 	        
 	        <UpkeepCost>20</UpkeepCost>
@@ -146,7 +146,7 @@
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
             <Attachment>
                 <Type>ATTACHMENT_LEADER_SOLDIER</Type>
-                <Limit>8</Limit>
+                <Limit>12</Limit>
             </Attachment>
 		</Logic>
 	</Behavior>

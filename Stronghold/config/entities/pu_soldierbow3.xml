@@ -2,52 +2,43 @@
 <root>
 	<Display classname="ED::CDisplayEntityProps">
 		  <Class>GD::CDisplaySettler</Class>
-		  <Model>PU_SoldierCavalry1</Model> 
-		  <DrawPlayerColor>True</DrawPlayerColor>
-		  <Anim>PU_SoldierCavalry1_Run1</Anim>
-		  <Anim>PU_SoldierCavalry1_Idle1</Anim>		
-		  <Anim>PU_SoldierCavalry1_Idle2</Anim>		
-		  <Anim>PU_SoldierCavalry1_Idle3</Anim>		
-		  <Anim>PU_SoldierCavalry1_Idle4</Anim>		
-		  <Anim>PU_SoldierCavalry1_Idle5</Anim>		
-		  <Anim>PU_SoldierCavalry1_Idle6</Anim>		
-		  <Anim>PU_SoldierCavalry1_Attack1</Anim>
-		  <Anim>PU_SoldierCavalry1_Dying1</Anim>
-		  <Anim>PU_SoldierCavalry1_Hit</Anim>
-	
+		  <Model>PU_SoldierBow3</Model> 
+		  <DrawPlayerColor>True</DrawPlayerColor>		
+		  <Anim>PU_SoldierBow3_Walk</Anim>
+		  <Anim>PU_SoldierBow3_Run1</Anim>
+		  <Anim>PU_SoldierBow3_Idle1</Anim>
+		  <Anim>PU_SoldierBow3_Idle2</Anim>
+		  <Anim>PU_SoldierBow3_Idle3</Anim>
+		  <Anim>PU_SoldierBow3_Idle4</Anim>
+		  <Anim>PU_SoldierBow3_Idle5</Anim>
+		  <Anim>PU_SoldierBow3_Idle6</Anim>		
+		  <Anim>PU_SoldierBow3_Attack1</Anim>
+		  <Anim>PU_SoldierBow3_IdleAttack1</Anim>
+		  <Anim>PU_SoldierBow3_Dying1</Anim>
+		  <Anim>PU_SoldierBow3_Hit</Anim>	
+		
 	</Display>
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
-		  <MaxHealth>150</MaxHealth>
+		  <MaxHealth>100</MaxHealth>
+		  <DodgeChance>0</DodgeChance> 
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>80</Gold>
-			  <Iron>30</Iron>
+			  <Gold>50</Gold>
+			  <Iron>40</Iron>
+			  <Wood/>
         </Cost>
-        <Category>Military</Category>
-        <Category>Soldier</Category>
-        <Category>LongRange</Category>
-		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <Exploration>25</Exploration>
-        <Upgrade>
-            <Cost>
-				    <Gold>10</Gold>
-				    <Iron>10</Iron>
-				    <Wood/>
-            </Cost>
-            <Type>PU_SoldierCavalry2</Type> 
-            <Category>SoldierCavalry</Category>
-        </Upgrade>
          
 
     
 
     
 
-    <!--Armor modifier-->
+    
+<!--Armor modifier-->
         <ModifyArmor>
         	<Technology>T_SoftArcherArmor</Technology>
         </ModifyArmor>
@@ -66,8 +57,9 @@
 
     
 
-    <!-- Damage Modifier-->
-          <!--ModifyDamage>
+    
+<!-- Damage Modifier-->
+         <!--ModifyDamage>
         	<Technology>T_Fletching</Technology>
         </ModifyDamage-->
         
@@ -78,11 +70,12 @@
          <ModifyMaxRange>
 			  <Technology>T_Fletching</Technology>
 		</ModifyMaxRange>
+        
          <ModifyDamage>
         	<Technology>T_BodkinArrow</Technology>
         </ModifyDamage>
         
-         
+        
 
     
 
@@ -90,18 +83,26 @@
 
     <!-- Speed Modifier-->
         <ModifySpeed>
-        	<Technology>T_Shoeing</Technology>
+        	<Technology>T_BetterTrainingArchery</Technology>
         </ModifySpeed>
         
+        <Category>Military</Category>
+        <Category>Soldier</Category>
+        <Category>LongRange</Category>
+		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
+		  <Exploration>27</Exploration>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
-    	<ExperiencePoints>15</ExperiencePoints>
-    	<AttractionSlots>2</AttractionSlots>
+    	<ExperiencePoints>20</ExperiencePoints>
+    	<Upgrade>           
+            <Type>PU_SoldierBow4</Type> 
+            <Category>SoldierBow</Category>
+        </Upgrade>
 	</Logic>
 	<Behavior>
 		  <Logic classname="GGL::CGLAnimationBehaviorExProps">
 			  <Class>GGL::CGLBehaviorAnimationEx</Class>
-			  <SuspensionAnimation>PU_SoldierSword1_Idle1</SuspensionAnimation>
-			  <AnimSet>SET_SOLDIERCAVALRY1</AnimSet>
+			  <SuspensionAnimation>PU_SoldierBow3_Idle1</SuspensionAnimation>			
+			  <AnimSet>SET_SOLDIERBOW3</AnimSet>
 		  </Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorAnimation</Class>
@@ -110,10 +111,10 @@
 	<Behavior>
 		  <Logic classname="EGL::CMovementBehaviorProps">
 			  <Class>GGL::CSoldierMovement</Class>
-			  <Speed>480</Speed>
+			  <Speed>320</Speed>
 			  <RotationSpeed>30</RotationSpeed>
 			  <MoveTaskList>TL_MILITARY_WALK</MoveTaskList>
-			  <MoveIdleAnim>PU_SoldierCavalry1_Idle1</MoveIdleAnim>
+			  <MoveIdleAnim>PU_SoldierBow3_Idle1</MoveIdleAnim>
 		</Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorMovement</Class>
@@ -123,57 +124,58 @@
 		  <Logic classname="GGL::CSoldierBehaviorProps">
 			  <Class>GGL::CSoldierBehavior</Class>
 
-	        <BattleTaskList>TL_BATTLE_BOW</BattleTaskList>
-	        <NormalAttackAnim1>PU_SoldierCavalry1_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>PU_SoldierCavalry1_Attack1</NormalAttackAnim2>
-	        <CounterAttackAnim>PU_SoldierCavalry1_Attack1</CounterAttackAnim> 
-	        <FinishingMoveAnim>PU_SoldierCavalry1_Attack1</FinishingMoveAnim>
-	        <MissAttackAnim>PU_SoldierCavalry1_Idle1</MissAttackAnim> 
-	        <BattleIdleAnim>PU_SoldierCavalry1_Idle1</BattleIdleAnim>
-	        <BattleWalkAnim>PU_SoldierCavalry1_Run1</BattleWalkAnim> 
-	        <HitAnim>PU_SoldierCavalry1_Hit</HitAnim>
+	        <BattleTaskList>TL_BATTLE_CROSSBOW</BattleTaskList>
+	        <NormalAttackAnim1>PU_SoldierBow3_Attack1</NormalAttackAnim1>
+	        <NormalAttackAnim2>PU_SoldierBow3_Attack1</NormalAttackAnim2>
+	        <CounterAttackAnim>PU_SoldierBow3_Attack1</CounterAttackAnim> 
+	        <FinishingMoveAnim>PU_SoldierBow3_Attack1</FinishingMoveAnim>
+	        <MissAttackAnim>PU_SoldierBow3_IdleAttack1</MissAttackAnim> 
+	        <BattleIdleAnim>PU_SoldierBow3_IdleAttack1</BattleIdleAnim>
+	        <BattleWalkAnim>PU_SoldierBow3_Run1</BattleWalkAnim> 
+	        <HitAnim>PU_SoldierBow3_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Pierce</DamageClass>
-	        <DamageAmount>13</DamageAmount>
-	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
+	        <DamageAmount>15</DamageAmount>
+	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>2500</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MissChance>12</MissChance>
+	        <MissChance>10</MissChance>
 	        
-			<ProjectileEffectID>FXCavalryArrow</ProjectileEffectID> 
-	        <MaxRange>2900</MaxRange>
+	        <ProjectileEffectID>FXCrossBowArrow</ProjectileEffectID>
+	        <MaxRange>2700</MaxRange>
 	        <MinRange>0.0f</MinRange>
-		  </Logic>
+		</Logic>
 	</Behavior>
+	
 	<Behavior>
 		  <Logic classname="GGL::CFormationBehaviorProperties">
 			  <Class>GGL::CFormationBehavior</Class>
-			  <IdleAnim>
-				    <AnimID>PU_SoldierCavalry1_Idle1</AnimID> 
-					  <Frequency>5</Frequency> 
-			</IdleAnim>	
-			  <IdleAnim>	
-				    <AnimID>PU_SoldierCavalry1_Idle2</AnimID> 
-				    <Frequency>1</Frequency> 
-			</IdleAnim>	
-			  <IdleAnim>	
-				    <AnimID>PU_SoldierCavalry1_Idle1</AnimID> 
-				    <Frequency>1</Frequency> 
-			</IdleAnim>	
-			  <IdleAnim>	
-				    <AnimID>PU_SoldierCavalry1_Idle2</AnimID> 
-				    <Frequency>1</Frequency> 
-			</IdleAnim>	
-			  <IdleAnim>	
-				    <AnimID>PU_SoldierCavalry1_Idle2</AnimID> 
-				    <Frequency>1</Frequency> 
-			</IdleAnim>	
-			  <IdleAnim>	
-				    <AnimID>PU_SoldierCavalry1_Idle1</AnimID> 
-				    <Frequency>1</Frequency> 
-			</IdleAnim>	
-			
+    		<IdleAnim>
+    		    <AnimID>PU_SoldierBow3_Idle1</AnimID>
+    		    <Frequency>5</Frequency>
+    		</IdleAnim>		
+    		<IdleAnim>
+    		    <AnimID>PU_SoldierBow3_Idle2</AnimID>
+    		    <Frequency>2</Frequency>
+    		</IdleAnim>		
+    		<IdleAnim>
+    		    <AnimID>PU_SoldierBow3_Idle3</AnimID>
+    		    <Frequency>1</Frequency>
+    		</IdleAnim>		
+    		<IdleAnim>
+    		    <AnimID>PU_SoldierBow3_Idle4</AnimID>
+    		    <Frequency>1</Frequency>
+    		</IdleAnim>		
+    		<IdleAnim>
+    		    <AnimID>PU_SoldierBow3_Idle5</AnimID>
+    		    <Frequency>1</Frequency>
+    		</IdleAnim>		
+    		<IdleAnim>
+    		    <AnimID>PU_SoldierBow3_Idle6</AnimID>
+    		    <Frequency>1</Frequency>
+    		</IdleAnim>		
+    		
 		</Logic>
 	</Behavior>
 	
@@ -184,7 +186,8 @@
 		</Logic>
 	</Behavior>
 
- 
+
+
 	<Behavior>
 	    <Logic classname="EGL::CGLEBehaviorProps">
 	        <Class>GGL::CSoldierEvadeBehavior</Class>
@@ -199,13 +202,15 @@
 	    </Logic>
 	</Behavior>
 
-
     <Behavior>
         <Logic classname="GGL::CReplaceableEntityBehaviorProperties">
             <Class>GGL::CReplaceableEntityBehavior</Class>
             <EntityType>XD_DroppedBow</EntityType>
         </Logic>
     </Behavior>
+
+
+
 
 
 

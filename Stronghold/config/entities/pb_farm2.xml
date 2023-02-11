@@ -26,7 +26,7 @@
 		
   <!-- Exploration-->
 		  <ModifyExploration>
-        	<Technology>T_CityGuard</Technology>
+        	<Technology>T_TownGuard</Technology>
         </ModifyExploration>   
 		
         <Worker>PU_Farmer</Worker>

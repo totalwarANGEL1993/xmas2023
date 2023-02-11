@@ -2,22 +2,23 @@
 <root>
 	<Display classname="ED::CDisplayEntityProps">
 		  <Class>GD::CDisplaySettler</Class>
-		  <Model>PU_LeaderSword2</Model>
-		  <DrawPlayerColor>True</DrawPlayerColor>		
-		  <Anim>PU_LeaderSword2_Walk</Anim>
-		  <Anim>PU_LeaderSword2_Run1</Anim>
-		  <Anim>PU_LeaderSword2_Idle1</Anim>
-		  <Anim>PU_LeaderSword2_Idle2</Anim>
-		  <Anim>PU_LeaderSword2_Idle3</Anim>
-		  <Anim>PU_LeaderSword2_Idle4</Anim>
-		  <Anim>PU_LeaderSword2_Idle5</Anim>
-		  <Anim>PU_LeaderSword2_Idle6</Anim>
-		  <Anim>PU_LeaderSword2_IdleAttack1</Anim>
-		  <Anim>PU_LeaderSword2_Attack1</Anim>
-		  <Anim>PU_LeaderSword2_Attack2</Anim>
-		  <Anim>PU_LeaderSword2_Finish</Anim>
-		  <Anim>PU_LeaderSword2_Hit</Anim>		
-		  <Anim>PU_LeaderSword2_Dying1</Anim>
+		  <Model>PU_LeaderPoleArm4</Model> 
+		  <DrawPlayerColor>True</DrawPlayerColor>
+		
+		  <Anim>PU_LeaderPoleArm4_Walk</Anim>
+		  <Anim>PU_LeaderPoleArm4_Run1</Anim>
+		  <Anim>PU_LeaderPoleArm4_Idle1</Anim>
+		  <Anim>PU_LeaderPoleArm4_Idle2</Anim>
+		  <Anim>PU_LeaderPoleArm4_Idle3</Anim>
+		  <Anim>PU_LeaderPoleArm4_Idle4</Anim>
+		  <Anim>PU_LeaderPoleArm4_Idle5</Anim>
+		  <Anim>PU_LeaderPoleArm4_Idle6</Anim>
+		  <Anim>PU_LeaderPoleArm4_IdleAttack1</Anim>
+		  <Anim>PU_LeaderPoleArm4_Attack1</Anim>
+		  <Anim>PU_LeaderPoleArm4_Attack2</Anim>
+		  <Anim>PU_LeaderPoleArm4_Finish</Anim>
+		  <Anim>PU_LeaderPoleArm4_Hit</Anim>		
+		  <Anim>PU_LeaderPoleArm4_Dying1</Anim>
 	</Display>
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>	
@@ -26,28 +27,26 @@
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>150</Gold>
-			  <Iron>60</Iron>
-			  <Wood/>
+			  <Gold>200</Gold>
+			  <Iron>0</Iron>
+			  <Wood>80</Wood>
         </Cost>
-        
-        
+         
 
     
 
     
-
-    <!--Armor modifier-->
+<!--Armor modifier-->
         <ModifyArmor>
-        	<Technology>T_LeatherMailArmor</Technology>
+        	<Technology>T_SoftArcherArmor</Technology>
         </ModifyArmor>
         
         <ModifyArmor>
-        	<Technology>T_ChainMailArmor</Technology>
+        	<Technology>T_PaddedArcherArmor</Technology>
         </ModifyArmor>
         
         <ModifyArmor>
-        	<Technology>T_PlateMailArmor</Technology>
+        	<Technology>T_LeatherArcherArmor</Technology>
         </ModifyArmor>
         
         
@@ -55,48 +54,41 @@
     
 
     
-
-    <!-- Damage Modifier-->
+<!-- Damage Modifier-->
          <ModifyDamage>
-        	<Technology>T_MasterOfSmithery</Technology>
+        	<Technology>T_WoodAging</Technology>
         </ModifyDamage>
          <ModifyDamage>
-        	<Technology>T_IronCasting</Technology>
+        	<Technology>T_Turnery</Technology>
         </ModifyDamage>
         
         
 
     
 
-    
-<!-- Speed Modifier-->
+    <!-- Speed Modifier-->
         <ModifySpeed>
         	<Technology>T_BetterTrainingBarracks</Technology>
         </ModifySpeed>
         
-        <Category>Military</Category>
+        <Category>Military</Category>        
         <Category>Leader</Category>
-        <Category>Sword</Category>
+        <Category>Spear</Category>
         <Category>Melee</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <MaxHealth>200</MaxHealth>
 		  <Exploration>20</Exploration>
-		  <ArmorClass>ArmorClassLeather</ArmorClass>
-		  <ArmorAmount>3</ArmorAmount>
-		  <DodgeChance>0</DodgeChance>
+		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
+		  <ArmorAmount>4</ArmorAmount>
+		  <DodgeChance>0</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
-    	<ExperiencePoints>30</ExperiencePoints>
-        <Upgrade>
-           
-            <Type>PU_LeaderSword3</Type> 
-            <Category>LeaderSword</Category>
-        </Upgrade>
+    	<ExperiencePoints>40</ExperiencePoints>
 	</Logic>
 	<Behavior>
 		  <Logic classname="GGL::CGLAnimationBehaviorExProps">
 			  <Class>GGL::CGLBehaviorAnimationEx</Class>
-			  <SuspensionAnimation>PU_LeaderSword2_Idle1</SuspensionAnimation>			
-			  <AnimSet>SET_LEADERSWORD2</AnimSet>
+			  <SuspensionAnimation>PU_LeaderPoleArm4_Idle1</SuspensionAnimation>			
+			  <AnimSet>SET_LEADERPOLEARM4</AnimSet>
 		  </Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorAnimation</Class>
@@ -108,13 +100,14 @@
 			  <Speed>360</Speed>
 			  <RotationSpeed>30</RotationSpeed>
 			  <MoveTaskList>TL_LEADER_WALK</MoveTaskList>
-			  <MoveIdleAnim>PU_LeaderSword2_Idle1</MoveIdleAnim>
+			  <MoveIdleAnim>PU_LeaderPoleArm4_Idle1</MoveIdleAnim>
 		</Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorMovement</Class>
 		</Display>
 	</Behavior>
 	<Behavior> 
+    
 		  <Logic classname="EGL::CGLEBehaviorProps">
 			  <Class>GGL::CBehaviorWalkCommand</Class>
 		</Logic>
@@ -124,33 +117,32 @@
 			  <Class>GGL::CLeaderBehavior</Class>
 			  <BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
             <HomeRadius>2000</HomeRadius>
-            
-			  <SoldierType>PU_SoldierSword2</SoldierType>
 			
-	        <BattleTaskList>TL_BATTLE</BattleTaskList>
-	        	        
-	        <NormalAttackAnim1>PU_LeaderSword2_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>PU_LeaderSword2_Attack2</NormalAttackAnim2>
-	        <CounterAttackAnim>PU_LeaderSword2_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_LeaderSword2_Attack1</FinishingMoveAnim>
-	        <MissAttackAnim>PU_LeaderSword2_Attack1</MissAttackAnim>
-	        <BattleIdleAnim>PU_LeaderSword2_IdleAttack1</BattleIdleAnim>
-	        <BattleWalkAnim>PU_LeaderSword2_Run1</BattleWalkAnim>
-	        <HitAnim>PU_LeaderSword2_Hit</HitAnim>
+			  <SoldierType>PU_SoldierPoleArm4</SoldierType>
+			
+	        <BattleTaskList>TL_BATTLE_POLEARM</BattleTaskList>
 	        
-	        <DamageClass>DC_Strike</DamageClass>
-	        <DamageAmount>10</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <NormalAttackAnim1>PU_LeaderPoleArm4_Attack1</NormalAttackAnim1>
+	        <NormalAttackAnim2>PU_LeaderPoleArm4_Attack2</NormalAttackAnim2>
+	        <CounterAttackAnim>PU_LeaderPoleArm4_Finish</CounterAttackAnim>
+	        <FinishingMoveAnim>PU_LeaderPoleArm4_Attack1</FinishingMoveAnim>
+	        <MissAttackAnim>PU_LeaderPoleArm4_Attack1</MissAttackAnim>
+	        <BattleIdleAnim>PU_LeaderPoleArm4_IdleAttack1</BattleIdleAnim>
+	        <BattleWalkAnim>PU_LeaderPoleArm4_Run1</BattleWalkAnim>
+	        <HitAnim>PU_LeaderPoleArm4_Hit</HitAnim>
 	        
-	        <BattleWaitUntil>1500</BattleWaitUntil>
+	        <DamageClass>DC_Pierce</DamageClass>
+	        <DamageAmount>23</DamageAmount>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
-	        <MaxRange>200</MaxRange>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        
+	        <MaxRange>300</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2000</AutoAttackRange>
 	        
 			  <HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>
-	        
 	        <UpkeepCost>20</UpkeepCost>
 		  </Logic>
 	</Behavior>
@@ -172,6 +164,8 @@
 		</Logic>
 	</Behavior>
 
+
+
 	<Behavior>
 	    <Logic classname="EGL::CGLEBehaviorProps">
 	        <Class>GGL::CLeaderEvadeBehavior</Class>
@@ -188,11 +182,9 @@
     <Behavior>
         <Logic classname="GGL::CReplaceableEntityBehaviorProperties">
             <Class>GGL::CReplaceableEntityBehavior</Class>
-            <EntityType>XD_DroppedSwordShield</EntityType>
+            <EntityType>XD_DroppedPoleArm</EntityType>
         </Logic>
     </Behavior>
-
-
 
 
 

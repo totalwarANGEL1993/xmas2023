@@ -2,36 +2,36 @@
 <root>
 	<Display classname="ED::CDisplayEntityProps">
 		  <Class>GD::CDisplaySettler</Class>
-		  <Model>PU_LeaderSword2</Model>
+		  <Model>PU_LeaderSword4</Model> 
 		  <DrawPlayerColor>True</DrawPlayerColor>		
-		  <Anim>PU_LeaderSword2_Walk</Anim>
-		  <Anim>PU_LeaderSword2_Run1</Anim>
-		  <Anim>PU_LeaderSword2_Idle1</Anim>
-		  <Anim>PU_LeaderSword2_Idle2</Anim>
-		  <Anim>PU_LeaderSword2_Idle3</Anim>
-		  <Anim>PU_LeaderSword2_Idle4</Anim>
-		  <Anim>PU_LeaderSword2_Idle5</Anim>
-		  <Anim>PU_LeaderSword2_Idle6</Anim>
-		  <Anim>PU_LeaderSword2_IdleAttack1</Anim>
-		  <Anim>PU_LeaderSword2_Attack1</Anim>
-		  <Anim>PU_LeaderSword2_Attack2</Anim>
-		  <Anim>PU_LeaderSword2_Finish</Anim>
-		  <Anim>PU_LeaderSword2_Hit</Anim>		
-		  <Anim>PU_LeaderSword2_Dying1</Anim>
+		  <Anim>PU_LeaderSword4_Walk</Anim>
+		  <Anim>PU_LeaderSword4_Run1</Anim>
+		  <Anim>PU_LeaderSword4_Idle1</Anim>
+		  <Anim>PU_LeaderSword4_Idle2</Anim>
+		  <Anim>PU_LeaderSword4_Idle3</Anim>
+		  <Anim>PU_LeaderSword4_Idle4</Anim>
+		  <Anim>PU_LeaderSword4_Idle5</Anim>
+		  <Anim>PU_LeaderSword4_Idle6</Anim>
+		  <Anim>PU_LeaderSword4_IdleAttack1</Anim>
+		  <Anim>PU_LeaderSword4_Attack1</Anim>
+		  <Anim>PU_LeaderSword4_Attack2</Anim>
+		  <Anim>PU_LeaderSword4_Finish</Anim>
+		  <Anim>PU_LeaderSword4_Hit</Anim>		
+		  <Anim>PU_LeaderSword4_Dying1</Anim>
 	</Display>
 	<Logic classname="GGL::CGLSettlerProps">
-		  <Class>GGL::CSettler</Class>	
-		  <AccessCategory>AccessCategorySettler</AccessCategory>			
+		  <Class>GGL::CSettler</Class>
+		  <AccessCategory>AccessCategorySettler</AccessCategory>		
+		  <MaxHealth>200</MaxHealth>
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>150</Gold>
-			  <Iron>60</Iron>
+			  <Gold>250</Gold>
+			  <Iron>80</Iron>
 			  <Wood/>
         </Cost>
-        
-        
+       
 
     
 
@@ -49,7 +49,6 @@
         <ModifyArmor>
         	<Technology>T_PlateMailArmor</Technology>
         </ModifyArmor>
-        
         
 
     
@@ -79,24 +78,18 @@
         <Category>Sword</Category>
         <Category>Melee</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <MaxHealth>200</MaxHealth>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassLeather</ArmorClass>
-		  <ArmorAmount>3</ArmorAmount>
-		  <DodgeChance>0</DodgeChance>
+		  <ArmorAmount>5</ArmorAmount> 
+		  <DodgeChance>0</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
-    	<ExperiencePoints>30</ExperiencePoints>
-        <Upgrade>
-           
-            <Type>PU_LeaderSword3</Type> 
-            <Category>LeaderSword</Category>
-        </Upgrade>
+    	<ExperiencePoints>40</ExperiencePoints>
 	</Logic>
 	<Behavior>
 		  <Logic classname="GGL::CGLAnimationBehaviorExProps">
 			  <Class>GGL::CGLBehaviorAnimationEx</Class>
-			  <SuspensionAnimation>PU_LeaderSword2_Idle1</SuspensionAnimation>			
-			  <AnimSet>SET_LEADERSWORD2</AnimSet>
+			  <SuspensionAnimation>PU_LeaderSword4_Idle1</SuspensionAnimation>			
+			  <AnimSet>SET_LEADERSWORD4</AnimSet>
 		  </Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorAnimation</Class>
@@ -108,7 +101,7 @@
 			  <Speed>360</Speed>
 			  <RotationSpeed>30</RotationSpeed>
 			  <MoveTaskList>TL_LEADER_WALK</MoveTaskList>
-			  <MoveIdleAnim>PU_LeaderSword2_Idle1</MoveIdleAnim>
+			  <MoveIdleAnim>PU_LeaderSword4_Idle1</MoveIdleAnim>
 		</Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorMovement</Class>
@@ -124,25 +117,24 @@
 			  <Class>GGL::CLeaderBehavior</Class>
 			  <BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
             <HomeRadius>2000</HomeRadius>
-            
-			  <SoldierType>PU_SoldierSword2</SoldierType>
+			  <SoldierType>PU_SoldierSword4</SoldierType>
 			
-	        <BattleTaskList>TL_BATTLE</BattleTaskList>
-	        	        
-	        <NormalAttackAnim1>PU_LeaderSword2_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>PU_LeaderSword2_Attack2</NormalAttackAnim2>
-	        <CounterAttackAnim>PU_LeaderSword2_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_LeaderSword2_Attack1</FinishingMoveAnim>
-	        <MissAttackAnim>PU_LeaderSword2_Attack1</MissAttackAnim>
-	        <BattleIdleAnim>PU_LeaderSword2_IdleAttack1</BattleIdleAnim>
-	        <BattleWalkAnim>PU_LeaderSword2_Run1</BattleWalkAnim>
-	        <HitAnim>PU_LeaderSword2_Hit</HitAnim>
+			  <BattleTaskList>TL_BATTLE</BattleTaskList>
+	        
+	        <NormalAttackAnim1>PU_LeaderSword4_Attack1</NormalAttackAnim1>
+	        <NormalAttackAnim2>PU_LeaderSword4_Attack2</NormalAttackAnim2>
+	        <CounterAttackAnim>PU_LeaderSword4_Finish</CounterAttackAnim>
+	        <FinishingMoveAnim>PU_LeaderSword4_Attack1</FinishingMoveAnim>
+	        <MissAttackAnim>PU_LeaderSword4_Attack1</MissAttackAnim>
+	        <BattleIdleAnim>PU_LeaderSword4_IdleAttack1</BattleIdleAnim>
+	        <BattleWalkAnim>PU_LeaderSword4_Run1</BattleWalkAnim>
+	        <HitAnim>PU_LeaderSword4_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Strike</DamageClass>
-	        <DamageAmount>10</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <DamageAmount>24</DamageAmount>
+	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>	
 	        
-	        <BattleWaitUntil>1500</BattleWaitUntil>
+	        <BattleWaitUntil>1500</BattleWaitUntil>        
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>
@@ -152,6 +144,7 @@
 	        <HealingSeconds>3</HealingSeconds>
 	        
 	        <UpkeepCost>20</UpkeepCost>
+	        
 		  </Logic>
 	</Behavior>
 
@@ -172,6 +165,8 @@
 		</Logic>
 	</Behavior>
 
+
+
 	<Behavior>
 	    <Logic classname="EGL::CGLEBehaviorProps">
 	        <Class>GGL::CLeaderEvadeBehavior</Class>
@@ -191,6 +186,10 @@
             <EntityType>XD_DroppedSwordShield</EntityType>
         </Logic>
     </Behavior>
+
+
+
+
 
 
 

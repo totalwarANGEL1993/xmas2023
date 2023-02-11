@@ -594,21 +594,22 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
     local Action = 0;
     if _Technology == Technologies.T_UpgradeSword1 then
         UnitType = Entities.PU_LeaderPoleArm1;
-        Places = (AutoFillActive and 5) or 1;
+        Places = (AutoFillActive and 13) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword2 then
         UnitType = Entities.PU_LeaderPoleArm3;
-        Places = (AutoFillActive and 5) or 1;
+        Places = (AutoFillActive and 7) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeSword3 then
-        UnitType = Entities.PU_LeaderSword3;
-        Places = (AutoFillActive and 9) or 1;
+        UnitType = Entities.PU_LeaderSword2;
+        Places = (AutoFillActive and 7) or 1;
         Action = self.SyncEvents.BuyUnit;
-    elseif _Technology == Technologies.T_UpgradeSword4 then
-        UnitType = Entities.PU_LeaderSword4;
-        Places = (AutoFillActive and 9) or 1;
+    elseif _Technology == Technologies.T_UpgradeSpear1 then
+        UnitType = Entities.PU_LeaderSword3;
+        Places = (AutoFillActive and 7) or 1;
         Action = self.SyncEvents.BuyUnit;
     end
+    Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Places);
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
@@ -683,29 +684,29 @@ function Stronghold.Building:OnBarracksSelected(_EntityID)
     local LancerConfig = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderPoleArm3);
     if LancerConfig.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < LancerConfig.Rank
+    or Type ~= Entities.PB_Barracks2
     or Sawmill1 + Sawmill2 == 0 then
         LancerDisabled = 1;
     end
     XGUIEng.DisableButton("Research_UpgradeSword2", LancerDisabled);
 
-    -- Longsword
+    -- Broadsword
     local SwordDisabled = 0;
-    local SwordConfig = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderSword3);
+    local SwordConfig = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderSword2);
     if SwordConfig.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < SwordConfig.Rank
-    or Type ~= Entities.PB_Barracks2
     or Blacksmith1 + Blacksmith2 + Blacksmith3 == 0 then
         SwordDisabled = 1;
     end
     XGUIEng.DisableButton("Research_UpgradeSword3", SwordDisabled);
 
-    -- Bastards
+    -- Longsword
     local SwordDisabled = 0;
-    local BastardConfig = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderSword4);
+    local BastardConfig = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderSword3);
     if BastardConfig.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < BastardConfig.Rank
     or Type ~= Entities.PB_Barracks2
-    or Blacksmith3 == 0 then
+    or Blacksmith2 + Blacksmith3 == 0 then
         SwordDisabled = 1;
     end
     XGUIEng.DisableButton("Research_UpgradeSpear1", SwordDisabled);
@@ -756,7 +757,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -767,13 +768,13 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " ..Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Sägemühle"
+                   " " ..Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Sägewerk"
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSword3" then
-        local Type = Entities.PU_LeaderSword3;
+        local Type = Entities.PU_LeaderSword2;
         local Config = Stronghold.Unit:GetUnitConfig(Type);
-        Text = "@color:180,180,180 Langschwertkämpfer @color:255,255,255 "..
+        Text = "@color:180,180,180 Breitschertkämpfer @color:255,255,255 "..
                "@cr Schwer gepanzerte Berufssoldaten, die für Euch über jede "..
                " Klinge springen.";
 
@@ -782,7 +783,7 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -797,18 +798,18 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
         end
 
     elseif _TextKey == "MenuBarracks/UpgradeSpear1" then
-        local Type = Entities.PU_LeaderSword4;
+        local Type = Entities.PU_LeaderSword3;
         local Config = Stronghold.Unit:GetUnitConfig(Type);
-        Text = "@color:180,180,180 Bastardschwertkämpfer @color:255,255,255 "..
-               "@cr Die schwerste Infanterie, die Ihr in die Schlacht werfen "..
-               "könnt. Diese Männer fürchten weder Tod noch Teufel.";
+        Text = "@color:180,180,180 Langschwertkämpfer @color:255,255,255 "..
+               "@cr Adlige, die sich kein Pferd leisten können, aber dennoch "..
+               "für Euch kämpfen. Sie fürchten weder Tod noch Teufel.";
 
         -- Hotkey
         ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name").. " [F]";
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -822,12 +823,6 @@ function Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(_PlayerID, _Te
                    " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Garnison, Feinschmiede";
         end
 
-    elseif _TextKey == "MenuBarracks/UpgradeSpear2" then
-        -- TODO: Hero special unit 1?
-        Text = "NOT IMPLEMENTED!";
-    elseif _TextKey == "MenuBarracks/UpgradeSpear3" then
-        -- TODO: Hero special unit 2?
-        Text = "NOT IMPLEMENTED!";
     else
         return false;
     end
@@ -857,22 +852,23 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
     local UnitType = 0;
     local Action = 0;
     if _Technology == Technologies.T_UpgradeBow1 then
-        UnitType = Entities.PU_LeaderBow2;
-        Places = (AutoFillActive and 5) or 1;
+        UnitType = Entities.PU_LeaderBow1;
+        Places = (AutoFillActive and 13) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeBow2 then
         UnitType = Entities.PU_LeaderBow3;
-        Places = (AutoFillActive and 5) or 1;
+        Places = (AutoFillActive and 7) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeBow3 then
         UnitType = Entities.PU_LeaderRifle1;
-        Places = (AutoFillActive and 5) or 1;
+        Places = (AutoFillActive and 7) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeRifle1 then
         UnitType = Entities.PU_LeaderRifle2;
-        Places = (AutoFillActive and 5) or 1;
+        Places = (AutoFillActive and 7) or 1;
         Action = self.SyncEvents.BuyUnit;
     end
+    Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Places);
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
@@ -928,10 +924,9 @@ function Stronghold.Building:OnArcherySelected(_EntityID)
 
     -- Bowmen
     local BowDisabled = 0;
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderBow2);
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderBow1);
     if Config.Allowed == false
-    or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
-    or Sawmill1 + Sawmill2 == 0 then
+    or Stronghold:GetPlayerRank(PlayerID) < Config.Rank then
         BowDisabled = 1;
     end
     XGUIEng.DisableButton("Research_UpgradeBow1", BowDisabled);
@@ -941,6 +936,7 @@ function Stronghold.Building:OnArcherySelected(_EntityID)
     local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderBow3);
     if Config.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
+    or Type ~= Entities.PB_Archery2
     or Sawmill1 + Sawmill2 == 0 then
         CrossbowDisabled = 1;
     end
@@ -976,9 +972,9 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
     local Text = "";
 
     if _TextKey == "MenuArchery/UpgradeBow1" then
-        local Type = Entities.PU_LeaderBow2;
+        local Type = Entities.PU_LeaderBow1;
         local Config = Stronghold.Unit:GetUnitConfig(Type);
-        Text = "@color:180,180,180 Langbogenschützen @color:255,255,255 "..
+        Text = "@color:180,180,180 Kurzbogenschützen @color:255,255,255 "..
                "@cr Diese Männer sind vor allem gegen Speerträger und Reiter "..
                "sehr effektiv.";
 
@@ -987,7 +983,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 13; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -998,7 +994,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Sägemühle";
+                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank);
         end
 
     elseif _TextKey == "MenuArchery/UpgradeBow2" then
@@ -1013,7 +1009,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -1024,7 +1020,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
             Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
         elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
             Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Schießanlage, Sägemühle";
+                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Schießanlage, Sägewerk";
         end
 
     elseif _TextKey == "MenuArchery/UpgradeBow3" then
@@ -1039,7 +1035,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -1065,7 +1061,7 @@ function Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(_PlayerID, _Tec
         -- Costs text
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 9; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -1247,14 +1243,15 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
     local UnitType = 0;
     local Action = 0;
     if _Technology == Technologies.T_UpgradeLightCavalry1 then
-        UnitType = Entities.PU_LeaderCavalry2;
-        Places = (AutoFillActive and 4) or 1;
+        UnitType = Entities.PU_LeaderCavalry1;
+        Places = (AutoFillActive and 6) or 1;
         Action = self.SyncEvents.BuyUnit;
     elseif _Technology == Technologies.T_UpgradeHeavyCavalry1 then
         UnitType = Entities.PU_LeaderHeavyCavalry1;
-        Places = (AutoFillActive and 4) or 1;
+        Places = (AutoFillActive and 6) or 1;
         Action = self.SyncEvents.BuyUnit;
     end
+    Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Places);
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
@@ -1305,7 +1302,7 @@ function Stronghold.Building:OnStableSelected(_EntityID)
 
     -- Bowmen
     local BowDisabled = 0;
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderCavalry2);
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderCavalry1);
     if Config.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
     or Sawmill1 + Sawmill2 == 0  then
@@ -1333,9 +1330,9 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
     local Text = "";
 
     if _TextKey == "MenuStables/UpgradeCavalryLight1" then
-        local Type = Entities.PU_LeaderCavalry2;
-        Text = "@color:180,180,180 Berittene Armbrustschützen @color:255,255,255 "..
-               "@cr Der Vorteil der berittenen Armbrustschützen ist ihre hohe "..
+        local Type = Entities.PU_LeaderCavalry1;
+        Text = "@color:180,180,180 Berittener Bogenschütze @color:255,255,255 "..
+               "@cr Der Vorteil der berittenen Bogenschützen ist ihre hohe "..
                "Flexibelität und Geschwindigkeit.";
 
         -- Hotkey
@@ -1344,7 +1341,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 7; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 6; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -1360,7 +1357,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
 
     elseif _TextKey == "MenuStables/UpgradeCavalryHeavy1" then
         local Type = Entities.PU_LeaderHeavyCavalry1;
-        Text = "@color:180,180,180 Berittene Streitaxtkämpfer @color:255,255,255 "..
+        Text = "@color:180,180,180 Berittener Schwertkämpfer @color:255,255,255 "..
                "@cr Treue Ritter, die jeden Gegner gnadenlos niedermähen, der "..
                "es wagt, sich Euch entgegenzustallen.";
 
@@ -1370,7 +1367,7 @@ function Stronghold.Building:UpdateUpgradeSettlersStableTooltip(_PlayerID, _Tech
         local Config = Stronghold.Unit:GetUnitConfig(Type);
         local Costs = CopyTable(Config.Costs);
         if Logic.IsAutoFillActive(EntityID) == 1 then
-            for i= 2, 7 do Costs[i] = Costs[i] * 4; end
+            for i= 2, 7 do Costs[i] = Costs[i] * 6; end
         end
         Costs = Stronghold:CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
@@ -1425,21 +1422,18 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
     local Action = 0;
     if _Type == Entities.PV_Cannon1 then
         UnitType = _Type;
-        Places = 5;
         Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon2 then
         UnitType = _Type;
-        Places = 10;
         Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon3 then
         UnitType = _Type;
-        Places = 15;
         Action = self.SyncEvents.BuyUnit;
     elseif _Type == Entities.PV_Cannon4 then
         UnitType = _Type;
-        Places = 15;
         Action = self.SyncEvents.BuyUnit;
     end
+    Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, 1);
 
     if Action > 0 then
         if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then

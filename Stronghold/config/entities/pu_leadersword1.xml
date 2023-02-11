@@ -179,8 +179,8 @@
 	        <HitAnim>PU_LeaderSword1_Hit</HitAnim>
 
 	        <DamageClass>DC_Strike</DamageClass>
-	        <DamageAmount>8</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <DamageAmount>5</DamageAmount>
+	        <MaxRandomDamageBonus>1</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>1500</BattleWaitUntil>
 	        
@@ -200,7 +200,7 @@
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
             <Attachment>
                 <Type>ATTACHMENT_LEADER_SOLDIER</Type>
-                <Limit>8</Limit>
+                <Limit>12</Limit>
             </Attachment>
 		</Logic>
 	</Behavior>

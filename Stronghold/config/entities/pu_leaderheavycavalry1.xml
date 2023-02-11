@@ -113,8 +113,8 @@
 	        <HitAnim>PU_LeaderCavalry3_Hit</HitAnim>
 			
 			<DamageClass>DC_Chaos</DamageClass>
-	        <DamageAmount>26</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <DamageAmount>19</DamageAmount>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
@@ -134,7 +134,7 @@
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
             <Attachment>
                 <Type>ATTACHMENT_LEADER_SOLDIER</Type>
-                <Limit>3</Limit>
+                <Limit>5</Limit>
             </Attachment>
 		</Logic>
 	</Behavior>

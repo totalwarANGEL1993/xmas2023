@@ -127,8 +127,8 @@
 	        <HitAnim>PU_SoldierCavalry3_Hit</HitAnim> 
 	        
 	        <DamageClass>DC_Chaos</DamageClass>
-	        <DamageAmount>26</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <DamageAmount>19</DamageAmount>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>  			
 	        

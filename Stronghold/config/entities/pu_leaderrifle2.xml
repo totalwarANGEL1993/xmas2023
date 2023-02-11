@@ -125,13 +125,12 @@
 	        <HitAnim>PU_LeaderRifle2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bullet</DamageClass>
-	        <DamageAmount>19</DamageAmount>
-	        <MaxRandomDamageBonus>0</MaxRandomDamageBonus>
-	        <DamageRange>80</DamageRange>
+	        <DamageAmount>22</DamageAmount>
+	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3800</BattleWaitUntil>
 	        
-	        <MissChance>2</MissChance>
+	        <MissChance>5</MissChance>
 	        
 	        <ProjectileEffectID>FXShotRifleman</ProjectileEffectID>
 	        <MaxRange>3000</MaxRange>
@@ -150,7 +149,7 @@
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
             <Attachment>
                 <Type>ATTACHMENT_LEADER_SOLDIER</Type>
-                <Limit>8</Limit>
+                <Limit>6</Limit>
             </Attachment>
 		</Logic>
 	</Behavior>

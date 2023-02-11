@@ -35,14 +35,14 @@ Stronghold.Attraction = {
     Data = {},
     Config = {
         HQCivilAttraction = {
-            [1] = 75,
-            [2] = 100,
-            [3] = 125
+            [1] = 85,
+            [2] = 115,
+            [3] = 145
         },
         HQMilitaryAttraction = {
-            [1] = 150,
-            [2] = 300,
-            [3] = 450
+            [1] = 300,
+            [2] = 450,
+            [3] = 600
         },
         VCCivilAttraction = {
             [1] = 35,
@@ -51,7 +51,7 @@ Stronghold.Attraction = {
         },
 
         Criminals = {
-            Steal      = {Min = 15, Max = 75},
+            Steal      = {Min = 25, Max = 75},
             Convert    = {Rate = 1.0, Chance = 850, Time = 2*60},
             Catch      = {Chance = 4, Area = 4000},
             Reputation = 3,
@@ -60,31 +60,31 @@ Stronghold.Attraction = {
         UsedSpace = {
             [Entities.PU_LeaderPoleArm1] = 1,
             [Entities.PU_LeaderPoleArm2] = 1,
-            [Entities.PU_LeaderPoleArm3] = 2,
-            [Entities.PU_LeaderPoleArm4] = 2,
+            [Entities.PU_LeaderPoleArm3] = 1,
+            [Entities.PU_LeaderPoleArm4] = 1,
             ---
             [Entities.PU_LeaderSword1] = 1,
             [Entities.PU_LeaderSword2] = 1,
-            [Entities.PU_LeaderSword3] = 2,
-            [Entities.PU_LeaderSword4] = 3,
+            [Entities.PU_LeaderSword3] = 1,
+            [Entities.PU_LeaderSword4] = 1,
             ---
             [Entities.PU_LeaderBow1] = 1,
             [Entities.PU_LeaderBow2] = 1,
             [Entities.PU_LeaderBow3] = 1,
-            [Entities.PU_LeaderBow4] = 2,
+            [Entities.PU_LeaderBow4] = 1,
             ---
             [Entities.PV_Cannon1] = 5,
             [Entities.PV_Cannon2] = 10,
             [Entities.PV_Cannon3] = 15,
             [Entities.PV_Cannon4] = 20,
             ---
-            [Entities.PU_LeaderCavalry1] = 1,
-            [Entities.PU_LeaderCavalry2] = 1,
+            [Entities.PU_LeaderCavalry1] = 2,
+            [Entities.PU_LeaderCavalry2] = 2,
             ---
-            [Entities.PU_LeaderHeavyCavalry1] = 3,
-            [Entities.PU_LeaderHeavyCavalry2] = 4,
+            [Entities.PU_LeaderHeavyCavalry1] = 2,
+            [Entities.PU_LeaderHeavyCavalry2] = 2,
             ---
-            [Entities.PU_LeaderRifle1] = 3,
+            [Entities.PU_LeaderRifle1] = 2,
             [Entities.PU_LeaderRifle2] = 1,
             ---
             [Entities.PU_Scout] = 0,
@@ -282,7 +282,8 @@ function Stronghold.Attraction:CalculateCrimeRate(_PlayerID)
     local CrimeRate = 0;
     if self.Data[_PlayerID] then
         local ReputationFactor = GetPlayerReputation(_PlayerID) / 100;
-        CrimeRate = self.Config.Criminals.Convert.Rate * ReputationFactor;
+        local RankFactor = 1 - ((GetPlayerRank(_PlayerID) -1) / 15);
+        CrimeRate = self.Config.Criminals.Convert.Rate * ReputationFactor * RankFactor;
         CrimeRate = GameCallback_Calculate_CrimeRate(_PlayerID, CrimeRate);
     end
     return CrimeRate;
@@ -446,11 +447,18 @@ end
 function Stronghold.Attraction:GetPlayerMilitaryAttractionUsage(_PlayerID)
     local Usage = 0;
     if Stronghold:IsPlayer(_PlayerID) then
-        Usage = Stronghold.Unit:GetMillitarySize(_PlayerID);
+        Usage = self:GetMillitarySize(_PlayerID);
         -- External
         Usage = GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, Usage);
     end
     return Usage;
+end
+
+function Stronghold.Attraction:GetMilitarySpaceForUnitType(_Type, _Amount)
+    if self.Config.UsedSpace[_Type] then
+        return self.Config.UsedSpace[_Type] * (_Amount or 1);
+    end
+    return 0;
 end
 
 function Stronghold.Attraction:HasPlayerSpaceForUnits(_PlayerID, _Amount)

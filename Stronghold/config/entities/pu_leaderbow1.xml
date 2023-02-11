@@ -120,12 +120,12 @@
 	        <HitAnim>PU_LeaderBow1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Pierce</DamageClass>
-	        <DamageAmount>4</DamageAmount>
-	        <MaxRandomDamageBonus>0</MaxRandomDamageBonus>
+	        <DamageAmount>3</DamageAmount>
+	        <MaxRandomDamageBonus>1</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MissChance>9</MissChance>
+	        <MissChance>15</MissChance>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        <MaxRange>2300</MaxRange>
@@ -145,7 +145,7 @@
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
             <Attachment>
                 <Type>ATTACHMENT_LEADER_SOLDIER</Type>
-                <Limit>8</Limit>
+                <Limit>12</Limit>
             </Attachment>
 		</Logic>
 	</Behavior>

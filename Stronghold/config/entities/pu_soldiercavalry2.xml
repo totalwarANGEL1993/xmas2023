@@ -129,7 +129,7 @@
 	        
 	        <DamageClass>DC_Pierce</DamageClass>
 	        <DamageAmount>16</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        

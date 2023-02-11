@@ -2,22 +2,22 @@
 <root>
 	<Display classname="ED::CDisplayEntityProps">
 		  <Class>GD::CDisplaySettler</Class>
-		  <Model>PU_SoldierSword2</Model> 
+		  <Model>PU_SoldierSword3</Model>
 		  <DrawPlayerColor>True</DrawPlayerColor>		
-		  <Anim>PU_SoldierSword2_Walk</Anim>
-		  <Anim>PU_SoldierSword2_Run1</Anim>
-		  <Anim>PU_SoldierSword2_Idle1</Anim>	
-		  <Anim>PU_SoldierSword2_Idle2</Anim>	
-		  <Anim>PU_SoldierSword2_Idle3</Anim>	
-		  <Anim>PU_SoldierSword2_Idle4</Anim>	
-		  <Anim>PU_SoldierSword2_Idle5</Anim>	
-		  <Anim>PU_SoldierSword2_Idle6</Anim>		
-		  <Anim>PU_SoldierSword2_Attack1</Anim>
-		  <Anim>PU_SoldierSword2_Attack2</Anim>
-		  <Anim>PU_SoldierSword2_IdleAttack1</Anim>
-		  <Anim>PU_SoldierSword2_Finish</Anim>
-		  <Anim>PU_SoldierSword2_Dying1</Anim>
-		  <Anim>PU_SoldierSword2_Hit</Anim>	
+		  <Anim>PU_SoldierSword3_Walk</Anim>
+		  <Anim>PU_SoldierSword3_Run1</Anim>
+		  <Anim>PU_SoldierSword3_Idle1</Anim>	
+		  <Anim>PU_SoldierSword3_Idle2</Anim>	
+		  <Anim>PU_SoldierSword3_Idle3</Anim>	
+		  <Anim>PU_SoldierSword3_Idle4</Anim>	
+		  <Anim>PU_SoldierSword3_Idle5</Anim>	
+		  <Anim>PU_SoldierSword3_Idle6</Anim>		
+		  <Anim>PU_SoldierSword3_Attack1</Anim>
+		  <Anim>PU_SoldierSword3_Attack2</Anim>
+		  <Anim>PU_SoldierSword3_IdleAttack1</Anim>
+		  <Anim>PU_SoldierSword3_Finish</Anim>
+		  <Anim>PU_SoldierSword3_Dying1</Anim>
+		  <Anim>PU_SoldierSword3_Hit</Anim>	
 		
 	</Display>
 	<Logic classname="GGL::CGLSettlerProps">
@@ -29,11 +29,10 @@
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>40</Gold>
-			  <Iron>30</Iron>
+			  <Gold>50</Gold>
+			  <Iron>40</Iron>
 			  <Wood/>
         </Cost>
-        
         
 
     
@@ -81,17 +80,17 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
-    	<ExperiencePoints>15</ExperiencePoints>
+    	<ExperiencePoints>20</ExperiencePoints>
         <Upgrade>            
-            <Type>PU_SoldierSword3</Type> 
+            <Type>PU_SoldierSword4</Type> 
             <Category>SoldierSword</Category>
         </Upgrade>
 	</Logic>
 	<Behavior>
 		  <Logic classname="GGL::CGLAnimationBehaviorExProps">
 			  <Class>GGL::CGLBehaviorAnimationEx</Class>
-			  <SuspensionAnimation>PU_SoldierSword2_Idle1</SuspensionAnimation>			
-			  <AnimSet>SET_SOLDIERSWORD2</AnimSet>
+			  <SuspensionAnimation>PU_SoldierSword3_Idle1</SuspensionAnimation>			
+			  <AnimSet>SET_SOLDIERSWORD3</AnimSet>
 		  </Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorAnimation</Class>
@@ -103,7 +102,7 @@
 			  <Speed>360</Speed>
 			  <RotationSpeed>30</RotationSpeed>
 			  <MoveTaskList>TL_MILITARY_WALK</MoveTaskList>
-			  <MoveIdleAnim>PU_SoldierSword2_Idle1</MoveIdleAnim>
+			  <MoveIdleAnim>PU_SoldierSword3_Idle1</MoveIdleAnim>
 		</Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorMovement</Class>
@@ -114,19 +113,21 @@
 			  <Class>GGL::CSoldierBehavior</Class>
 
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
-	        <NormalAttackAnim1>PU_SoldierSword2_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>PU_SoldierSword2_Attack2</NormalAttackAnim2>
-	        <CounterAttackAnim>PU_SoldierSword2_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_SoldierSword2_Finish</FinishingMoveAnim>
-	        <MissAttackAnim>PU_SoldierSword2_IdleAttack1</MissAttackAnim>
-	        <BattleIdleAnim>PU_SoldierSword2_IdleAttack1</BattleIdleAnim>
-	        <BattleWalkAnim>PU_SoldierSword2_Run1</BattleWalkAnim> 
-	        <HitAnim>PU_SoldierSword2_Hit</HitAnim>
+	        <NormalAttackAnim1>PU_SoldierSword3_Attack1</NormalAttackAnim1>
+	        <NormalAttackAnim2>PU_SoldierSword3_Attack2</NormalAttackAnim2>
+	        <CounterAttackAnim>PU_SoldierSword3_Finish</CounterAttackAnim> 
+	        <FinishingMoveAnim>PU_SoldierSword3_Finish</FinishingMoveAnim>
+	        <MissAttackAnim>PU_SoldierSword3_IdleAttack1</MissAttackAnim> 
+	        <BattleIdleAnim>PU_SoldierSword3_IdleAttack1</BattleIdleAnim>
+	        <BattleWalkAnim>PU_SoldierSword3_Run1</BattleWalkAnim>
+	        <HitAnim>PU_SoldierSword3_Hit</HitAnim> 
 	        
 	        <DamageClass>DC_Strike</DamageClass>
-	        <DamageAmount>10</DamageAmount>
+	        <DamageAmount>21</DamageAmount>
 	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        
 	        <BattleWaitUntil>1500</BattleWaitUntil>
+	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>
 		</Logic>
@@ -136,27 +137,27 @@
 		  <Logic classname="GGL::CFormationBehaviorProperties">
 			  <Class>GGL::CFormationBehavior</Class>
     		<IdleAnim>
-    		    <AnimID>PU_SoldierSword2_Idle1</AnimID>
+    		    <AnimID>PU_SoldierSword3_Idle1</AnimID>
     		    <Frequency>99</Frequency>
-		</IdleAnim>		
+    		</IdleAnim>		
     		<IdleAnim>
-    		    <AnimID>PU_SoldierSword2_Idle2</AnimID>
+    		    <AnimID>PU_SoldierSword3_Idle2</AnimID>
     		    <Frequency>2</Frequency>
-		</IdleAnim>		
+    		</IdleAnim>
     		<IdleAnim>
-    		    <AnimID>PU_SoldierSword2_Idle3</AnimID>
+    		    <AnimID>PU_SoldierSword3_Idle3</AnimID>
     		    <Frequency>2</Frequency>
-		</IdleAnim>		
+    		</IdleAnim>
     		<IdleAnim>
-    		    <AnimID>PU_SoldierSword2_Idle4</AnimID>
+    		    <AnimID>PU_SoldierSword3_Idle4</AnimID>
     		    <Frequency>2</Frequency>
-		</IdleAnim>		
+    		</IdleAnim>
     		<IdleAnim>
-    		    <AnimID>PU_SoldierSword2_Idle5</AnimID>
+    		    <AnimID>PU_SoldierSword3_Idle5</AnimID>
     		    <Frequency>2</Frequency>
-		</IdleAnim>		
+    		</IdleAnim>
     		<IdleAnim>
-    		    <AnimID>PU_SoldierSword2_Idle6</AnimID>
+    		    <AnimID>PU_SoldierSword3_Idle6</AnimID>
     		    <Frequency>2</Frequency>
     		</IdleAnim>		
 		</Logic>
@@ -168,6 +169,8 @@
 			  <DyingTaskList>TL_DIE</DyingTaskList>
 		</Logic>
 	</Behavior>
+
+
 
 	<Behavior>
 	    <Logic classname="EGL::CGLEBehaviorProps">
@@ -189,6 +192,8 @@
             <EntityType>XD_DroppedSword</EntityType>
         </Logic>
     </Behavior>
+
+
 
 
 

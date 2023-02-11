@@ -116,7 +116,7 @@
 
             <DamageClass>DC_Pierce</DamageClass>
 	        <DamageAmount>16</DamageAmount>
-	        <MaxRandomDamageBonus>0</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        
@@ -127,7 +127,7 @@
 	        <MinRange>500.0f</MinRange>
 	        <AutoAttackRange>3100</AutoAttackRange>
 	        
-			  <HealingPoints>5</HealingPoints>
+			<HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>
 	        
 	        <UpkeepCost>20</UpkeepCost>
@@ -140,7 +140,7 @@
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
             <Attachment>
                 <Type>ATTACHMENT_LEADER_SOLDIER</Type>
-                <Limit>6</Limit>
+                <Limit>5</Limit>
             </Attachment>
 		</Logic>
 	</Behavior>

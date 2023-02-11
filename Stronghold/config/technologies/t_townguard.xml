@@ -2,12 +2,12 @@
 	<TecCategoryType>TC_Technologies</TecCategoryType>
 	<TimeToResearch>20</TimeToResearch>
 	<ResourceCosts>
-		  <Gold>400</Gold>
-		  <Clay/>
-		  <Wood/>
-		  <Stone/>		
-		  <Iron/>
-		  <Sulfur/>
+		<Gold>400</Gold>
+		<Clay/>
+		<Wood/>
+		<Stone/>		
+		<Iron/>
+		<Sulfur/>
 	</ResourceCosts>	
 	<UseForStatisticsFlag>true</UseForStatisticsFlag>
 	<ExplorationModifier>
@@ -15,21 +15,18 @@
 		<Operation>+</Operation>
 	</ExplorationModifier>
 	<Conditions>	
-		  <RequiredEntityConditions>1</RequiredEntityConditions>
-	 	
-		  <EntityCondition>
-			  <EntityType>PB_VillageCenter1</EntityType>
-			  <Amount>1</Amount>
+		<RequiredEntityConditions>1</RequiredEntityConditions>
+		<EntityCondition>
+			<EntityType>PB_VillageCenter1</EntityType>
+			<Amount>1</Amount>
 		</EntityCondition>	
-		
-		  <EntityCondition>
-			  <EntityType>PB_VillageCenter2</EntityType>
-			  <Amount>1</Amount>
+		<EntityCondition>
+			<EntityType>PB_VillageCenter2</EntityType>
+			<Amount>1</Amount>
 		</EntityCondition>	
-		
-		  <EntityCondition>
-			  <EntityType>PB_VillageCenter3</EntityType>
-			  <Amount>1</Amount>
+		<EntityCondition>
+			<EntityType>PB_VillageCenter3</EntityType>
+			<Amount>1</Amount>
 		</EntityCondition>	
 	</Conditions>
 </root>

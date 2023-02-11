@@ -46,8 +46,8 @@ Stronghold.Unit = {
             },
             [Entities.PU_LeaderSword2] = {
                 Costs = {10, 40, 0, 0, 0, 35, 0},
-                Allowed = false,
-                Rank = 0,
+                Allowed = true,
+                Rank = 2,
                 Upkeep = 35,
             },
             [Entities.PU_LeaderSword3] = {
@@ -58,21 +58,21 @@ Stronghold.Unit = {
             },
             [Entities.PU_LeaderSword4] = {
                 Costs = {30, 60, 0, 0, 0, 45, 0},
-                Allowed = true,
-                Rank = 7,
+                Allowed = false,
+                Rank = 0,
                 Upkeep = 75,
             },
             ---
             [Entities.PU_LeaderBow1] = {
                 Costs = {2, 25, 0, 20, 0, 0, 0},
-                Allowed = false,
-                Rank = 0,
+                Allowed = true,
+                Rank = 2,
                 Upkeep = 15,
             },
             [Entities.PU_LeaderBow2] = {
                 Costs = {6, 30, 0, 25, 0, 0, 0},
-                Allowed = true,
-                Rank = 2,
+                Allowed = false,
+                Rank = 0,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderBow3] = {
@@ -115,14 +115,14 @@ Stronghold.Unit = {
             ---
             [Entities.PU_LeaderCavalry1] = {
                 Costs = {6, 50, 0, 25, 0, 0, 0},
-                Allowed = false,
-                Rank = 0,
+                Allowed = true,
+                Rank = 4,
                 Upkeep = 25,
             },
             [Entities.PU_LeaderCavalry2] = {
                 Costs = {10, 60, 0, 30, 0, 10, 0},
-                Allowed = true,
-                Rank = 4,
+                Allowed = false,
+                Rank = 0,
                 Upkeep = 40,
             },
             ---
@@ -135,7 +135,7 @@ Stronghold.Unit = {
             [Entities.PU_LeaderHeavyCavalry2] = {
                 Costs = {50, 185, 0, 0, 0, 120, 0},
                 Allowed = false,
-                Rank = 7,
+                Rank = 0,
                 Upkeep = 90,
             },
             ---
@@ -148,7 +148,7 @@ Stronghold.Unit = {
             [Entities.PU_LeaderRifle2] = {
                 Costs = {30, 85, 0, 20, 0, 0, 55},
                 Allowed = true,
-                Rank = 6,
+                Rank = 7,
                 Upkeep = 80,
             },
             ---
@@ -266,6 +266,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                     end
                 end
                 Logic.RotateEntity(ID, Orientation +180);
+                self:SetFormationType(ID);
             end
         end
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;
@@ -309,6 +310,39 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
         end
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;
     end
+end
+
+function Stronghold.Unit:SetFormationType(_ID)
+    -- Circle formation
+    if Logic.GetEntityType(_ID) == Entities.PU_LeaderSword2
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderSword3
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderSword4 then
+        Logic.LeaderChangeFormationType(_ID, 5);
+        return;
+    end
+
+    -- Line formation
+    if Logic.GetEntityType(_ID) == Entities.PU_LeaderRifle1
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderRifle2
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderPoleArm3
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderPoleArm4
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderBow3
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderBow4
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderCavalry1
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderCavalry2 then
+        Logic.LeaderChangeFormationType(_ID, 4);
+        return;
+    end
+
+    -- Arrow formation
+    if Logic.GetEntityType(_ID) == Entities.PU_LeaderHeavyCavalry1
+    or Logic.GetEntityType(_ID) == Entities.PU_LeaderHeavyCavalry2 then
+        Logic.LeaderChangeFormationType(_ID, 6);
+        return;
+    end
+
+    -- Default: Horde formation
+    Logic.LeaderChangeFormationType(_ID, 9);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -437,13 +471,13 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     if BarracksType == Entities.PB_Barracks1 or BarracksType == Entities.PB_Barracks2 then
         Position = GetCirclePosition(_BarracksID, 900, 180);
     elseif BarracksType == Entities.PB_Archery1 or BarracksType == Entities.PB_Archery2 then
-        Position = GetCirclePosition(_BarracksID, 800, 180);
+        Position = GetCirclePosition(_BarracksID, 800, 170);
     elseif BarracksType == Entities.PB_Stable1 or BarracksType == Entities.PB_Stable2 then
-        Position = GetCirclePosition(_BarracksID, 1000, 180);
+        Position = GetCirclePosition(_BarracksID, 1000, 165);
     elseif BarracksType == Entities.PB_Foundry1 or BarracksType == Entities.PB_Foundry2 then
-        Position = GetCirclePosition(_BarracksID, 800, 270);
+        Position = GetCirclePosition(_BarracksID, 800, 280);
     elseif BarracksType == Entities.PB_Tavern1 or BarracksType == Entities.PB_Tavern2 then
-        Position = GetCirclePosition(_BarracksID, 600, 180);
+        Position = GetCirclePosition(_BarracksID, 600, 160);
     elseif BarracksType == Entities.PB_VillageCenter1 or
            BarracksType == Entities.PB_VillageCenter2 or
            BarracksType == Entities.PB_VillageCenter3 then
