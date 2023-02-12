@@ -129,7 +129,7 @@
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        <MaxRange>2300</MaxRange>
-	        <MinRange>500.0f</MinRange>	        
+	        <MinRange>800.0f</MinRange>	        
 	        <AutoAttackRange>2300</AutoAttackRange>
 	        
 			<HealingPoints>5</HealingPoints>

@@ -124,7 +124,7 @@
 	        
 	        <ProjectileEffectID>FXCrossBowCavalryArrow</ProjectileEffectID>
 	        <MaxRange>3100</MaxRange>
-	        <MinRange>500.0f</MinRange>
+	        <MinRange>800.0f</MinRange>
 	        <AutoAttackRange>3100</AutoAttackRange>
 	        
 			<HealingPoints>5</HealingPoints>

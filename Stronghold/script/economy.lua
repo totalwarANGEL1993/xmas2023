@@ -16,9 +16,15 @@
 ---
 --- - <number> GameCallback_Calculate_StaticReputationIncrease(_PlayerID, _Type, _CurrentAmount)
 ---   Allows to overwrite the reputation income from buildings.
+---
+--- - <number> GameCallback_Calculate_ReputationIncreaseExternal(_PlayerID)
+---   Allows to overwrite the external income.
 ---   
 --- - <number> GameCallback_Calculate_ReputationDecrease(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the reputation malus.
+---   
+--- - <number> GameCallback_Calculate_ReputationDecreaseExternal(_PlayerID)
+---   Allows to overwrite the external reputation malus.
 ---   
 --- - <number> GameCallback_Calculate_HonorIncrease(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the honor income.
@@ -28,6 +34,9 @@
 ---
 --- - <number> GameCallback_Calculate_StaticHonorIncrease(_PlayerID, _Type, _CurrentAmount)
 ---   Allows to overwrite the honor income from buildings.
+---   
+--- - <number> GameCallback_Calculate_HonorIncreaseSpecial(_PlayerID)
+---   Allows to overwrite the external honor income.
 ---   
 --- - <number> GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _CurrentAmount)
 ---   Allows to overwrite the total money income.
@@ -103,12 +112,33 @@ Stronghold.Economy = {
 function Stronghold.Economy:Install()
     for i= 1, table.getn(Score.Player) do
         self.Data[i] = {
-            MeasurePoints = 0;
-            IncomeMoney = 0;
-            UpkeepMoney = 0;
-            UpkeepDetails = {};
-            IncomeReputation = 0;
-            IncomeHonor = 0;
+            MeasurePoints = 0,
+
+            IncomeMoney = 0,
+            UpkeepMoney = 0,
+            UpkeepDetails = {},
+
+            IncomeReputation = 0,
+            ReputationDetails = {
+                TaxBonus = 0,
+                Housing = 0,
+                Providing = 0,
+                Buildings = 0,
+                OtherBonus = 0,
+                TaxPenalty = 0,
+                Homelessness = 0,
+                Hunger = 0,
+                OtherMalus = 0,
+            },
+
+            IncomeHonor = 0,
+            HonorDetails = {
+                TaxBonus = 0,
+                Housing = 0,
+                Providing = 0,
+                Buildings = 0,
+                OtherBonus = 0,
+            },
         };
     end
 
@@ -156,6 +186,10 @@ function GameCallback_Calculate_ReputationDecrease(_PlayerID, _Amount)
     return _Amount;
 end
 
+function GameCallback_Calculate_ReputationDecreaseExternal(_PlayerID)
+    return 0;
+end
+
 function GameCallback_Calculate_ReputationIncrease(_PlayerID, _Amount)
     return _Amount;
 end
@@ -168,6 +202,10 @@ function GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, _BuildingID
     return _Amount;
 end
 
+function GameCallback_Calculate_ReputationIncreaseExternal(_PlayerID)
+    return 0;
+end
+
 function GameCallback_Calculate_HonorIncrease(_PlayerID, _Amount)
     return _Amount;
 end
@@ -178,6 +216,10 @@ end
 
 function GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, _BuildingID, _WorkerID, _Amount)
     return _Amount;
+end
+
+function GameCallback_Calculate_HonorIncreaseSpecial(_PlayerID)
+    return 0;
 end
 
 function GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _Amount)
@@ -205,16 +247,70 @@ function Stronghold.Economy:UpdateIncomeAndUpkeep(_PlayerID)
         MaxReputation = GameCallback_Calculate_ReputationMax(_PlayerID, MaxReputation);
         Stronghold:SetPlayerReputationLimit(_PlayerID, MaxReputation);
 
+        -- Calculate reputation bonus
+        local ReputationPlus = 0;
+        self:CalculateReputationIncrease(_PlayerID);
+        if self.Data[_PlayerID].ReputationDetails.Housing > 0 then
+            ReputationPlus = ReputationPlus + self.Data[_PlayerID].ReputationDetails.Housing;
+        end
+        if self.Data[_PlayerID].ReputationDetails.Providing > 0 then
+            ReputationPlus = ReputationPlus + self.Data[_PlayerID].ReputationDetails.Providing;
+        end
+        if self.Data[_PlayerID].ReputationDetails.TaxBonus > 0 then
+            ReputationPlus = ReputationPlus + self.Data[_PlayerID].ReputationDetails.TaxBonus;
+        end
+        if self.Data[_PlayerID].ReputationDetails.Buildings > 0 then
+            ReputationPlus = ReputationPlus + self.Data[_PlayerID].ReputationDetails.Buildings;
+        end
+        if self.Data[_PlayerID].ReputationDetails.OtherBonus > 0 then
+            ReputationPlus = ReputationPlus + self.Data[_PlayerID].ReputationDetails.OtherBonus;
+        end
+        ReputationPlus = GameCallback_Calculate_ReputationIncrease(_PlayerID, ReputationPlus);
+
+        -- Calculate reputation penalty
+        local ReputationMinus = 0;
+        self:CalculateReputationDecrease(_PlayerID);
+        if self.Data[_PlayerID].ReputationDetails.Homelessness > 0 then
+            ReputationMinus = ReputationMinus + self.Data[_PlayerID].ReputationDetails.Homelessness;
+        end
+        if self.Data[_PlayerID].ReputationDetails.Hunger > 0 then
+            ReputationMinus = ReputationMinus + self.Data[_PlayerID].ReputationDetails.Hunger;
+        end
+        if self.Data[_PlayerID].ReputationDetails.TaxPenalty > 0 then
+            ReputationMinus = ReputationMinus + self.Data[_PlayerID].ReputationDetails.TaxPenalty;
+        end
+        if self.Data[_PlayerID].ReputationDetails.OtherMalus > 0 then
+            ReputationMinus = ReputationMinus + self.Data[_PlayerID].ReputationDetails.OtherMalus;
+        end
+        ReputationMinus = GameCallback_Calculate_ReputationDecrease(_PlayerID, ReputationMinus);
+
+        -- Calculate honor
+        local HonorPlus = 0;
+        self:CalculateHonorIncome(_PlayerID);
+        if self.Data[_PlayerID].HonorDetails.Housing > 0 then
+            HonorPlus = HonorPlus + self.Data[_PlayerID].HonorDetails.Housing;
+        end
+        if self.Data[_PlayerID].HonorDetails.Providing > 0 then
+            HonorPlus = HonorPlus + self.Data[_PlayerID].HonorDetails.Providing;
+        end
+        if self.Data[_PlayerID].HonorDetails.TaxBonus > 0 then
+            HonorPlus = HonorPlus + self.Data[_PlayerID].HonorDetails.TaxBonus;
+        end
+        if self.Data[_PlayerID].HonorDetails.Buildings > 0 then
+            HonorPlus = HonorPlus + self.Data[_PlayerID].HonorDetails.Buildings;
+        end
+        if self.Data[_PlayerID].HonorDetails.OtherBonus > 0 then
+            HonorPlus = HonorPlus + self.Data[_PlayerID].HonorDetails.OtherBonus;
+        end
+        HonorPlus = GameCallback_Calculate_HonorIncrease(_PlayerID, HonorPlus);
+
         local Upkeep = self:CalculateMoneyUpkeep(_PlayerID);
         local Income = self:CalculateMoneyIncome(_PlayerID);
-        local ReputationPlus = self:CalculateReputationIncrease(_PlayerID);
-        local ReputationMinus = self:CalculateReputationDecrease(_PlayerID);
-        local Honor = self:CalculateHonorIncome(_PlayerID);
 
         self.Data[_PlayerID].IncomeMoney = Income;
         self.Data[_PlayerID].UpkeepMoney = Upkeep;
-        self.Data[_PlayerID].IncomeReputation = math.floor(ReputationPlus - ReputationMinus);
-        self.Data[_PlayerID].IncomeHonor = Honor;
+        self.Data[_PlayerID].IncomeReputation = math.floor((ReputationPlus - ReputationMinus) + 0.5);
+        self.Data[_PlayerID].IncomeHonor = math.floor(HonorPlus + 0.5);
     end
 end
 
@@ -230,10 +326,14 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
             local TaxtHeight = Stronghold.Players[_PlayerID].TaxHeight;
             if TaxtHeight == 1 then
                 local TaxEffect = self.Config.Income.TaxEffect;
-                Income = Income + TaxEffect[TaxtHeight].Reputation;
+                local TaxBonus = TaxEffect[TaxtHeight].Reputation;
+                self.Data[_PlayerID].ReputationDetails.TaxBonus = TaxBonus;
+                Income = Income + TaxBonus;
             end
 
             -- Care for the settlers
+            local Providing = 0;
+            local Housing = 0;
             for k, v in pairs(WorkerList) do
                 local FarmID = Logic.GetSettlersFarm(v);
                 if FarmID ~= 0 then
@@ -242,6 +342,7 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
                     if self.Config.Income.Dynamic[Type] then
                         Bonus = self.Config.Income.Dynamic[Type].Reputation;
                         Bonus = GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, FarmID, v, Bonus);
+                        Providing = Providing + Bonus;
                         Income = Income + Bonus;
                     end
                 end
@@ -252,12 +353,16 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
                     if self.Config.Income.Dynamic[Type] then
                         Bonus = self.Config.Income.Dynamic[Type].Reputation;
                         Bonus = GameCallback_Calculate_DynamicReputationIncrease(_PlayerID, ResidenceID, v, Bonus);
+                        Housing = Housing + Bonus;
                         Income = Income + Bonus;
                     end
                 end
             end
+            self.Data[_PlayerID].ReputationDetails.Providing = Providing;
+            self.Data[_PlayerID].ReputationDetails.Housing = Housing;
 
             -- Building bonuses
+            local Beauty = 0;
             for k, v in pairs(self.Config.Income.Static) do
                 local Buildings = GetValidEntitiesOfType(_PlayerID, k);
                 for i= table.getn(Buildings), 1, -1 do
@@ -267,16 +372,18 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
                         end
                     end
                 end
-                Income = Income + (table.getn(Buildings) * v.Reputation);
-                Income = GameCallback_Calculate_StaticReputationIncrease(_PlayerID, k, Income);
+                local BuildingIncome = (table.getn(Buildings) * v.Reputation);
+                BuildingIncome = GameCallback_Calculate_StaticReputationIncrease(_PlayerID, k, BuildingIncome);
+                Income = Income + BuildingIncome;
+                Beauty = Beauty + BuildingIncome;
             end
+            self.Data[_PlayerID].ReputationDetails.Buildings = Beauty;
 
             -- External calculations
-            Income = GameCallback_Calculate_ReputationIncrease(_PlayerID, Income);
+            local Special = GameCallback_Calculate_ReputationIncreaseExternal(_PlayerID);
+            self.Data[_PlayerID].ReputationDetails.OtherBonus = Special;
         end
-        return math.floor(Income + 0.5);
     end
-    return 0;
 end
 
 -- Calculate reputation decrease
@@ -293,21 +400,23 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
                 _PlayerID,
                 Stronghold.Players[_PlayerID].TaxHeight
             );
+            self.Data[_PlayerID].ReputationDetails.TaxPenalty = TaxPenalty;
             Decrease = TaxPenalty;
 
             -- Care for the settlers
             local NoFarm = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID);
             local NoFarmPenalty = 15 * ((1.005 ^ NoFarm) -1);
+            self.Data[_PlayerID].ReputationDetails.Hunger = NoFarmPenalty;
             local NoHouse = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID);
             local NoHousePenalty = 10 * ((1.005 ^ NoHouse) -1);
+            self.Data[_PlayerID].ReputationDetails.Homelessness = NoHousePenalty;
             Decrease = Decrease + NoFarmPenalty + NoHousePenalty;
 
             -- External calculations
-            Decrease = GameCallback_Calculate_ReputationDecrease(_PlayerID, Decrease);
+            local Special = GameCallback_Calculate_ReputationDecreaseExternal(_PlayerID);
+            self.Data[_PlayerID].ReputationDetails.OtherMalus = Special;
         end
-        return math.floor(Decrease + 0.5);
     end
-    return 0;
 end
 
 function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _TaxtHeight)
@@ -336,9 +445,12 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
                 -- Tax height
                 local TaxHight = Stronghold.Players[_PlayerID].TaxHeight;
                 local TaxBonus = self.Config.Income.TaxEffect[TaxHight].Honor;
+                self.Data[_PlayerID].HonorDetails.TaxBonus = TaxBonus;
                 Income = Income + TaxBonus;
 
                 -- Care for the settlers
+                local Housing = 0;
+                local Providing = 0;
                 for k, v in pairs(WorkerList) do
                     local FarmID = Logic.GetSettlersFarm(v);
                     if FarmID ~= 0 then
@@ -347,6 +459,7 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
                         if self.Config.Income.Dynamic[Type] then
                             Bonus = self.Config.Income.Dynamic[Type].Honor;
                             Bonus = GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, FarmID, v, Bonus);
+                            Providing = Providing + Bonus;
                             Income = Income + Bonus;
                         end
                     end
@@ -357,12 +470,16 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
                         if self.Config.Income.Dynamic[Type] then
                             Bonus = self.Config.Income.Dynamic[Type].Honor;
                             Bonus = GameCallback_Calculate_DynamicHonorIncrease(_PlayerID, ResidenceID, v, Bonus);
+                            Housing = Housing + Bonus;
                             Income = Income + Bonus;
                         end
                     end
                 end
+                self.Data[_PlayerID].HonorDetails.Providing = Providing;
+                self.Data[_PlayerID].HonorDetails.Housing = Housing;
 
                 -- Buildings bonuses
+                local Beauty = 0;
                 for k, v in pairs(self.Config.Income.Static) do
                     local Buildings = GetValidEntitiesOfType(_PlayerID, k);
                     for i= table.getn(Buildings), 1, -1 do
@@ -373,17 +490,19 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
                             end
                         end
                     end
-                    Income = GameCallback_Calculate_StaticHonorIncrease(_PlayerID, k, Income);
-                    Income = Income + (table.getn(Buildings) * v.Honor);
+                    local BuildingBonus = (table.getn(Buildings) * v.Honor);
+                    BuildingBonus = GameCallback_Calculate_StaticHonorIncrease(_PlayerID, k, BuildingBonus);
+                    Beauty = Beauty + BuildingBonus
+                    Income = Income + BuildingBonus;
                 end
+                self.Data[_PlayerID].HonorDetails.Buildings = Beauty;
 
                 -- External calculations
-                Income = GameCallback_Calculate_HonorIncrease(_PlayerID, Income);
+                local Special = GameCallback_Calculate_HonorIncreaseSpecial(_PlayerID);
+                self.Data[_PlayerID].HonorDetails.OtherBonus = Special;
             end
         end
-        return math.floor(Income + 0.5);
     end
-    return 0;
 end
 
 -- Calculate tax income

@@ -15,19 +15,6 @@
 ---   (TODO: Use hook if CMod is nil)
 ---
 --- Defined game callbacks:
---- - <number> GameCallback_Calculate_CivilAttrationLimit(_PlayerID, _Amount)
----   Allows to overwrite the max worker attraction.
----
---- - <number> GameCallback_Calculate_CivilAttrationUsage(_PlayerID, _Amount)
----   Allows to overwrite the used worker attraction.
----
---- - <number> GameCallback_Calculate_MilitaryAttrationLimit(_PlayerID, _Amount)
----   Allows to overwrite the max usage of military places.
----
---- - <number> GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, _Amount)
----   Allows to overwrite the current overall usage of military places.
----   (For unit type see GameCallback_Calculate_UnitPlaces)
----
 --- - GameCallback_Stronghold_OnPayday(_PlayerID)
 ---   Called after the payday is done.
 ---
@@ -35,6 +22,7 @@
 Stronghold = {
     Shared = {
         DelayedAction = {},
+        HQInfo = {},
     },
     Players = {},
     Config = {
@@ -403,22 +391,6 @@ end
 -- -------------------------------------------------------------------------- --
 -- Game Callbacks
 
-function GameCallback_Calculate_CivilAttrationLimit(_PlayerID, _Amount)
-    return _Amount
-end
-
-function GameCallback_Calculate_CivilAttrationUsage(_PlayerID, _Amount)
-    return _Amount
-end
-
-function GameCallback_Calculate_MilitaryAttrationLimit(_PlayerID, _Amount)
-    return _Amount
-end
-
-function GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, _Amount)
-    return _Amount
-end
-
 function GameCallback_Stronghold_OnPayday(_PlayerID)
 end
 
@@ -600,13 +572,6 @@ function Stronghold:InitTradeBalancer()
     if Logic.GetCurrentPrice(PlayerID, PurchaseTyp) < 0.75 then
         Logic.SetCurrentPrice(PlayerID, PurchaseTyp, 0.75);
     end
-end
-
--- -------------------------------------------------------------------------- --
--- Military
-
-function Stronghold:HasPlayerSpaceForUnits(_PlayerID, _Amount)
-    return Stronghold.Attraction:HasPlayerSpaceForUnits(_PlayerID, _Amount);
 end
 
 -- -------------------------------------------------------------------------- --
@@ -956,125 +921,89 @@ end
 
 -- Tooptip Generic Override
 function Stronghold:OverrideTooltipGenericMain()
-    Overwrite.CreateOverwrite(
-        "GUITooltip_Generic",
-        function(_Key)
-            local PlayerID = Stronghold:GetLocalPlayerID();
-            local EntityID = GUI.GetSelectedEntity();
-            Overwrite.CallOriginal();
-            Stronghold.Economy:PrintTooltipGenericForFindView(PlayerID, _Key);
-        end
-    );
+    Overwrite.CreateOverwrite( "GUITooltip_Generic", function(_Key)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        Overwrite.CallOriginal();
+        Stronghold.Economy:PrintTooltipGenericForFindView(PlayerID, _Key);
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUITooltip_Generic",
-        function(_Key)
-            local PlayerID = Stronghold:GetLocalPlayerID();
-            local EntityID = GUI.GetSelectedEntity();
-            Overwrite.CallOriginal();
-            Stronghold.Economy:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
-        end
-    );
+    Overwrite.CreateOverwrite("GUITooltip_Generic", function(_Key)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        Overwrite.CallOriginal();
+        Stronghold.Economy:PrintTooltipGenericForEcoGeneral(PlayerID, _Key);
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUITooltip_Generic",
-        function(_Key)
-            local PlayerID = Stronghold:GetLocalPlayerID();
-            local EntityID = GUI.GetSelectedEntity();
-            Overwrite.CallOriginal();
-            Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, EntityID, _Key);
-        end
-    );
+    Overwrite.CreateOverwrite("GUITooltip_Generic", function(_Key)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        Overwrite.CallOriginal();
+        Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(PlayerID, EntityID, _Key);
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUITooltip_Generic",
-        function(_Key)
-            local PlayerID = Stronghold:GetLocalPlayerID();
-            local EntityID = GUI.GetSelectedEntity();
-            Overwrite.CallOriginal();
-            Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(PlayerID, EntityID, _Key);
-        end
-    );
+    Overwrite.CreateOverwrite("GUITooltip_Generic", function(_Key)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        local EntityID = GUI.GetSelectedEntity();
+        Overwrite.CallOriginal();
+        Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(PlayerID, EntityID, _Key);
+    end);
 end
 
 -- Action research technology Override
 function Stronghold:OverrideActionResearchTechnologyMain()
-    Overwrite.CreateOverwrite(
-        "GUIAction_ReserachTechnology",
-        function(_Technology)
-            if not Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
-                Overwrite.CallOriginal();
-            end
+    Overwrite.CreateOverwrite("GUIAction_ReserachTechnology", function(_Technology)
+        if not Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
+            Overwrite.CallOriginal();
         end
-    );
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUIAction_ReserachTechnology",
-        function(_Technology)
-            if not Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
-                Overwrite.CallOriginal();
-            end
+    Overwrite.CreateOverwrite("GUIAction_ReserachTechnology", function(_Technology)
+        if not Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
+            Overwrite.CallOriginal();
         end
-    );
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUIAction_ReserachTechnology",
-        function(_Technology)
-            if not Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
-                Overwrite.CallOriginal();
-            end
+    Overwrite.CreateOverwrite("GUIAction_ReserachTechnology", function(_Technology)
+        if not Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
+            Overwrite.CallOriginal();
         end
-    );
+    end);
 end
 
 -- Tooptip Upgrade Settlers Override
 function Stronghold:OverrideTooltipUpgradeSettlersMain()
-    Overwrite.CreateOverwrite(
-        "GUITooltip_ResearchTechnologies",
-        function(_Technology, _TextKey, _ShortCut)
-            local PlayerID = Stronghold:GetLocalPlayerID();
-            Overwrite.CallOriginal();
-            Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
-        end
-    );
+    Overwrite.CreateOverwrite("GUITooltip_ResearchTechnologies", function(_Technology, _TextKey, _ShortCut)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        Overwrite.CallOriginal();
+        Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUITooltip_ResearchTechnologies",
-        function(_Technology, _TextKey, _ShortCut)
-            local PlayerID = Stronghold:GetLocalPlayerID();
-            Overwrite.CallOriginal();
-            Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
-        end
-    );
+    Overwrite.CreateOverwrite("GUITooltip_ResearchTechnologies", function(_Technology, _TextKey, _ShortCut)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        Overwrite.CallOriginal();
+        Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUITooltip_ResearchTechnologies",
-        function(_Technology, _TextKey, _ShortCut)
-            local PlayerID = Stronghold:GetLocalPlayerID();
-            Overwrite.CallOriginal();
-            Stronghold.Building:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
-        end
-    );
+    Overwrite.CreateOverwrite("GUITooltip_ResearchTechnologies", function(_Technology, _TextKey, _ShortCut)
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        Overwrite.CallOriginal();
+        Stronghold.Building:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+    end);
 end
 
 function Stronghold:OverrideActionBuyMilitaryUnitMain()
-    Overwrite.CreateOverwrite(
-        "GUIAction_BuyMilitaryUnit",
-        function(_UpgradeCategory)
-            if not Stronghold.Building:BuyMilitaryUnitFromTavernAction(_UpgradeCategory) then
-                Overwrite.CallOriginal();
-            end
+    Overwrite.CreateOverwrite("GUIAction_BuyMilitaryUnit", function(_UpgradeCategory)
+        if not Stronghold.Building:BuyMilitaryUnitFromTavernAction(_UpgradeCategory) then
+            Overwrite.CallOriginal();
         end
-    );
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUIAction_BuyCannon",
-        function(_Type, _UpgradeCategory)
-            if not Stronghold.Building:BuyMilitaryUnitFromFoundryAction(_Type, _UpgradeCategory) then
-                Overwrite.CallOriginal();
-            end
+    Overwrite.CreateOverwrite("GUIAction_BuyCannon", function(_Type, _UpgradeCategory)
+        if not Stronghold.Building:BuyMilitaryUnitFromFoundryAction(_Type, _UpgradeCategory) then
+            Overwrite.CallOriginal();
         end
-    );
+    end);
 end
 
 function Stronghold:OverrideTooltipBuyMilitaryUnitMain()

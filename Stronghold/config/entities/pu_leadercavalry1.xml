@@ -130,7 +130,7 @@
 	        
 	        <ProjectileEffectID>FXCavalryArrow</ProjectileEffectID>
 	        <MaxRange>2900</MaxRange>
-	        <MinRange>500</MinRange>
+	        <MinRange>800</MinRange>
 	        <AutoAttackRange>2900</AutoAttackRange>
 	        
 			<HealingPoints>5</HealingPoints>

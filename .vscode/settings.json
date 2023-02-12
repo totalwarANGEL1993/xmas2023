@@ -215,7 +215,8 @@
         "GetLanguage",
         "GetAllWorkplaces",
         "IsBuildingBeingUpgraded",
-        "Job"
+        "Job",
+        "Placeholder"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

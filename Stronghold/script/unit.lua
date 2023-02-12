@@ -368,7 +368,7 @@ function Stronghold.Unit:BuySoldierButtonAction()
     if BuyAmount < 1 then
         return true;
     end
-    if not Stronghold:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
+    if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
         Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
         Message("Euer Heer ist bereits groß genug!");
         return true;

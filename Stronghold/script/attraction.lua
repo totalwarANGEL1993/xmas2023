@@ -505,10 +505,11 @@ function Stronghold.Attraction:InitCriminalsEffects()
     end
 
     -- Criminals will have a negative effect on the reputation.
-    self.Orig_GameCallback_Calculate_ReputationDecrease = GameCallback_Calculate_ReputationDecrease;
-    GameCallback_Calculate_ReputationDecrease = function(_PlayerID, _CurrentAmount)
-        local Amount = Stronghold.Attraction.Orig_GameCallback_Calculate_ReputationDecrease(_PlayerID, _CurrentAmount);
-        return Amount + Stronghold.Attraction:GetReputationLossByCriminals(_PlayerID);
+    self.Orig_GameCallback_Calculate_ReputationDecreaseExternal = GameCallback_Calculate_ReputationDecreaseExternal;
+    GameCallback_Calculate_ReputationDecreaseExternal = function(_PlayerID)
+        local Amount = Stronghold.Attraction.Orig_GameCallback_Calculate_ReputationDecreaseExternal(_PlayerID);
+        local Criminals = Stronghold.Attraction:GetReputationLossByCriminals(_PlayerID);
+        return Amount + Criminals;
     end
 end
 

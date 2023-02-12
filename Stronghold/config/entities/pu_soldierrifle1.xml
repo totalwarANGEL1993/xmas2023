@@ -127,7 +127,7 @@
 	        
 	        <ProjectileEffectID>FXBulletRifleman</ProjectileEffectID>
 	        <MaxRange>2800</MaxRange>
-	        <MinRange>0.0f</MinRange>
+	        <MinRange>800.0f</MinRange>
 	        
 		</Logic>
 	</Behavior>

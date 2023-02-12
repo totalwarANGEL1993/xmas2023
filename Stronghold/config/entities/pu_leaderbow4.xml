@@ -152,7 +152,7 @@
 	        
 	        <ProjectileEffectID>FXCrossBowArrow</ProjectileEffectID>
 	        <MaxRange>2900</MaxRange>
-	        <MinRange>500.0f</MinRange>
+	        <MinRange>800.0f</MinRange>
 	        <AutoAttackRange>2900</AutoAttackRange>
 	        
 			  <HealingPoints>5</HealingPoints>

@@ -612,7 +612,7 @@ function Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technolo
     Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Places);
 
     if Action > 0 then
-        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+        if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, Places) then
             Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;
@@ -871,7 +871,7 @@ function Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technolog
     Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Places);
 
     if Action > 0 then
-        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+        if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, Places) then
             Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;
@@ -1254,7 +1254,7 @@ function Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology
     Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Places);
 
     if Action > 0 then
-        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+        if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, Places) then
             Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;
@@ -1436,7 +1436,7 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
     Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, 1);
 
     if Action > 0 then
-        if not Stronghold:HasPlayerSpaceForUnits(PlayerID, Places) then
+        if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, Places) then
             Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
             Message("Euer Heer ist bereits groß genug!");
             return true;

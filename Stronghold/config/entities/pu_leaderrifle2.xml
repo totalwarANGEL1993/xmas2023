@@ -134,7 +134,7 @@
 	        
 	        <ProjectileEffectID>FXShotRifleman</ProjectileEffectID>
 	        <MaxRange>3000</MaxRange>
-	        <MinRange>0.0f</MinRange>
+	        <MinRange>800.0f</MinRange>
 	        <AutoAttackRange>3000</AutoAttackRange>
 	        
 			  <HealingPoints>5</HealingPoints>
