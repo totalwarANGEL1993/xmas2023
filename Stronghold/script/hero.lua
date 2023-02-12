@@ -695,6 +695,23 @@ function Stronghold.Hero:OnSelectHero12(_EntityID)
     end
 end
 
+function Stronghold.Hero:PrintSelectionName()
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = Logic.EntityGetPlayer(EntityID);
+    if Stronghold:IsPlayer(PlayerID) then
+		if EntityID == GetID(Stronghold.Players[PlayerID].LordScriptName) then
+            local Type = Logic.GetEntityType(EntityID);
+            local TypeName = Logic.GetEntityTypeName(Type);
+            local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
+            local Rank = GetPlayerRank(PlayerID);
+            local Language = GetLanguage();
+            local Gender = Stronghold:GetLairdGender(Type);
+            local Text = Stronghold.Config.Ranks[Rank].Text[Gender][Language];
+            XGUIEng.SetText("Selection_Name", Text.. " " ..Name);
+		end
+    end
+end
+
 -- -------------------------------------------------------------------------- --
 -- Buy Hero
 
@@ -1222,32 +1239,28 @@ end
 -- UI
 
 function Stronghold.Hero:OverrideGUI()
-    Overwrite.CreateOverwrite(
-        "GUIAction_OnlineHelp",
-        function()
-            Stronghold.Hero:OnlineHelpAction();
-        end
-    );
+    Overwrite.CreateOverwrite("GUIAction_OnlineHelp", function()
+        Stronghold.Hero:OnlineHelpAction();
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUITooltip_Generic",
-        function(_Key)
-            Overwrite.CallOriginal();
-            Stronghold.Hero:OnlineHelpTooltip(_Key);
-        end
-    );
+    Overwrite.CreateOverwrite("GUITooltip_Generic", function(_Key)
+        Overwrite.CallOriginal();
+        Stronghold.Hero:OnlineHelpTooltip(_Key);
+    end);
 
-    Overwrite.CreateOverwrite(
-        "GUIUpdate_BuildingButtons",
-        function(_Button, _Technology)
-            Overwrite.CallOriginal();
-            local PlayerID = GUI.GetPlayerID();
-            return Stronghold.Hero:OnlineHelpUpdate(PlayerID, _Button, _Technology);
-        end
-    );
+    Overwrite.CreateOverwrite("GUIUpdate_BuildingButtons", function(_Button, _Technology)
+        Overwrite.CallOriginal();
+        local PlayerID = GUI.GetPlayerID();
+        return Stronghold.Hero:OnlineHelpUpdate(PlayerID, _Button, _Technology);
+    end);
     Job.Second(function()
         local PlayerID = GUI.GetPlayerID();
         Stronghold.Hero:OnlineHelpUpdate(PlayerID, "OnlineHelpButton", Technologies.T_OnlineHelp);
+    end);
+
+    Overwrite.CreateOverwrite("GUIUpdate_SelectionName", function()
+        Overwrite.CallOriginal();
+        Stronghold.Hero:PrintSelectionName();
     end);
 end
 

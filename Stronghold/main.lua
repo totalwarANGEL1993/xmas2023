@@ -36,7 +36,8 @@ Stronghold = {
 
         Ranks = {
             [1] = {
-                Text = {"Edelmann", "Edelfrau"},
+                Text = {{de = "Edelmann", en = "Nobleman"},
+                        {de = "Edelfrau", en = "Noblewoman"}},
                 Costs = {0, 0, 0, 0, 0, 0, 0},
                 Description = nil,
                 Condition = function(_PlayerID)
@@ -44,7 +45,8 @@ Stronghold = {
                 end,
             },
             [2] = {
-                Text = {"Landvogt", "Landvögtin"},
+                Text = {{de = "Landvogt", en = "Bailiff"},
+                        {de = "Landvögtin", en = "Bailiff"}},
                 Costs = {20, 100, 0, 0, 0, 0, 0},
                 Description = "Kapelle",
                 Condition = function(_PlayerID)
@@ -55,7 +57,8 @@ Stronghold = {
                 end,
             },
             [3] = {
-                Text = {"Fürst", "Fürstin"},
+                Text = {{de = "Fürst", en = "Lord"},
+                        {de = "Fürstin", en = "Lady"}},
                 Costs = {50, 200, 0, 0, 0, 0, 0},
                 Description = "Handelswesen, Festung",
                 Condition = function(_PlayerID)
@@ -68,7 +71,8 @@ Stronghold = {
                 end,
             },
             [4] = {
-                Text = {"Baron", "Baronin"},
+                Text = {{de = "Baron", en = "Baron"},
+                        {de = "Baronin", en = "Baroness"}},
                 Costs = {100, 300, 0, 0, 0, 0, 0},
                 Description = "12 Ziergebäude",
                 Condition = function(_PlayerID)
@@ -89,7 +93,8 @@ Stronghold = {
                 end,
             },
             [5] = {
-                Text = {"Graf", "Gräfin"},
+                Text = {{de = "Graf", en = "Count"},
+                        {de = "Gräfin", en = "Countess"}},
                 Costs = {150, 500, 0, 0, 0, 0, 0},
                 Description = "6 Alchemisten, 6 Ziegelbrenner, 6 Sägewerker, 6 Schmiede, 6 Steinmetze",
                 Condition = function(_PlayerID)
@@ -102,7 +107,8 @@ Stronghold = {
                 end,
             },
             [6] = {
-                Text = {"Marktgraf", "Marktgräfin"},
+                Text = {{de = "Markgraf", en = "Margrave"},
+                        {de = "Markgräfin", en = "Margravine"}},
                 Costs = {250, 2000, 0, 0, 0, 0, 0},
                 Description = "Kathedrale, 50 Arbeiter",
                 Condition = function(_PlayerID)
@@ -112,7 +118,8 @@ Stronghold = {
                 end,
             },
             [7] = {
-                Text = {"Herzog", "Herzogin"},
+                Text = {{de = "Herzog", en = "Duke"},
+                        {de = "Herzogin", en = "Duchess"}},
                 Costs = {300, 3000, 0, 0, 0, 0, 0},
                 Description = "Alle Ziergebäude, Zitadelle, 75 Arbeiter",
                 Condition = function(_PlayerID)
@@ -676,7 +683,8 @@ function Stronghold:GetPlayerRankName(_PlayerID, _Rank)
             Gender = self:GetLairdGender(Logic.GetEntityType(LairdID)) or 1;
         end
 
-        local Text = self.Config.Ranks[Rank].Text[Gender];
+        local Language = GetLanguage();
+        local Text = self.Config.Ranks[Rank].Text[Gender][Language];
         if type (Text) == "table" then
             local Language = GetLanguage();
             Text = Text[Language];
