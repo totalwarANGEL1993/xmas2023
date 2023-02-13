@@ -89,11 +89,11 @@
         <Category>Bow</Category>
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <MaxHealth>150</MaxHealth>
+		  <MaxHealth>125</MaxHealth>
 		  <Exploration>27</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
 		  <ArmorAmount>2</ArmorAmount>
-		  <DodgeChance>0</DodgeChance> 
+		  <DodgeChance>5</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>35</ExperiencePoints>
     	
@@ -148,9 +148,9 @@
 	        <BattleWalkAnim>PU_LeaderBow3_Run1</BattleWalkAnim>
 	        <HitAnim>PU_LeaderBow3_Hit</HitAnim>
 	        
-	        <DamageClass>DC_Pierce</DamageClass>
-	        <DamageAmount>15</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <DamageClass>DC_Bow</DamageClass>
+	        <DamageAmount>18</DamageAmount>
+	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        

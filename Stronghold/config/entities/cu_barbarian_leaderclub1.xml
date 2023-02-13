@@ -1,101 +1,84 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<root>
+<?xml version="1.0" encoding="utf-8" standalone="no" ?><root>
 	<Display classname="ED::CDisplayEntityProps">
 		  <Class>GD::CDisplaySettler</Class>
-		  <Model>PU_LeaderSword3</Model> 
+		  <Model>CU_Barbarian_LeaderClub1</Model> 
 		  <DrawPlayerColor>True</DrawPlayerColor>
-		  <Anim>PU_LeaderSword3_Walk</Anim>
-		  <Anim>PU_LeaderSword3_Run1</Anim>
-		  <Anim>PU_LeaderSword3_Idle1</Anim>
-		  <Anim>PU_LeaderSword3_Idle2</Anim>
-		  <Anim>PU_LeaderSword3_Idle3</Anim>
-		  <Anim>PU_LeaderSword3_Idle4</Anim>
-		  <Anim>PU_LeaderSword3_Idle5</Anim>
-		  <Anim>PU_LeaderSword3_Idle6</Anim>
-		  <Anim>PU_LeaderSword3_IdleAttack1</Anim>
-		  <Anim>PU_LeaderSword3_Attack1</Anim>
-		  <Anim>PU_LeaderSword3_Attack2</Anim>
-		  <Anim>PU_LeaderSword3_Finish</Anim>
-		  <Anim>PU_LeaderSword3_Hit</Anim>
-		  <Anim>PU_LeaderSword3_Dying1</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_Walk</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_Run1</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_Idle1</Anim>		
+		  <Anim>CU_Barbarian_LeaderClub1_Idle2</Anim>	
+		  <Anim>CU_Barbarian_LeaderClub1_Idle3</Anim>	
+		  <Anim>CU_Barbarian_LeaderClub1_Idle4</Anim>	
+		  <Anim>CU_Barbarian_LeaderClub1_Idle5</Anim>	
+		  <Anim>CU_Barbarian_LeaderClub1_Idle6</Anim>	
+		  <Anim>CU_Barbarian_LeaderClub1_Attack1</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_Attack2</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_IdleAttack1</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_Finish</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_Dying1</Anim>
+		  <Anim>CU_Barbarian_LeaderClub1_Hit</Anim>	
+		  <Anim>CU_Barbarian_LeaderClub1_Dead</Anim>	
 	</Display>
 	<Logic classname="GGL::CGLSettlerProps">
-		  <Class>GGL::CSettler</Class>	
-		  <AccessCategory>AccessCategorySettler</AccessCategory>			
+		  <Class>GGL::CSettler</Class>
+		  <AccessCategory>AccessCategorySettler</AccessCategory>		
+		  <MaxHealth>175</MaxHealth>
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>200</Gold>
-			  <Iron>70</Iron>
+			  <Gold>150</Gold>
+			  <Iron>60</Iron>
 			  <Wood/>
         </Cost>
-       
 
-    
-
-    
-<!--Armor modifier-->
         <ModifyArmor>
-        	<Technology>T_LeatherMailArmor</Technology>
+        	<Technology>T_SoftArcherArmor</Technology>
         </ModifyArmor>
         
         <ModifyArmor>
-        	<Technology>T_ChainMailArmor</Technology>
+        	<Technology>T_PaddedArcherArmor</Technology>
         </ModifyArmor>
         
         <ModifyArmor>
-        	<Technology>T_PlateMailArmor</Technology>
+        	<Technology>T_LeatherArcherArmor</Technology>
         </ModifyArmor>
-        
 
-    
-
-    
-<!-- Damage Modifier-->
          <ModifyDamage>
         	<Technology>T_MasterOfSmithery</Technology>
         </ModifyDamage>
          <ModifyDamage>
         	<Technology>T_IronCasting</Technology>
         </ModifyDamage>
-        
-        
 
-    
-
-    <!-- Speed Modifier-->
         <ModifySpeed>
         	<Technology>T_BetterTrainingBarracks</Technology>
         </ModifySpeed>
+       
         
         <Category>Military</Category>
         <Category>Leader</Category>
         <Category>Sword</Category>
         <Category>Melee</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <MaxHealth>200</MaxHealth>
 		  <Exploration>20</Exploration>
-		  <ArmorClass>ArmorClassLeather</ArmorClass>
-		  <ArmorAmount>4</ArmorAmount>
-		  <DodgeChance>5</DodgeChance> 
+		  <ArmorClass>ArmorClassJerkin</ArmorClass>
+		  <ArmorAmount>2</ArmorAmount> 
+		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
-    	<ExperiencePoints>35</ExperiencePoints>
-        <Upgrade>
-           
-            <Type>PU_LeaderSword4</Type> 
-            <Category>LeaderSword</Category>
+    	<ExperiencePoints>30</ExperiencePoints>
+    	
+    	<Upgrade>                       
+    	   <Category>LeaderBarbarian</Category>
+    	    <Type>CU_Barbarian_LeaderClub2</Type> 
         </Upgrade>
-        
-        <ModifyExploration>
-			  <Technology>T_Tracking</Technology>			
-        </ModifyExploration>
+
 	</Logic>
 	<Behavior>
 		  <Logic classname="GGL::CGLAnimationBehaviorExProps">
 			  <Class>GGL::CGLBehaviorAnimationEx</Class>
-			  <SuspensionAnimation>PU_LeaderSword3_Idle1</SuspensionAnimation>
-			  <AnimSet>SET_LEADERSWORD3</AnimSet>
+			  <SuspensionAnimation>CU_Barbarian_LeaderClub1_Idle1</SuspensionAnimation>
+			  <AnimSet>SET_CU_BARBARIAN_LEADERCLUB1</AnimSet>
 		  </Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorAnimation</Class>
@@ -107,7 +90,7 @@
 			  <Speed>360</Speed>
 			  <RotationSpeed>30</RotationSpeed>
 			  <MoveTaskList>TL_LEADER_WALK</MoveTaskList>
-			  <MoveIdleAnim>PU_LeaderSword3_Idle1</MoveIdleAnim>
+			  <MoveIdleAnim>CU_Barbarian_LeaderClub1_Idle1</MoveIdleAnim>
 		</Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorMovement</Class>
@@ -122,26 +105,26 @@
 		  <Logic classname="GGL::CLeaderBehaviorProps">
 			  <Class>GGL::CLeaderBehavior</Class>
 			  <BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
-            <HomeRadius>2000</HomeRadius>
+            <HomeRadius>1500</HomeRadius>
 			
-			  <SoldierType>PU_SoldierSword3</SoldierType>
+			  <SoldierType>CU_Barbarian_SoldierClub1</SoldierType>
 			
-	        <BattleTaskList>TL_BATTLE</BattleTaskList>
+	        <BattleTaskList>TL_BATTLE_MACE</BattleTaskList>
 	        
-	        <NormalAttackAnim1>PU_LeaderSword3_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>PU_LeaderSword3_Attack2</NormalAttackAnim2>
-	        <CounterAttackAnim>PU_LeaderSword3_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_LeaderSword3_Attack1</FinishingMoveAnim>
-	        <MissAttackAnim>PU_LeaderSword3_Attack1</MissAttackAnim>
-	        <BattleIdleAnim>PU_LeaderSword3_IdleAttack1</BattleIdleAnim>
-	        <BattleWalkAnim>PU_LeaderSword3_Run1</BattleWalkAnim>
-	        <HitAnim>PU_LeaderSword3_Hit</HitAnim>
+	        <NormalAttackAnim1>CU_Barbarian_LeaderClub1_Attack1</NormalAttackAnim1>
+	        <NormalAttackAnim2>CU_Barbarian_LeaderClub1_Attack2</NormalAttackAnim2>
+	        <CounterAttackAnim>CU_Barbarian_LeaderClub1_Finish</CounterAttackAnim>
+	        <FinishingMoveAnim>CU_Barbarian_LeaderClub1_Attack1</FinishingMoveAnim>
+	        <MissAttackAnim>CU_Barbarian_LeaderClub1_Attack1</MissAttackAnim>
+	        <BattleIdleAnim>CU_Barbarian_LeaderClub1_IdleAttack1</BattleIdleAnim>
+	        <BattleWalkAnim>CU_Barbarian_LeaderClub1_Run1</BattleWalkAnim>
+	        <HitAnim>CU_Barbarian_LeaderClub1_Hit</HitAnim>
+
+	        <DamageClass>DC_Mace</DamageClass>
+	        <DamageAmount>16</DamageAmount>	        
+	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
-	        <DamageClass>DC_Sword</DamageClass>
-	        <DamageAmount>21</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
-	        
-	        <BattleWaitUntil>1500</BattleWaitUntil>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>
@@ -149,12 +132,9 @@
 	        
 			  <HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>
-	        
-	        <UpkeepCost>20</UpkeepCost>
-
 		  </Logic>
 	</Behavior>
-
+    
 	<Behavior>
 		  <Logic classname="GGL::CLimitedAttachmentBehaviorProperties">
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
@@ -172,7 +152,6 @@
 		</Logic>
 	</Behavior>
 
-
 	<Behavior>
 	    <Logic classname="EGL::CGLEBehaviorProps">
 	        <Class>GGL::CLeaderEvadeBehavior</Class>
@@ -185,23 +164,10 @@
 	        <BasePriority>400</BasePriority>
 	    </Logic>
 	</Behavior>
-
     <Behavior>
         <Logic classname="GGL::CReplaceableEntityBehaviorProperties">
             <Class>GGL::CReplaceableEntityBehavior</Class>
-            <EntityType>XD_DroppedSwordShield</EntityType>
+            <EntityType>XD_DroppedShield</EntityType>
         </Logic>
     </Behavior>
-
-
-
-
-
-
-
-
-
-
-
-
 </root>

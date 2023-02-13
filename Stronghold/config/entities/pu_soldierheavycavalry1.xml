@@ -19,7 +19,7 @@
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
-		  <MaxHealth>300</MaxHealth>
+		  <MaxHealth>325</MaxHealth>
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
@@ -32,6 +32,9 @@
         <Category>Soldier</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
+		  <ArmorClass>ArmorClassIron</ArmorClass>
+		  <ArmorAmount>4</ArmorAmount> 
+		  <DodgeChance>10</DodgeChance> 
         <Upgrade>
             <Cost>
 				    <Gold>10</Gold>
@@ -126,8 +129,8 @@
 	        <BattleWalkAnim>PU_SoldierCavalry3_Run1</BattleWalkAnim>
 	        <HitAnim>PU_SoldierCavalry3_Hit</HitAnim> 
 	        
-	        <DamageClass>DC_Chaos</DamageClass>
-	        <DamageAmount>19</DamageAmount>
+	        <DamageClass>DC_Axe</DamageClass>
+	        <DamageAmount>22</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>  			

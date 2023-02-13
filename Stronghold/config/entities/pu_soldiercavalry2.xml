@@ -32,7 +32,10 @@
         <Category>Soldier</Category>
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <Exploration>29</Exploration>
+		  <Exploration>31</Exploration>
+		  <ArmorClass>ArmorClassIron</ArmorClass>
+		  <ArmorAmount>3</ArmorAmount> 
+		  <DodgeChance>15</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>20</ExperiencePoints>
     	<AttractionSlots>2</AttractionSlots>
@@ -127,8 +130,8 @@
 	        <BattleWalkAnim>PU_SoldierCavalry2_Run1</BattleWalkAnim> 
 	        <HitAnim>PU_SoldierCavalry2_Hit</HitAnim>
 	        
-	        <DamageClass>DC_Pierce</DamageClass>
-	        <DamageAmount>16</DamageAmount>
+	        <DamageClass>DC_Bow</DamageClass>
+	        <DamageAmount>20</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2500</BattleWaitUntil>

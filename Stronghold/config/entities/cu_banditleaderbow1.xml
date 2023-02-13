@@ -1,21 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <root>
 	<Display classname="ED::CDisplayEntityProps">
 		  <Class>GD::CDisplaySettler</Class>
-		  <Model>PU_LeaderBow4</Model> 
+		  <Model>CU_BanditLeaderBow1</Model> 
 		  <DrawPlayerColor>True</DrawPlayerColor>
-		  <Anim>PU_LeaderBow4_Walk</Anim>
-		  <Anim>PU_LeaderBow4_Run1</Anim>
-		  <Anim>PU_LeaderBow4_Idle1</Anim>
-		  <Anim>PU_LeaderBow4_Idle2</Anim>
-		  <Anim>PU_LeaderBow4_Idle3</Anim>
-		  <Anim>PU_LeaderBow4_Idle4</Anim>
-		  <Anim>PU_LeaderBow4_Idle5</Anim>
-		  <Anim>PU_LeaderBow4_Idle6</Anim>
-		  <Anim>PU_LeaderBow4_IdleAttack1</Anim>
-		  <Anim>PU_LeaderBow4_Attack1</Anim>
-		  <Anim>PU_LeaderBow4_Hit</Anim>		
-		  <Anim>PU_LeaderBow4_Dying1</Anim>
+		  <Anim>CU_BanditLeaderBow1_Walk</Anim>
+		  <Anim>CU_BanditLeaderBow1_Run1</Anim>
+		  <Anim>CU_BanditLeaderBow1_Idle1</Anim>
+		  <Anim>CU_BanditLeaderBow1_Idle2</Anim>
+		  <Anim>CU_BanditLeaderBow1_Idle3</Anim>
+		  <Anim>CU_BanditLeaderBow1_Idle4</Anim>
+		  <Anim>CU_BanditLeaderBow1_Idle5</Anim>
+		  <Anim>CU_BanditLeaderBow1_Idle6</Anim>
+		  <Anim>CU_BanditLeaderBow1_IdleAttack1</Anim>
+		  <Anim>CU_BanditLeaderBow1_Attack1</Anim>
+		  <Anim>CU_BanditLeaderBow1_Hit</Anim>		
+		  <Anim>CU_BanditLeaderBow1_Dying1</Anim>
 	</Display>
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>	
@@ -24,19 +24,11 @@
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>300</Gold>
-			  <Iron>80</Iron>
-			  <Wood/>
+			  <Gold>150</Gold>
+			  <Iron>0</Iron>			  
+			  <Wood>60</Wood>			  
         </Cost>
-        
 
-    
-
-    
-
-    
-
-    <!--Armor modifier-->
         <ModifyArmor>
         	<Technology>T_SoftArcherArmor</Technology>
         </ModifyArmor>
@@ -48,19 +40,7 @@
         <ModifyArmor>
         	<Technology>T_LeatherArcherArmor</Technology>
         </ModifyArmor>
-        
-        
 
-    
-
-    
-
-    
-
-    <!-- Damage Modifier-->
-         <!--ModifyDamage>
-        	<Technology>T_Fletching</Technology>
-        </ModifyDamage-->
         <ModifyExploration>
         	<Technology>T_Fletching</Technology>
         </ModifyExploration>
@@ -71,36 +51,33 @@
          <ModifyDamage>
         	<Technology>T_BodkinArrow</Technology>
         </ModifyDamage>
-        
-        
 
-    
-
-    
-
-    <!-- Speed Modifier-->
         <ModifySpeed>
         	<Technology>T_BetterTrainingArchery</Technology>
         </ModifySpeed>
-        
+
+        <Upgrade>                       
+    	   <Category>LeaderBanditBow</Category>    	    
+        </Upgrade>
+
         <Category>Military</Category>
         <Category>Leader</Category>
         <Category>Bow</Category>
-        <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <MaxHealth>135</MaxHealth>
-		  <Exploration>29</Exploration>
+		  <MaxHealth>100</MaxHealth>
+		  <Exploration>25</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
-		  <ArmorAmount>3</ArmorAmount>
-		  <DodgeChance>5</DodgeChance> 
+		  <ArmorAmount>0</ArmorAmount>
+		  <DodgeChance>20</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
-    	<ExperiencePoints>40</ExperiencePoints>
+    	<ExperiencePoints>25</ExperiencePoints>
+    	
 	</Logic>
 	<Behavior>
 		  <Logic classname="GGL::CGLAnimationBehaviorExProps">
-			  <Class>GGL::CGLBehaviorAnimationEx</Class>
-			  <SuspensionAnimation>PU_LeaderBow4_Idle1</SuspensionAnimation>			
-			  <AnimSet>SET_LEADERBOW4</AnimSet>
+			  <Class>GGL::CGLBehaviorAnimationEx</Class>			
+			  <SuspensionAnimation>CU_BanditLeaderBow1_Idle1</SuspensionAnimation>			
+			  <AnimSet>SET_CU_BANDITLEADERBOW1</AnimSet>
 		  </Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorAnimation</Class>
@@ -109,10 +86,10 @@
 	<Behavior>
 		  <Logic classname="EGL::CMovementBehaviorProps">
 			  <Class>GGL::CLeaderMovement</Class>
-			  <Speed>320</Speed>
+			  <Speed>340</Speed>
 			  <RotationSpeed>30</RotationSpeed>
 			  <MoveTaskList>TL_LEADER_WALK</MoveTaskList>
-			  <MoveIdleAnim>PU_LeaderBow4_Idle1</MoveIdleAnim>
+			  <MoveIdleAnim>CU_BanditLeaderBow1_Idle1</MoveIdleAnim>
 		</Logic>
 		  <Display classname="ED::CBehaviorProps">
 			  <Class>ED::CDisplayBehaviorMovement</Class>
@@ -125,40 +102,41 @@
 	</Behavior>
 	<Behavior>
 		  <Logic classname="GGL::CLeaderBehaviorProps">
-			  <Class>GGL::CLeaderBehavior</Class>
-			  <BarrackUpgradeCategory>Archery</BarrackUpgradeCategory>
+			  <Class>GGL::CLeaderBehavior</Class>			
+			  <BarrackUpgradeCategory>Archery</BarrackUpgradeCategory>			
             <HomeRadius>2000</HomeRadius>
-            
-			  <SoldierType>PU_SoldierBow4</SoldierType>
+
+			  <SoldierType>CU_BanditSoldierBow1</SoldierType>
 			
-	        <BattleTaskList>TL_BATTLE_CROSSBOW</BattleTaskList>
+	        <BattleTaskList>TL_BATTLE_BOW</BattleTaskList>
 	        
-	        <NormalAttackAnim1>PU_LeaderBow4_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>PU_LeaderBow4_Attack1</NormalAttackAnim2>
-	        <CounterAttackAnim>PU_LeaderBow4_Attack1</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_LeaderBow4_Attack1</FinishingMoveAnim>
-	        <MissAttackAnim>PU_LeaderBow4_Attack1</MissAttackAnim>
-	        <BattleIdleAnim>PU_LeaderBow4_IdleAttack1</BattleIdleAnim>
-	        <BattleWalkAnim>PU_LeaderBow4_Run1</BattleWalkAnim>
-	        <HitAnim>PU_LeaderBow4_Hit</HitAnim>
+	        <NormalAttackAnim1>CU_BanditLeaderBow1_Attack1</NormalAttackAnim1>
+	        <NormalAttackAnim2>CU_BanditLeaderBow1_Attack1</NormalAttackAnim2>
+	        <CounterAttackAnim>CU_BanditLeaderBow1_Attack1</CounterAttackAnim>
+	        <FinishingMoveAnim>CU_BanditLeaderBow1_Attack1</FinishingMoveAnim>
+	        <MissAttackAnim>CU_BanditLeaderBow1_Attack1</MissAttackAnim>
+	        <BattleIdleAnim>CU_BanditLeaderBow1_IdleAttack1</BattleIdleAnim>
+	        <BattleWalkAnim>CU_BanditLeaderBow1_Run1</BattleWalkAnim>
+	        <HitAnim>CU_BanditLeaderBow1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>21</DamageAmount>
-	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
+	        <DamageAmount>6</DamageAmount>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2600</BattleWaitUntil>
 	        
-	        <MissChance>8</MissChance>
+	        <MissChance>15</MissChance>
 	        
-	        <ProjectileEffectID>FXCrossBowArrow</ProjectileEffectID>
-	        <MaxRange>2900</MaxRange>
-	        <MinRange>800.0f</MinRange>
-	        <AutoAttackRange>2900</AutoAttackRange>
+	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
+	        <MaxRange>2500</MaxRange>
+	        <MinRange>500.0f</MinRange>	        
+	        <AutoAttackRange>2500</AutoAttackRange>
 	        
-			  <HealingPoints>5</HealingPoints>
+			<HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>
 	        
 	        <UpkeepCost>20</UpkeepCost>
+	        
 		  </Logic>
 	</Behavior>
 
@@ -167,7 +145,7 @@
 			  <Class>GGL::CLimitedAttachmentBehavior</Class>
             <Attachment>
                 <Type>ATTACHMENT_LEADER_SOLDIER</Type>
-                <Limit>6</Limit>
+                <Limit>12</Limit>
             </Attachment>
 		</Logic>
 	</Behavior>
@@ -178,6 +156,7 @@
 			  <DyingTaskList>TL_DIE</DyingTaskList>
 		</Logic>
 	</Behavior>
+
 
 
 	<Behavior>
@@ -200,6 +179,11 @@
             <EntityType>XD_DroppedBow</EntityType>
         </Logic>
     </Behavior>
+
+
+
+
+
 
 
 

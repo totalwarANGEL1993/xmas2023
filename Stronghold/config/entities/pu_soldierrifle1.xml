@@ -22,7 +22,7 @@
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
 		  <MaxHealth>100</MaxHealth>
-		  <DodgeChance>0</DodgeChance> 
+		  <DodgeChance>10</DodgeChance> 
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>

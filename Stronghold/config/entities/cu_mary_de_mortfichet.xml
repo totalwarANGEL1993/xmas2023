@@ -131,7 +131,7 @@
 	        <TaskList>TL_BATTLE_POISON</TaskList>
 	        <Animation>CU_Mary_de_Mortfichet_PoisonAttack</Animation>
 	        <DamageClass>DC_Hero</DamageClass>
-	        <DamageAmount>75</DamageAmount>
+	        <DamageAmount>95</DamageAmount>
 	        <Range>1500.0</Range>
 	        <Effect>FXMaryPoison</Effect>
 	    </Logic>

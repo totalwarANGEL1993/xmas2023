@@ -79,7 +79,7 @@
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
 		  <ArmorAmount>3</ArmorAmount>
-		  <DodgeChance>0</DodgeChance> 
+		  <DodgeChance>5</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>35</ExperiencePoints>
     	<Upgrade>
@@ -133,7 +133,7 @@
 	        <BattleWalkAnim>PU_LeaderPoleArm3_Run1</BattleWalkAnim>
 	        <HitAnim>PU_LeaderPoleArm3_Hit</HitAnim>
 	        
-	        <DamageClass>DC_Pierce</DamageClass>
+	        <DamageClass>DC_Pole</DamageClass>
 	        <DamageAmount>20</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        

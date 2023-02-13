@@ -21,8 +21,8 @@
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
-		  <MaxHealth>100</MaxHealth>
-		  <DodgeChance>0</DodgeChance> 
+		  <MaxHealth>120</MaxHealth>
+		  <DodgeChance>5</DodgeChance> 
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>

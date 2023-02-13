@@ -26,6 +26,7 @@
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
 		  <MaxHealth>130</MaxHealth>
 		  <NeedsPlayer>true</NeedsPlayer>
+		  <DodgeChance>10</DodgeChance>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
@@ -33,6 +34,8 @@
 			  <Iron>20</Iron>
 			  <Wood/>
         </Cost>
+
+        
         <ModifyArmor>
         	<Technology>T_SuperTechnology</Technology>
         </ModifyArmor>
@@ -72,13 +75,7 @@
 		  <ModifyGroupLimit>
 			  <Technology>T_SuperTechnology</Technology>
 		</ModifyGroupLimit>
-		
-		
-  
-  
-  
-  
-  <!--Armor modifier-->
+
         <ModifyArmor>
         	<Technology>T_LeatherMailArmor</Technology>
         </ModifyArmor>
@@ -90,26 +87,14 @@
         <ModifyArmor>
         	<Technology>T_PlateMailArmor</Technology>
         </ModifyArmor>
-        
-        
 
-    
-
-    
-<!-- Damage Modifier-->
          <ModifyDamage>
         	<Technology>T_MasterOfSmithery</Technology>
         </ModifyDamage>
          <ModifyDamage>
         	<Technology>T_IronCasting</Technology>
         </ModifyDamage>
-        
-        
 
-    
-
-    
-<!-- Speed Modifier-->
         <ModifySpeed>
         	<Technology>T_BetterTrainingBarracks</Technology>
         </ModifySpeed>
@@ -166,8 +151,8 @@
 	        <BattleWalkAnim>PU_SoldierSword1_Run1</BattleWalkAnim> 
 	        <HitAnim>PU_SoldierSword1_Hit</HitAnim>
 	        
-	        <DamageClass>DC_Strike</DamageClass>
-	        <DamageAmount>5</DamageAmount>
+	        <DamageClass>DC_Sword</DamageClass>
+	        <DamageAmount>6</DamageAmount>
 	        <MaxRandomDamageBonus>1</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>1500</BattleWaitUntil>

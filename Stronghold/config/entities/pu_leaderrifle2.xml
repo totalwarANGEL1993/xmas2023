@@ -74,7 +74,7 @@
 		  <Exploration>30</Exploration>
 		  <ArmorClass>ArmorClassLeather</ArmorClass> 
 		  <ArmorAmount>2</ArmorAmount>
-		  <DodgeChance>0</DodgeChance> 
+		  <DodgeChance>5</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>40</ExperiencePoints>
 	</Logic>
