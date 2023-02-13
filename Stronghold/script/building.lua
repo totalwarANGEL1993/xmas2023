@@ -303,7 +303,8 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         if Logic.IsEntityInCategory(GUI.GetSelectedEntity(), EntityCategories.Headquarters) == 1 then
             Text = "@color:180,180,180 Laird wählen @color:255,255,255 "..
                    "@cr Wählt euren Laird aus. Jeder Laird verfügt über "..
-                   "starke Fähigkeiten.";
+                   "starke Fähigkeiten. Ohne einen Laird könnt ihr keine "..
+                   "Ehre erhalten.";
         end
     else
         return false;
@@ -351,17 +352,15 @@ function Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, _BlessCategory
 
     local Effects = Stronghold.Building.Config.Headquarters[_BlessCategory];
     if _BlessCategory == BlessCategories.Construction then
-        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
-        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
-        Stronghold:AddPlayerHonor(_PlayerID, Effects.Honor);
+        Stronghold.Economy:AddOneTimeReputation(_PlayerID, Effects.Reputation);
+        Stronghold.Economy:AddOneTimeHonor(_PlayerID, Effects.Honor);
 
     elseif _BlessCategory == BlessCategories.Research then
         local RandomTax = 0;
         for i= 1, Logic.GetNumberOfAttractedWorker(_PlayerID) do
             RandomTax = RandomTax + math.random(1, 5);
         end
-        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
-        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+        Stronghold.Economy:AddOneTimeReputation(_PlayerID, Effects.Reputation);
 
         Message("Ihr habt " ..RandomTax.. " Taler erhalten!");
         Sound.PlayGUISound(Sounds.LevyTaxes, 100);
@@ -379,13 +378,11 @@ function Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, _BlessCategory
         end
 
     elseif _BlessCategory == BlessCategories.Financial then
-        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
-        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+        Stronghold.Economy:AddOneTimeReputation(_PlayerID, Effects.Reputation);
 
     elseif _BlessCategory == BlessCategories.Canonisation then
-        Stronghold:AddPlayerReputation(_PlayerID, Effects.Reputation);
-        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
-        Stronghold:AddPlayerHonor(_PlayerID, Effects.Honor);
+        Stronghold.Economy:AddOneTimeReputation(_PlayerID, Effects.Reputation);
+        Stronghold.Economy:AddOneTimeHonor(_PlayerID, Effects.Honor);
     end
 end
 
@@ -1607,11 +1604,10 @@ function Stronghold.Building:MonasteryBlessSettlers(_PlayerID, _BlessCategory)
 
     local BlessData = self.Config.Monastery[_BlessCategory];
     if BlessData.Reputation > 0 then
-        Stronghold:AddPlayerReputation(_PlayerID, BlessData.Reputation);
-        Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+        Stronghold.Economy:AddOneTimeReputation(_PlayerID, BlessData.Reputation);
     end
     if BlessData.Honor > 0 then
-        Stronghold:AddPlayerHonor(_PlayerID, BlessData.Honor);
+        Stronghold.Economy:AddOneTimeHonor(_PlayerID, BlessData.Honor);
     end
 
     if GUI.GetPlayerID() == _PlayerID then

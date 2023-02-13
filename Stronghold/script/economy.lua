@@ -72,8 +72,8 @@ Stronghold.Economy = {
                 [Entities.PB_Farm2]      = {Honor = 0.12, Reputation = 0.03,},
                 [Entities.PB_Farm3]      = {Honor = 0.18, Reputation = 0.06,},
                 ---
-                [Entities.PB_Residence2] = {Honor = 0, Reputation = 0.15,},
-                [Entities.PB_Residence3] = {Honor = 0, Reputation = 0.24,},
+                [Entities.PB_Residence2] = {Honor = 0.03, Reputation = 0.12,},
+                [Entities.PB_Residence3] = {Honor = 0.06, Reputation = 0.18,},
                 ---
                 [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.35,},
                 [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.45,},
@@ -105,6 +105,43 @@ Stronghold.Economy = {
                 [Entities.PB_Monastery2]       = {Honor = 0, Reputation = 9,},
                 [Entities.PB_Monastery3]       = {Honor = 0, Reputation = 12,},
             },
+        },
+
+        Text = {
+            CourtClerk = {
+                [1] = {
+                    de = "Hofschreiber",
+                    en = "Court Clerk",
+                },
+                [2] = {
+                    de = "{white}Erwartete Ehre: %s{cr}"..
+                         "{none}___{grey}Steuer: %s{cr}"..
+                         "{none}___{grey}Gebäude: %s{cr}"..
+                         "{none}___{grey}Versorgung: %s{cr}"..
+                         "{none}___{grey}Obdach: %s{cr}"..
+                         "{none}___{grey}Spezial: %s{cr}{cr}"..
+                         "{white}Erwartete Beliebtheit: %s{cr}"..
+                         "{none}___{grey}Steuer: %s{cr}"..
+                         "{none}___{grey}Gesetz: %s{cr}"..
+                         "{none}___{grey}Gebäude: %s{cr}"..
+                         "{none}___{grey}Versorgung: %s{cr}"..
+                         "{none}___{grey}Obdach: %s{cr}"..
+                         "{none}___{grey}Spezial: %s",
+                    en = "{white}Expected Honor: %s{cr}"..
+                         "{none}___{grey}Tax: %s{cr}"..
+                         "{none}___{grey}Buildings: %s{cr}"..
+                         "{none}___{grey}Providing: %s{cr}"..
+                         "{none}___{grey}Housing: %s{cr}"..
+                         "{none}___{grey}Special: %s{cr}{cr}"..
+                         "{white}Expected Reputation: %s{cr}"..
+                         "{none}___{grey}Tax: %s{cr}"..
+                         "{none}___{grey}Law & Order: %s{cr}"..
+                         "{none}___{grey}Buildings: %s{cr}"..
+                         "{none}___{grey}Providing: %s{cr}"..
+                         "{none}___{grey}Housing: %s{cr}"..
+                         "{none}___{grey}Special: %s",
+                },
+            }
         }
     }
 };
@@ -119,6 +156,7 @@ function Stronghold.Economy:Install()
             UpkeepDetails = {},
 
             IncomeReputation = 0,
+            IncomeReputationSingle = 0,
             ReputationDetails = {
                 TaxBonus = 0,
                 Housing = 0,
@@ -128,15 +166,18 @@ function Stronghold.Economy:Install()
                 TaxPenalty = 0,
                 Homelessness = 0,
                 Hunger = 0,
+                Criminals = 0,
                 OtherMalus = 0,
             },
 
             IncomeHonor = 0,
+            IncomeHonorSingle = 0,
             HonorDetails = {
                 TaxBonus = 0,
                 Housing = 0,
                 Providing = 0,
                 Buildings = 0,
+                Criminals = 0,
                 OtherBonus = 0,
             },
         };
@@ -146,7 +187,6 @@ function Stronghold.Economy:Install()
 
     self:OverrideFindViewUpdate();
     self:OverrideTaxAndPayStatistics();
-    self:OverridePaydayClockTooltip();
 end
 
 function Stronghold.Economy:OnSaveGameLoaded()
@@ -309,7 +349,7 @@ function Stronghold.Economy:UpdateIncomeAndUpkeep(_PlayerID)
 
         self.Data[_PlayerID].IncomeMoney = Income;
         self.Data[_PlayerID].UpkeepMoney = Upkeep;
-        self.Data[_PlayerID].IncomeReputation = math.floor((ReputationPlus - ReputationMinus) + 0.5);
+        self.Data[_PlayerID].IncomeReputation = math.floor((ReputationPlus - ReputationMinus)+ 0.5);
         self.Data[_PlayerID].IncomeHonor = math.floor(HonorPlus + 0.5);
     end
 end
@@ -324,6 +364,7 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
         if table.getn(WorkerList) > 0 then
             -- Tax height
             local TaxtHeight = Stronghold.Players[_PlayerID].TaxHeight;
+            self.Data[_PlayerID].ReputationDetails.TaxBonus = 0;
             if TaxtHeight == 1 then
                 local TaxEffect = self.Config.Income.TaxEffect;
                 local TaxBonus = TaxEffect[TaxtHeight].Reputation;
@@ -381,7 +422,8 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
 
             -- External calculations
             local Special = GameCallback_Calculate_ReputationIncreaseExternal(_PlayerID);
-            self.Data[_PlayerID].ReputationDetails.OtherBonus = Special;
+            local ReputationOneshot = self.Data[_PlayerID].IncomeReputationSingle;
+            self.Data[_PlayerID].ReputationDetails.OtherBonus = Special + ReputationOneshot;
         end
     end
 end
@@ -414,7 +456,9 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
 
             -- External calculations
             local Special = GameCallback_Calculate_ReputationDecreaseExternal(_PlayerID);
-            self.Data[_PlayerID].ReputationDetails.OtherMalus = Special;
+            local Criminals = Stronghold.Attraction:GetReputationLossByCriminals(_PlayerID);
+            self.Data[_PlayerID].ReputationDetails.Criminals = Criminals;
+            self.Data[_PlayerID].ReputationDetails.OtherMalus = Special - Criminals;
         end
     end
 end
@@ -499,7 +543,8 @@ function Stronghold.Economy:CalculateHonorIncome(_PlayerID)
 
                 -- External calculations
                 local Special = GameCallback_Calculate_HonorIncreaseSpecial(_PlayerID);
-                self.Data[_PlayerID].HonorDetails.OtherBonus = Special;
+                local HonorOneshot = self.Data[_PlayerID].IncomeHonorSingle;
+                self.Data[_PlayerID].HonorDetails.OtherBonus = Special + HonorOneshot;
             end
         end
     end
@@ -549,6 +594,20 @@ function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
         return math.floor(Upkeep + 0.5);
     end
     return 0;
+end
+
+function Stronghold.Economy:AddOneTimeHonor(_PlayerID, _Amount)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local Old = self.Data[_PlayerID].IncomeHonorSingle;
+        self.Data[_PlayerID].IncomeHonorSingle = Old + _Amount;
+    end
+end
+
+function Stronghold.Economy:AddOneTimeReputation(_PlayerID, _Amount)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local Old = self.Data[_PlayerID].IncomeReputationSingle;
+        self.Data[_PlayerID].IncomeReputationSingle = Old + _Amount;
+    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -666,51 +725,34 @@ function Stronghold.Economy:HonorMenu()
         "GCWindowWelcome",
         Honor.. "/" ..MaxHonor.. " @cr " ..Reputation.. "/" ..ReputationLimit
     );
-end
-
-function Stronghold.Economy:OverridePaydayClockTooltip()
-    GUITooltip_Payday_Orig_StrongholdEco = GUITooltip_Payday
-    GUITooltip_Payday = function()
-        local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold.Economy.Data[PlayerID] then
-            return GUITooltip_Payday_Orig_StrongholdEco();
-        end
-
-        local PaydayTime = math.floor((Logic.GetPlayerPaydayTimeLeft(PlayerID)/1000) + 0.5);
-        local Honor = Stronghold.Economy.Data[PlayerID].IncomeHonor;
-        local Reputation = Stronghold.Economy.Data[PlayerID].IncomeReputation;
-
-        local TextCol = " @color:255,255,255 ";
-        local GreenCol = " @color:173,255,47 ";
-        local RepuColor = GreenCol;
-
-        if Reputation < 0 then
-            RepuColor = " @color:255,32,32 ";
-        else
-            Reputation = "+" .. Reputation;
-        end
-        if Honor >= 0 then
-            Honor = "+" .. Honor;
-        end
-
-        XGUIEng.SetText(
-            "TooltipTopText",
-            " @color:180,180,180 Zahltag @cr " ..TextCol.. " " ..PaydayTime..
-            " Sekunden verbleiben @cr Ihr erhaltet: @cr "..
-            RepuColor.. " " ..Reputation.. " " ..TextCol.. " Beliebtheit @cr "..
-            GreenCol.. " " ..Honor.. " " ..TextCol.. " Ehre"
-        );
+    XGUIEng.SetTextColor("GCWindowWelcome", 255, 255, 255);
+    if Game.GameTimeGetFactor() == 0 then
+        XGUIEng.SetTextColor("GCWindowWelcome", 80, 80, 80);
     end
 end
 
 function Stronghold.Economy:OverrideTaxAndPayStatistics()
-    GUIUpdate_TaxPaydayIncome_Orig_StrongholdEco = GUIUpdate_TaxPaydayIncome;
-    GUIUpdate_TaxPaydayIncome = function()
-		local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold.Economy.Data[PlayerID] then
-            return GUIUpdate_TaxPaydayIncome_Orig_StrongholdEco();
+    Overwrite.CreateOverwrite("GameCallback_Stronghold_OnPayday", function(_PlayerID)
+        Overwrite.CallOriginal();
+        -- Remove the one time bonuses
+        if Stronghold.Economy.Data[_PlayerID] then
+            Stronghold.Economy.Data[_PlayerID].IncomeReputationSingle = 0;
+            Stronghold.Economy.Data[_PlayerID].IncomeHonorSingle = 0;
         end
+    end);
 
+    Overwrite.CreateOverwrite("GameCallback_Logic_CriminalCatched", function(_PlayerID, _BuildingID)
+        Overwrite.CallOriginal();
+        if Stronghold.Economy.Data[_PlayerID] then
+            Stronghold.Economy:AddOneTimeHonor(_PlayerID, 1);
+        end
+    end);
+
+    Overwrite.CreateOverwrite("GUIUpdate_TaxPaydayIncome", function()
+        local PlayerID = Stronghold:GetLocalPlayerID();
+        if not Stronghold.Economy.Data[PlayerID] then
+            return Overwrite.CallOriginal();
+        end
         local Income = Stronghold.Economy.Data[PlayerID].IncomeMoney;
         local Upkeep = Stronghold.Economy.Data[PlayerID].UpkeepMoney;
         if Income - Upkeep < 0 then
@@ -720,54 +762,41 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
 			XGUIEng.SetText( "SumOfPayday", " @color:173,255,47 @ra +"..(Income-Upkeep));
 			XGUIEng.SetText( "TaxSumOfPayday", " @color:173,255,47 @ra +"..(Income-Upkeep));
 		end
-	end
+    end);
 
-    GUIUpdate_TaxSumOfTaxes_Orig_StrongholdEco = GUIUpdate_TaxSumOfTaxes;
-	GUIUpdate_TaxSumOfTaxes = function()
-		local PlayerID = Stronghold:GetLocalPlayerID();
+    Overwrite.CreateOverwrite("GUIUpdate_TaxSumOfTaxes", function()
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Economy.Data[PlayerID] then
-            return GUIUpdate_TaxSumOfTaxes_Orig_StrongholdEco();
+            return Overwrite.CallOriginal();
         end
-
         local Income = Stronghold.Economy.Data[PlayerID].IncomeMoney;
         XGUIEng.SetText( "TaxWorkerSumOfTaxes", " @color:173,255,47 @ra " ..Income);
-	end
+    end);
 
-    GUIUpdate_TaxLeaderCosts_Orig_StrongholdEco = GUIUpdate_TaxLeaderCosts;
-	GUIUpdate_TaxLeaderCosts = function()
-		local PlayerID = Stronghold:GetLocalPlayerID();
+    Overwrite.CreateOverwrite("GUIUpdate_TaxLeaderCosts", function()
+        local PlayerID = Stronghold:GetLocalPlayerID();
         if not Stronghold.Economy.Data[PlayerID] then
-            return GUIUpdate_TaxLeaderCosts_Orig_StrongholdEco();
+            return Overwrite.CallOriginal();
         end
-
         local Upkeep = Stronghold.Economy.Data[PlayerID].UpkeepMoney;
         XGUIEng.SetText( "TaxLeaderSumOfPay", " @color:255,32,32 @ra "..Upkeep);
-	end
+    end);
 
-    GUIUpdate_AverageMotivation_Orig_StrongholdEco = GUIUpdate_AverageMotivation;
-    GUIUpdate_AverageMotivation = function()
+    Overwrite.CreateOverwrite("GUIUpdate_AverageMotivation", function()
         local PlayerID = Stronghold:GetLocalPlayerID();
-        if not Stronghold.Economy.Data[PlayerID] or not Stronghold:IsPlayer(PlayerID) then
-            return GUIUpdate_AverageMotivation_Orig_StrongholdEco();
+        if not Stronghold:IsPlayer(PlayerID) then
+            return Overwrite.CallOriginal();
         end
-        local Reputation = Stronghold:GetPlayerReputation(PlayerID)
-        local ReputationLimit = Stronghold:GetPlayerReputationLimit(PlayerID)
-        -- Icon
-        local TexturePath = "data/graphics/textures/gui/";
-        if Reputation < 70 then
-            TexturePath = TexturePath .. "i_res_motiv_worse.png";
-        elseif Reputation >= 70 and Reputation < 100 then
-            TexturePath = TexturePath .. "i_res_motiv_bad.png";
-        elseif Reputation >= 100 and Reputation < 150 then
-            TexturePath = TexturePath .. "i_res_motiv_good.png";
-        elseif Reputation >= 150 then
-            TexturePath = TexturePath .. "i_res_motiv_fine.png";
-        end
-        XGUIEng.SetMaterialTexture("IconMotivation", 0, TexturePath);
-        -- Text
-        XGUIEng.SetWidgetPosition("AverageMotivation", 40, 118);
-		XGUIEng.SetText("AverageMotivation", "@center " ..Reputation.. "/" ..ReputationLimit);
-	end
+        XGUIEng.SetMaterialTexture("IconMotivation", 0, gvBasePath.. "graphics/i_res_arms.png");
+        XGUIEng.SetWidgetPosition("IconMotivation", 12, 120);
+        XGUIEng.SetWidgetSize("IconMotivation", 18, 18);
+
+        local Usage = Stronghold.Attraction:GetPlayerMilitaryAttractionUsage(PlayerID);
+        local Limit = Stronghold.Attraction:GetPlayerMilitaryAttractionLimit(PlayerID);
+        XGUIEng.SetText("AverageMotivation", "@ra " ..Usage.. "/" ..Limit);
+        XGUIEng.SetWidgetPositionAndSize("AverageMotivation", 37, 118, 53, 15);
+		XGUIEng.SetTextColor("AverageMotivation", 115, 125, 125);
+    end);
 end
 
 function Stronghold.Economy:PrintTooltipGenericForEcoGeneral(_PlayerID, _Key)
@@ -796,27 +825,18 @@ function Stronghold.Economy:PrintTooltipGenericForEcoGeneral(_PlayerID, _Key)
             gvGUI_WidgetID.TooltipBottomText,
             " @color:180,180,180 Bevölkerung @color:255,255,255 @cr Zur "..
             "Bevölkerung zählen alle Arbeiter, Leibeigene, Kundschafter "..
-            "und Diebe. Baut die Burg aus, um mehr Volk anzulocken."
+            "und Diebe. Nehmt Dörfer ein, um mehr Volk anzulocken."
         );
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
         return true;
     elseif _Key == "MenuResources/Motivation" then
-        local Text = " @color:180,180,180 Beliebtheit @color:255,255,255 @cr ";
-        local Reputation = Stronghold.Players[_PlayerID].Reputation;
-        if Reputation <= 30 then
-            Text = Text .. "Sir, Ihr seid eine Katastrophe! Die Leute verlassen die Burg!";
-        elseif Reputation > 30 and Reputation < 70 then
-            Text = Text .. "Wenn man Euch etwas zuruft, ist es meistens etwas unanständiges.";
-        elseif Reputation >= 70 and Reputation < 90 then
-            Text = Text .. "Der Pöbel tuschelt hinter vorgehaltener Hand über Euch.";
-        elseif Reputation >= 90 and Reputation < 150 then
-            Text = Text .. "Die Leute sind zufrieden mit Eurer Herrschaft, Milord.";
-        elseif Reputation >= 150 then
-            Text = Text .. "Ihr seid unglaublich, Sir! Das Volk verehrt Euch.";
-        end
-
-        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+        XGUIEng.SetText(
+            gvGUI_WidgetID.TooltipBottomText,
+            " @color:180,180,180 Militär @color:255,255,255 @cr Zum "..
+            " Militär zählen alle Soldaten und Kanonen. Baut Eure Burg aus, "..
+            " um mehr Truppen unterhalten zu können."
+        );
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
         return true;
@@ -880,6 +900,79 @@ function Stronghold.Economy:PrintTooltipGenericForFindView(_PlayerID, _Key)
 end
 
 -- -------------------------------------------------------------------------- --
+-- HQ Details
+
+function Stronghold.Economy:ShowHeadquartersDetail(_PlayerID)
+    local GuiPlayer = GUI.GetPlayerID();
+    if Stronghold:IsPlayer(_PlayerID) then
+        if GuiPlayer == 17 or GuiPlayer == _PlayerID then
+            local Selected = GUI.GetSelectedEntity();
+            if Selected == GetID(Stronghold.Players[_PlayerID].HQScriptName) then
+                local Language = GetLanguage();
+                local Headline = self.Config.Text.CourtClerk[1][Language];
+                local Content = self:CreateHeadquarterDetailsText(_PlayerID);
+                self:PrintHeadquartersDetail(Headline, Content);
+            else
+                XGUIEng.ShowWidget("Movie", 0);
+            end
+        end
+    end
+end
+
+function Stronghold.Economy:CreateHeadquarterDetailsText(_PlayerID)
+    local irep = self.Data[_PlayerID].IncomeReputation;
+
+    local ihon = self.Data[_PlayerID].IncomeHonor;
+    local hbb  = self.Data[_PlayerID].HonorDetails.Buildings;
+    local htb  = self.Data[_PlayerID].HonorDetails.TaxBonus;
+    local hho  = self.Data[_PlayerID].HonorDetails.Housing;
+    local hpr  = self.Data[_PlayerID].HonorDetails.Providing;
+    local hob  = self.Data[_PlayerID].HonorDetails.OtherBonus;
+
+    local pbb  = self.Data[_PlayerID].ReputationDetails.Buildings;
+    local ptb  = self.Data[_PlayerID].ReputationDetails.TaxBonus;
+    local ptp  = self.Data[_PlayerID].ReputationDetails.TaxPenalty;
+    local pho  = self.Data[_PlayerID].ReputationDetails.Housing;
+    local phs  = self.Data[_PlayerID].ReputationDetails.Homelessness;
+    local ppr  = self.Data[_PlayerID].ReputationDetails.Providing;
+    local phu  = self.Data[_PlayerID].ReputationDetails.Hunger;
+    local pob  = self.Data[_PlayerID].ReputationDetails.OtherBonus;
+    local pcr  = self.Data[_PlayerID].ReputationDetails.Criminals;
+    local pop  = self.Data[_PlayerID].ReputationDetails.OtherMalus;
+
+    local Language = GetLanguage();
+    return string.format(
+        self.Config.Text.CourtClerk[2][Language],
+        -- Honor
+        ((ihon < 0 and "{scarlet}") or "{green}") ..ihon,
+        ((htb < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", htb),
+        ((hbb < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", hbb),
+        ((hpr < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", hpr),
+        ((hho < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", hho),
+        ((hob < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", hob),
+        -- Reputation
+        ((irep < 0 and "{scarlet}") or "{green}") ..irep,
+        ((ptb-ptp < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", ptb-ptp),
+        ((pcr < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", pcr),
+        ((pbb < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", pbb),
+        ((ppr-phu < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", ppr-phu),
+        ((pho-phs < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", pho-phs),
+        ((pob-pop < 0 and "{scarlet}") or "{green}") ..string.format("%.2f", pob-pop)
+    );
+end
+
+function Stronghold.Economy:PrintHeadquartersDetail(_Title, _Text)
+    XGUIEng.ShowWidget("Movie", 1);
+    XGUIEng.ShowWidget("Cinematic_Text", 0);
+    XGUIEng.ShowWidget("CreditsWindowLogo", 0);
+    XGUIEng.ShowWidget("MovieBarTop", 0);
+    XGUIEng.ShowWidget("MovieBarBottom", 0);
+    XGUIEng.ShowWidget("MovieInvisibleClickCatcher", 0);
+    XGUIEng.SetText("CreditsWindowTextTitle", _Title);
+    XGUIEng.SetText("CreditsWindowText", Placeholder.Replace(_Text));
+end
+
+-- -------------------------------------------------------------------------- --
 -- Trigger
 
 function Stronghold.Economy:StartTriggers()
@@ -889,6 +982,12 @@ function Stronghold.Economy:StartTriggers()
         local PlayerID = math.mod(math.floor(Logic.GetTime() * 10), Players);
         Stronghold.Economy:UpdateIncomeAndUpkeep(PlayerID);
         Stronghold.Economy:GainMeasurePoints(PlayerID);
+    end);
+
+    Job.Turn(function()
+        for i= 1, table.getn(Score.Player) do
+            Stronghold.Economy:ShowHeadquartersDetail(i);
+        end
     end);
 end
 

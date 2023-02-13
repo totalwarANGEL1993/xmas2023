@@ -831,7 +831,7 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                 if Logic.GetEntityHealth(k) == 0 then
                     Stronghold.Players[_PlayerID].AttackMemory[k] = nil;
                     local WolfPlayerID = Logic.EntityGetPlayer(v[2]);
-                    Stronghold:AddPlayerHonor(WolfPlayerID, 1);
+                    Stronghold.Economy:AddOneTimeHonor(WolfPlayerID, 1);
                 end
             end
 
@@ -1051,7 +1051,7 @@ end
 -- Passive Ability: Produce honor for technology
 function Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID)
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
-        Stronghold:AddPlayerHonor(_PlayerID, 5);
+        Stronghold.Economy:AddOneTimeHonor(_PlayerID, 5);
     end
 end
 

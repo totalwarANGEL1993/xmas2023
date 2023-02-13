@@ -52,7 +52,7 @@ Stronghold = {
                 Condition = function(_PlayerID)
                     local Chapell1 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Monastery1));
                     local Chapell2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
-                    local Chapell3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
+                    local Chapell3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
                     return Chapell1 + Chapell2 + Chapell3 > 0;
                 end,
             },
@@ -878,6 +878,8 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
     self.Building:OnStableSelected(SelectedID);
     self.Building:OnFoundrySelected(SelectedID);
     self.Building:OnTavernSelected(SelectedID);
+
+    -- self.Economy:ShowHeadquartersDetail(GuiPlayer);
 end
 
 function Stronghold:OverwriteCommonCallbacks()

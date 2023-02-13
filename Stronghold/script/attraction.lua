@@ -24,9 +24,12 @@
 --- 
 --- - <number> GameCallback_Calculate_CrimeChance(_PlayerID, _Chance)
 ---   Allows to overwrite the crime chance.
---- 
---- - GameCallback_Logic_CriminalSpawned(_PlayerID, _EntityID, _BuildingID)
----   Called after a criminal has replaced a worker.
+---
+--- - <number> GameCallback_Logic_CriminalAppeared(_PlayerID, _BuildingID)
+---   Allows to overwrite the crime chance.
+---
+--- - <number> GameCallback_Logic_CriminalCatched(_PlayerID, _Chance)
+---   Allows to overwrite the crime chance.
 ---
 
 Stronghold = Stronghold or {};
@@ -35,19 +38,19 @@ Stronghold.Attraction = {
     Data = {},
     Config = {
         HQCivilAttraction = {
-            [1] = 85,
-            [2] = 115,
-            [3] = 145
+            [1] = 76,
+            [2] = 84,
+            [3] = 92
         },
         HQMilitaryAttraction = {
-            [1] = 300,
-            [2] = 450,
+            [1] = 360,
+            [2] = 480,
             [3] = 600
         },
         VCCivilAttraction = {
-            [1] = 35,
-            [2] = 50,
-            [3] = 65
+            [1] = 50,
+            [2] = 66,
+            [3] = 82
         },
 
         Criminals = {
@@ -180,7 +183,10 @@ function GameCallback_Calculate_CrimeChance(_PlayerID, _Chance)
     return _Chance;
 end
 
-function GameCallback_Logic_CriminalSpawned(_PlayerID, _EntityID, _BuildingID)
+function GameCallback_Logic_CriminalAppeared(_PlayerID, _BuildingID)
+end
+
+function GameCallback_Logic_CriminalCatched(_PlayerID, _BuildingID)
 end
 
 -- -------------------------------------------------------------------------- --
@@ -190,35 +196,38 @@ function Stronghold.Attraction:ManageCriminalsOfPlayer(_PlayerID)
     if self.Data[_PlayerID] then
         -- Converting workers to criminals
         -- Depending on the crime rate each x seconds a settler can become a
-        -- criminal by a chance of y %.
-        -- Then they are deleted and his space inside the building is blocked
+        -- criminal by a chance of y%.
+        -- Then they are deleted and their space inside the building is blocked
         -- until the criminal is punished.
-        local CrimeRate = self:CalculateCrimeRate(_PlayerID);
-        local CrimeChance = self.Config.Criminals.Convert.Chance;
-        local CrimeTime = self.Config.Criminals.Convert.Time;
-        if self.Data[_PlayerID].LastCriminal + (CrimeRate * CrimeTime) < Logic.GetTime() then
-            CrimeChance = GameCallback_Calculate_CrimeChance(_PlayerID, CrimeChance);
-            if math.random(1, 1000) <= CrimeChance then
-                local WorkerList = {};
-                for k, v in pairs(GetAllWorkplaces(_PlayerID)) do
-                    local WorkerOfBuilding = {Logic.GetAttachedWorkersToBuilding(v)};
-                    for i= 2, WorkerOfBuilding[1] +1 do
-                        table.insert(WorkerList, {WorkerOfBuilding[i], v});
+        if self:DoCriminalsAppear(_PlayerID) then
+            local CrimeRate = self:CalculateCrimeRate(_PlayerID);
+            local CrimeChance = self.Config.Criminals.Convert.Chance;
+            local CrimeTime = self.Config.Criminals.Convert.Time;
+            if self.Data[_PlayerID].LastCriminal + (CrimeRate * CrimeTime) < Logic.GetTime() then
+                CrimeChance = GameCallback_Calculate_CrimeChance(_PlayerID, CrimeChance);
+                if math.random(1, 1000) <= CrimeChance then
+                    local WorkerList = {};
+                    for k, v in pairs(GetAllWorkplaces(_PlayerID)) do
+                        local WorkerOfBuilding = {Logic.GetAttachedWorkersToBuilding(v)};
+                        for i= 2, WorkerOfBuilding[1] +1 do
+                            table.insert(WorkerList, {WorkerOfBuilding[i], v});
+                        end
+                    end
+                    local WorkerCount = table.getn(WorkerList);
+                    if WorkerCount > 0 then
+                        local Selected = WorkerList[math.random(1, WorkerCount)];
+                        if GUI.GetPlayerID() == _PlayerID then
+                            local x,y,z = Logic.EntityGetPos(Selected[2]);
+                            GUI.ScriptSignal(x, y, 3);
+                            local Language = GetLanguage();
+                            Message(self.Config.UI.Msg.ConvertedToCriminal[Language]);
+                        end
+                        self:AddCriminal(_PlayerID, Selected[2], Selected[1]);
+                        GameCallback_Logic_CriminalAppeared(_PlayerID, Selected[2]);
                     end
                 end
-                local WorkerCount = table.getn(WorkerList);
-                if WorkerCount > 0 then
-                    local Selected = WorkerList[math.random(1, WorkerCount)];
-                    if GUI.GetPlayerID() == _PlayerID then
-                        local x,y,z = Logic.EntityGetPos(Selected[2]);
-                        GUI.ScriptSignal(x, y, 3);
-                        local Language = GetLanguage();
-                        Message(self.Config.UI.Msg.ConvertedToCriminal[Language]);
-                    end
-                    self:AddCriminal(_PlayerID, Selected[2], Selected[1]);
-                end
+                self.Data[_PlayerID].LastCriminal = Logic.GetTime();
             end
-            self.Data[_PlayerID].LastCriminal = Logic.GetTime();
         end
 
         -- Catch criminals
@@ -250,6 +259,7 @@ function Stronghold.Attraction:ManageCriminalsOfPlayer(_PlayerID)
                             Message(self.Config.UI.Msg.CriminalResocialized[Language]);
                         end
                         self:RemoveCriminal(_PlayerID, Data[1]);
+                        GameCallback_Logic_CriminalCatched(_PlayerID, Data[2]);
                     end
                 end
             end
@@ -263,7 +273,6 @@ function Stronghold.Attraction:AddCriminal(_PlayerID, _BuildingID, _WorkerID)
         self.Data[_PlayerID].Criminals.IdSequence = self.Data[_PlayerID].Criminals.IdSequence +1;
         local ID = self.Data[_PlayerID].Criminals.IdSequence;
         table.insert(self.Data[_PlayerID].Criminals, {ID, _BuildingID});
-        GameCallback_Logic_CriminalSpawned(_PlayerID, ID, _BuildingID);
     end
 end
 
@@ -276,6 +285,13 @@ function Stronghold.Attraction:RemoveCriminal(_PlayerID, _CriminalID)
             end
         end
     end
+end
+
+function Stronghold.Attraction:DoCriminalsAppear(_PlayerID)
+    if self.Data[_PlayerID] then
+        return Stronghold:GetPlayerRank(_PlayerID) >= 3;
+    end
+    return false;
 end
 
 function Stronghold.Attraction:CalculateCrimeRate(_PlayerID)
