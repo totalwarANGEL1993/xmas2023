@@ -10,7 +10,7 @@
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
 		  <MaxHealth>1400</MaxHealth>
-		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
+		  <ArmorClass>ArmorClassFortification</ArmorClass> 
 		  <ArmorAmount>6</ArmorAmount>
       <Category>MilitaryBuilding</Category>
 		  <Category>Military</Category>

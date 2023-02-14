@@ -11,8 +11,8 @@
 		  <ForceNoPlayer>false</ForceNoPlayer>
 		  <UpgradeSite>ZB_UpgradeSiteTower1</UpgradeSite>
 		  <MaxHealth>1200</MaxHealth>
-		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
-		  <ArmorAmount>6</ArmorAmount>
+		  <ArmorClass>ArmorClassFortification</ArmorClass> 
+		  <ArmorAmount>5</ArmorAmount>
       <Category>MilitaryBuilding</Category>
 		  <Category>Military</Category>
 		  
