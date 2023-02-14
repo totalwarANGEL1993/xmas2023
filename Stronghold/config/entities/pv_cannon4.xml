@@ -95,7 +95,7 @@
 	        <MaxRandomDamageBonus>16</MaxRandomDamageBonus>
 	        <DamageRange>75</DamageRange>
 	        
-	        <BattleWaitUntil>5000</BattleWaitUntil>
+	        <BattleWaitUntil>4500</BattleWaitUntil>
 	        
 	        <ProjectileEffectID>FXCannonBall</ProjectileEffectID>
 	        <MaxRange>3300</MaxRange>
