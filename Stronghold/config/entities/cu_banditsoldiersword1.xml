@@ -63,7 +63,10 @@
         <Category>Melee</Category>
         <Category>Sword</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <Exploration>20</Exploration>
+		  <Exploration>20</Exploration>	
+		  <ArmorClass>ArmorClassLeather</ArmorClass>
+		  <ArmorAmount>2</ArmorAmount> 
+		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>20</ExperiencePoints>
     	<Upgrade>                       

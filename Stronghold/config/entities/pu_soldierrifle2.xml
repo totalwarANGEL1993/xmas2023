@@ -113,7 +113,7 @@
 	        <HitAnim>PU_SoldierRifle2_Hit</HitAnim>
 	        
 	       	<DamageClass>DC_Bullet</DamageClass>
-	        <DamageAmount>22</DamageAmount>
+	        <DamageAmount>18</DamageAmount>
 	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <AutoAttackRange>3000</AutoAttackRange>
@@ -122,7 +122,7 @@
 	        
 	        <MissChance>5</MissChance>
 	        
-	        <ProjectileEffectID>FXShotRifleman</ProjectileEffectID>
+	        <ProjectileEffectID>FXBulletRifleman</ProjectileEffectID>
 	        <MaxRange>3000</MaxRange>
 	        <MinRange>800.0f</MinRange>
 		</Logic>

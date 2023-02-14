@@ -68,7 +68,6 @@
         <Category>Leader</Category>
         <Category>Rifle</Category>
         <Category>LongRange</Category>
-        <Category>SplashDamage</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <MaxHealth>150</MaxHealth>
 		  <Exploration>30</Exploration>
@@ -125,14 +124,14 @@
 	        <HitAnim>PU_LeaderRifle2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bullet</DamageClass>
-	        <DamageAmount>22</DamageAmount>
+	        <DamageAmount>18</DamageAmount>
 	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3800</BattleWaitUntil>
 	        
 	        <MissChance>5</MissChance>
 	        
-	        <ProjectileEffectID>FXShotRifleman</ProjectileEffectID>
+	        <ProjectileEffectID>FXBulletRifleman</ProjectileEffectID>
 	        <MaxRange>3000</MaxRange>
 	        <MinRange>800.0f</MinRange>
 	        <AutoAttackRange>3000</AutoAttackRange>

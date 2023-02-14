@@ -67,7 +67,7 @@
 		  <MaxHealth>100</MaxHealth>
 		  <Exploration>25</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
-		  <ArmorAmount>0</ArmorAmount>
+		  <ArmorAmount>2</ArmorAmount>
 		  <DodgeChance>20</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>25</ExperiencePoints>
@@ -129,7 +129,7 @@
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        <MaxRange>2500</MaxRange>
-	        <MinRange>500.0f</MinRange>	        
+	        <MinRange>800.0f</MinRange>	        
 	        <AutoAttackRange>2500</AutoAttackRange>
 	        
 			<HealingPoints>5</HealingPoints>

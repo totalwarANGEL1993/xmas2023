@@ -65,6 +65,9 @@
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>25</Exploration>
+		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
+		  <ArmorAmount>1</ArmorAmount>
+		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>15</ExperiencePoints>
     	<Upgrade>           

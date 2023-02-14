@@ -104,6 +104,9 @@
         <Category>Sword</Category>
         <Category>Melee</Category>
 		  <Exploration>20</Exploration>
+		  <ArmorClass>ArmorClassLeather</ArmorClass>
+		  <ArmorAmount>2</ArmorAmount> 
+		  <DodgeChance>10</DodgeChance> 
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
         <Upgrade>
             <Cost>
@@ -152,7 +155,7 @@
 	        <HitAnim>PU_SoldierSword1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Sword</DamageClass>
-	        <DamageAmount>6</DamageAmount>
+	        <DamageAmount>8</DamageAmount>
 	        <MaxRandomDamageBonus>1</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>1500</BattleWaitUntil>

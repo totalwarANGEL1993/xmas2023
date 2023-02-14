@@ -62,6 +62,9 @@
         <Category>Melee</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
+		  <ArmorClass>ArmorClassLeather</ArmorClass>
+		  <ArmorAmount>3</ArmorAmount>
+		  <DodgeChance>10</DodgeChance>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>15</ExperiencePoints>
         <Upgrade>            

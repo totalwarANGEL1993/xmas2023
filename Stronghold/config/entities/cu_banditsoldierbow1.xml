@@ -63,6 +63,9 @@
         <Category>Soldier</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>25</Exploration>
+		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
+		  <ArmorAmount>2</ArmorAmount>
+		  <DodgeChance>20</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>10</ExperiencePoints>    	
 	</Logic>
@@ -113,7 +116,7 @@
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        
 	        <MaxRange>2300</MaxRange>
-	        <MinRange>0.0f</MinRange>
+	        <MinRange>800.0f</MinRange>
 		</Logic>
 	</Behavior>
 	
