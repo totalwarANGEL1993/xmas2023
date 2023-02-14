@@ -34,9 +34,9 @@
             <Cost>
 				    <Clay>0</Clay>
 				    <Wood/>
-				    <Stone>200</Stone>
+				    <Stone>300</Stone>
 				    <Gold/>
-				    <Iron>0</Iron>
+				    <Iron>200</Iron>
 				    <Sulfur>200</Sulfur>
             </Cost>
             <Type>PB_DarkTower3</Type>     			

@@ -16,7 +16,7 @@
 		<Category>Cannon</Category> 	
         <!--NumBlockedPoints>2</NumBlockedPoints-->
         <DamageClass>DC_Bow</DamageClass>
-        <SnapTolerance>50.0f</SnapTolerance>
+        <SnapTolerance>40.0f</SnapTolerance>
 		<MapFileDontSave>true</MapFileDontSave>
 		<Visible>false</Visible>
 	</Logic>

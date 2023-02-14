@@ -35,11 +35,11 @@
             <Category>DarkTower</Category>
             <Time>15.0</Time>  
             <Cost>
-				    <Clay>0</Clay>
-				    <Wood>200</Wood>
-				    <Stone>300</Stone>
+                    <Clay>0</Clay>
+				    <Wood>300</Wood>
+				    <Stone>400</Stone>
 				    <Gold/>
-				    <Iron>0</Iron>
+				    <Iron>200</Iron>
 				    <Sulfur/>
             </Cost>
             <Type>PB_DarkTower2</Type>            
