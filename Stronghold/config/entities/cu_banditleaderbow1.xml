@@ -63,6 +63,7 @@
         <Category>Military</Category>
         <Category>Leader</Category>
         <Category>Bow</Category>
+        <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <MaxHealth>100</MaxHealth>
 		  <Exploration>25</Exploration>

@@ -65,6 +65,7 @@
 
         <Category>Military</Category>
         <Category>Soldier</Category>
+        <Category>LongRange</Category>
         <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
         <Exploration>20</Exploration>
         <ArmorClass>ArmorClassFur</ArmorClass>

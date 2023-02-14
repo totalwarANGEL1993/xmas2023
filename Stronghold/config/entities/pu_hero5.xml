@@ -28,6 +28,7 @@
         <Category>Hero</Category>
         <Category>Hero5</Category>
         <Category>Military</Category>
+        <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>27</Exploration>
 		  <ArmorClass>ArmorClassHero</ArmorClass>

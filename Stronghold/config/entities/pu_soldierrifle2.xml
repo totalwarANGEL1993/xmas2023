@@ -70,7 +70,6 @@
         <Category>Military</Category>
         <Category>Soldier</Category>
         <Category>LongRange</Category>
-        <Category>SplashDamage</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>30</Exploration>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
