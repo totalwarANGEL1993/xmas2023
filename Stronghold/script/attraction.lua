@@ -25,10 +25,10 @@
 --- - <number> GameCallback_Calculate_CrimeChance(_PlayerID, _Chance)
 ---   Allows to overwrite the crime chance.
 ---
---- - <number> GameCallback_Logic_CriminalAppeared(_PlayerID, _BuildingID)
+--- - <number> GameCallback_Logic_CriminalAppeared(_PlayerID, _EntityID, _BuildingID)
 ---   Allows to overwrite the crime chance.
 ---
---- - <number> GameCallback_Logic_CriminalCatched(_PlayerID, _Chance)
+--- - <number> GameCallback_Logic_CriminalCatched(_PlayerID, _OldEntityID, _BuildingID)
 ---   Allows to overwrite the crime chance.
 ---
 
@@ -125,9 +125,7 @@ function Stronghold.Attraction:Install()
     for i= 1, table.getn(Score.Player) do
         self.Data[i] = {
             LastCriminal = 0,
-            Criminals = {
-                IdSequence = 0,
-            },
+            Criminals = {},
         };
     end
 
@@ -183,10 +181,10 @@ function GameCallback_Calculate_CrimeChance(_PlayerID, _Chance)
     return _Chance;
 end
 
-function GameCallback_Logic_CriminalAppeared(_PlayerID, _BuildingID)
+function GameCallback_Logic_CriminalAppeared(_PlayerID, _EntityID, _BuildingID)
 end
 
-function GameCallback_Logic_CriminalCatched(_PlayerID, _BuildingID)
+function GameCallback_Logic_CriminalCatched(_PlayerID, _OldEntityID, _BuildingID)
 end
 
 -- -------------------------------------------------------------------------- --
@@ -216,14 +214,14 @@ function Stronghold.Attraction:ManageCriminalsOfPlayer(_PlayerID)
                     local WorkerCount = table.getn(WorkerList);
                     if WorkerCount > 0 then
                         local Selected = WorkerList[math.random(1, WorkerCount)];
-                        if GUI.GetPlayerID() == _PlayerID then
-                            local x,y,z = Logic.EntityGetPos(Selected[2]);
-                            GUI.ScriptSignal(x, y, 3);
-                            local Language = GetLanguage();
-                            Message(self.Config.UI.Msg.ConvertedToCriminal[Language]);
+                        local ID = self:AddCriminal(_PlayerID, Selected[2], Selected[1]);
+                        if ID ~= 0 then
+                            if GUI.GetPlayerID() == _PlayerID then
+                                local Language = GetLanguage();
+                                Message(self.Config.UI.Msg.ConvertedToCriminal[Language]);
+                            end
+                            GameCallback_Logic_CriminalAppeared(_PlayerID, ID, Selected[2]);
                         end
-                        self:AddCriminal(_PlayerID, Selected[2], Selected[1]);
-                        GameCallback_Logic_CriminalAppeared(_PlayerID, Selected[2]);
                     end
                 end
                 self.Data[_PlayerID].LastCriminal = Logic.GetTime();
@@ -239,48 +237,63 @@ function Stronghold.Attraction:ManageCriminalsOfPlayer(_PlayerID)
             if not IsExisting(Data[2]) then
                 self:RemoveCriminal(_PlayerID, Data[1]);
             else
-                local x,y,z = Logic.EntityGetPos(Data[2]);
+                local x,y,z = Logic.EntityGetPos(Data[1]);
                 if Logic.IsPlayerEntityOfCategoryInArea(_PlayerID, x, y, self.Config.Criminals.Catch.Area, "Military", "MilitaryBuilding") == 1 then
-                    local Chance = self.Config.Criminals.Catch.Chance;
-                    -- Buildings do it more efficient than just pepole
-                    if Logic.IsPlayerEntityOfCategoryInArea(_PlayerID, x, y, self.Config.Criminals.Catch.Area, "MilitaryBuilding") == 1 then
-                        Chance = Chance * 2;
-                    end
-                    -- A organized townguard increases efficiency futher
-                    if Logic.IsTechnologyResearched(_PlayerID, Technologies.T_TownGuard) == 1 then
-                        Chance = Chance * 2;
-                    end
+                    local Chance = self:CalculateCriminalCatchChance(_PlayerID, Data[1]);
                     -- Decide if a criminal is catched
                     if math.random(1, 1000) <= Chance then
                         if GUI.GetPlayerID() == _PlayerID then
-                            local x,y,z = Logic.EntityGetPos(Data[2]);
-                            GUI.ScriptSignal(x, y, 0);
                             local Language = GetLanguage();
                             Message(self.Config.UI.Msg.CriminalResocialized[Language]);
                         end
                         self:RemoveCriminal(_PlayerID, Data[1]);
-                        GameCallback_Logic_CriminalCatched(_PlayerID, Data[2]);
+                        GameCallback_Logic_CriminalCatched(_PlayerID, Data[1], Data[2]);
                     end
                 end
+            end
+        end
+
+        -- Criminal activity
+        -- Moves the criminals between the castle and their workplace
+        for i= table.getn(self.Data[_PlayerID].Criminals), 1, -1 do
+            local Data = self.Data[_PlayerID].Criminals[i];
+            if Data[4] == nil then
+                self.Data[_PlayerID].Criminals[i][4] = Stronghold.Players[_PlayerID].DoorPos;
+            end
+            if GetDistance(Data[1], Data[4]) <= 100 then
+                if GetDistance(Data[1], Stronghold.Players[_PlayerID].DoorPos) <= 100 then
+                    self.Data[_PlayerID].Criminals[i][4] = Data[3];
+                else
+                    self.Data[_PlayerID].Criminals[i][4] = nil;
+                end
+            end
+            if Data[4] and Logic.IsEntityMoving(Data[1]) == false then
+                Logic.GroupAttackMove(Data[1], Data[4].X, Data[4].Y);
             end
         end
     end
 end
 
 function Stronghold.Attraction:AddCriminal(_PlayerID, _BuildingID, _WorkerID)
+    local ID = 0;
     if self.Data[_PlayerID] then
+        local x,y,z = Logic.EntityGetPos(_BuildingID);
         DestroyEntity(_WorkerID);
-        self.Data[_PlayerID].Criminals.IdSequence = self.Data[_PlayerID].Criminals.IdSequence +1;
-        local ID = self.Data[_PlayerID].Criminals.IdSequence;
-        table.insert(self.Data[_PlayerID].Criminals, {ID, _BuildingID});
+        ID = AI.Entity_CreateFormation(_PlayerID, Entities.CU_Thief, nil, 0, x, y, 0, 0, 0, 0);
+        x,y,z = Logic.EntityGetPos(ID);
+        Logic.SetEntitySelectableFlag(ID, 0);
+        Logic.MoveSettler(ID, x, y);
+        table.insert(self.Data[_PlayerID].Criminals, {ID, _BuildingID, {X= x, Y= y}, nil});
     end
+    return ID;
 end
 
-function Stronghold.Attraction:RemoveCriminal(_PlayerID, _CriminalID)
+function Stronghold.Attraction:RemoveCriminal(_PlayerID, _EntityID)
     if self.Data[_PlayerID] then
         for i= table.getn(self.Data[_PlayerID].Criminals), 1, -1 do
-            if self.Data[_PlayerID].Criminals[i][1] == _CriminalID then
+            if self.Data[_PlayerID].Criminals[i][1] == _EntityID then
                 table.remove(self.Data[_PlayerID].Criminals, i);
+                DestroyEntity(_EntityID);
                 break;
             end
         end
@@ -303,6 +316,33 @@ function Stronghold.Attraction:CalculateCrimeRate(_PlayerID)
         CrimeRate = GameCallback_Calculate_CrimeRate(_PlayerID, CrimeRate);
     end
     return CrimeRate;
+end
+
+function Stronghold.Attraction:CalculateCriminalCatchChance(_PlayerID, _ThiefID)
+    local Chance = self.Config.Criminals.Catch.Chance;
+    local Position = GetPosition(_ThiefID);
+    -- The Laird can do it much better
+    if self.Data[_PlayerID] then
+        if IsNear(_ThiefID, Stronghold.Players[_PlayerID].LordScriptName, self.Config.Criminals.Catch.Area) then
+            Chance = Chance +4;
+        end
+    end
+    -- Buildings do it more efficient than just pepole
+    if AreEntitiesInArea(_PlayerID, Entities.PB_DarkTower1, Position, self.Config.Criminals.Catch.Area, 1)
+    or AreEntitiesInArea(_PlayerID, Entities.PB_Barracks1, Position, self.Config.Criminals.Catch.Area, 1)
+    or AreEntitiesInArea(_PlayerID, Entities.PB_Barracks2, Position, self.Config.Criminals.Catch.Area, 1)
+    or AreEntitiesInArea(_PlayerID, Entities.PB_Archery1, Position, self.Config.Criminals.Catch.Area, 1)
+    or AreEntitiesInArea(_PlayerID, Entities.PB_Archery2, Position, self.Config.Criminals.Catch.Area, 1)
+    or AreEntitiesInArea(_PlayerID, Entities.PB_Stable1, Position, self.Config.Criminals.Catch.Area, 1)
+    or AreEntitiesInArea(_PlayerID, Entities.PB_Stable2, Position, self.Config.Criminals.Catch.Area, 1)
+    or AreEntitiesInArea(_PlayerID, Entities.PB_Tower1, Position, self.Config.Criminals.Catch.Area, 1) then
+        Chance = Chance +4;
+    end
+    -- A organized townguard increases efficiency futher
+    if Logic.IsTechnologyResearched(_PlayerID, Technologies.T_TownGuard) == 1 then
+        Chance = Chance +4;
+    end
+    return Chance;
 end
 
 function Stronghold.Attraction:CountCriminals(_PlayerID)
@@ -343,7 +383,7 @@ end
 -- criminals. Their workplace stays occupied until they brought to justice.
 function Stronghold.Attraction:CreateWorkersForPlayer(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
-        if not self.Data[_PlayerID].CivilAttractionLocked then
+        if not Stronghold.Players[_PlayerID].CivilAttractionLocked then
             if Logic.GetPlayerAttractionUsage(_PlayerID) < Logic.GetPlayerAttractionLimit(_PlayerID) then
                 -- Get buildings that need workers
                 local Buildings = GetAllWorkplaces(_PlayerID);
