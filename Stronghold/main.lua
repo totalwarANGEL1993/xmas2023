@@ -74,7 +74,7 @@ Stronghold = {
                 Text = {{de = "Baron", en = "Baron"},
                         {de = "Baronin", en = "Baroness"}},
                 Costs = {100, 300, 0, 0, 0, 0, 0},
-                Description = "12 Ziergebäude",
+                Description = "8 Ziergebäude",
                 Condition = function(_PlayerID)
                     local Beauty01 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification01));
                     local Beauty02 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification02));
@@ -89,7 +89,7 @@ Stronghold = {
                     local Beauty11 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification11));
                     local Beauty12 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification12));
                     return Beauty01 + Beauty02 + Beauty03 + Beauty04 + Beauty05 + Beauty06 +
-                           Beauty07 + Beauty08 + Beauty09 + Beauty10 + Beauty11 + Beauty12 >= 12;
+                           Beauty07 + Beauty08 + Beauty09 + Beauty10 + Beauty11 + Beauty12 >= 8;
                 end,
             },
             [5] = {

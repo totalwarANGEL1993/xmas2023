@@ -183,7 +183,7 @@ function Stronghold.Construction:UpdateSerfUpgradeButtons(_Button, _Technology)
             local LimitReached = false;
             local CheckList = Stronghold.Construction.Config.TypesToCheckForUpgrade[_Technology] or {};
 
-            local Type = Logic.GetEntityType(GUI.GetSelectedEntity());
+            local Type = Logic.GetEntityType(GUI.GetSelectedEntity()) +1;
             local Limit = EntityTracker.GetLimitOfType(Type);
             local Usage = 0;
             if Limit > -1 then
@@ -406,32 +406,32 @@ end
 -- (The tracker only handles the tracking and not the UI!)
 function Stronghold.Construction:InitBuildingLimits()
     -- Beautifications
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification04, 8);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification06, 8);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification09, 8);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification01, 6);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification02, 6);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification12, 6);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification05, 4);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification07, 4);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification08, 4);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification03, 2);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification10, 2);
-    EntityTracker.SetLimitOfType(Entities.PB_Beautification11, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification04, 6);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification06, 6);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification09, 6);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification01, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification02, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification12, 4);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification05, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification07, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification08, 2);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification03, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification10, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Beautification11, 1);
 
     -- Civil buildings
     EntityTracker.SetLimitOfType(Entities.PB_Monastery1, 1);
     EntityTracker.SetLimitOfType(Entities.PB_Monastery2, 1);
     EntityTracker.SetLimitOfType(Entities.PB_Monastery3, 1);
-    EntityTracker.SetLimitOfType(Entities.PB_Market2, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Market2, 3);
     EntityTracker.SetLimitOfType(Entities.PB_PowerPlant1, 1);
 
     -- Military buildings
-    EntityTracker.SetLimitOfType(Entities.PB_Barracks1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Barracks1, 2);
     EntityTracker.SetLimitOfType(Entities.PB_Barracks2, 1);
-    EntityTracker.SetLimitOfType(Entities.PB_Stable1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Stable1, 2);
     EntityTracker.SetLimitOfType(Entities.PB_Stable2, 1);
-    EntityTracker.SetLimitOfType(Entities.PB_Archery1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Archery1, 2);
     EntityTracker.SetLimitOfType(Entities.PB_Archery2, 1);
 end
 

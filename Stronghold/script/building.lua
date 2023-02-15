@@ -262,7 +262,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 2);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[2];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
+        EffectText = EffectText .. ((-1) * ((Penalty > 0 and Penalty) or Effects.Reputation)).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -273,7 +273,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 3);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[3];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
+        EffectText = EffectText .. ((-1) * ((Penalty > 0 and Penalty) or Effects.Reputation)).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -284,7 +284,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 4);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[4];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
+        EffectText = EffectText .. ((-1) * ((Penalty > 0 and Penalty) or Effects.Reputation)).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -295,7 +295,7 @@ function Stronghold.Building:PrintHeadquartersTaxButtonsTooltip(_PlayerID, _Enti
         local Penalty = Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, 5);
         local Effects = Stronghold.Economy.Config.Income.TaxEffect[5];
         EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 ";
-        EffectText = EffectText .. (((-1) * (Penalty > 0 and Penalty)) or Effects.Reputation).. " Beliebtheit ";
+        EffectText = EffectText .. ((-1) * ((Penalty > 0 and Penalty) or Effects.Reputation)).. " Beliebtheit ";
         if Effects.Honor > 0 then
             EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
         end
@@ -941,7 +941,7 @@ function Stronghold.Building:OnArcherySelected(_EntityID)
 
     -- Rifle
     local RifleDisabled = 0;
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderRifle2);
+    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_LeaderRifle1);
     if Config.Allowed == false
     or Stronghold:GetPlayerRank(PlayerID) < Config.Rank
     or Gunsmith1 + Gunsmith2 == 0 then
