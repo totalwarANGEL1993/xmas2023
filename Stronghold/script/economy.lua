@@ -58,7 +58,7 @@ Stronghold.Economy = {
     Config = {
         MaxMeasurePoints = 5000,
         MaxReputation = 200,
-        TaxPerWorker = 5,
+        TaxPerWorker = 6,
         Income = {
             TaxEffect = {
                 [1] = {Honor = 4, Reputation = 10,},
@@ -318,6 +318,9 @@ function Stronghold.Economy:UpdateIncomeAndUpkeep(_PlayerID)
         end
         if self.Data[_PlayerID].ReputationDetails.TaxPenalty > 0 then
             ReputationMinus = ReputationMinus + self.Data[_PlayerID].ReputationDetails.TaxPenalty;
+        end
+        if self.Data[_PlayerID].ReputationDetails.Criminals > 0 then
+            ReputationMinus = ReputationMinus + self.Data[_PlayerID].ReputationDetails.Criminals;
         end
         if self.Data[_PlayerID].ReputationDetails.OtherMalus > 0 then
             ReputationMinus = ReputationMinus + self.Data[_PlayerID].ReputationDetails.OtherMalus;
@@ -742,7 +745,7 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
         end
     end);
 
-    Overwrite.CreateOverwrite("GameCallback_Logic_CriminalCatched", function(_PlayerID, _BuildingID)
+    Overwrite.CreateOverwrite("GameCallback_Logic_CriminalCatched", function(_PlayerID, _OldEntityID, _BuildingID)
         Overwrite.CallOriginal();
         if Stronghold.Economy.Data[_PlayerID] then
             Stronghold.Economy:AddOneTimeHonor(_PlayerID, 1);
@@ -938,7 +941,7 @@ function Stronghold.Economy:CreateHeadquarterDetailsText(_PlayerID)
     local ppr  = self.Data[_PlayerID].ReputationDetails.Providing;
     local phu  = self.Data[_PlayerID].ReputationDetails.Hunger;
     local pob  = self.Data[_PlayerID].ReputationDetails.OtherBonus;
-    local pcr  = self.Data[_PlayerID].ReputationDetails.Criminals;
+    local pcr  = (-1) * self.Data[_PlayerID].ReputationDetails.Criminals;
     local pop  = self.Data[_PlayerID].ReputationDetails.OtherMalus;
 
     local Language = GetLanguage();

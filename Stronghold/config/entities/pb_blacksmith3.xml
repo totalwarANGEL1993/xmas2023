@@ -118,7 +118,7 @@
         <Logic classname="GGL::CResourceRefinerBehaviorProperties">
             <Class>GGL::CResourceRefinerBehavior</Class>
             <ResourceType>Iron</ResourceType>
-            <InitialFactor>4</InitialFactor>
+            <InitialFactor>5</InitialFactor>
             <SupplierCategory>IronSupplier</SupplierCategory>
         </Logic>
     </Behavior>

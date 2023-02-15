@@ -136,7 +136,7 @@
         <Logic classname="GGL::CResourceRefinerBehaviorProperties">
             <Class>GGL::CResourceRefinerBehavior</Class>
             <ResourceType>Stone</ResourceType>
-            <InitialFactor>4</InitialFactor>
+            <InitialFactor>5</InitialFactor>
             <SupplierCategory>StoneSupplier</SupplierCategory>
           
         </Logic>
