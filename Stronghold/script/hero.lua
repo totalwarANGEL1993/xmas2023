@@ -234,8 +234,8 @@ Stronghold.Hero = {
                          "als 1000 Schwerter. " ..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
-                         "Kundschafter und Diebe nehmen keinen Bevölkerungsplatz ein "..
-                         "und verlangen keinen Sold. "..
+                         "Diebe und Kundschafter verlangen keinen Sold. Diebe belegen weniger "..
+                         "Bevölkerungsplatz. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann die Angriffskraft von nahestehenden Feinden senken.",
@@ -246,8 +246,8 @@ Stronghold.Hero = {
                          "them without regrets. A good placed dagger is better than 1000 swords. "..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
-                         "Scouts and thieves do not occupy population places. Also they "..
-                         "do not need any upkeep. "..
+                         "Scouts and thieves do not cost any upkeep. Thieves occupy less "..
+                         "population places. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can damage moral to lower enemies strength.",
@@ -372,7 +372,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Die gesteigerte Geburtenrate sorgt für einen demographischen "..
-                         "Wandel. Euer Bevölkerungslimit wird um 30% erhöht. "..
+                         "Wandel. Euer Bevölkerungslimit wird um 35% erhöht. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann nahestehende Feinde mit Gift schädigen.",
@@ -384,7 +384,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
                          "The increased birth rate is causing demographic change. Your attraction "..
-                         "limit is increased by 30%. "..
+                         "limit is increased by 35%. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can inflict poison damage to enemies.",
@@ -1065,7 +1065,7 @@ function Stronghold.Hero:ResourceProductionBonus(_PlayerID, _Type, _Amount)
             or _Type == ResourceType.StoneRaw
             or _Type == ResourceType.IronRaw then
                 -- TODO: Maybe use the non-raw here?
-                Logic.AddToPlayersGlobalResource(_PlayerID, _Type, 1);
+                Logic.AddToPlayersGlobalResource(_PlayerID, _Type, math.max(_Amount-4, 1));
             end
         end
     end
@@ -1101,7 +1101,7 @@ end
 function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        Value = Value * 1.3;
+        Value = Value * 1.35;
     end
     return Value;
 end
@@ -1110,9 +1110,8 @@ end
 function Stronghold.Hero:ApplyAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
-        local ScoutCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Scout);
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
-        Value = Value - (ScoutCount + ThiefCount * 5);
+        Value = Value - (ThiefCount * 3);
     end
     return Value;
 end

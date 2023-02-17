@@ -64,8 +64,8 @@ Stronghold.Economy = {
                 [1] = {Honor = 4, Reputation = 10,},
                 [2] = {Honor = 2, Reputation = -2,},
                 [3] = {Honor = 1, Reputation = -4,},
-                [4] = {Honor = 0, Reputation = -8,},
-                [5] = {Honor = 0, Reputation = -12,},
+                [4] = {Honor = 0, Reputation = -10,},
+                [5] = {Honor = 0, Reputation = -16,},
             },
 
             Dynamic = {
@@ -473,8 +473,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local Rank = Stronghold.Players[_PlayerID].Rank;
             local TaxEffect = self.Config.Income.TaxEffect[_TaxtHeight].Reputation * -1;
-            --Penalty = TaxEffect * (1 + ((0.003 * (Rank -1)) * WorkerCount));
-            Penalty = TaxEffect * (1 + ((WorkerCount/75) + (0.16 * (Rank -1))));
+            Penalty = TaxEffect * (1 + ((WorkerCount/65) + (0.25 * (Rank -1))));
         end
         return math.floor(Penalty);
     end
