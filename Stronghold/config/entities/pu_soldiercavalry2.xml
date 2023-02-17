@@ -107,7 +107,7 @@
 	<Behavior>
 		  <Logic classname="EGL::CMovementBehaviorProps">
 			  <Class>GGL::CSoldierMovement</Class>
-			  <Speed>480</Speed>
+			  <Speed>500</Speed>
 			  <RotationSpeed>30</RotationSpeed>
 			  <MoveTaskList>TL_MILITARY_WALK</MoveTaskList>
 			  <MoveIdleAnim>PU_SoldierCavalry2_Idle1</MoveIdleAnim>
@@ -131,7 +131,7 @@
 	        <HitAnim>PU_SoldierCavalry2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>20</DamageAmount>
+	        <DamageAmount>16</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2500</BattleWaitUntil>

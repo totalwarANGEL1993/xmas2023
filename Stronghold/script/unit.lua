@@ -14,159 +14,234 @@ Stronghold.Unit = {
     Config = {
         Units = {
             [Entities.PU_LeaderPoleArm1] = {
-                Costs = {0, 18, 0, 12, 0, 0, 0},
+                Costs = {
+                    [1] = {0, 50, 0, 40, 0, 0, 0},
+                    [2] = {0, 5, 0, 10, 0, 0, 0},
+                },
                 Allowed = true,
                 Rank = 1,
                 Upkeep = 15,
             },
             [Entities.PU_LeaderPoleArm2] = {
-                Costs = {5, 20, 0, 15, 0, 0, 0},
+                Costs = {
+                    [1] = {5, 75, 0, 50, 0, 0, 0},
+                    [2] = {0, 10, 0, 25, 0, 0, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 2,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderPoleArm3] = {
-                Costs = {10, 45, 0, 35, 0, 10, 0},
+                Costs = {
+                    [1] = {10, 150, 0, 70, 0, 10, 0},
+                    [2] = {0, 65, 0, 40, 0, 5, 0},
+                },
                 Allowed = true,
                 Rank = 3,
                 Upkeep = 40
             },
             [Entities.PU_LeaderPoleArm4] = {
-                Costs = {15, 55, 0, 40, 0, 20, 0},
+                Costs = {
+                    [1] = {15, 200, 0, 80, 0, 20, 0},
+                    [2] = {0, 75, 0, 45, 0, 10, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 6,
                 Upkeep = 50
             },
             ---
             [Entities.PU_LeaderSword1] = {
-                Costs = {6, 35, 0, 0, 0, 30, 0},
+                Costs = {
+                    [1] = {6, 100, 0, 0, 0, 50, 0},
+                    [2] = {0, 15, 0, 0, 0, 10, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 2,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderSword2] = {
-                Costs = {10, 40, 0, 0, 0, 35, 0},
+                Costs = {
+                    [1] = {10, 150, 0, 0, 0, 60, 0},
+                    [2] = {0, 50, 0, 0, 0, 35, 0},
+                },
                 Allowed = true,
-                Rank = 2,
+                Rank = 3,
                 Upkeep = 35,
             },
             [Entities.PU_LeaderSword3] = {
-                Costs = {20, 50, 0, 0, 0, 40, 0},
+                Costs = {
+                    [1] = {20, 230, 0, 0, 0, 70, 0},
+                    [2] = {0, 60, 0, 0, 0, 45, 0},
+                },
                 Allowed = true,
                 Rank = 5,
                 Upkeep = 60,
             },
             [Entities.PU_LeaderSword4] = {
-                Costs = {30, 60, 0, 0, 0, 45, 0},
+                Costs = {
+                    [1] = {30, 275, 0, 0, 0, 85, 0},
+                    [2] = {0, 75, 0, 0, 0, 60, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 7,
                 Upkeep = 75,
             },
             ---
             [Entities.PU_LeaderBow1] = {
-                Costs = {2, 25, 0, 20, 0, 0, 0},
+                Costs = {
+                    [1] = {2, 90, 0, 60, 0, 0, 0},
+                    [2] = {0, 10, 0, 10, 0, 0, 0},
+                },
                 Allowed = true,
                 Rank = 2,
                 Upkeep = 15,
             },
             [Entities.PU_LeaderBow2] = {
-                Costs = {6, 30, 0, 25, 0, 0, 0},
+                Costs = {
+                    [1] = {6, 110, 0, 70, 0, 0, 0},
+                    [2] = {0, 20, 0, 20, 0, 0, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 2,
                 Upkeep = 20,
             },
             [Entities.PU_LeaderBow3] = {
-                Costs = {12, 40, 0, 30, 0, 10, 0},
+                Costs = {
+                    [1] = {12, 250, 0, 35, 0, 35, 0},
+                    [2] = {0, 60, 0, 15, 0, 25, 0},
+                },
                 Allowed = true,
                 Rank = 3,
                 Upkeep = 35,
             },
             [Entities.PU_LeaderBow4] = {
-                Costs = {15, 50, 0, 35, 0, 15, 0},
+                Costs = {
+                    [1] = {15, 300, 0, 40, 0, 40, 0},
+                    [2] = {0, 75, 0, 20, 0, 30, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 5,
                 Upkeep = 50,
             },
             ---
             [Entities.PV_Cannon1] = {
-                Costs = {8, 150, 0, 20, 0, 50, 100},
+                Costs = {
+                    [1] = {15, 250, 0, 30, 0, 150, 100},
+                    [2] = {0, 0, 0, 0, 0, 0, 0},
+                },
                 Allowed = true,
-                Rank = 3,
+                Rank = 4,
                 Upkeep = 30,
             },
             [Entities.PV_Cannon2] = {
-                Costs = {15, 150, 0, 30, 0, 70, 120},
+                Costs = {
+                    [1] = {15, 250, 0, 30, 0, 150, 100},
+                    [2] = {0, 0, 0, 0, 0, 0, 0},
+                },
                 Allowed = true,
                 Rank = 4,
                 Upkeep = 50,
             },
             [Entities.PV_Cannon3] = {
-                Costs = {25, 300, 0, 50, 0, 500, 250},
+                Costs = {
+                    [1] = {30, 800, 0, 50, 0, 500, 250},
+                    [2] = {0, 0, 0, 0, 0, 0, 0},
+                },
                 Allowed = true,
-                Rank = 6,
+                Rank = 7,
                 Upkeep = 100,
             },
             [Entities.PV_Cannon4] = {
-                Costs = {30, 300, 0, 50, 0, 250, 500},
+                Costs = {
+                    [1] = {30, 800, 0, 50, 0, 250, 500},
+                    [2] = {0, 0, 0, 0, 0, 0, 0},
+                },
                 Allowed = true,
                 Rank = 7,
                 Upkeep = 120,
             },
             ---
             [Entities.PU_LeaderCavalry1] = {
-                Costs = {6, 50, 0, 25, 0, 0, 0},
+                Costs = {
+                    [1] = {6, 200, 0, 40, 0, 20, 0},
+                    [2] = {0, 60, 0, 15, 0, 5, 0},
+                },
                 Allowed = true,
                 Rank = 4,
                 Upkeep = 25,
             },
             [Entities.PU_LeaderCavalry2] = {
-                Costs = {10, 60, 0, 30, 0, 10, 0},
+                Costs = {
+                    [1] = {10, 250, 0, 20, 0, 50, 0},
+                    [2] = {0, 80, 0, 20, 0, 10, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 6,
                 Upkeep = 40,
             },
             ---
             [Entities.PU_LeaderHeavyCavalry1] = {
-                Costs = {35, 155, 0, 0, 0, 105, 0},
+                Costs = {
+                    [1] = {35, 300, 0, 0, 0, 90, 0},
+                    [2] = {0, 100, 0, 0, 0, 30, 0},
+                },
                 Allowed = true,
                 Rank = 6,
                 Upkeep = 70,
             },
             [Entities.PU_LeaderHeavyCavalry2] = {
-                Costs = {50, 185, 0, 0, 0, 120, 0},
+                Costs = {
+                    [1] = {50, 400, 0, 0, 0, 110, 0},
+                    [2] = {0, 120, 0, 0, 0, 40, 0},
+                },
                 Allowed = false,
-                Rank = 0,
+                Rank = 7,
                 Upkeep = 90,
             },
             ---
             [Entities.PU_LeaderRifle1] = {
-                Costs = {20, 55, 0, 10, 0, 0, 35},
+                Costs = {
+                    [1] = {20, 250, 0, 20, 0, 0, 50},
+                    [2] = {0, 60, 0, 20, 0, 0, 30},
+                },
                 Allowed = true,
                 Rank = 5,
                 Upkeep = 50,
             },
             [Entities.PU_LeaderRifle2] = {
-                Costs = {30, 85, 0, 20, 0, 0, 55},
+                Costs = {
+                    [1] = {30, 300, 0, 0, 0, 20, 60},
+                    [2] = {0, 70, 0, 0, 0, 20, 30},
+                },
                 Allowed = true,
                 Rank = 7,
                 Upkeep = 80,
             },
             ---
             [Entities.PU_Scout] = {
-                Costs = {0, 150, 0, 50, 0, 50, 0},
+                Costs = {
+                    [1] = {0, 150, 0, 50, 0, 50, 0},
+                    [2] = {0, 0, 0, 0, 0, 0, 0},
+                },
                 Allowed = true,
                 Rank = 2,
                 Upkeep = 10,
             },
             [Entities.PU_Thief] = {
-                Costs = {30, 500, 0, 0, 0, 100, 100},
+                Costs = {
+                    [1] = {30, 500, 0, 0, 0, 100, 100},
+                    [2] = {0, 0, 0, 0, 0, 0, 0},
+                },
                 Allowed = true,
                 Rank = 4,
                 Upkeep = 50,
             },
             ---
             [Entities.PU_Serf] = {
-                Costs = {0, 50, 0, 0, 0, 0, 0},
+                Costs = {
+                    [1] = {0, 50, 0, 0, 0, 0, 0},
+                    [2] = {0, 0, 0, 0, 0, 0, 0},
+                },
                 Allowed = true,
                 Rank = 1,
                 Upkeep = 0,
@@ -206,7 +281,10 @@ function Stronghold.Unit:GetUnitConfig(_Type)
         return self.Config.Units[_Type];
     end
     return {
-        Costs = {0, 0, 0, 0, 0, 0, 0},
+        Costs = {
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+        },
         Allowed = false,
         Rank = 0,
         Upkeep = 0,
@@ -227,12 +305,12 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
             local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
-            local Costs = Stronghold:CreateCostTable(unpack(self.Config.Units[_Type].Costs));
+            local CostsLeader = Stronghold:CreateCostTable(unpack(self.Config.Units[_Type].Costs[1]));
 
             -- Passive ability: experienced troops
             local Experience = 0;
             if IsLeader and not IsCannon and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-                Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+                CostsLeader = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CostsLeader);
                 Experience = 3;
             end
 
@@ -250,15 +328,17 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                 end
             end
 
-            RemoveResourcesFromPlayer(_PlayerID, Costs);
+            RemoveResourcesFromPlayer(_PlayerID, CostsLeader);
             local ID = AI.Entity_CreateFormation(_PlayerID, _Type, 0, 0, Position.X, Position.Y, 0, 0, Experience, 0);
             if ID ~= 0 then
                 if IsLeader and _AutoFill then
-                    Costs[ResourceType.Honor] = 0;
                     local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
                     for i= 1, MaxSoldiers do
-                        if HasEnoughResources(_PlayerID, Costs) then
-                            RemoveResourcesFromPlayer(_PlayerID, Costs);
+                        local CostsSoldier = self.Config.Units[_Type].Costs[2];
+                        CostsSoldier = Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
+                        CostsSoldier[ResourceType.Honor] = 0;
+                        if HasEnoughResources(_PlayerID, CostsSoldier) then
+                            RemoveResourcesFromPlayer(_PlayerID, CostsSoldier);
                             local SoldierType = Logic.LeaderGetSoldiersType(ID);
                             Logic.CreateEntity(SoldierType, Position.X, Position.Y, 0, _PlayerID);
                             Tools.AttachSoldiersToLeader(ID, 1);
@@ -375,9 +455,9 @@ function Stronghold.Unit:BuySoldierButtonAction()
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = self.Config.Units[Type].Costs;
-    Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
-    Costs[ResourceType.Honor] = 0;
+    local Costs = self.Config.Units[Type].Costs[2];
+    Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
+    Costs[ResourceType.Honor] = nil;
     if not HasPlayerEnoughResourcesFeedback(Costs) then
         return true;
     end
@@ -422,8 +502,8 @@ function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _Shor
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = self.Config.Units[Type].Costs;
-    Costs = Stronghold.Unit:GetCurrentUnitCosts(PlayerID, EntityID, Costs, BuyAmount);
+    local Costs = self.Config.Units[Type].Costs[2];
+    Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
 
     local Text = "@color:180,180,180 Soldat rekrutieren @color:255,255,255 @cr ";
@@ -487,13 +567,30 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     return Position;
 end
 
-function Stronghold.Unit:GetCurrentUnitCosts(_PlayerID, _EntityID, _Costs, _Amount)
-    local Costs = CopyTable(_Costs);
-    for i= 2, 7 do
-        Costs[i] = Costs[i] * _Amount;
+function Stronghold.Unit:GetLeaderCosts(_PlayerID, _Type, _SoldierAmount)
+    local Costs = {};
+    if self.Config.Units[_Type] then
+        Costs = CopyTable(self.Config.Units[_Type].Costs[1]);
+        Costs = CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        if _SoldierAmount and _SoldierAmount > 0 then
+            local SoldierCosts = self:GetSoldierCostsByLeaderType(_PlayerID, _Type, _SoldierAmount);
+            Costs = MergeCostTable(Costs, SoldierCosts);
+        end
     end
-    Costs = Stronghold:CreateCostTable(unpack(Costs));
-    Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+    return Costs;
+end
+
+function Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, _Amount)
+    local Costs = {};
+    if self.Config.Units[_Type] then
+        Costs = CopyTable(self.Config.Units[_Type].Costs[2]);
+        for i= 2, 7 do
+            Costs[i] = Costs[i] * _Amount;
+        end
+        Costs = CreateCostTable(unpack(Costs));
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+    end
     return Costs;
 end
 

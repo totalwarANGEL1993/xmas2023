@@ -89,7 +89,7 @@
         <Category>Bow</Category>
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <MaxHealth>125</MaxHealth>
+		  <MaxHealth>150</MaxHealth>
 		  <Exploration>27</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
 		  <ArmorAmount>2</ArmorAmount>

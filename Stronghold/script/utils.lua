@@ -136,6 +136,42 @@ end
 -- -------------------------------------------------------------------------- --
 -- Resources
 
+function Stronghold:MergeCostTable(_Costs1, _Costs2)
+    local Costs = {};
+    Costs[ResourceType.Honor] = _Costs1[ResourceType.Honor];
+    if _Costs2[ResourceType.Honor] ~= nil and _Costs2[ResourceType.Honor] > 0 then
+        Costs[ResourceType.Honor] = (_Costs1[ResourceType.Honor] or 0) + _Costs2[ResourceType.Honor];
+    end
+    Costs[ResourceType.Gold] = _Costs1[ResourceType.Gold];
+    if _Costs2[ResourceType.Gold] ~= nil and _Costs2[ResourceType.Gold] > 0 then
+        Costs[ResourceType.Gold] = (_Costs1[ResourceType.Gold] or 0) + _Costs2[ResourceType.Gold];
+    end
+    Costs[ResourceType.Clay] = _Costs1[ResourceType.Clay];
+    if _Costs2[ResourceType.Clay] ~= nil and _Costs2[ResourceType.Clay] > 0 then
+        Costs[ResourceType.Clay] = (_Costs1[ResourceType.Clay] or 0) + _Costs2[ResourceType.Clay];
+    end
+    Costs[ResourceType.Wood] = _Costs1[ResourceType.Wood];
+    if _Costs2[ResourceType.Wood] ~= nil and _Costs2[ResourceType.Wood] > 0 then
+        Costs[ResourceType.Wood] = (_Costs1[ResourceType.Wood] or 0) + _Costs2[ResourceType.Wood];
+    end
+    Costs[ResourceType.Stone] = _Costs1[ResourceType.Stone];
+    if _Costs2[ResourceType.Stone] ~= nil and _Costs2[ResourceType.Stone] > 0 then
+        Costs[ResourceType.Stone] = (_Costs1[ResourceType.Stone] or 0) + _Costs2[ResourceType.Stone];
+    end
+    Costs[ResourceType.Iron] = _Costs1[ResourceType.Iron];
+    if _Costs2[ResourceType.Iron] ~= nil and _Costs2[ResourceType.Iron] > 0 then
+        Costs[ResourceType.Iron] = (_Costs1[ResourceType.Iron] or 0) + _Costs2[ResourceType.Iron];
+    end
+    Costs[ResourceType.Sulfur] = _Costs1[ResourceType.Sulfur];
+    if _Costs2[ResourceType.Sulfur] ~= nil and _Costs2[ResourceType.Sulfur] > 0 then
+        Costs[ResourceType.Sulfur] = (_Costs1[ResourceType.Sulfur] or 0) + _Costs2[ResourceType.Sulfur];
+    end
+    return Costs
+end
+function MergeCostTable(_Costs1, _Costs2)
+    return Stronghold:MergeCostTable(_Costs1, _Costs2);
+end
+
 function Stronghold:CreateCostTable(_Honor, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
     local Costs = {};
     if _Honor ~= nil and _Honor > 0 then
