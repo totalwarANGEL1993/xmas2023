@@ -71,7 +71,7 @@
         <Category>Rifle</Category>
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <MaxHealth>120</MaxHealth>
+		  <MaxHealth>150</MaxHealth>
 		  <Exploration>28</Exploration>
 		  <ArmorClass>ArmorClassLeather</ArmorClass> 
 		  <ArmorAmount>1</ArmorAmount>

@@ -23,7 +23,7 @@
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
-		  <MaxHealth>195</MaxHealth>
+		  <MaxHealth>200</MaxHealth>
 		  <DodgeChance>1</DodgeChance> 
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
@@ -120,7 +120,7 @@
 
             <DamageClass>DC_Pole</DamageClass>
 
-            <DamageAmount>21</DamageAmount>
+            <DamageAmount>24</DamageAmount>
             <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 
             <BattleWaitUntil>2000</BattleWaitUntil>

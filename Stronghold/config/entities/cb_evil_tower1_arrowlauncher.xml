@@ -31,7 +31,7 @@
     	    <ReloadTime>500</ReloadTime>
     	    <MaxAttackRange>2800.0f</MaxAttackRange>
     	     <MinRange>200.0f</MinRange>
-    	    <DamageClass>DC_Chaos</DamageClass>
+    	    <DamageClass>DC_Javelin</DamageClass>
     	    <DamageAmount>20</DamageAmount>
     	    <DamageRange>300</DamageRange>
     	    <AutoAttackRange>2800</AutoAttackRange>

@@ -113,8 +113,8 @@
 	        <HitAnim>CU_Barbarian_SoldierClub1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Mace</DamageClass>
-	        <DamageAmount>16</DamageAmount>	        
-	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
+	        <DamageAmount>7</DamageAmount>	        
+	        <MaxRandomDamageBonus>7</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        

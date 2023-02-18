@@ -32,11 +32,29 @@
 			<Silver>100</Silver>
 			<Iron>80</Iron>
         </Cost>
+
+
+        <ModifySpeed>
+            <Technology>T_Shoes</Technology>
+        </ModifySpeed>
+        <ModifyArmor>
+            <Technology>T_Loom</Technology>
+        </ModifyArmor>
+
+
+        <ModifyDamage>
+            <Technology>T_MasterOfSmithery</Technology>
+        </ModifyDamage>
+         <ModifyDamage>
+        	<Technology>T_IronCasting</Technology>
+        </ModifyDamage>
+
+
         <Category>Military</Category>
 		<AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		<Exploration>15</Exploration>
 		<ArmorClass>ArmorClassLeather</ArmorClass>
-		<ArmorAmount>1</ArmorAmount> 
+		<ArmorAmount>2</ArmorAmount> 
 		<DodgeChance>0</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>0</ExperiencePoints>
@@ -84,9 +102,9 @@
 	        <BattleWalkAnim>PU_Militia_Run1</BattleWalkAnim>
 	        <HitAnim>PU_Militia_Hit</HitAnim>
 
-	        <DamageClass>DC_Strike</DamageClass>
-	        <DamageAmount>10</DamageAmount>
-	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
+	        <DamageClass>DC_Sword</DamageClass>
+	        <DamageAmount>9</DamageAmount>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        

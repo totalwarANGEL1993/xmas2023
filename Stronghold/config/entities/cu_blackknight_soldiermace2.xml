@@ -66,7 +66,7 @@
         <Category>Melee</Category>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassLeather</ArmorClass>
-		  <ArmorAmount>2</ArmorAmount> 
+		  <ArmorAmount>5</ArmorAmount> 
 		  <DodgeChance>10</DodgeChance> 
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
@@ -114,8 +114,8 @@
 	        <HitAnim>CU_BlackKnight_SoldierMace1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Mace</DamageClass>
-	        <DamageAmount>16</DamageAmount>	        
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <DamageAmount>8</DamageAmount>	        
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        

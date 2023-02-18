@@ -23,7 +23,7 @@
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
-		  <MaxHealth>60</MaxHealth>
+		  <MaxHealth>50</MaxHealth>
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
 		  <Fearless>true</Fearless>
@@ -34,6 +34,27 @@
 			  <Iron>10</Iron>
 			  <Wood/>
         </Cost>
+
+        <ModifyArmor>
+        	<Technology>T_LeatherMailArmor</Technology>
+        </ModifyArmor>
+        <ModifyArmor>
+        	<Technology>T_ChainMailArmor</Technology>
+        </ModifyArmor>
+        <ModifyArmor>
+        	<Technology>T_PlateMailArmor</Technology>
+        </ModifyArmor>
+
+         <ModifyDamage>
+        	<Technology>T_MasterOfSmithery</Technology>
+        </ModifyDamage>
+         <ModifyDamage>
+        	<Technology>T_IronCasting</Technology>
+        </ModifyDamage>
+
+        <ModifySpeed>
+        	<Technology>T_BetterTrainingBarracks</Technology>
+        </ModifySpeed>
        
 		
         <Category>Military</Category>
@@ -42,7 +63,7 @@
         <Category>Melee</Category>
         <Exploration>20</Exploration>
         <ArmorClass>ArmorClassFur</ArmorClass>
-        <ArmorAmount>5</ArmorAmount>
+        <ArmorAmount>6</ArmorAmount>
         <DodgeChance>10</DodgeChance>
         <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
@@ -94,7 +115,7 @@
 	        
 	        <DamageClass>DC_Evil</DamageClass>
 	        <DamageAmount>16</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        
