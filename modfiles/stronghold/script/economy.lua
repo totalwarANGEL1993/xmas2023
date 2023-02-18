@@ -653,52 +653,31 @@ end
 -- UI
 
 function Stronghold.Economy:OverrideFindViewUpdate()
-    self.Orig_GUIUpdate_FindView = GUIUpdate_FindView;
-    GUIUpdate_FindView = function()
-        Stronghold.Economy.Orig_GUIUpdate_FindView();
+    Overwrite.CreateOverwrite(
+        "GUIUpdate_FindView",
+        function()
+            Overwrite.CallOriginal();
+            local PlayerID = GUI.GetPlayerID();
+            if PlayerID == 17 then
+                local EntityID = GUI.GetSelectedEntity();
+                PlayerID = Logic.EntityGetPlayer(EntityID);
+            end
+            XGUIEng.ShowWidget("FindView", 1);
+            XGUIEng.ShowAllSubWidgets("FindView", 1);
+            Stronghold.Economy:HonorMenu();
+        end
+    );
+end
 
-        local PlayerID = GUI.GetPlayerID();
-        if PlayerID == 17 then
-            local EntityID = GUI.GetSelectedEntity();
-            PlayerID = Logic.EntityGetPlayer(EntityID);
+function Stronghold.Economy:GetLeaderTypesInUpgradeCategories(...)
+    local Result = {};
+    for i= 1, table.getn(arg) do
+        local UpCatMembers = {Logic.GetSettlerTypesInUpgradeCategory(UpgradeCategories.LeaderPoleArm)};
+        for j= 2, UpCatMembers[1]+1 do
+            table.insert(Result, UpCatMembers[j]);
         end
-        local x = Logic.WorldGetSize() / 2;
-        local y = Logic.WorldGetSize() / 2;
-
-        XGUIEng.ShowWidget("FindView", 1);
-        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PU_Serf) > 0 then
-            XGUIEng.ShowWidget("Find_IdleSerf", 1);
-        end
-        if Logic.IsPlayerEntityOfCategoryInArea(PlayerID, x, y, Logic.WorldGetSize(), "Spear") == 1 then
-		    XGUIEng.ShowWidget("FindSpearmen", 1);
-        end
-        if Logic.IsPlayerEntityOfCategoryInArea(PlayerID, x, y, Logic.WorldGetSize(), "Sword") == 1 then
-            XGUIEng.ShowWidget("FindSwordmen", 1);
-        end
-        if Logic.IsPlayerEntityOfCategoryInArea(PlayerID, x, y, Logic.WorldGetSize(), "Bow") == 1 then
-            XGUIEng.ShowWidget("FindBowmen", 1);
-        end
-        if Logic.IsPlayerEntityOfCategoryInArea(PlayerID, x, y, Logic.WorldGetSize(), "Cannon") == 1 then
-            XGUIEng.ShowWidget("FindCannon", 1);
-        end
-        if Logic.IsPlayerEntityOfCategoryInArea(PlayerID, x, y, Logic.WorldGetSize(), "CavalryLight") == 1 then
-            XGUIEng.ShowWidget("FindLightCavalry", 1);
-        end
-        if Logic.IsPlayerEntityOfCategoryInArea(PlayerID, x, y, Logic.WorldGetSize(), "CavalryHeavy") == 1 then
-            XGUIEng.ShowWidget("FindHeavyCavalry", 1);
-        end
-        if Logic.IsPlayerEntityOfCategoryInArea(PlayerID, x, y, Logic.WorldGetSize(), "Rifle") == 1 then
-            XGUIEng.ShowWidget("FindRiflemen", 1);
-        end
-        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PU_Scout) > 0 then
-            XGUIEng.ShowWidget("FindScout", 1);
-        end
-        if Logic.GetNumberOfEntitiesOfTypeOfPlayer(PlayerID, Entities.PU_Thief) > 0 then
-            XGUIEng.ShowWidget("FindThief", 1);
-        end
-
-        Stronghold.Economy:HonorMenu();
-	end
+    end
+    return Result;
 end
 
 function Stronghold.Economy:HonorMenu()

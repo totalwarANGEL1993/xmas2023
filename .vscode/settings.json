@@ -216,7 +216,9 @@
         "GetAllWorkplaces",
         "IsBuildingBeingUpgraded",
         "Job",
-        "Placeholder"
+        "Placeholder",
+        "GetAllLeader",
+        "GetAllCannons"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

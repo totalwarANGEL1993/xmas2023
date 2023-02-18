@@ -318,7 +318,6 @@ end
 -- Check tower placement (Community Server)
 -- Prevents towers from being placed if another tower of the same player is
 -- to close. Type of tower does not matter.
--- This function is the one to be called!
 function Stronghold.Construction:StartCheckTowerDistanceCallback()
     if not GameCallback_PlaceBuildingAdditionalCheck then
         return false;
@@ -363,8 +362,8 @@ function Stronghold.Construction:OverridePlaceBuildingAction()
     Overwrite.CreateOverwrite(
         "GUIUpdate_FindView",
         function()
-            local PlayerID = Stronghold:GetLocalPlayerID();
             Overwrite.CallOriginal();
+            local PlayerID = Stronghold:GetLocalPlayerID();
             Stronghold.Construction:CancelBuildingPlacementForUpgradeCategory(
                 PlayerID,
                 Stronghold.Construction.Data[PlayerID].LastPlacedUpgradeCategory
