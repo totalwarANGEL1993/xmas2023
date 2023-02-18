@@ -13,7 +13,7 @@ function OnMapStart()
 
     local Path = "E:/Siedler/Projekte/xmas2023/dev/devload.lua";
     if false then
-        Path = "maps/externalmap/stronghold/loader.lua";
+        Path = "stronghold/loader.lua";
     end
     Script.Load(Path);
 

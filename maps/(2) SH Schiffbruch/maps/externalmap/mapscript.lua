@@ -13,9 +13,9 @@
 function OnMapStart()
     Player_Teams = {[1] = {1}, [2] = {2}};
 
-    gvBasePath = "maps/externalmap/stronghold/";
+    gvBasePath = "stronghold/";
     if false then
-        gvBasePath = "E:/Siedler/Projekte/xmas2023/stronghold/";
+        gvBasePath = "E:/Siedler/Projekte/xmas2023/modfiles/stronghold/";
     end
     Script.Load(gvBasePath.. "loader.lua");
 

@@ -31,7 +31,7 @@ DetectStronghold = function()
     return false;
 end
 
-gvBasePath = gvBasePath or "maps/externalmap/stronghold/";
+gvBasePath = gvBasePath or "stronghold/";
 Script.Load(gvBasePath.. "detecter.lua");
 if not DetectStronghold() then
     GUI.AddStaticNote("@color:255,0,0 ERROR: Can not find Stronghold!");
