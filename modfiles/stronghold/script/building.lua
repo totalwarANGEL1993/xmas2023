@@ -203,7 +203,7 @@ function Stronghold.Building:HeadquartersBuySerf()
     end
 
     local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Serf);
-    if not HasPlayerEnoughResourcesFeedback(Config.Costs) then
+    if not HasPlayerEnoughResourcesFeedback(Config.Costs[1]) then
         return false;
     end
     if Logic.GetPlayerAttractionUsage(PlayerID) >= Logic.GetPlayerAttractionLimit(PlayerID) then

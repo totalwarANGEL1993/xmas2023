@@ -2,8 +2,8 @@
 <root>
  <NameKey>MapDescription/Peaceful_Land_name</NameKey>
  <DescKey>MapDescription/Peaceful_Land_desc</DescKey>
- <Name>(2) @color:255,225,95 SH @color:255,255,255 Schiffbruch</Name>
- <Desc>@color:255,225,95 von totalwarANGEL @cr @cr @color:255,255,255 Ihr seid gestranded. Und Ihr seid nicht alein.... Könnt Ihr Euch gegen den Feind behaupten und diese gottverlassene Insel als Sieger verlassen?</Desc>
+ <Name>(2) @color:200,70,40 SH @color:255,255,255 Schiffbruch</Name>
+ <Desc>@color:200,70,40 von totalwarANGEL @cr @cr @color:255,255,255 Ihr seid gestranded. Und Ihr seid nicht alein.... Könnt Ihr Euch gegen den Feind behaupten und diese gottverlassene Insel als Sieger verlassen?</Desc>
  <SizeX>417</SizeX>
  <SizeY>417</SizeY>
  <MPFlag>true</MPFlag>
