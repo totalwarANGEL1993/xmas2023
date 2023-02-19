@@ -126,7 +126,7 @@ Stronghold.Unit = {
             ---
             [Entities.PV_Cannon1] = {
                 Costs = {
-                    [1] = {15, 250, 0, 30, 0, 150, 100},
+                    [1] = {15, 350, 0, 30, 0, 200, 150},
                     [2] = {0, 0, 0, 0, 0, 0, 0},
                 },
                 Allowed = true,
@@ -135,7 +135,7 @@ Stronghold.Unit = {
             },
             [Entities.PV_Cannon2] = {
                 Costs = {
-                    [1] = {15, 250, 0, 30, 0, 150, 100},
+                    [1] = {15, 350, 0, 30, 0, 200, 150},
                     [2] = {0, 0, 0, 0, 0, 0, 0},
                 },
                 Allowed = true,
@@ -144,7 +144,7 @@ Stronghold.Unit = {
             },
             [Entities.PV_Cannon3] = {
                 Costs = {
-                    [1] = {30, 800, 0, 50, 0, 500, 250},
+                    [1] = {30, 950, 0, 50, 0, 600, 350},
                     [2] = {0, 0, 0, 0, 0, 0, 0},
                 },
                 Allowed = true,
@@ -153,7 +153,7 @@ Stronghold.Unit = {
             },
             [Entities.PV_Cannon4] = {
                 Costs = {
-                    [1] = {30, 800, 0, 50, 0, 250, 500},
+                    [1] = {30, 950, 0, 50, 0, 350, 600},
                     [2] = {0, 0, 0, 0, 0, 0, 0},
                 },
                 Allowed = true,
@@ -255,6 +255,10 @@ function Stronghold.Unit:Install()
         self.Data[i] = {};
     end
 
+    Job.Create(function()
+        local ID = Event.GetEntityID();
+        Stronghold.Unit:SetFormationOnCreate(ID);
+    end);
     self:CreateUnitButtonHandlers();
     self:OverrideGUI();
 end
@@ -313,44 +317,43 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                 CostsLeader = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CostsLeader);
                 Experience = 3;
             end
-
-            -- Check worker for foundry and send him to eat (no cannon spamming :) )
-            if TypeName and string.find(TypeName, "Cannon") then
-                local Workers = {Logic.GetAttachedWorkersToBuilding(_BarracksID)};
-                if Workers[1] == 0 or Logic.IsSettlerAtWork(Workers[2]) == 0 then
-                    Stronghold.Players[_PlayerID].BuyUnitLock = false;
-                    Sound.PlayQueuedFeedbackSound(Sounds.VoicesWorker_WORKER_FunnyNo_rnd_01, 127);
-                    Message("Es ist kein Kanonengießer anwesend!");
-                    return;
-                else
-                    Logic.SetCurrentMaxNumWorkersInBuilding(_BarracksID, 0);
-                    Logic.SetCurrentMaxNumWorkersInBuilding(_BarracksID, 1);
-                end
-            end
-
-            RemoveResourcesFromPlayer(_PlayerID, CostsLeader);
-            local ID = AI.Entity_CreateFormation(_PlayerID, _Type, 0, 0, Position.X, Position.Y, 0, 0, Experience, 0);
-            if ID ~= 0 then
-                if IsLeader and _AutoFill then
-                    local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
-                    for i= 1, MaxSoldiers do
-                        local CostsSoldier = self.Config.Units[_Type].Costs[2];
-                        CostsSoldier = Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
-                        CostsSoldier[ResourceType.Honor] = 0;
-                        if HasEnoughResources(_PlayerID, CostsSoldier) then
-                            RemoveResourcesFromPlayer(_PlayerID, CostsSoldier);
-                            local SoldierType = Logic.LeaderGetSoldiersType(ID);
-                            Logic.CreateEntity(SoldierType, Position.X, Position.Y, 0, _PlayerID);
-                            Tools.AttachSoldiersToLeader(ID, 1);
+            if not TypeName or not string.find(TypeName, "Cannon") then
+                RemoveResourcesFromPlayer(_PlayerID, CostsLeader);
+                local ID = AI.Entity_CreateFormation(_PlayerID, _Type, 0, 0, Position.X, Position.Y, 0, 0, Experience, 0);
+                if ID ~= 0 then
+                    if IsLeader and _AutoFill then
+                        local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
+                        for i= 1, MaxSoldiers do
+                            local CostsSoldier = self.Config.Units[_Type].Costs[2];
+                            CostsSoldier = Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
+                            CostsSoldier[ResourceType.Honor] = 0;
+                            if HasEnoughResources(_PlayerID, CostsSoldier) then
+                                RemoveResourcesFromPlayer(_PlayerID, CostsSoldier);
+                                local SoldierType = Logic.LeaderGetSoldiersType(ID);
+                                Logic.CreateEntity(SoldierType, Position.X, Position.Y, 0, _PlayerID);
+                                Tools.AttachSoldiersToLeader(ID, 1);
+                            end
                         end
                     end
+                    Logic.RotateEntity(ID, Orientation +180);
+                    self:SetFormationOnCreate(ID);
                 end
-                Logic.RotateEntity(ID, Orientation +180);
-                self:SetFormationType(ID);
+            else
+                self:PayUnit(_PlayerID, _Type);
             end
         end
         Stronghold.Players[_PlayerID].BuyUnitLock = nil;
     end
+end
+
+function Stronghold.Unit:PayUnit(_PlayerID, _Type)
+    local CostsLeader = Stronghold:CreateCostTable(unpack(self.Config.Units[_Type].Costs[1]));
+    local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
+    local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
+    if IsLeader and not IsCannon and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
+        CostsLeader = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CostsLeader);
+    end
+    RemoveResourcesFromPlayer(_PlayerID, CostsLeader);
 end
 
 function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
@@ -392,7 +395,11 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
     end
 end
 
-function Stronghold.Unit:SetFormationType(_ID)
+function Stronghold.Unit:SetFormationOnCreate(_ID)
+    if Logic.IsLeader(_ID) == 0 then
+        return;
+    end
+
     -- Circle formation
     if Logic.GetEntityType(_ID) == Entities.PU_LeaderSword2
     or Logic.GetEntityType(_ID) == Entities.PU_LeaderSword3
@@ -524,19 +531,18 @@ function Stronghold.Unit:BuySoldierButtonUpdate()
     local EntityID = GUI.GetSelectedEntity();
     local Type = Logic.GetEntityType(EntityID);
     if Stronghold:IsPlayer(PlayerID) then
-        if not Stronghold.Unit.Config.Units[Type] then
-            XGUIEng.ShowWidget("Buy_Soldier_Button", 0);
-        end
-        if Logic.IsLeader(EntityID) == 0 then
-            XGUIEng.ShowWidget("Buy_Soldier_Button", 0);
-        end
         local BarracksID = Logic.LeaderGetNearbyBarracks(EntityID);
         local CurrentSoldiers = Logic.LeaderGetNumberOfSoldiers(EntityID);
         local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(EntityID);
         if BarracksID == 0 or CurrentSoldiers == MaxSoldiers then
             XGUIEng.DisableButton("Buy_Soldier_Button", 1);
         else
-            XGUIEng.DisableButton("Buy_Soldier_Button", 0);
+            if not Stronghold.Unit.Config.Units[Type]
+            or Logic.IsLeader(EntityID) == 0 then
+                XGUIEng.DisableButton("Buy_Soldier_Button", 1);
+            else
+                XGUIEng.DisableButton("Buy_Soldier_Button", 0);
+            end
         end
         return true;
     end

@@ -206,9 +206,11 @@ function Stronghold.Attraction:ManageCriminalsOfPlayer(_PlayerID)
                 if math.random(1, 1000) <= CrimeChance then
                     local WorkerList = {};
                     for k, v in pairs(GetAllWorkplaces(_PlayerID)) do
-                        local WorkerOfBuilding = {Logic.GetAttachedWorkersToBuilding(v)};
-                        for i= 2, WorkerOfBuilding[1] +1 do
-                            table.insert(WorkerList, {WorkerOfBuilding[i], v});
+                        if Logic.GetEntityType(v) ~= Entities.PB_Foundry1 and Logic.GetEntityType(v) ~= Entities.PB_Foundry2 then
+                            local WorkerOfBuilding = {Logic.GetAttachedWorkersToBuilding(v)};
+                            for i= 2, WorkerOfBuilding[1] +1 do
+                                table.insert(WorkerList, {WorkerOfBuilding[i], v});
+                            end
                         end
                     end
                     local WorkerCount = table.getn(WorkerList);

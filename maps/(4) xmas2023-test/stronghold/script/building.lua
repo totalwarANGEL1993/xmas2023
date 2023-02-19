@@ -203,7 +203,7 @@ function Stronghold.Building:HeadquartersBuySerf()
     end
 
     local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Serf);
-    if not HasPlayerEnoughResourcesFeedback(Config.Costs) then
+    if not HasPlayerEnoughResourcesFeedback(Config.Costs[1]) then
         return false;
     end
     if Logic.GetPlayerAttractionUsage(PlayerID) >= Logic.GetPlayerAttractionLimit(PlayerID) then
@@ -1389,6 +1389,10 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
         local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, 0);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
+
+            GUI.BuyCannon(EntityID, _Type);
+		    XGUIEng.ShowWidget(gvGUI_WidgetID.CannonInProgress,1);
+
             Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 Action, EntityID, UnitType, false
