@@ -1,6 +1,6 @@
--- local LibPath = "maps\\user\\cerberus\\loader.lua";
+local LibPath = "maps\\user\\cerberus\\loader.lua";
 -- local LibPath = "maps\\externalmap\\cerberus\\loader.lua";
-local LibPath = "cerberus\\loader.lua";
+-- local LibPath = "cerberus\\loader.lua";
 Script.Load(LibPath);
 assert(Lib ~= nil);
 

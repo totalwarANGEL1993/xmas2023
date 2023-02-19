@@ -1389,6 +1389,10 @@ function Stronghold.Building:OnFoundryBuyUnitClicked(_Type, _UpgradeCategory)
         local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, 0);
         if HasPlayerEnoughResourcesFeedback(Costs) then
             Stronghold.Players[PlayerID].BuyUnitLock = true;
+
+            GUI.BuyCannon(EntityID, _Type);
+		    XGUIEng.ShowWidget(gvGUI_WidgetID.CannonInProgress,1);
+
             Syncer.InvokeEvent(
                 Stronghold.Building.NetworkCall,
                 Action, EntityID, UnitType, false

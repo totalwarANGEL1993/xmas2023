@@ -218,7 +218,8 @@
         "Job",
         "Placeholder",
         "GetAllLeader",
-        "GetAllCannons"
+        "GetAllCannons",
+        "UseWeatherSet"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

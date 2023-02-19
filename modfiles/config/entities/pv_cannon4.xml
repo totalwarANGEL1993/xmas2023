@@ -16,9 +16,7 @@
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>300</Gold>
-			  <Iron>200</Iron>
-			  <Sulfur>200</Sulfur>
+			  <Gold>0</Gold>
         </Cost>
         <Category>Military</Category>
         <Category>Cannon</Category>
@@ -31,7 +29,7 @@
 		  <DodgeChance>0</DodgeChance> 
     	<IdleTaskList>TL_VEHICLE_IDLE</IdleTaskList>
     	<ExperiencePoints>4</ExperiencePoints>
-    	<AttractionSlots>5</AttractionSlots>
+    	<AttractionSlots>0</AttractionSlots>
     	
     	
 
