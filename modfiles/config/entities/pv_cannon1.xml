@@ -95,7 +95,7 @@
 	        <MaxRandomDamageBonus>8</MaxRandomDamageBonus>
 	        <DamageRange>300</DamageRange>
 	        
-	        <BattleWaitUntil>3500</BattleWaitUntil>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
   			<ProjectileOffsetFront>40</ProjectileOffsetFront>
   			<ProjectileOffsetRight/>
 	        <ProjectileEffectID>FXCannonBallShrapnel</ProjectileEffectID>

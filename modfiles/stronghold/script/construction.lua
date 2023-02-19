@@ -426,11 +426,13 @@ function Stronghold.Construction:InitBuildingLimits()
     EntityTracker.SetLimitOfType(Entities.PB_PowerPlant1, 1);
 
     -- Military buildings
-    EntityTracker.SetLimitOfType(Entities.PB_Barracks1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Barracks1, 2);
     EntityTracker.SetLimitOfType(Entities.PB_Barracks2, 1);
-    EntityTracker.SetLimitOfType(Entities.PB_Stable1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Stable1, 2);
     EntityTracker.SetLimitOfType(Entities.PB_Stable2, 1);
-    EntityTracker.SetLimitOfType(Entities.PB_Archery1, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Archery1, 2);
     EntityTracker.SetLimitOfType(Entities.PB_Archery2, 1);
+    EntityTracker.SetLimitOfType(Entities.PB_Foundry1, 6);
+    EntityTracker.SetLimitOfType(Entities.PB_Foundry2, 6);
 end
 

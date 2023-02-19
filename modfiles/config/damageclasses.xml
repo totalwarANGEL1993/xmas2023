@@ -133,7 +133,7 @@
             <ArmorClassJerkinFactor>0.1</ArmorClassJerkinFactor>
             <ArmorClassLeatherFactor>0.1</ArmorClassLeatherFactor>
             <ArmorClassIronFactor>0.1</ArmorClassIronFactor>
-            <ArmorClassFortificationFactor>2.2</ArmorClassFortificationFactor>
+            <ArmorClassFortificationFactor>2.5</ArmorClassFortificationFactor>
             <ArmorClassHeroFactor>0.1</ArmorClassHeroFactor>            
             <ArmorClassFurFactor>0.1</ArmorClassFurFactor>
         </Logic>
