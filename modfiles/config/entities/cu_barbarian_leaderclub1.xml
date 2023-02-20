@@ -63,7 +63,7 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass>
-		  <ArmorAmount>2</ArmorAmount> 
+		  <ArmorAmount>3</ArmorAmount> 
 		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>30</ExperiencePoints>
@@ -122,7 +122,7 @@
 
 	        <DamageClass>DC_Mace</DamageClass>
 	        <DamageAmount>16</DamageAmount>	        
-	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>8</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        

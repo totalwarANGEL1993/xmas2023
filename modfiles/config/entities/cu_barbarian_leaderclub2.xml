@@ -22,7 +22,7 @@
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
-		  <MaxHealth>175</MaxHealth>
+		  <MaxHealth>150</MaxHealth>
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
@@ -65,7 +65,7 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass>
-		  <ArmorAmount>2</ArmorAmount> 
+		  <ArmorAmount>1</ArmorAmount> 
 		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>20</ExperiencePoints>
@@ -119,7 +119,7 @@
 
 	        <DamageClass>DC_Mace</DamageClass>
 	        <DamageAmount>7</DamageAmount>	        
-	        <MaxRandomDamageBonus>7</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>14</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        

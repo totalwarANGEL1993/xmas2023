@@ -6,7 +6,7 @@
 
 Stronghold = Stronghold or {};
 
-Stronghold.Building = {
+Stronghold.Building = Stronghold.Building or {
     SyncEvents = {},
     Data = {},
     Config = {
@@ -1796,6 +1796,10 @@ function Stronghold.Building:ExecuteBuyUnitKeybindForBarracks(_Key, _PlayerID, _
                     GUIAction_ReserachTechnology(Technologies.T_UpgradeSword3);
                 elseif _Key == 4 and XGUIEng.IsButtonDisabled("Research_UpgradeSpear1") == 0 then
                     GUIAction_ReserachTechnology(Technologies.T_UpgradeSpear1);
+                elseif _Key == 4 and XGUIEng.IsButtonDisabled("Research_UpgradeSpear2") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeSpear2);
+                elseif _Key == 4 and XGUIEng.IsButtonDisabled("Research_UpgradeSpear3") == 0 then
+                    GUIAction_ReserachTechnology(Technologies.T_UpgradeSpear3);
                 end
             end
         end

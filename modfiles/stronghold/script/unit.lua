@@ -309,7 +309,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
             local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
-            local CostsLeader = Stronghold:CreateCostTable(unpack(self.Config.Units[_Type].Costs[1]));
+            local CostsLeader = self:GetLeaderCosts(_PlayerID, _Type, 0);
 
             -- Passive ability: experienced troops
             local Experience = 0;
@@ -574,9 +574,10 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
 end
 
 function Stronghold.Unit:GetLeaderCosts(_PlayerID, _Type, _SoldierAmount)
+    local UnitConfig = Stronghold.Recruitment:GetConfig(_Type, _PlayerID);
     local Costs = {};
-    if self.Config.Units[_Type] then
-        Costs = CopyTable(self.Config.Units[_Type].Costs[1]);
+    if UnitConfig or self.Config.Units[_Type] then
+        Costs = CopyTable((UnitConfig ~= nil and UnitConfig.Costs[1]) or self.Config.Units[_Type].Costs[1]);
         Costs = CreateCostTable(unpack(Costs));
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
         if _SoldierAmount and _SoldierAmount > 0 then
@@ -588,9 +589,10 @@ function Stronghold.Unit:GetLeaderCosts(_PlayerID, _Type, _SoldierAmount)
 end
 
 function Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, _Amount)
+    local UnitConfig = Stronghold.Recruitment:GetConfig(_Type, _PlayerID);
     local Costs = {};
-    if self.Config.Units[_Type] then
-        Costs = CopyTable(self.Config.Units[_Type].Costs[2]);
+    if UnitConfig or self.Config.Units[_Type] then
+        Costs = CopyTable((UnitConfig ~= nil and UnitConfig.Costs[2]) or self.Config.Units[_Type].Costs[2]);
         for i= 2, 7 do
             Costs[i] = Costs[i] * _Amount;
         end

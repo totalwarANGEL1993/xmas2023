@@ -243,13 +243,11 @@ function Stronghold:Init()
     self.Economy:Install();
     self.Construction:Install();
     self.Building:Install();
+    self.Recruitment:Install();
     self.Hero:Install();
     self.Unit:Install();
     self.Attraction:Install();
     self.Province:Install();
-    self.AiArmy:Install();
-    self.AiCamp:Install();
-    self.AiPlayer:Install();
 
     self:StartTurnDelayTrigger();
     self:StartPlayerPaydayUpdater();
@@ -285,14 +283,12 @@ function Stronghold:OnSaveGameLoaded()
 
     self.Construction:OnSaveGameLoaded();
     self.Building:OnSaveGameLoaded();
+    self.Recruitment:OnSaveGameLoaded();
     self.Economy:OnSaveGameLoaded();
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
     self.Attraction:OnSaveGameLoaded();
     self.Province:OnSaveGameLoaded();
-    self.AiArmy:OnSaveGameLoaded();
-    self.AiCamp:OnSaveGameLoaded();
-    self.AiPlayer:OnSaveGameLoaded();
 
     return true;
 end
@@ -686,7 +682,6 @@ function Stronghold:GetPlayerRankName(_PlayerID, _Rank)
         local Language = GetLanguage();
         local Text = self.Config.Ranks[Rank].Text[Gender][Language];
         if type (Text) == "table" then
-            local Language = GetLanguage();
             Text = Text[Language];
         end
         return Text;
@@ -873,8 +868,8 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
 
     self.Building:OnHeadquarterSelected(SelectedID);
     self.Building:OnMonasterySelected(SelectedID);
-    self.Building:OnBarracksSelected(SelectedID);
-    self.Building:OnArcherySelected(SelectedID);
+    self.Recruitment:OnBarracksSelected(SelectedID);
+    self.Recruitment:OnArcherySelected(SelectedID);
     self.Building:OnStableSelected(SelectedID);
     self.Building:OnFoundrySelected(SelectedID);
     self.Building:OnTavernSelected(SelectedID);
@@ -963,13 +958,13 @@ end
 -- Action research technology Override
 function Stronghold:OverrideActionResearchTechnologyMain()
     Overwrite.CreateOverwrite("GUIAction_ReserachTechnology", function(_Technology)
-        if not Stronghold.Building:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
+        if not Stronghold.Recruitment:OnBarracksSettlerUpgradeTechnologyClicked(_Technology) then
             Overwrite.CallOriginal();
         end
     end);
 
     Overwrite.CreateOverwrite("GUIAction_ReserachTechnology", function(_Technology)
-        if not Stronghold.Building:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
+        if not Stronghold.Recruitment:OnArcherySettlerUpgradeTechnologyClicked(_Technology) then
             Overwrite.CallOriginal();
         end
     end);
@@ -986,13 +981,13 @@ function Stronghold:OverrideTooltipUpgradeSettlersMain()
     Overwrite.CreateOverwrite("GUITooltip_ResearchTechnologies", function(_Technology, _TextKey, _ShortCut)
         local PlayerID = Stronghold:GetLocalPlayerID();
         Overwrite.CallOriginal();
-        Stronghold.Building:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+        Stronghold.Recruitment:UpdateUpgradeSettlersBarracksTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
     end);
 
     Overwrite.CreateOverwrite("GUITooltip_ResearchTechnologies", function(_Technology, _TextKey, _ShortCut)
         local PlayerID = Stronghold:GetLocalPlayerID();
         Overwrite.CallOriginal();
-        Stronghold.Building:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+        Stronghold.Recruitment:UpdateUpgradeSettlersArcheryTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
     end);
 
     Overwrite.CreateOverwrite("GUITooltip_ResearchTechnologies", function(_Technology, _TextKey, _ShortCut)

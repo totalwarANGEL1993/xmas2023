@@ -219,7 +219,8 @@
         "Placeholder",
         "GetAllLeader",
         "GetAllCannons",
-        "UseWeatherSet"
+        "UseWeatherSet",
+        "IsInTable"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

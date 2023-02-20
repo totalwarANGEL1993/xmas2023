@@ -15,6 +15,7 @@ Lib.Require("comfort/GetLanguage");
 Lib.Require("comfort/GetSeparatedTooltipText");
 Lib.Require("comfort/GetValidEntitiesOfType");
 Lib.Require("comfort/IsBuildingBeingUpgraded");
+Lib.Require("comfort/IsInTable");
 Lib.Require("comfort/IsValidEntity");
 
 Lib.Require("module/archive/Archive");
@@ -48,11 +49,8 @@ Script.Load(gvBasePath.. "script/attraction.lua");
 Script.Load(gvBasePath.. "script/economy.lua");
 Script.Load(gvBasePath.. "script/construction.lua");
 Script.Load(gvBasePath.. "script/building.lua");
+Script.Load(gvBasePath.. "script/recruitment.lua");
 Script.Load(gvBasePath.. "script/unit.lua");
 Script.Load(gvBasePath.. "script/hero.lua");
 Script.Load(gvBasePath.. "script/province.lua");
-
-Script.Load(gvBasePath.. "script/ai_army.lua");
-Script.Load(gvBasePath.. "script/ai_camp.lua");
-Script.Load(gvBasePath.. "script/ai_player.lua");
 
