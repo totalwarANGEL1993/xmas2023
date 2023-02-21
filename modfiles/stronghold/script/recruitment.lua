@@ -28,8 +28,7 @@ end
 function Stronghold.Recruitment:InitDefaultRoster(_PlayerID)
     self.Data[_PlayerID].Roster = {
         -- Barracks
-        -- ["Research_UpgradeSword1"] = Entities.PU_LeaderPoleArm1,
-        ["Research_UpgradeSword1"] = Entities.CU_BlackKnight_LeaderMace2,
+        ["Research_UpgradeSword1"] = Entities.PU_LeaderPoleArm1,
         ["Research_UpgradeSword2"] = Entities.PU_LeaderPoleArm3,
         ["Research_UpgradeSword3"] = Entities.PU_LeaderSword2,
         ["Research_UpgradeSpear1"] = Entities.PU_LeaderSword3,
