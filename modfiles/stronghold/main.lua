@@ -868,9 +868,10 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
 
     self.Building:OnHeadquarterSelected(SelectedID);
     self.Building:OnMonasterySelected(SelectedID);
+
     self.Recruitment:OnBarracksSelected(SelectedID);
     self.Recruitment:OnArcherySelected(SelectedID);
-    self.Building:OnStableSelected(SelectedID);
+    self.Recruitment:OnStableSelected(SelectedID);
     self.Building:OnFoundrySelected(SelectedID);
     self.Building:OnTavernSelected(SelectedID);
 
@@ -970,7 +971,7 @@ function Stronghold:OverrideActionResearchTechnologyMain()
     end);
 
     Overwrite.CreateOverwrite("GUIAction_ReserachTechnology", function(_Technology)
-        if not Stronghold.Building:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
+        if not Stronghold.Recruitment:OnStableSettlerUpgradeTechnologyClicked(_Technology) then
             Overwrite.CallOriginal();
         end
     end);
@@ -993,7 +994,7 @@ function Stronghold:OverrideTooltipUpgradeSettlersMain()
     Overwrite.CreateOverwrite("GUITooltip_ResearchTechnologies", function(_Technology, _TextKey, _ShortCut)
         local PlayerID = Stronghold:GetLocalPlayerID();
         Overwrite.CallOriginal();
-        Stronghold.Building:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
+        Stronghold.Recruitment:UpdateUpgradeSettlersStableTooltip(PlayerID, _Technology, _TextKey, _ShortCut);
     end);
 end
 

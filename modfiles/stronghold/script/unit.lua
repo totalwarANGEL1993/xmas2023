@@ -281,18 +281,13 @@ function Stronghold.Unit:CreateUnitButtonHandlers()
 end
 
 function Stronghold.Unit:GetUnitConfig(_Type)
-    if self.Config.Units[_Type] then
-        return self.Config.Units[_Type];
+    local Config = Stronghold.Recruitment:GetConfig(_Type);
+    if not Config then
+        if self.Config.Units[_Type] then
+            return self.Config.Units[_Type];
+        end
     end
-    return {
-        Costs = {
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-        },
-        Allowed = false,
-        Rank = 0,
-        Upkeep = 0,
-    }
+    return Config;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -300,7 +295,7 @@ end
 
 function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
     if Stronghold:IsPlayer(_PlayerID) then
-        if self.Config.Units[_Type] then
+        if Stronghold.Recruitment:GetConfig(_Type, _PlayerID) then
             if not IsExisting(_BarracksID) then
                 return;
             end
@@ -324,7 +319,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                     if IsLeader and _AutoFill then
                         local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
                         for i= 1, MaxSoldiers do
-                            local CostsSoldier = self.Config.Units[_Type].Costs[2];
+                            local CostsSoldier = Stronghold.Recruitment:GetConfig(_Type, _PlayerID).Costs[2];
                             CostsSoldier = Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
                             CostsSoldier[ResourceType.Honor] = 0;
                             if HasEnoughResources(_PlayerID, CostsSoldier) then
@@ -347,7 +342,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
 end
 
 function Stronghold.Unit:PayUnit(_PlayerID, _Type)
-    local CostsLeader = Stronghold:CreateCostTable(unpack(self.Config.Units[_Type].Costs[1]));
+    local CostsLeader = Stronghold:CreateCostTable(unpack(Stronghold.Recruitment:GetConfig(_Type, _PlayerID).Costs[1]));
     local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
     local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
     if IsLeader and not IsCannon and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
@@ -359,7 +354,7 @@ end
 function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _Wood, _Stone, _Iron, _Sulfur)
     if Stronghold:IsPlayer(_PlayerID) then
         local LeaderType = Logic.GetEntityType(_UnitID);
-        if self.Config.Units[LeaderType] then
+        if Stronghold.Recruitment:GetConfig(LeaderType, _PlayerID) then
             if Logic.GetEntityHealth(_UnitID) > 0 then
                 if Logic.IsEntityInCategory(_UnitID, EntityCategories.Leader) == 1 then
                     local Task = Logic.GetCurrentTaskList(_UnitID);
@@ -462,7 +457,7 @@ function Stronghold.Unit:BuySoldierButtonAction()
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = self.Config.Units[Type].Costs[2];
+    local Costs = Stronghold.Recruitment:GetConfig(Type, PlayerID).Costs[2];
     Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
     if not HasPlayerEnoughResourcesFeedback(Costs) then
@@ -509,7 +504,7 @@ function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _Shor
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = self.Config.Units[Type].Costs[2];
+    local Costs = Stronghold.Recruitment:GetConfig(Type, PlayerID).Costs[2];
     Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
 
