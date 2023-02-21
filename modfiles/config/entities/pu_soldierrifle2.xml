@@ -115,12 +115,12 @@
 	        <HitAnim>PU_SoldierRifle2_Hit</HitAnim>
 	        
 	       	<DamageClass>DC_Bullet</DamageClass>
-	        <DamageAmount>18</DamageAmount>
+	        <DamageAmount>28</DamageAmount>
 	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <AutoAttackRange>3000</AutoAttackRange>
 	        
-	        <BattleWaitUntil>3800</BattleWaitUntil>
+	        <BattleWaitUntil>6200</BattleWaitUntil>
 	        
 	        <MissChance>5</MissChance>
 	        

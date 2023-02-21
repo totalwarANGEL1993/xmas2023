@@ -62,6 +62,9 @@
         <Category>Melee</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
+		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
+		  <ArmorAmount>1</ArmorAmount>
+		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>10</ExperiencePoints>
     	<Upgrade>            

@@ -79,6 +79,9 @@
         <Category>Melee</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
+		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
+		  <ArmorAmount>7</ArmorAmount>
+		  <DodgeChance>1</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>25</ExperiencePoints>
 	</Logic>
@@ -120,7 +123,7 @@
 
             <DamageClass>DC_Pole</DamageClass>
 
-            <DamageAmount>24</DamageAmount>
+            <DamageAmount>18</DamageAmount>
             <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 
             <BattleWaitUntil>2000</BattleWaitUntil>
