@@ -43,7 +43,10 @@ function Stronghold.Recruitment:InitDefaultRoster(_PlayerID)
         ["Research_UpgradeCavalryLight1"] = Entities.PU_LeaderCavalry1,
         ["Research_UpgradeCavalryHeavy1"] = Entities.PU_LeaderHeavyCavalry1,
         -- Foundry
-        -- TODO???
+        ["Buy_Cannon1"] = Entities.PV_Cannon1,
+        ["Buy_Cannon2"] = Entities.PV_Cannon2,
+        ["Buy_Cannon3"] = Entities.PV_Cannon3,
+        ["Buy_Cannon4"] = Entities.PV_Cannon4,
     };
 end
 
@@ -138,6 +141,60 @@ function Stronghold.Recruitment:GetSoldierCostsByLeaderType(_PlayerID, _Type, _A
         Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
     end
     return Costs;
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Stronghold.Recruitment:BuyMilitaryUnitFromFoundryAction(_Type, _UpgradeCategory)
+    local UnitToRecruit = {
+        [Entities.PV_Cannon1] = {"Buy_Cannon1"},
+        [Entities.PV_Cannon2] = {"Buy_Cannon2"},
+        [Entities.PV_Cannon3] = {"Buy_Cannon3"},
+        [Entities.PV_Cannon4] = {"Buy_Cannon4"},
+    };
+    return self:BuyMilitaryUnitFromRecruiterAction(UnitToRecruit, _Type);
+end
+
+function Stronghold.Recruitment:BuyMilitaryUnitFromRecruiterAction(_UnitToRecruit, _Type)
+    local GuiPlayer = Stronghold:GetLocalPlayerID();
+    local EntityID = GUI.GetSelectedEntity();
+    local PlayerID = GUI.GetPlayerID();
+    local AutoFillActive = Logic.IsAutoFillActive(EntityID) == 1;
+    if PlayerID ~= GuiPlayer or not Stronghold:IsPlayer(PlayerID) then
+        return false;
+    end
+    if Stronghold.Players[PlayerID].BuyUnitLock then
+        return true;
+    end
+    if _UnitToRecruit[_Type] then
+        local Button = _UnitToRecruit[_Type][1];
+        if self.Data[PlayerID].Roster[Button] then
+            local UnitType = self.Data[PlayerID].Roster[Button];
+            local Config = self:GetConfig(UnitType, PlayerID);
+            local Soldiers = (AutoFillActive and Config.Soldiers) or 0;
+
+            local Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Soldiers +1);
+            if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, Places) then
+                Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
+                Message("Euer Heer ist bereits groß genug!");
+                return true;
+            end
+            local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, Soldiers);
+            Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
+            if HasPlayerEnoughResourcesFeedback(Costs) then
+                Stronghold.Players[PlayerID].BuyUnitLock = true;
+                if string.find(Button, "Cannon") then
+                    GUI.BuyCannon(EntityID, _Type);
+		            XGUIEng.ShowWidget(gvGUI_WidgetID.CannonInProgress,1);
+                end
+                Syncer.InvokeEvent(
+                    self.NetworkCall,
+                    self.SyncEvents.BuyUnit, EntityID, UnitType, false
+                );
+            end
+            return true;
+        end
+    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -264,6 +321,20 @@ function Stronghold.Recruitment:OnStableSelected(_EntityID)
     self:OnRecruiterSelected(ButtonsToUpdate, _EntityID);
 end
 
+function Stronghold.Recruitment:OnFoundrySelected(_EntityID)
+    local ButtonsToUpdate = {
+        ["Buy_Cannon1"] = {4, 4, 31, 31},
+        ["Buy_Cannon2"] = {38, 4, 31, 31},
+        ["Buy_Cannon3"] = {72, 4, 31, 31},
+        ["Buy_Cannon4"] = {106, 4, 31, 31},
+    };
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type ~= Entities.PB_Foundry1 and Type ~= Entities.PB_Foundry2 then
+        return;
+    end
+    self:OnRecruiterSelected(ButtonsToUpdate, _EntityID);
+end
+
 function Stronghold.Recruitment:OnRecruiterSelected(_ButtonsToUpdate, _EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
     if not Stronghold:IsPlayer(PlayerID) then
@@ -288,6 +359,50 @@ function Stronghold.Recruitment:OnRecruiterSelected(_ButtonsToUpdate, _EntityID)
             XGUIEng.DisableButton(k, Disabled);
         end
     end
+end
+
+-- -------------------------------------------------------------------------- --
+
+function Stronghold.Recruitment:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    local TextToPrint = {
+        [UpgradeCategories.Cannon1] = {"Buy_Cannon1"},
+        [UpgradeCategories.Cannon2] = {"Buy_Cannon2"},
+        [UpgradeCategories.Cannon3] = {"Buy_Cannon3"},
+        [UpgradeCategories.Cannon4] = {"Buy_Cannon4"},
+    };
+    return self:UpdateRecruiterBuyUnitTooltip(TextToPrint, _PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
+end
+
+function Stronghold.Recruitment:UpdateRecruiterBuyUnitTooltip(_TextToPrint, _PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    local WidgetID = XGUIEng.GetCurrentWidgetID();
+    local EntityID = GUI.GetSelectedEntity();
+    local Text = "";
+    local CostsText = "";
+
+    if _TextToPrint[_UpgradeCategory] then
+        local UnitType = self.Data[_PlayerID].Roster[_TextToPrint[_UpgradeCategory][1]];
+        local Config = self:GetConfig(UnitType, _PlayerID);
+        if not Config.Allowed then
+            Text = XGUIEng.GetStringTableText("MenuGeneric/UnitNotAvailable");
+        else
+            local Soldiers = (Logic.IsAutoFillActive(EntityID) == 1 and 6) or 0;
+            local Costs = Stronghold.Unit:GetLeaderCosts(_PlayerID, UnitType, Soldiers);
+            CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
+            Text = Placeholder.Replace(Config.TextNormal[GetLanguage()]);
+            if XGUIEng.IsButtonDisabled(WidgetID) == 1 then
+                local DisabledText = Placeholder.Replace(Config.TextDisabled[GetLanguage()]);
+                local RankName = Stronghold:GetPlayerRankName(_PlayerID, Config.Rank);
+                DisabledText = string.gsub(DisabledText, "#Rank#", RankName);
+                Text = Text .. DisabledText;
+            end
+        end
+    else
+        return false;
+    end
+
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
+    return true;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -928,6 +1043,84 @@ Stronghold.Recruitment.Config.Units = {
         Rank              = 6,
         RecruiterBuilding = {Entities.PB_Stable2},
         ProviderBuilding  = {Entities.PB_Blacksmith3},
+    },
+
+    -- Cannons --
+    [Entities.PV_Cannon1] = {
+        Button            = "Buy_Cannon1",
+        TextNormal        = {
+            de = "{grey}Bombarde{cr}{white}Die Bombarde ist stark gegen Einheiten.{cr}",
+            en = "{grey}Bombarde{cr}{white}The bombard is strong against units.{cr}",
+        },
+        TextDisabled      = {
+            de = "@color:244,184,0 benötigt:{white} #Rank#, Kanonengießerei, Alchemistenhütte",
+            en = "@color:244,184,0 requires:{white} #Rank#, Foundry, Alchemist's Hut",
+        },
+        Costs             = {
+            [1] = {15, 350, 0, 30, 0, 200, 150},
+            [2] = {0, 0, 0, 0, 0, 0, 0},
+        },
+        Allowed           = true,
+        Rank              = 4,
+        RecruiterBuilding = {Entities.PB_Foundry1, Entities.PB_Foundry2},
+        ProviderBuilding  = {},
+    },
+    [Entities.PV_Cannon2] = {
+        Button            = "Buy_Cannon2",
+        TextNormal        = {
+            de = "{grey}Bronzekanone{cr}{white}Die Bronzekanone ist stark gegen Gebäude.{cr}",
+            en = "{grey}Bronze Cannon{cr}{white}The bronze cannon is strong against buildings.{cr}",
+        },
+        TextDisabled      = {
+            de = "@color:244,184,0 benötigt:{white} #Rank#, Kanonengießerei, Alchemistenhütte",
+            en = "@color:244,184,0 requires:{white} #Rank#, Foundry, Alchemist's Hut",
+        },
+        Costs             = {
+            [1] = {15, 350, 0, 30, 0, 200, 150},
+            [2] = {0, 0, 0, 0, 0, 0, 0},
+        },
+        Allowed           = true,
+        Rank              = 4,
+        RecruiterBuilding = {Entities.PB_Foundry1, Entities.PB_Foundry2},
+        ProviderBuilding  = {},
+    },
+    [Entities.PV_Cannon3] = {
+        Button            = "Buy_Cannon3",
+        TextNormal        = {
+            de = "{grey}Eisenkanone{cr}{white}Eine schwere Kanone, die gegen Einheiten eingesetzt wird.{cr}",
+            en = "{grey}Iron Cannon{cr}{white}A heavy cannon used against military units.{cr}",
+        },
+        TextDisabled      = {
+            de = "@color:244,184,0 benötigt:{white} #Rank#, Kanonenmanufaktur, Laboratorium",
+            en = "@color:244,184,0 requires:{white} #Rank#, Cannon Factory, Laboratory",
+        },
+        Costs             = {
+            [1] = {30, 950, 0, 50, 0, 600, 350},
+            [2] = {0, 0, 0, 0, 0, 0, 0},
+        },
+        Allowed           = true,
+        Rank              = 7,
+        RecruiterBuilding = {Entities.PB_Foundry2},
+        ProviderBuilding  = {},
+    },
+    [Entities.PV_Cannon4] = {
+        Button            = "Buy_Cannon4",
+        TextNormal        = {
+            de = "{grey}Belagerungskanone{cr}{white}Diese schwere Kanone ist besonders effizient bei der Zerstörung von Gebäuden.{cr}",
+            en = "{grey}Siege Cannon{cr}{white}This heavy cannon is particularly efficient at destroying buildings.{cr}",
+        },
+        TextDisabled      = {
+            de = "@color:244,184,0 benötigt:{white} #Rank#, Kanonenmanufaktur, Laboratorium",
+            en = "@color:244,184,0 requires:{white} #Rank#, Cannon Factory, Laboratory",
+        },
+        Costs             = {
+            [1] = {30, 950, 0, 50, 0, 350, 600},
+            [2] = {0, 0, 0, 0, 0, 0, 0},
+        },
+        Allowed           = true,
+        Rank              = 7,
+        RecruiterBuilding = {Entities.PB_Foundry2},
+        ProviderBuilding  = {},
     },
 };
 

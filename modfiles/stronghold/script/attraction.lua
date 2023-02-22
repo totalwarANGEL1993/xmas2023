@@ -76,9 +76,9 @@ Stronghold.Attraction = {
             [Entities.PU_LeaderBow3] = 1,
             [Entities.PU_LeaderBow4] = 1,
             ---
-            [Entities.PV_Cannon1] = 5,
+            [Entities.PV_Cannon1] = 10,
             [Entities.PV_Cannon2] = 10,
-            [Entities.PV_Cannon3] = 15,
+            [Entities.PV_Cannon3] = 20,
             [Entities.PV_Cannon4] = 20,
             ---
             [Entities.PU_LeaderCavalry1] = 2,
