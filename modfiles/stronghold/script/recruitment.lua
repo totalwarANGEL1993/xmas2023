@@ -47,6 +47,9 @@ function Stronghold.Recruitment:InitDefaultRoster(_PlayerID)
         ["Buy_Cannon2"] = Entities.PV_Cannon2,
         ["Buy_Cannon3"] = Entities.PV_Cannon3,
         ["Buy_Cannon4"] = Entities.PV_Cannon4,
+        -- Tavern
+        ["Buy_Scout"] = Entities.PU_Scout,
+        ["Buy_Thief"] = Entities.PU_Thief,
     };
 end
 
@@ -153,6 +156,15 @@ function Stronghold.Recruitment:BuyMilitaryUnitFromFoundryAction(_Type, _Upgrade
         [Entities.PV_Cannon4] = {"Buy_Cannon4"},
     };
     return self:BuyMilitaryUnitFromRecruiterAction(UnitToRecruit, _Type);
+end
+
+function Stronghold.Recruitment:BuyMilitaryUnitFromTavernAction(_UpgradeCategory)
+    local _,Type = Logic.GetSettlerTypesInUpgradeCategory(_UpgradeCategory);
+    local UnitToRecruit = {
+        [Entities.PU_Scout] = {"Buy_Scout"},
+        [Entities.PU_Thief] = {"Buy_Thief"},
+    };
+    return self:BuyMilitaryUnitFromRecruiterAction(UnitToRecruit, Type);
 end
 
 function Stronghold.Recruitment:BuyMilitaryUnitFromRecruiterAction(_UnitToRecruit, _Type)
@@ -335,6 +347,18 @@ function Stronghold.Recruitment:OnFoundrySelected(_EntityID)
     self:OnRecruiterSelected(ButtonsToUpdate, _EntityID);
 end
 
+function Stronghold.Recruitment:OnTavernSelected(_EntityID)
+    local ButtonsToUpdate = {
+        ["Buy_Scout"] = {4, 4, 31, 31},
+        ["Buy_Thief"] = {38, 4, 31, 31},
+    };
+    local Type = Logic.GetEntityType(_EntityID);
+    if Type ~= Entities.PB_Tavern1 and Type ~= Entities.PB_Tavern2 then
+        return;
+    end
+    self:OnRecruiterSelected(ButtonsToUpdate, _EntityID);
+end
+
 function Stronghold.Recruitment:OnRecruiterSelected(_ButtonsToUpdate, _EntityID)
     local PlayerID = Logic.EntityGetPlayer(_EntityID);
     if not Stronghold:IsPlayer(PlayerID) then
@@ -369,6 +393,14 @@ function Stronghold.Recruitment:UpdateFoundryBuyUnitTooltip(_PlayerID, _UpgradeC
         [UpgradeCategories.Cannon2] = {"Buy_Cannon2"},
         [UpgradeCategories.Cannon3] = {"Buy_Cannon3"},
         [UpgradeCategories.Cannon4] = {"Buy_Cannon4"},
+    };
+    return self:UpdateRecruiterBuyUnitTooltip(TextToPrint, _PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
+end
+
+function Stronghold.Recruitment:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    local TextToPrint = {
+        [UpgradeCategories.Scout] = {"Buy_Scout"},
+        [UpgradeCategories.Thief] = {"Buy_Thief"},
     };
     return self:UpdateRecruiterBuyUnitTooltip(TextToPrint, _PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
 end
@@ -1120,6 +1152,68 @@ Stronghold.Recruitment.Config.Units = {
         Allowed           = true,
         Rank              = 7,
         RecruiterBuilding = {Entities.PB_Foundry2},
+        ProviderBuilding  = {},
+    },
+
+    -- Special units
+    [Entities.PU_Scout]   = {
+        Button            = "Buy_Scout",
+        TextNormal        = {
+            de = "{grey}Kundschafter{cr}{white}Kundschafter können für Euch Informationen beschaffen, Rohstoffe finden und Gebiete aufdecken.{cr}",
+            en = "{grey}Scout{cr}{white}{cr}Scouts can gather information for you, find raw materials and uncover areas.",
+        },
+        TextDisabled      = {
+            de = "@color:244,184,0 benötigt:{white} #Rank#",
+            en = "@color:244,184,0 requires:{white} #Rank#",
+        },
+        Costs             = {
+            [1] = {0, 150, 0, 50, 0, 50, 0},
+            [2] = {0, 0, 0, 0, 0, 0, 0},
+        },
+        Allowed           = true,
+        Rank              = 2,
+        Upkeep            = 10,
+        RecruiterBuilding = {Entities.PB_Tavern1, Entities.PB_Tavern2},
+        ProviderBuilding  = {},
+    },
+    [Entities.PU_Thief]   = {
+        Button            = "Buy_Thief",
+        TextNormal        = {
+            de = "{grey}Dieb{cr}{white}Mancher Krimineller arbeitet lieber für Euch, als Euch zu beklauen. Lehrt ihnen später den Umgang mit Sprengstoff.{cr}",
+            en = "{grey}Thief{cr}{white}Some criminals would rather work for you than steal from you. Teaches them later how to use explosives.{cr}",
+        },
+        TextDisabled      = {
+            de = "@color:244,184,0 benötigt:{white} #Rank#, Wirtshaus",
+            en = "@color:244,184,0 requires:{white} #Rank#, Inn",
+        },
+        Costs             = {
+            [1] = {30, 500, 0, 0, 0, 100, 100},
+            [2] = {0, 0, 0, 0, 0, 0, 0},
+        },
+        Allowed           = true,
+        Rank              = 4,
+        Upkeep            = 50,
+        RecruiterBuilding = {Entities.PB_Tavern2},
+        ProviderBuilding  = {},
+    },
+    [Entities.PU_Serf]    = {
+        Button            = "Buy_Serf",
+        TextNormal        = {
+            de = "{grey}Leibeigener{cr}{white}{cr}",
+            en = "{grey}Serf{cr}{white}{cr}",
+        },
+        TextDisabled      = {
+            de = "@color:244,184,0 benötigt:{white} #Rank#",
+            en = "@color:244,184,0 requires:{white} #Rank#",
+        },
+        Costs             = {
+            [1] = {0, 50, 0, 0, 0, 0, 0},
+            [2] = {0, 0, 0, 0, 0, 0, 0},
+        },
+        Allowed           = true,
+        Rank              = 1,
+        Upkeep            = 0,
+        RecruiterBuilding = {Entities.PB_Headquarters1, Entities.PB_Headquarters2, Entities.PB_Headquarters3},
         ProviderBuilding  = {},
     },
 };

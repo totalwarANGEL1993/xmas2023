@@ -873,7 +873,7 @@ function Stronghold:OnSelectionMenuChanged(_EntityID)
     self.Recruitment:OnArcherySelected(SelectedID);
     self.Recruitment:OnStableSelected(SelectedID);
     self.Recruitment:OnFoundrySelected(SelectedID);
-    self.Building:OnTavernSelected(SelectedID);
+    self.Recruitment:OnTavernSelected(SelectedID);
 
     -- self.Economy:ShowHeadquartersDetail(GuiPlayer);
 end
@@ -1000,7 +1000,7 @@ end
 
 function Stronghold:OverrideActionBuyMilitaryUnitMain()
     Overwrite.CreateOverwrite("GUIAction_BuyMilitaryUnit", function(_UpgradeCategory)
-        if not Stronghold.Building:BuyMilitaryUnitFromTavernAction(_UpgradeCategory) then
+        if not Stronghold.Recruitment:BuyMilitaryUnitFromTavernAction(_UpgradeCategory) then
             Overwrite.CallOriginal();
         end
     end);
@@ -1022,7 +1022,7 @@ function Stronghold:OverrideTooltipBuyMilitaryUnitMain()
 
         local TooltipSet = false;
         if not TooltipSet then
-            TooltipSet = Stronghold.Building:UpdateTavernBuyUnitTooltip(PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
+            TooltipSet = Stronghold.Recruitment:UpdateTavernBuyUnitTooltip(PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
         end
         if not TooltipSet then
             TooltipSet = Stronghold.Recruitment:UpdateFoundryBuyUnitTooltip(PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut);
