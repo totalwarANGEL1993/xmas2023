@@ -49,6 +49,7 @@ Script.Load(gvBasePath.. "script/attraction.lua");
 Script.Load(gvBasePath.. "script/economy.lua");
 Script.Load(gvBasePath.. "script/construction.lua");
 Script.Load(gvBasePath.. "script/building.lua");
+Script.Load(gvBasePath.. "script/unitconfig.lua");
 Script.Load(gvBasePath.. "script/recruitment.lua");
 Script.Load(gvBasePath.. "script/unit.lua");
 Script.Load(gvBasePath.. "script/hero.lua");

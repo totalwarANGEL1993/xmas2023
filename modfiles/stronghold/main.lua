@@ -243,6 +243,7 @@ function Stronghold:Init()
     self.Economy:Install();
     self.Construction:Install();
     self.Building:Install();
+    self.UnitConfig:Install();
     self.Recruitment:Install();
     self.Hero:Install();
     self.Unit:Install();
@@ -283,6 +284,7 @@ function Stronghold:OnSaveGameLoaded()
 
     self.Construction:OnSaveGameLoaded();
     self.Building:OnSaveGameLoaded();
+    self.UnitConfig:OnSaveGameLoaded();
     self.Recruitment:OnSaveGameLoaded();
     self.Economy:OnSaveGameLoaded();
     self.Hero:OnSaveGameLoaded();

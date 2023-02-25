@@ -108,9 +108,8 @@ function Stronghold.Building:CreateBuildingButtonHandlers()
     self.SyncEvents = {
         ChangeTax = 1,
         BuySerf = 3,
-        BuyUnit = 4,
-        BlessSettlers = 5,
-        MeasureTaken = 6,
+        BlessSettlers = 4,
+        MeasureTaken = 5,
     };
 
     self.NetworkCall = Syncer.CreateEvent(
@@ -119,9 +118,6 @@ function Stronghold.Building:CreateBuildingButtonHandlers()
                 Stronghold.Building:HeadquartersButtonChangeTax(_PlayerID, arg[1]);
             end
             if _Action == Stronghold.Building.SyncEvents.BuySerf then
-                Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
-            end
-            if _Action == Stronghold.Building.SyncEvents.BuyUnit then
                 Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
             end
             if _Action == Stronghold.Building.SyncEvents.BlessSettlers then
@@ -202,7 +198,7 @@ function Stronghold.Building:HeadquartersBuySerf()
         return false;
     end
 
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Serf);
+    local Config = Stronghold.UnitConfig:GetConfig(Entities.PU_Serf);
     if not HasPlayerEnoughResourcesFeedback(Config.Costs[1]) then
         return false;
     end
@@ -568,142 +564,6 @@ function Stronghold.Building:HeadquartersBuildingTabsGuiTooltip(_PlayerID, _Enti
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
-    return true;
-end
-
--- -------------------------------------------------------------------------- --
--- Tavern
-
-function Stronghold.Building:BuyMilitaryUnitFromTavernAction(_UpgradeCategory)
-    local PlayerID = GUI.GetPlayerID();
-    if Stronghold:IsPlayer(PlayerID) then
-        local EntityID = GUI.GetSelectedEntity();
-        local Type = Logic.GetEntityType(EntityID);
-        if Type == Entities.PB_Tavern1 or Type == Entities.PB_Tavern2 then
-            return self:OnTavernBuyUnitClicked(_UpgradeCategory);
-        end
-    end
-    return false;
-end
-
-function Stronghold.Building:OnTavernBuyUnitClicked(_UpgradeCategory)
-    local GuiPlayer = Stronghold:GetLocalPlayerID();
-    local EntityID = GUI.GetSelectedEntity();
-    local PlayerID = GUI.GetPlayerID();
-    if PlayerID ~= GuiPlayer or not Stronghold:IsPlayer(PlayerID) then
-        return false;
-    end
-    if Stronghold.Players[PlayerID].BuyUnitLock then
-        return true;
-    end
-
-    local UnitType = 0;
-    local Action = 0;
-    if _UpgradeCategory == UpgradeCategories.Scout then
-        if Logic.GetPlayerAttractionLimit(PlayerID) >= Logic.GetPlayerAttractionUsage(PlayerID) then
-            UnitType = Entities.PU_Scout;
-            Action = self.SyncEvents.BuyUnit;
-        end
-    elseif _UpgradeCategory == UpgradeCategories.Thief then
-        if Logic.GetPlayerAttractionLimit(PlayerID) >= Logic.GetPlayerAttractionUsage(PlayerID) +5 then
-            UnitType = Entities.PU_Thief;
-            Action = self.SyncEvents.BuyUnit;
-        end
-    end
-
-    if Action > 0 then
-        local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, 0);
-        if HasPlayerEnoughResourcesFeedback(Costs) then
-            Stronghold.Players[PlayerID].BuyUnitLock = true;
-            Syncer.InvokeEvent(
-                Stronghold.Building.NetworkCall,
-                Action, EntityID, UnitType, false
-            );
-        end
-        return true;
-    end
-    return false;
-end
-
-function Stronghold.Building:OnTavernSelected(_EntityID)
-    local PlayerID = Logic.EntityGetPlayer(_EntityID);
-    if not Stronghold:IsPlayer(PlayerID) then
-        return;
-    end
-    local Type = Logic.GetEntityType(_EntityID);
-    if Type ~= Entities.PB_Tavern1 and Type ~= Entities.PB_Tavern2 then
-        return;
-    end
-
-    local Rank = Stronghold:GetPlayerRank(PlayerID);
-
-    -- Scout
-    local ScoutDisabled = 0;
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Scout);
-    if Config.Allowed == false
-    or Rank < Config.Rank then
-        ScoutDisabled = 1;
-    end
-    XGUIEng.DisableButton("Buy_Scout", ScoutDisabled);
-
-    -- Thief
-    local ThiefDisabled = 0;
-    local Config = Stronghold.Unit:GetUnitConfig(Entities.PU_Thief);
-    if Config.Allowed == false
-    or Rank < Config.Rank
-    or Type ~= Entities.PB_Tavern2 then
-        ThiefDisabled = 1;
-    end
-    XGUIEng.DisableButton("Buy_Thief", ThiefDisabled);
-end
-
-function Stronghold.Building:UpdateTavernBuyUnitTooltip(_PlayerID, _UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
-    local WidgetID = XGUIEng.GetCurrentWidgetID();
-    local CostsText = "";
-    local Text = "";
-
-    if _KeyNormal == "MenuTavern/BuyScout_normal" then
-        local Type = Entities.PU_Scout;
-        Text = "@color:180,180,180 Kundschafter @color:255,255,255 "..
-               "@cr Kundschafter erkunden die Umgebung und finden Rohstoffe.";
-
-        -- Costs text
-        local Config = Stronghold.Unit:GetUnitConfig(Type);
-        local Costs = Stronghold.Unit:GetLeaderCosts(_PlayerID, Type, 0);
-        CostsText = FormatCostString(_PlayerID, Costs);
-
-        -- Disabled text
-        if not Config.Allowed then
-            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
-            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. "";
-        end
-
-    elseif _KeyNormal == "MenuTavern/BuyThief_normal" then
-        local Type = Entities.PU_Thief;
-        Text = "@color:180,180,180 Dieb @color:255,255,255 "..
-               "@cr Diebe können den Feind bestehlen und später sabotieren.";
-
-        -- Costs text
-        local Config = Stronghold.Unit:GetUnitConfig(Type);
-        local Costs = Stronghold.Unit:GetLeaderCosts(_PlayerID, Type, 0);
-        CostsText = FormatCostString(_PlayerID, Costs);
-
-        -- Disabled text
-        if not Config.Allowed then
-            Text = XGUIEng.GetStringTableText("MenuGeneric/BuildingNotAvailable");
-        elseif XGUIEng.IsButtonDisabled(WidgetID) == 1 then
-            Text = Text .. " @cr @color:244,184,0 benötigt: @color:255,255,255 "..
-                   " " .. Stronghold:GetPlayerRankName(_PlayerID, Config.Rank).. ", Wirtshaus";
-        end
-
-    else
-        return false;
-    end
-
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, CostsText);
     return true;
 end
 

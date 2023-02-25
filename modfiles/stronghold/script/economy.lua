@@ -573,7 +573,7 @@ end
 function Stronghold.Economy:CalculateMoneyUpkeep(_PlayerID)
     if Stronghold:IsPlayer(_PlayerID) then
         local Upkeep = 0;
-        for k, v in pairs(Stronghold.Unit.Config.Units) do
+        for k, v in pairs(Stronghold.UnitConfig.Units) do
             local Military = GetValidEntitiesOfType(_PlayerID, k);
             -- Calculate regular upkeep
             local TypeUpkeep = 0;
