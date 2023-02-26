@@ -248,6 +248,7 @@ function Stronghold:Init()
     self.Hero:Install();
     self.Unit:Install();
     self.Attraction:Install();
+    self.Outlaw:Install();
     self.Province:Install();
 
     self:StartTurnDelayTrigger();
@@ -290,6 +291,7 @@ function Stronghold:OnSaveGameLoaded()
     self.Hero:OnSaveGameLoaded();
     self.Unit:OnSaveGameLoaded();
     self.Attraction:OnSaveGameLoaded();
+    self.Outlaw:OnSaveGameLoaded();
     self.Province:OnSaveGameLoaded();
 
     return true;
@@ -297,7 +299,6 @@ end
 
 function Stronghold:LoadGUIDelayed(_PlayerID)
     if GUI.GetPlayerID() == _PlayerID then
-        XGUIEng.TransferMaterials("Formation01", "Research_Gilds");
         XGUIEng.SetMaterialTexture("BackGround_Top", 0, gvBasePath.. "graphics/bg_top.png");
         XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, gvBasePath.. "graphics/bg_bottom_left.png");
         XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, gvBasePath.. "graphics/bg_bottom.png");
