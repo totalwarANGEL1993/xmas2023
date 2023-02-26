@@ -96,7 +96,7 @@
             <ArmorClassIronFactor>1.0</ArmorClassIronFactor>
             <ArmorClassFortificationFactor>0.1</ArmorClassFortificationFactor>
             <ArmorClassHeroFactor>1.0</ArmorClassHeroFactor>    
-            <ArmorClassFurFactor>1.4</ArmorClassFurFactor>        
+            <ArmorClassFurFactor>1.0</ArmorClassFurFactor>        
         </Logic>
     </DamageClass>
 
@@ -145,12 +145,12 @@
     <DamageClass id="DC_Bullet">
         <Logic classname="GGL::CDamageClassProps">
             <ArmorClassNoneFactor>1.0</ArmorClassNoneFactor>
-            <ArmorClassJerkinFactor>1.6</ArmorClassJerkinFactor>
-            <ArmorClassLeatherFactor>1.2</ArmorClassLeatherFactor>
-            <ArmorClassIronFactor>1.0</ArmorClassIronFactor>
+            <ArmorClassJerkinFactor>1.9</ArmorClassJerkinFactor>
+            <ArmorClassLeatherFactor>1.0</ArmorClassLeatherFactor>
+            <ArmorClassIronFactor>1.6</ArmorClassIronFactor>
             <ArmorClassFortificationFactor>0.1</ArmorClassFortificationFactor>
             <ArmorClassHeroFactor>1.0</ArmorClassHeroFactor>
-            <ArmorClassFurFactor>1.6</ArmorClassFurFactor>
+            <ArmorClassFurFactor>1.9</ArmorClassFurFactor>
         </Logic>
     </DamageClass>
     <!-- Bearmen -->
