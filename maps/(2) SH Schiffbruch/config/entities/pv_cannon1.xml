@@ -16,9 +16,7 @@
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Cost>
-			  <Gold>150</Gold>
-			  <Iron>50</Iron>
-			  <Sulfur>100</Sulfur>
+			  <Gold>0</Gold>
         </Cost>
         <Category>Military</Category>
         <Category>Cannon</Category>
@@ -31,7 +29,7 @@
 		  <DodgeChance>0</DodgeChance> 
     	<IdleTaskList>TL_VEHICLE_IDLE</IdleTaskList>   
     	<ExperiencePoints>4</ExperiencePoints> 	
-    	<AttractionSlots>5</AttractionSlots>
+    	<AttractionSlots>0</AttractionSlots>
     	
     	
 
@@ -97,7 +95,7 @@
 	        <MaxRandomDamageBonus>8</MaxRandomDamageBonus>
 	        <DamageRange>300</DamageRange>
 	        
-	        <BattleWaitUntil>3500</BattleWaitUntil>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
   			<ProjectileOffsetFront>40</ProjectileOffsetFront>
   			<ProjectileOffsetRight/>
 	        <ProjectileEffectID>FXCannonBallShrapnel</ProjectileEffectID>

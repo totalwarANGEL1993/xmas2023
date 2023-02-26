@@ -64,8 +64,8 @@
         <Category>Sword</Category>
         <Category>Melee</Category>
 		  <Exploration>20</Exploration>
-		  <ArmorClass>ArmorClassJerkin</ArmorClass>
-		  <ArmorAmount>2</ArmorAmount> 
+		  <ArmorClass>ArmorClassLeather</ArmorClass>
+		  <ArmorAmount>0</ArmorAmount> 
 		  <DodgeChance>10</DodgeChance> 
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
@@ -114,9 +114,9 @@
 	        
 	        <DamageClass>DC_Mace</DamageClass>
 	        <DamageAmount>7</DamageAmount>	        
-	        <MaxRandomDamageBonus>7</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>14</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>1400</BattleWaitUntil>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>

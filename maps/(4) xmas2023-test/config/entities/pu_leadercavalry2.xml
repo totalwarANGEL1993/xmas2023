@@ -115,7 +115,7 @@
 	        <HitAnim>PU_LeaderCavalry2_Hit</HitAnim>
 
             <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>16</DamageAmount>
+	        <DamageAmount>20</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2500</BattleWaitUntil>
@@ -125,7 +125,7 @@
 	        <ProjectileEffectID>FXCrossBowCavalryArrow</ProjectileEffectID>
 	        <MaxRange>3100</MaxRange>
 	        <MinRange>800.0f</MinRange>
-	        <AutoAttackRange>3100</AutoAttackRange>
+	        <AutoAttackRange>4200</AutoAttackRange>
 	        
 			<HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>

@@ -131,11 +131,11 @@
 	        <HitAnim>PU_LeaderRifle1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bullet</DamageClass>
-	        <DamageAmount>14</DamageAmount>
-	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
+	        <DamageAmount>18</DamageAmount>
+	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
 	        
 	        
-	        <BattleWaitUntil>3800</BattleWaitUntil>
+	        <BattleWaitUntil>5000</BattleWaitUntil>
 	        
 	        <MissChance>15</MissChance>
 	        

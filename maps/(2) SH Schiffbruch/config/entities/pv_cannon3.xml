@@ -17,9 +17,7 @@
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Gold>300</Gold>
-			  <Iron>100</Iron>
-			  <Sulfur>150</Sulfur>
+			  <Gold>0</Gold>
         </Cost>
         <Category>Military</Category>
         <Category>Cannon</Category>
@@ -32,7 +30,7 @@
 		  <DodgeChance>0</DodgeChance> 
     	<IdleTaskList>TL_VEHICLE_IDLE</IdleTaskList>
     	<ExperiencePoints>4</ExperiencePoints>
-    	<AttractionSlots>5</AttractionSlots>
+    	<AttractionSlots>0</AttractionSlots>
     	
 
         <ModifySpeed>
@@ -92,9 +90,9 @@
 	        <DamageClass>DC_Cannon</DamageClass>
 	        <DamageAmount>65</DamageAmount>
 	        <MaxRandomDamageBonus>16</MaxRandomDamageBonus>
-	        <DamageRange>400</DamageRange>
+	        <DamageRange>600</DamageRange>
 	        
-	        <BattleWaitUntil>3500</BattleWaitUntil>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        
 	        <ProjectileEffectID>FXCannonBall</ProjectileEffectID>
 	        <MaxRange>2700</MaxRange>

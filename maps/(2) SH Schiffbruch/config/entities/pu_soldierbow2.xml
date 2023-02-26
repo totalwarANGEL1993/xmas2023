@@ -112,7 +112,7 @@
 	        <HitAnim>PU_SoldierBow2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>8</DamageAmount>
+	        <DamageAmount>9</DamageAmount>
 	        <MaxRandomDamageBonus>1</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>

@@ -172,8 +172,8 @@
 	        <BattleIdleAnim>PU_Serf_Idle1</BattleIdleAnim>
 	        <BattleWalkAnim>PU_Serf_Run</BattleWalkAnim>
 
-            
-	        <DamageClass>DC_Unarmed</DamageClass>
+            <!-- Might be funny ;) -->
+	        <DamageClass>DC_Chaos</DamageClass>
 	        <DamageAmount>6</DamageAmount>
 	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
 	        <BattleWaitUntil>2400</BattleWaitUntil>
