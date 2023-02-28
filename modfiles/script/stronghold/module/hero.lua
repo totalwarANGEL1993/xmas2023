@@ -67,6 +67,12 @@ Stronghold.Hero = {
                          "highest possible title.",
                 },
             },
+            HeroSkill = {
+                [Entities.PU_Hero5]              = {
+                    de = "{grey}Pfeilhagel{cr}{white}Ari lässt einen Köcher voll Pfeile auf die Gegner herabregnen.",
+                    en = "{grey}Pfeilhagel{cr}{white}Ari launches a quiver full of arrows on enemy troops.",
+                },
+            },
             HeroCV = {
                 [Entities.PU_Hero1c]             = {
                     de = "DARIO, der könig @cr @cr @color:180,180,180 "..
@@ -183,8 +189,7 @@ Stronghold.Hero = {
                          "kommen. Die Steuereinnahmen werden um 50% erhöht. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
-                         "Kann Gesetzlose um sich scharen. Je höher der Rang, desto mehr "..
-                         "Gesetzlose sind es.",
+                         "Kann einen Pfeilhagel auf Feinde hernieder gehen lassen.",
                     en = "ARI, the vagabund "..
                          "@cr @cr @color:180,180,180 "..
                          "As a little girl she was adopted by the outlaws. Since then she grew to "..
@@ -196,11 +201,10 @@ Stronghold.Hero = {
                          "increased by 50%. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
-                         "Can summon a hored of outlaws. The higher Aris rank the more will " ..
-                         "heed her call.",
+                         "Can unleash a hail of arrows on enemies.",
                 },
                 [Entities.PU_Hero6]              = {
-                    de = "HELIAS, der pfaffe "..
+                    de = "HELIAS, der priester "..
                          "@cr @cr @color:180,180,180 " ..
                          "Einst vorgesehen für die Thronfolge des Alten Reiches, war der Ruf des " ..
                          "Herrn stärker. Wenn er nicht gerade Wasser predigt und Wein trinkt, "..
@@ -283,9 +287,9 @@ Stronghold.Hero = {
                 [Entities.CU_Barbarian_Hero]     = {
                     de = "VARG, das wolfsblut "..
                          "@cr @cr @color:180,180,180 "..
-                         "Als er als zwölfjähriger Junge einen Eisbären im Zweikampf besiegte, " ..
-                         "wurde Varg zum Anführer aller Barbaren gekrönt. Als Baby gesäugt von " ..
-                         "einer Alphawölfin, besitzt er die Macht, mächtige Bestien zu beschwören. " ..
+                         "Als Baby wurde Varg von einer Alphawölfin gesäugt. Als zwölfjähriger "..
+                         "Junge besiegte er einen Eisbären im Zweikampf und wurde daraufhin zum " ..
+                         "Anführer aller Barbaren gekrönt."..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Einen Sieg muss man zu feiern wissen! Die Effektivität "..
@@ -402,9 +406,11 @@ function Stronghold.Hero:Install()
     self:ConfigureBuyHero();
     self:OverrideCalculationCallbacks();
     self:CreateHeroButtonHandlers();
-    self:OverrideHero5AbilitySummon();
+    self:OverrideHero5AbilityArrowRain();
     self:StartTriggers();
     self:OverrideGUI();
+    -- DEPRECATED
+    -- self:OverrideHero5AbilitySummon();
 end
 
 function Stronghold.Hero:OnSaveGameLoaded()
@@ -618,8 +624,12 @@ function Stronghold.Hero:OnSelectHero5(_EntityID)
     if Type == Entities.PU_Hero5 then
         XGUIEng.SetWidgetPosition("Hero5_RechargeSummon", 4, 38);
         XGUIEng.SetWidgetPosition("Hero5_Summon", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero5_RechargeArrowRain", 4, 38);
+        XGUIEng.SetWidgetPosition("Hero5_ArrowRain", 4, 38);
         XGUIEng.ShowWidget("Hero5_RechargeCamouflage", 0);
         XGUIEng.ShowWidget("Hero5_Camouflage", 0);
+        XGUIEng.ShowWidget("Hero5_RechargeSummon", 0);
+        XGUIEng.ShowWidget("Hero5_Summon", 0);
     end
 end
 
@@ -894,6 +904,7 @@ function Stronghold.Hero:OnHero5SummonSelected(_PlayerID, _EntityID, _X, _Y)
     end
 end
 
+-- DEPRECATED!
 function Stronghold.Hero:OverrideHero5AbilitySummon()
     self.Orig_GUIAction_Hero5Summon = GUIAction_Hero5Summon;
     GUIAction_Hero5Summon = function()
@@ -914,6 +925,26 @@ function Stronghold.Hero:OverrideHero5AbilitySummon()
             x,y
         );
     end
+end
+
+function Stronghold.Hero:OverrideHero5AbilityArrowRain()
+    function GUIAction_Hero5ArrowRain()
+        GUI.ActivateShurikenCommandState();
+	    GUI.State_SetExclusiveMessageRecipient(HeroSelection_GetCurrentSelectedHeroID());
+    end
+    Overwrite.CreateOverwrite("GUITooltip_NormalButton", function(_TextKey, _ShortCut)
+        Overwrite.CallOriginal();
+        if _TextKey == "AOMenuHero5/command_poisonarrows" then
+            local Language = GetLanguage();
+            local Text = Stronghold.Hero.Config.UI.HeroSkill[Entities.PU_Hero5][Language];
+            ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
+                ": [" .. XGUIEng.GetStringTableText(_ShortCut) .. "]";
+
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Placeholder.Replace(Text));
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
+        end
+    end);
 end
 
 -- -------------------------------------------------------------------------- --

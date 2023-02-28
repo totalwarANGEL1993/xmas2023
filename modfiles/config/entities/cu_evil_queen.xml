@@ -122,7 +122,7 @@
 	        <ProjectileType>FXKalaArrow</ProjectileType> 
 	        <ProjectileOffsetHeight>120.0</ProjectileOffsetHeight> 
 	        <DamageClass>DC_Hero</DamageClass>
-	        <DamageAmount>20</DamageAmount>
+	        <DamageAmount>45</DamageAmount>
 	    </Logic>
 	</Behavior>
 

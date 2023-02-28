@@ -10,6 +10,7 @@ Lib.Require("comfort/GetAllLeader");
 Lib.Require("comfort/GetAllWorker");
 Lib.Require("comfort/GetAllWorkplaces");
 Lib.Require("comfort/GetDistance");
+Lib.Require("comfort/GetEnemiesInArea");
 Lib.Require("comfort/GetPlayerEntities");
 Lib.Require("comfort/GetLanguage");
 Lib.Require("comfort/GetSeparatedTooltipText");
@@ -53,6 +54,7 @@ Script.Load(gvBasePath.. "module/unitconfig.lua");
 Script.Load(gvBasePath.. "module/recruitment.lua");
 Script.Load(gvBasePath.. "module/unit.lua");
 Script.Load(gvBasePath.. "module/hero.lua");
+Script.Load(gvBasePath.. "module/spawner.lua");
 Script.Load(gvBasePath.. "module/outlaw.lua");
 Script.Load(gvBasePath.. "module/province.lua");
 
