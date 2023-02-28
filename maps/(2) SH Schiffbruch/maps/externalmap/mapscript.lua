@@ -37,6 +37,7 @@ function OnMapStart()
 
     StockResourceEntities();
     CreatePilesOfWood();
+    CreateBanditCamps();
 end
 
 -- Create wood piles
@@ -60,6 +61,21 @@ function StockResourceEntities()
         local Heaps = {Logic.GetEntities(Type, 48)};
         for i= 2, Heaps[1]+1, 1 do
             Logic.SetResourceDoodadGoodAmount(Heaps[i], 4000);
+        end
+    end
+end
+
+function CreateBanditCamps()
+    SetHostile(1, 7);
+    for i= 1, 4 do
+        Treasure.RandomChest("VCCamp" ..i.. "Chest1", 1500, 2500);
+        for j= 1, 3 do
+            CreateTroopSpawner(
+                7, "VCCamp" ..i.. "Tent" ..j, nil, 3, 60, 3000,
+                Entities.CU_BanditLeaderSword2,
+                Entities.CU_BanditLeaderBow1,
+                Entities.PV_Cannon1
+            );
         end
     end
 end

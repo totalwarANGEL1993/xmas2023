@@ -1,5 +1,10 @@
 --- 
 --- Spawner Script
+---
+--- Allows to define spawner buildings that can produce troops. The spawner can
+--- have a different player ID as the troops that will be spawned. Troops can
+--- be obtained when full and soldiers are refilled automatically. The spawned
+--- troops always have max experience.
 --- 
 
 Stronghold = Stronghold or {};
@@ -24,22 +29,27 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+--- Defines an entity as troop spawner.
 function CreateTroopSpawner(_PlayerID, _ScriptName, _SpawnPosition, _SpawnMax, _RespawnTime, _DefArea, ...)
     return Stronghold.Spawner:CreateSpawner(_PlayerID, _ScriptName, _SpawnPosition, _SpawnMax, _RespawnTime, _DefArea, unpack(arg));
 end
 
+--- Destroys a spawner (not the entity).
 function DestroyTroopSpawner(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:DestroySpawner(_PlayerID, _SpawnerID);
 end
 
+--- Returns if all troops are spawned and full.
 function HasSpawnerFullStrength(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:HasFullStrength(_PlayerID, _SpawnerID);
 end
 
+--- Counts all leaders the spawner has produced.
 function CountTroopsBySpawner(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:CountTroops(_PlayerID, _SpawnerID);
 end
 
+--- Removes a troop from the spawner and returns it.
 function GetTroopFromSpawner(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:GetTroop(_PlayerID, _SpawnerID);
 end
@@ -98,7 +108,13 @@ end
 
 function Stronghold.Spawner:HasFullStrength(_PlayerID, _SpawnerID)
     if self.Data[_PlayerID].Spawner[_SpawnerID] then
-        return self:CountTroops(_PlayerID, _SpawnerID) >= self.Data[_PlayerID].Spawner[_SpawnerID].MaxAmount;
+        for i= table.getn(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops), 1, -1 do
+            local ID = self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops[i];
+            if Logic.LeaderGetNumberOfSoldiers(ID) < Logic.LeaderGetMaxNumberOfSoldiers(ID) then
+                return false;
+            end
+        end
+        return true;
     end
     return false;
 end
@@ -178,15 +194,20 @@ function Stronghold.Spawner:ControlSpawner(_PlayerID, _SpawnerID)
             end
         end
 
-        -- Attack near enemies
+        -- Attack near enemies or refill soldiers
         local EnemyID =  self:GetNextEnemy(_PlayerID, Data.SpawnPosition, Data.DefendArea);
-        if EnemyID ~= 0 then
-            for i= table.getn(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops), 1, -1 do
-                local ID = self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops[i];
-                local Task = Logic.GetCurrentTaskList(ID);
-                if  (not Task or (not string.find(Task, "BATTLE") and not string.find(Task, "DIE")))
-                and Logic.IsEntityMoving(ID) == false then
+        for i= table.getn(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops), 1, -1 do
+            local ID = self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops[i];
+            local Task = Logic.GetCurrentTaskList(ID);
+            if  (not Task or (not string.find(Task, "BATTLE") and not string.find(Task, "DIE")))
+            and Logic.IsEntityMoving(ID) == false then
+                if EnemyID ~= 0 then
                     Logic.GroupAttack(ID, EnemyID);
+                else
+                    if  Logic.LeaderGetNumberOfSoldiers(ID) < Logic.LeaderGetMaxNumberOfSoldiers(ID)
+                    and GetDistance(ID, Data.SpawnPosition) <= Data.DefendArea / 2 then
+                        Tools.CreateSoldiersForLeader(ID, 1);
+                    end
                 end
             end
         end

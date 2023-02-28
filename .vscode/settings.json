@@ -222,7 +222,8 @@
         "UseWeatherSet",
         "IsInTable",
         "GetEnemiesInArea",
-        "HeroSelection_GetCurrentSelectedHeroID"
+        "HeroSelection_GetCurrentSelectedHeroID",
+        "Treasure"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

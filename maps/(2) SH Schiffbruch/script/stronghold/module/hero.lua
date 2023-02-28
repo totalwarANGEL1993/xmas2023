@@ -186,7 +186,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Als Banditenfürstin kennt sie alle Tricks, um an Gold zu "..
-                         "kommen. Die Steuereinnahmen werden um 50% erhöht. "..
+                         "kommen. Die Steuereinnahmen werden um 30% erhöht. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann einen Pfeilhagel auf Feinde hernieder gehen lassen.",
@@ -198,7 +198,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
                          "Her upbringing taught her where to search for money. The tax income is "..
-                         "increased by 50%. "..
+                         "increased by 30%. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can unleash a hail of arrows on enemies.",
@@ -1209,7 +1209,7 @@ end
 function Stronghold.Hero:ApplyIncomeBonusPassiveAbility(_PlayerID, _Income)
     local Income = _Income;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero5) then
-        Income = Income * 1.5;
+        Income = Income * 1.3;
     end
     return Income;
 end

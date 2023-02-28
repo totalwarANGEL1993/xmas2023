@@ -22,6 +22,7 @@ Lib.Require("comfort/IsValidEntity");
 Lib.Require("module/archive/Archive");
 Lib.Require("module/entity/EntityTracker");
 Lib.Require("module/entity/SVLib");
+Lib.Require("module/entity/Treasure");
 Lib.Require("module/lua/Overwrite");
 Lib.Require("module/mp/Syncer");
 Lib.Require("module/trigger/Job");
