@@ -405,7 +405,8 @@ function Stronghold.Attraction:CreateWorkersForPlayer(_PlayerID)
                     local Criminals = self:GetCriminalsOfBuilding(Buildings[Index]);
                     local Current = math.min(Used +1, Limit - table.getn(Criminals));
                     local AttractionBuilding = self:GetClostestAttractionBuilding(Buildings[Index]);
-                    local Position = Stronghold.Unit:GetBarracksDoorPosition(AttractionBuilding);
+                    -- local Position = Stronghold.Unit:GetBarracksDoorPosition(AttractionBuilding);
+                    local Position = Stronghold.Unit:GetBarracksRotatedDoorPosition(AttractionBuilding);
                     self:SetBuildingCurrentWorkerAmount(Buildings[Index], Current);
                     if Used < Current then
                         Stronghold:AddDelayedAction(1, function(_Type, _X, _Y, _PlayerID)

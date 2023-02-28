@@ -118,7 +118,7 @@
 	        <Animation>CU_Evil_Queen_PoisonDart</Animation> 
 	        <Range>3000.0</Range>
 	        <MaxArcDegree>90</MaxArcDegree>
-	        <NumberShuriken>10</NumberShuriken>
+	        <NumberShuriken>12</NumberShuriken>
 	        <ProjectileType>FXKalaArrow</ProjectileType> 
 	        <ProjectileOffsetHeight>120.0</ProjectileOffsetHeight> 
 	        <DamageClass>DC_Hero</DamageClass>
@@ -133,7 +133,7 @@
 	        <TaskList>TL_BATTLE_SPECIAL</TaskList>
 	        <Animation>CU_Evil_Queen_PoisonAttack</Animation>
 	        <DamageClass>DC_Hero</DamageClass>
-	        <DamageAmount>95</DamageAmount>
+	        <DamageAmount>75</DamageAmount>
 	        <Range>1500.0</Range>
       		<Effect>FXKalaPoison</Effect>
 	    </Logic>

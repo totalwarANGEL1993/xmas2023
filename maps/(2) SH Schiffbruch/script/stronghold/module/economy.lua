@@ -672,7 +672,7 @@ end
 function Stronghold.Economy:GetLeaderTypesInUpgradeCategories(...)
     local Result = {};
     for i= 1, table.getn(arg) do
-        local UpCatMembers = {Logic.GetSettlerTypesInUpgradeCategory(UpgradeCategories.LeaderPoleArm)};
+        local UpCatMembers = {Logic.GetSettlerTypesInUpgradeCategory(arg)};
         for j= 2, UpCatMembers[1]+1 do
             table.insert(Result, UpCatMembers[j]);
         end

@@ -39,6 +39,33 @@ function Bar()
     Message("Bar Original");
 end
 
+function CreateTestCamp()
+    local Spawner1 = CreateTroopSpawner(
+        7, "Camp1", nil, 3, 60, 2500,
+        Entities.CU_BanditLeaderSword2,
+        Entities.CU_BanditLeaderBow1,
+        Entities.PV_Cannon1
+    );
+    local Spawner2 = CreateTroopSpawner(
+        7, "Camp2", nil, 3, 60, 2500,
+        Entities.CU_BanditLeaderSword2,
+        Entities.CU_BanditLeaderBow1,
+        Entities.PV_Cannon1
+    );
+    local Spawner3 = CreateTroopSpawner(
+        7, "Camp3", nil, 3, 60, 2500,
+        Entities.CU_BanditLeaderSword2,
+        Entities.CU_BanditLeaderBow1,
+        Entities.PV_Cannon1
+    );
+    local Spawner4 = CreateTroopSpawner(
+        7, "Camp4", nil, 3, 60, 2500,
+        Entities.CU_BanditLeaderSword2,
+        Entities.CU_BanditLeaderBow1,
+        Entities.PV_Cannon1
+    );
+end
+
 function CreateTestArmy()
     SetHostile(1, 5);
     local Position = GetPosition("OP2_DoorPos");
