@@ -37,7 +37,10 @@ function OnMapStart()
 
     StockResourceEntities();
     CreatePilesOfWood();
-    CreateBanditCamps();
+
+    SetHostile(1, 7);
+    CreatePassiveBanditCamps();
+    CreateAggressiveBanditCamps();
 end
 
 -- Create wood piles
@@ -65,17 +68,33 @@ function StockResourceEntities()
     end
 end
 
-function CreateBanditCamps()
-    SetHostile(1, 7);
-    for i= 1, 4 do
-        Treasure.RandomChest("VCCamp" ..i.. "Chest1", 1500, 2500);
+function CreatePassiveBanditCamps()
+    for k,v in pairs{2, 4} do
+        Treasure.RandomChest("VCCamp" ..v.. "Chest1", 1000, 2000);
         for j= 1, 3 do
             CreateTroopSpawner(
-                7, "VCCamp" ..i.. "Tent" ..j, nil, 3, 60, 3000,
+                7, "VCCamp" ..v.. "Tent" ..j, nil, 3, 60, 3000,
                 Entities.CU_BanditLeaderSword2,
                 Entities.CU_BanditLeaderBow1,
                 Entities.PV_Cannon1
             );
+        end
+    end
+end
+
+function CreateAggressiveBanditCamps()
+    for k,v in pairs{2, 4} do
+        Treasure.RandomChest("VCCamp" ..v.. "Chest1", 2000, 4000);
+
+        _G["VCCamp" ..v.. "Spawners"] = {};
+        for j= 1, 3 do
+            local ID = CreateTroopSpawner(
+                7, "VCCamp" ..v.. "Tent" ..j, nil, 3, 60, 3000,
+                Entities.CU_BanditLeaderSword2,
+                Entities.CU_BanditLeaderBow1,
+                Entities.PV_Cannon1
+            );
+            table.insert(_G["VCCamp" ..v.. "Spawners"], ID);
         end
     end
 end

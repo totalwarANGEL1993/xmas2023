@@ -223,7 +223,8 @@
         "IsInTable",
         "GetEnemiesInArea",
         "HeroSelection_GetCurrentSelectedHeroID",
-        "Treasure"
+        "Treasure",
+        "GetGeometricCenter"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

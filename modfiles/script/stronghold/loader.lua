@@ -11,6 +11,7 @@ Lib.Require("comfort/GetAllWorker");
 Lib.Require("comfort/GetAllWorkplaces");
 Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/GetEnemiesInArea");
+Lib.Require("comfort/GetGeometricCenter");
 Lib.Require("comfort/GetPlayerEntities");
 Lib.Require("comfort/GetLanguage");
 Lib.Require("comfort/GetSeparatedTooltipText");

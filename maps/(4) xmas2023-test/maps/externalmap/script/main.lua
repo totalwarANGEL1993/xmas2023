@@ -26,11 +26,6 @@ function StartTestStuff()
 end
 
 
--- [ 2023/01/28 17:41:20 ] ERROR: DEBUG ERROR!
-
--- Error: LUA_ERRRUN: [string "E:/Siedler/Projekte/xmas2023/Stronghold/scr..."]:365: bad argument #1 to `find' (string expected, got nil)
--- Additional info: Game turn 99 (0:09)
-
 function Foo()
     Message("Foo Original");
 end
@@ -40,29 +35,39 @@ function Bar()
 end
 
 function CreateTestCamp()
-    local Spawner1 = CreateTroopSpawner(
+    CreateTestSpawners();
+    SetHostile(2, 7);
+
+    OutlawCamp1 = CreateOutlawCamp(
+        7, "CampCenter", "CampTarget", 2500, 5, 3*60,
+        OutlawSpawner1, OutlawSpawner2, OutlawSpawner3, OutlawSpawner4
+    );
+end
+
+function CreateTestSpawners()
+    OutlawSpawner1 = CreateTroopSpawner(
         7, "Camp1", nil, 3, 60, 2500,
         Entities.CU_BanditLeaderSword2,
         Entities.CU_BanditLeaderBow1,
-        Entities.PV_Cannon1
+        Entities.PV_Cannon2
     );
-    local Spawner2 = CreateTroopSpawner(
+    OutlawSpawner2 = CreateTroopSpawner(
         7, "Camp2", nil, 3, 60, 2500,
         Entities.CU_BanditLeaderSword2,
         Entities.CU_BanditLeaderBow1,
-        Entities.PV_Cannon1
+        Entities.PV_Cannon2
     );
-    local Spawner3 = CreateTroopSpawner(
+    OutlawSpawner3 = CreateTroopSpawner(
         7, "Camp3", nil, 3, 60, 2500,
         Entities.CU_BanditLeaderSword2,
         Entities.CU_BanditLeaderBow1,
-        Entities.PV_Cannon1
+        Entities.PV_Cannon2
     );
-    local Spawner4 = CreateTroopSpawner(
+    OutlawSpawner4 = CreateTroopSpawner(
         7, "Camp4", nil, 3, 60, 2500,
         Entities.CU_BanditLeaderSword2,
         Entities.CU_BanditLeaderBow1,
-        Entities.PV_Cannon1
+        Entities.PV_Cannon2
     );
 end
 
