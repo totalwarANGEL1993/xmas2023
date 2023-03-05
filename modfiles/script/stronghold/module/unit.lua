@@ -323,8 +323,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             end
             local Orientation = Logic.GetEntityOrientation(_BarracksID);
             local TypeName = Logic.GetEntityTypeName(_Type);
-            -- local Position = self:GetBarracksDoorPosition(_BarracksID);
-            local Position = self:GetBarracksRotatedDoorPosition(_BarracksID);
+            local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
             local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
             local CostsLeader = self:GetLeaderCosts(_PlayerID, _Type, 0);
@@ -383,8 +382,7 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
                     local Task = Logic.GetCurrentTaskList(_UnitID);
                     if not Task or (not string.find(Task, "DIE") and not string.find(Task, "BATTLE")) then
                         local BuildingID = Logic.LeaderGetNearbyBarracks(_UnitID);
-                        -- local Position = self:GetBarracksDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
-                        local Position = self:GetBarracksRotatedDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
+                        local Position = self:GetBarracksDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
 
                         local Costs = Stronghold:CreateCostTable(unpack({
                             0,
@@ -573,11 +571,11 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     if BarracksType == Entities.PB_Barracks1 or BarracksType == Entities.PB_Barracks2 then
         Position = GetCirclePosition(_BarracksID, 900, 180);
     elseif BarracksType == Entities.PB_Archery1 or BarracksType == Entities.PB_Archery2 then
-        Position = GetCirclePosition(_BarracksID, 900, 160);
+        Position = GetCirclePosition(_BarracksID, 850, 135);
     elseif BarracksType == Entities.PB_Stable1 or BarracksType == Entities.PB_Stable2 then
-        Position = GetCirclePosition(_BarracksID, 1100, 165);
+        Position = GetCirclePosition(_BarracksID, 1000, 165);
     elseif BarracksType == Entities.PB_Foundry1 or BarracksType == Entities.PB_Foundry2 then
-        Position = GetCirclePosition(_BarracksID, 800, 280);
+        Position = GetCirclePosition(_BarracksID, 1000, 280);
     elseif BarracksType == Entities.PB_Tavern1 or BarracksType == Entities.PB_Tavern2 then
         Position = GetCirclePosition(_BarracksID, 800, 220);
     elseif BarracksType == Entities.PB_VillageCenter1 or
@@ -587,37 +585,6 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     -- TODO: Add more positions if needed
     end
     return Position;
-end
-
-function Stronghold.Unit:GetBarracksRotatedDoorPosition(_BarracksID)
-    local BarracksType = Logic.GetEntityType(_BarracksID);
-    local Rotation = Logic.GetEntityOrientation(_BarracksID);
-    local zx, zy, _ = Logic.EntityGetPos(_BarracksID);
-    local dx, dy = -700, -100;
-    if BarracksType == Entities.PB_Barracks1
-    or BarracksType == Entities.PB_Barracks2 then
-        dx, dy = -900, -600;
-    elseif BarracksType == Entities.PB_Archery1
-    or BarracksType == Entities.PB_Archery2 then
-        dx, dy = -670, 600;
-    elseif BarracksType == Entities.PB_Stable1
-    or BarracksType == Entities.PB_Stable2 then
-        dx, dy = -900, 400;
-    elseif BarracksType == Entities.PB_Foundry1
-    or BarracksType == Entities.PB_Foundry2 then
-        dx, dy = 660, -800;
-    elseif BarracksType == Entities.PB_Tavern1
-    or BarracksType == Entities.PB_Tavern2 then
-        dx, dy = -600, -500;
-    elseif BarracksType == Entities.PB_VillageCenter1 or
-           BarracksType == Entities.PB_VillageCenter2 or
-           BarracksType == Entities.PB_VillageCenter3 then
-        dx, dy = -500, -600;
-    end
-    return {
-        X= zx + dx * math.cos(math.rad(Rotation)),
-        Y= zy + dy * math.sin(math.rad(Rotation)),
-    };
 end
 
 function Stronghold.Unit:GetLeaderCosts(_PlayerID, _Type, _SoldierAmount)
