@@ -485,10 +485,10 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
 
             -- Care for the settlers
             local NoFarm = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID);
-            local NoFarmPenalty = 15 * ((1.0075 ^ NoFarm) -1);
+            local NoFarmPenalty = 15 * ((1.0080 ^ NoFarm) -1);
             self.Data[_PlayerID].ReputationDetails.Hunger = NoFarmPenalty;
             local NoHouse = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID);
-            local NoHousePenalty = 10 * ((1.0075 ^ NoHouse) -1);
+            local NoHousePenalty = 10 * ((1.0080 ^ NoHouse) -1);
             self.Data[_PlayerID].ReputationDetails.Homelessness = NoHousePenalty;
             Decrease = Decrease + NoFarmPenalty + NoHousePenalty;
 
@@ -508,7 +508,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local Rank = Stronghold.Players[_PlayerID].Rank;
             local TaxEffect = self.Config.Income.TaxEffect[_TaxtHeight].Reputation * -1;
-            Penalty = TaxEffect * (1 + ((WorkerCount/65) + (0.25 * (Rank -1))));
+            Penalty = TaxEffect * (1 + ((WorkerCount/65) + (0.30 * (Rank -1))));
         end
         return math.floor(Penalty);
     end

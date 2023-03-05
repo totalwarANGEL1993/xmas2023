@@ -99,7 +99,7 @@
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        
-	        <HealingPoints>1</HealingPoints>
+	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>

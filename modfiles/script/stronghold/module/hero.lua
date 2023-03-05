@@ -69,16 +69,16 @@ Stronghold.Hero = {
             },
             Promotion = {
                 [1] = {
-                    de = "@color:180,180,180 %s @color:255,255,255 @cr Last Euch in einen höheren "..
-                         "Rang erheben. @cr @color:244,184,0 benötigt: @color:255,255,255 %s",
-                    en = "@color:180,180,180 %s @color:255,255,255 @cr Take on a new title so you "..
-                         "can train better troops. @cr Requirements: %s",
+                    de = "@color:180,180,180 %s @color:255,255,255 @cr Erhebt Euren Laird in einen "..
+                         "höheren Adelsstand. @cr @color:244,184,0 benötigt: @color:255,255,255 %s",
+                    en = "@color:180,180,180 %s @color:255,255,255 @cr Promote your Laird to a higher "..
+                         " peerage. @cr Requirements: %s",
                 },
                 [2] = {
-                    de = "@color:180,180,180 Höchster Rang @cr @color:255,255,255 Ihr habt den "..
-                         "höchsten Titel erreicht.",
-                    en = "@color:180,180,180 Highest Rank @cr @color:255,255,255 You reached the "..
-                         "highest possible title.",
+                    de = "@color:180,180,180 Höchster Rang @cr @color:255,255,255 Euer Laird hat "..
+                         "den höchsten Titel erreicht.",
+                    en = "@color:180,180,180 Highest Rank @cr @color:255,255,255 Your Laird reached "..
+                         "the highest possible title.",
                 },
             },
             HeroSkill = {
@@ -283,7 +283,7 @@ Stronghold.Hero = {
                          "um 30%. Die maximale Beliebtheit sinkt auf 175. " ..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
-                         "Kann die Rüstung von nahestehenden Feinden halbieren.",
+                         "Kann die Rüstung von nahestehenden Feinden brechen.",
                     en = "KERBEROS, the dread "..
                          "@cr @cr @color:180,180,180 "..
                          "After his father gave up the throne to become a priest the world "..
@@ -296,7 +296,7 @@ Stronghold.Hero = {
                          "reputation maximum becomes 175. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
-                         "Can halve the armor of enemies.",
+                         "Can break the armor of enemies.",
                 },
                 [Entities.CU_Barbarian_Hero]     = {
                     de = "VARG, das wolfsblut "..
@@ -364,7 +364,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Yuki erhöht die maximale Beliebtheit auf 300. Außerdem "..
-                         "wird die Beliebtheit einmalig um 50 erhöht, sobald sie erscheint. "..
+                         "wird die Beliebtheit einmalig um 100 erhöht, sobald sie erscheint. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann befreundete Arbeiter mit Feuerwerk motivieren.",
@@ -376,7 +376,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
                          "Yuki raises the reputation maximum to 300. The current reputation "..
-                         "is increased by 50 only once after she appears."..
+                         "is increased by 100 only once after she appears."..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can motivate workers with her pyrotechnics.",
@@ -390,7 +390,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
                          "Die gesteigerte Geburtenrate sorgt für einen demographischen "..
-                         "Wandel. Euer Bevölkerungslimit wird um 35% erhöht. "..
+                         "Wandel. Euer Bevölkerungslimit wird um 15% erhöht. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann nahestehende Feinde mit Gift schädigen.",
@@ -402,7 +402,7 @@ Stronghold.Hero = {
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
                          "The increased birth rate is causing demographic change. Your attraction "..
-                         "limit is increased by 35%. "..
+                         "limit is increased by 15%. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can inflict poison damage to enemies.",
@@ -781,7 +781,7 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
         Message(string.format(self.Config.UI.Player[1][Language], PlayerColor, Name));
 
         if _Type == Entities.PU_Hero11 then
-            Stronghold:AddPlayerReputation(_PlayerID, 50);
+            Stronghold:AddPlayerReputation(_PlayerID, 100);
             Stronghold:UpdateMotivationOfWorkers(_PlayerID);
         end
         if _PlayerID == GUI.GetPlayerID() or GUI.GetPlayerID() == 17 then
@@ -1147,7 +1147,7 @@ end
 function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        Value = Value * 1.35;
+        Value = Value * 1.15;
     end
     return Value;
 end
