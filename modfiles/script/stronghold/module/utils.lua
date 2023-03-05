@@ -26,6 +26,7 @@ end
 -- UI Tools
 
 function Stronghold:HasPlayerEnoughResourcesFeedback(_Costs)
+    local Language = GetLanguage();
     local PlayerID = self:GetLocalPlayerID();
     if not self.Players[PlayerID] then
         return InterfaceTool_HasPlayerEnoughResources_Feedback(_Costs) == 1;
@@ -37,7 +38,8 @@ function Stronghold:HasPlayerEnoughResourcesFeedback(_Costs)
 		CanBuy = false;
         Sound.PlayQueuedFeedbackSound(Sounds.VoicesMentor_INFO_NotEnough, 127);
 		GUI.AddNote(string.format(
-            "%d Ehre muss noch erlangt werden.",
+            (Language == "de" and "%d Ehre muss noch erlangt werden.") or
+            "%d honor must first be aquired.",
             _Costs[ResourceType.Honor] - Honor
         ));
 	end
@@ -49,6 +51,7 @@ function HasPlayerEnoughResourcesFeedback(_Costs)
 end
 
 function Stronghold:FormatCostString(_PlayerID, _Costs)
+    local Language = GetLanguage();
     local CostString = "";
     if not self.Players[_PlayerID] then
         return CostString;
@@ -73,7 +76,7 @@ function Stronghold:FormatCostString(_PlayerID, _Costs)
 
     if _Costs[ResourceType.Honor] ~= nil then
 		CostString = CostString .. ((string.len(CostString) > 0 and " @cr ") or "");
-        CostString = CostString .. ColWhite.. " Ehre:";
+        CostString = CostString .. ColWhite.. ((Language == "de" and " Ehre:") or " Honor:");
         if Honor < _Costs[ResourceType.Honor] then
             CostString = CostString .. ColRed;
         end
@@ -81,7 +84,7 @@ function Stronghold:FormatCostString(_PlayerID, _Costs)
     end
     if _Costs[ResourceType.Gold] ~= nil then
 		CostString = CostString .. ((string.len(CostString) > 0 and " @cr ") or "");
-        CostString = CostString .. ColWhite.. " Taler:";
+        CostString = CostString .. ColWhite.. ((Language == "de" and " Taler:") or " Gold:");
         if Gold+GoldRaw < _Costs[ResourceType.Gold] then
             CostString = CostString .. ColRed;
         end
@@ -89,7 +92,7 @@ function Stronghold:FormatCostString(_PlayerID, _Costs)
     end
 	if _Costs[ResourceType.Clay] ~= nil  then
 		CostString = CostString .. ((string.len(CostString) > 0 and " @cr ") or "");
-        CostString = CostString .. ColWhite.. " Lehm:";
+        CostString = CostString .. ColWhite.. ((Language == "de" and " Lehm:") or " Clay:");
 		if Clay+ClayRaw < _Costs[ResourceType.Clay] then
             CostString = CostString .. ColRed;
         end
@@ -97,7 +100,7 @@ function Stronghold:FormatCostString(_PlayerID, _Costs)
 	end
 	if _Costs[ResourceType.Wood] ~= nil then
 		CostString = CostString .. ((string.len(CostString) > 0 and " @cr ") or "");
-        CostString = CostString .. ColWhite.. " Holz:";
+        CostString = CostString .. ColWhite.. ((Language == "de" and " Holz:") or " Wood:");
 		if Wood+WoodRaw < _Costs[ResourceType.Wood] then
             CostString = CostString .. ColRed;
         end
@@ -105,7 +108,7 @@ function Stronghold:FormatCostString(_PlayerID, _Costs)
 	end
 	if _Costs[ResourceType.Iron] ~= nil then
 		CostString = CostString .. ((string.len(CostString) > 0 and " @cr ") or "");
-        CostString = CostString .. ColWhite.. "Eisen:";
+        CostString = CostString .. ColWhite.. ((Language == "de" and " Eisen:") or " Iron:");
 		if Iron+IronRaw < _Costs[ResourceType.Iron] then
             CostString = CostString .. ColRed;
         end
@@ -113,7 +116,7 @@ function Stronghold:FormatCostString(_PlayerID, _Costs)
 	end
 	if _Costs[ResourceType.Stone] ~= nil then
 		CostString = CostString .. ((string.len(CostString) > 0 and " @cr ") or "");
-        CostString = CostString .. ColWhite.. "Stein:";
+        CostString = CostString .. ColWhite.. ((Language == "de" and " Stein:") or " Stone:");
 		if Stone+StoneRaw < _Costs[ResourceType.Stone] then
             CostString = CostString .. ColRed;
         end
@@ -121,7 +124,7 @@ function Stronghold:FormatCostString(_PlayerID, _Costs)
 	end
     if _Costs[ResourceType.Sulfur] ~= nil then
 		CostString = CostString .. ((string.len(CostString) > 0 and " @cr ") or "");
-        CostString = CostString .. ColWhite.. "Schwefel:";
+        CostString = CostString .. ColWhite.. ((Language == "de" and " Schwefel:") or " Sulfur:");
 		if Sulfur+SulfurRaw < _Costs[ResourceType.Sulfur] then
             CostString = CostString .. ColRed;
         end

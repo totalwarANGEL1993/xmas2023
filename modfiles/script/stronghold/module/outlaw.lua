@@ -77,26 +77,35 @@ end
 
 --- Allows a camp to send an attack.
 function AllowAttackForOutlawCamp(_PlayerID, _CampID, _CanAttack)
-    Stronghold.Outlaw:SetAttackAllowed(_PlayerID, _CampID, _CanAttack)
+    Stronghold.Outlaw:SetAttackAllowed(_PlayerID, _CampID, _CanAttack);
 end
 
 --- Sets the time between two attacks.
 function SetAttackDelayOfOutlawCamp(_PlayerID, _CampID, _AtkDelay)
-    Stronghold.Outlaw:SetAttackDelay(_PlayerID, _CampID, _AtkDelay)
+    Stronghold.Outlaw:SetAttackDelay(_PlayerID, _CampID, _AtkDelay);
+end
+
+-- Changes the attack target of the outlaw camp.
+function SetAttackTargetOfOutlawCamp(_PlayerID, _CampID, _AtkTarget)
+    local AttackPosition = _AtkTarget;
+    if type(AttackPosition) ~= "table" then
+        AttackPosition = GetPosition(AttackPosition);
+    end
+    Stronghold.Outlaw:SetAttackTarget(_PlayerID, _CampID, AttackPosition);
 end
 
 -- -------------------------------------------------------------------------- --
 
 --- A camp starts an attack.
-function GameCallback_Logic_OutlawAttackStarted(_CampID)
+function GameCallback_Logic_OutlawAttackStarted(_PlayerID, _CampID)
 end
 
 --- The attack troops of a camp arrived at the target.
-function GameCallback_Logic_OutlawAttackArrived(_CampID)
+function GameCallback_Logic_OutlawAttackArrived(_PlayerID, _CampID)
 end
 
 --- An attack of a camp ended.
-function GameCallback_Logic_OutlawAttackFinished(_CampID, _AttackResult)
+function GameCallback_Logic_OutlawAttackFinished(_PlayerID, _CampID, _AttackResult)
 end
 
 -- -------------------------------------------------------------------------- --
@@ -240,7 +249,7 @@ function Stronghold.Outlaw:ControlCamp(_PlayerID, _CampID)
                             if Data.AttackTimer <= 0 then
                                 self.Data[_PlayerID].Camps[_CampID].AttackTimer = 0;
                                 self.Data[_PlayerID].Camps[_CampID].State = OutlawAttackState.Advance;
-                                GameCallback_Logic_OutlawAttackStarted(_CampID);
+                                GameCallback_Logic_OutlawAttackStarted(_PlayerID, _CampID);
                             end
                         end
                         return;
@@ -289,7 +298,7 @@ function Stronghold.Outlaw:ControlCamp(_PlayerID, _CampID)
                 for i= table.getn(Data.Troops), 1, -1 do
                     if GetDistance(Data.Troops[i], Data.AttackTarget) <= Data.ActionArea then
                         self.Data[_PlayerID].Camps[_CampID].State = OutlawAttackState.Pillage;
-                        GameCallback_Logic_OutlawAttackArrived(_CampID);
+                        GameCallback_Logic_OutlawAttackArrived(_PlayerID, _CampID);
                         return;
                     end
                 end
@@ -358,7 +367,7 @@ function Stronghold.Outlaw:ControlCamp(_PlayerID, _CampID)
                     for i= table.getn(Data.Troops), 1, -1 do
                         Logic.MoveSettler(Data.Troops[i], Data.Position.X, Data.Position.Y);
                     end
-                    GameCallback_Logic_OutlawAttackFinished(_CampID, AttackDone);
+                    GameCallback_Logic_OutlawAttackFinished(_PlayerID, _CampID, AttackDone);
                 end
 
             elseif Data.State == OutlawAttackState.Retreat then

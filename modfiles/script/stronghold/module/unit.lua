@@ -12,6 +12,38 @@ Stronghold.Unit = {
     SyncEvents = {},
     Data = {},
     Config = {
+        UI = {
+            MilitaryLimit = {
+                de = "Euere Heeresstärke ist an ihrem Limit, Euer Hochwohlgeboren!",
+                en = "Your army strength is at its limit, Your Highness!",
+            },
+            ExpellSingle = {
+                de = "{grey}Einheit entlassen{white}{cr}Entlasst die "..
+                     "selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
+                     "Soldaten entlasst, geht der Hauptmann zuletzt.",
+                en = "{grey}Dismiss unit{white}{cr}Dismiss the unit from "..
+                     "their duties. The leader always goes last.",
+            },
+            ExpellAll = {
+                de = "{grey}Alle entlassen{white}{cr}Entlasst alle aktuell "..
+                     "selektierten Einheiten aus ihrem Dienst.",
+                en = "{grey}Dismiss all{white}{cr}Dismiss all units you "..
+                     " currently have selected at once.",
+            },
+            RecruitSingle = {
+                de = "{grey}Soldat rekrutieren{white}{cr}Heuert einen neuen "..
+                     "Soldaten für die Gruppe des Haupmannes an.",
+                en = "{grey}Buy soldier{white}{cr}Recruit a single soldier "..
+                     "for the group of the leader.",
+            },
+            RecruitAll = {
+                de = "{grey}Soldaten rekrutieren{white}{cr}Füllt die Gruppe "..
+                     "des Haupmannes mit so vielen Soldaten, wie möglich.",
+                en = "{grey}Buy soldiers{white}{cr}Refill the leader's group "..
+                     "as much as possible with new soldiers.",
+            },
+        },
+
         Units = {
             [Entities.PU_LeaderPoleArm1] = {
                 Costs = {
@@ -423,6 +455,7 @@ end
 -- Buy Unit (UI)
 
 function Stronghold.Unit:BuySoldierButtonAction()
+    local Language = GetLanguage();
     local GuiPlayer = GUI.GetPlayerID();
     local PlayerID = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
@@ -444,7 +477,7 @@ function Stronghold.Unit:BuySoldierButtonAction()
     end
     if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
         Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
-        Message("Euer Heer ist bereits groß genug!");
+        Message(self.Config.UI.MilitaryLimit[Language]);
         return true;
     end
 
@@ -477,6 +510,7 @@ function Stronghold.Unit:BuySoldierButtonAction()
 end
 
 function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _ShortCut)
+    local Language = GetLanguage();
     local GuiPlayer = GUI.GetPlayerID();
     local PlayerID = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
@@ -498,11 +532,8 @@ function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _Shor
     local Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
 
-    local Text = "@color:180,180,180 Soldat rekrutieren @color:255,255,255 @cr ";
-    if BuyAmount > 1 then
-        Text = "@color:180,180,180 Soldaten rekrutieren @color:255,255,255 @cr ";
-    end
-    Text = Text .. "Heuert Gruppenmitglieder an, um den Hauptmann zu verstärken.";
+    local Index = (BuyAmount > 1 and "All") or "Single";
+    local Text = Placeholder.Replace(self.Config.UI["Recruit" ..Index][Language]);
     local CostText = FormatCostString(PlayerID, Costs);
     if _KeyNormal == "MenuCommandsGeneric/Buy_Soldier" then
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
@@ -622,17 +653,12 @@ end
 -- Expel
 
 function Stronghold.Unit:ExpelSettlerButtonTooltip(_Key)
+    local Language = GetLanguage();
     local PlayerID = Stronghold:GetLocalPlayerID();
     if Stronghold:IsPlayer(PlayerID) then
         if _Key == "MenuCommandsGeneric/expel" then
-            local Text = "@color:180,180,180 Einheit entlassen @color:255,255,255 @cr "..
-                            "Entlasst die selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
-                            "Soldaten entlasst, geht der Hauptmann zuletzt.";
-            if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
-                Text   = "@color:180,180,180 Alle entlassen @color:255,255,255 @cr "..
-                            "Entlasst alle selektierten Einheiten aus ihrem Dienst. Alle "..
-                            "Einheiten werden sofort entlassen!";
-            end
+            local Index = (XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 and "All") or "Single";
+            local Text = Placeholder.Replace(self.Config.UI["Expell" ..Index][Language]);
             XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
             return true;
         end

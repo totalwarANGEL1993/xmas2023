@@ -38,6 +38,10 @@ Stronghold.Hero = {
 
         ---
 
+        Text = {
+
+        },
+
         UI = {
             TypeToBuyHeroButton = {
                 [Entities.PU_Hero1c]             = "BuyHeroWindowBuyHero1",
@@ -52,6 +56,16 @@ Stronghold.Hero = {
                 [Entities.PU_Hero10]             = "BuyHeroWindowBuyHero10",
                 [Entities.PU_Hero11]             = "BuyHeroWindowBuyHero11",
                 [Entities.CU_Evil_Queen]         = "BuyHeroWindowBuyHero12",
+            },
+            Player = {
+                [1] = {
+                    de = "%s %s{grey}wurde als Laird gewählt!",
+                    en = "%s %s{grey}was choosen as Laird!",
+                },
+                [2] = {
+                    de = "%s %s{white}muss sich in die Burg zurückziehen!",
+                    en = "%s %s{white}has to retreat to the castle!",
+                },
             },
             Promotion = {
                 [1] = {
@@ -480,7 +494,7 @@ function Stronghold.Hero:OnlineHelpTooltip(_Key)
             Text = string.format(
                 Stronghold.Hero.Config.UI.Promotion[1][Language],
                 Stronghold:GetPlayerRankName(PlayerID, NextRank),
-                Config.Description
+                (Config.Description and Config.Description[Language]) or ""
             );
             CostText = Stronghold:FormatCostString(PlayerID, Costs);
         else
@@ -716,7 +730,7 @@ function Stronghold.Hero:PrintSelectionName()
             local Rank = GetPlayerRank(PlayerID);
             local Language = GetLanguage();
             local Gender = Stronghold:GetLairdGender(Type);
-            local Text = Stronghold.Config.Ranks[Rank].Text[Gender][Language];
+            local Text = Stronghold:GetPlayerRankName(PlayerID, Rank);
             XGUIEng.SetText("Selection_Name", Text.. " " ..Name);
 		end
     end
@@ -760,10 +774,11 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
     if Stronghold:IsPlayer(_PlayerID) then
         Logic.SetEntityName(_ID, Stronghold.Players[_PlayerID].LordScriptName);
 
+        local Language = GetLanguage();
         local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
         local TypeName = Logic.GetEntityTypeName(_Type);
         local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
-        Message(PlayerColor.. " " ..Name.. " @color:180,180,180 wurde als Laird gewählt!");
+        Message(string.format(self.Config.UI.Player[1][Language], PlayerColor, Name));
 
         if _Type == Entities.PU_Hero11 then
             Stronghold:AddPlayerReputation(_PlayerID, 50);
@@ -828,6 +843,7 @@ end
 -- Trigger
 
 function Stronghold.Hero:EntityAttackedController(_PlayerID)
+    local Language = GetLanguage();
     if Stronghold:IsPlayer(_PlayerID) then
         for k,v in pairs(Stronghold.Players[_PlayerID].AttackMemory) do
             -- Count down and remove
@@ -850,13 +866,12 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                 if Logic.GetEntityHealth(k) == 0 then
                     Stronghold.Players[_PlayerID].AttackMemory[k] = nil;
                     local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
-                    local HeroType = Logic.GetEntityType(k);
                     local x,y,z = Logic.EntityGetPos(k);
 
                     -- Send message
                     local TypeName = Logic.GetEntityTypeName(Logic.GetEntityType(k));
                     local Name = XGUIEng.GetStringTableText("Names/" ..TypeName);
-                    Message(PlayerColor.. " " ..Name.. " @color:255,255,255 muss sich in die Burg zurückziehen!");
+                    Message(string.format(self.Config.UI.Player[2][Language], PlayerColor, Name));
                     -- Place hero
                     Logic.CreateEffect(GGL_Effects.FXDieHero, x, y, _PlayerID);
                     local ID = SetPosition(k, Stronghold.Players[_PlayerID].DoorPos);

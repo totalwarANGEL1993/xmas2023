@@ -36,8 +36,6 @@ Stronghold = {
 
         Ranks = {
             [1] = {
-                Text = {{de = "Edelmann", en = "Nobleman"},
-                        {de = "Edelfrau", en = "Noblewoman"}},
                 Costs = {0, 0, 0, 0, 0, 0, 0},
                 Description = nil,
                 Condition = function(_PlayerID)
@@ -45,10 +43,11 @@ Stronghold = {
                 end,
             },
             [2] = {
-                Text = {{de = "Landvogt", en = "Bailiff"},
-                        {de = "Landvögtin", en = "Bailiff"}},
-                Costs = {20, 100, 0, 0, 0, 0, 0},
-                Description = "Kapelle",
+                Costs = {15, 100, 0, 0, 0, 0, 0},
+                Description = {
+                    de = "Kapelle",
+                    en = "Chapel"
+                },
                 Condition = function(_PlayerID)
                     local Chapell1 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Monastery1));
                     local Chapell2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery2);
@@ -57,10 +56,11 @@ Stronghold = {
                 end,
             },
             [3] = {
-                Text = {{de = "Fürst", en = "Lord"},
-                        {de = "Fürstin", en = "Lady"}},
                 Costs = {50, 200, 0, 0, 0, 0, 0},
-                Description = "Handelswesen, Festung",
+                Description = {
+                    de = "Handelswesen, Festung",
+                    en = "Trading, Fortress"
+                },
                 Condition = function(_PlayerID)
                     local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
                     if Logic.GetEntityType(CastleID) == Entities.PB_Headquarters2
@@ -71,10 +71,11 @@ Stronghold = {
                 end,
             },
             [4] = {
-                Text = {{de = "Baron", en = "Baron"},
-                        {de = "Baronin", en = "Baroness"}},
                 Costs = {100, 300, 0, 0, 0, 0, 0},
-                Description = "8 Ziergebäude",
+                Description = {
+                    de = "8 Ziergebäude",
+                    en = "8 Beautifications"
+                },
                 Condition = function(_PlayerID)
                     local Beauty01 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification01));
                     local Beauty02 = table.getn(GetValidEntitiesOfType(_PlayerID, Entities.PB_Beautification02));
@@ -93,10 +94,11 @@ Stronghold = {
                 end,
             },
             [5] = {
-                Text = {{de = "Graf", en = "Count"},
-                        {de = "Gräfin", en = "Countess"}},
                 Costs = {150, 500, 0, 0, 0, 0, 0},
-                Description = "6 Alchemisten, 6 Ziegelbrenner, 6 Sägewerker, 6 Schmiede, 6 Steinmetze",
+                Description = {
+                    de = "6 Alchemisten, 6 Ziegelbrenner, 6 Sägewerker, 6 Schmiede, 6 Steinmetze",
+                    en = "6 Alchemists, 6 Brickmaker, 6 Sawmillworkers, 6 Smiths, 6 Stonemasons"
+                },
                 Condition = function(_PlayerID)
                     local Workers1 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_BrickMaker);
                     local Workers2 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Sawmillworker);
@@ -107,10 +109,11 @@ Stronghold = {
                 end,
             },
             [6] = {
-                Text = {{de = "Markgraf", en = "Margrave"},
-                        {de = "Markgräfin", en = "Margravine"}},
                 Costs = {250, 2000, 0, 0, 0, 0, 0},
-                Description = "Kathedrale, 50 Arbeiter",
+                Description = {
+                    de = "Kathedrale, 50 Arbeiter",
+                    en = "Cathedral, 50 Workers"
+                },
                 Condition = function(_PlayerID)
                     local Workers = Logic.GetNumberOfAttractedWorker(_PlayerID);
                     local Castle3 = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PB_Monastery3);
@@ -118,10 +121,11 @@ Stronghold = {
                 end,
             },
             [7] = {
-                Text = {{de = "Herzog", en = "Duke"},
-                        {de = "Herzogin", en = "Duchess"}},
                 Costs = {300, 3000, 0, 0, 0, 0, 0},
-                Description = "Alle Ziergebäude, Zitadelle, 75 Arbeiter",
+                Description = {
+                    de = "Alle Ziergebäude, Zitadelle, 75 Arbeiter",
+                    en = "All Beautifications, Zitadel, 75 Workers"
+                },
                 Condition = function(_PlayerID)
                     local IsFulfilled = false;
                     if Logic.GetNumberOfAttractedWorker(_PlayerID) >= 75 then
@@ -155,6 +159,52 @@ Stronghold = {
             [Entities.PU_Hero10]             = 1,
             [Entities.PU_Hero11]             = 2,
             [Entities.CU_Evil_Queen]         = 2,
+        },
+
+        UI = {
+            Reputation = {de = "Beliebtheit", en = "Reputation"},
+            Honor = {de = "Ehre", en = "Honor"},
+
+            Titles = {
+                [1] = {{de = "Edelmann", en = "Nobleman"},
+                       {de = "Edelfrau", en = "Noblewoman"}},
+                [2] = {{de = "Landvogt", en = "Bailiff"},
+                       {de = "Landvögtin", en = "Bailiff"}},
+                [3] = {{de = "Fürst", en = "Lord"},
+                       {de = "Fürstin", en = "Lady"}},
+                [4] = {{de = "Baron", en = "Baron"},
+                       {de = "Baronin", en = "Baroness"}},
+                [5] = {{de = "Graf", en = "Count"},
+                       {de = "Gräfin", en = "Countess"}},
+                [6] = {{de = "Markgraf", en = "Margrave"},
+                       {de = "Markgräfin", en = "Margravine"}},
+                [7] = {{de = "Herzog", en = "Duke"},
+                       {de = "Herzogin", en = "Duchess"}},
+            },
+            Player = {
+                [1] = {
+                    de = "{grey}Das Haupthaus von %s %s{grey}ist nun geschützt!",
+                    en = "{grey}The headquarter of %s %s{grey}is no protected!",
+                },
+                [2] = {
+                    de = "{grey}Das Haupthaus von %s %s{grey} ist nun verwundbar!",
+                    en = "{grey}The headquarter of %s %s{grey} is now vulnerable!",
+                },
+                [3] = {
+                    de = "%s %s{grey}wurde besiegt!",
+                    en = "%s %s{grey}has been defeated!",
+                },
+            },
+            Promotion = {
+                Player = {
+                    de = "Erhebt Euch, %s!",
+                    en = "Rise, %!"
+                },
+                Other = {
+                    de = "%s %s {grey} wurde befördert und ist nun{white}%s",
+                    en = "%s %s {grey}has been promoted and is now{white}%s"
+                },
+            }
         },
     },
 }
@@ -224,6 +274,7 @@ function Stronghold:Init()
     Archive.Install();
     Archive.ReloadEntities();
 
+    Placeholder.Install();
     Syncer.Install(999);
     EntityTracker.Install();
     BuyHero.Install();
@@ -501,6 +552,7 @@ end
 -- much like Stronghold but having 1 super strong hero as the main target
 -- might be a bit risky.
 function Stronghold:PlayerDefeatCondition(_PlayerID)
+    local Language = GetLanguage();
     if not self:IsPlayer(_PlayerID) then
         return;
     end
@@ -522,10 +574,11 @@ function Stronghold:PlayerDefeatCondition(_PlayerID)
 
             local PlayerName = UserTool_GetPlayerName(_PlayerID);
             local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
-            Message(
-                "@color:180,180,180 Das Haupthaus von " ..PlayerColor.. " "..
-                PlayerName.. " @color:180,180,180 ist nun geschützt!"
-            );
+            Message(string.format(
+                self.Config.UI.Player[1][Language],
+                PlayerColor,
+                PlayerName
+            ));
         end
     else
         self.Players[_PlayerID].InvulnerabilityInfoShown = false;
@@ -538,10 +591,11 @@ function Stronghold:PlayerDefeatCondition(_PlayerID)
 
             local PlayerName = UserTool_GetPlayerName(_PlayerID);
             local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
-            Message(
-                "@color:180,180,180 Das Haupthaus von " ..PlayerColor.. " "..
-                PlayerName.. " @color:180,180,180 ist nun verwundbar!"
-            );
+            Message(string.format(
+                self.Config.UI.Player[2][Language],
+                PlayerColor,
+                PlayerName
+            ));
         end
     end
 
@@ -552,7 +606,11 @@ function Stronghold:PlayerDefeatCondition(_PlayerID)
 
             local PlayerName = UserTool_GetPlayerName(_PlayerID);
             local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
-            Message(PlayerColor.. " " ..PlayerName.. " @color:180,180,180 wurde besiegt!");
+            Message(string.format(
+                self.Config.UI.Player[3][Language],
+                PlayerColor,
+                PlayerName
+            ));
         end
     end
 end
@@ -673,6 +731,7 @@ function Stronghold:GetPlayerRank(_PlayerID)
 end
 
 function Stronghold:GetPlayerRankName(_PlayerID, _Rank)
+    local Language = GetLanguage();
     if self:IsPlayer(_PlayerID) then
         local Rank = _Rank or self.Players[_PlayerID].Rank;
         local LairdID = GetID(self.Players[_PlayerID].LordScriptName);
@@ -682,14 +741,13 @@ function Stronghold:GetPlayerRankName(_PlayerID, _Rank)
             Gender = self:GetLairdGender(Logic.GetEntityType(LairdID)) or 1;
         end
 
-        local Language = GetLanguage();
-        local Text = self.Config.Ranks[Rank].Text[Gender][Language];
+        local Text = self.Config.UI.Titles[Rank][Gender][Language];
         if type (Text) == "table" then
             Text = Text[Language];
         end
         return Text;
     end
-    return "Fußvolk";
+    return (Language == "de" and "Pöbel") or "Rabble";
 end
 
 function Stronghold:GetLairdGender(_Type)
@@ -706,22 +764,25 @@ function Stronghold:SetPlayerRank(_PlayerID, _Rank)
 end
 
 function Stronghold:PromotePlayer(_PlayerID)
+    local Language = GetLanguage();
     if self:CanPlayerBePromoted(_PlayerID) then
         local Rank = self:GetPlayerRank(_PlayerID);
-        local RankName = Stronghold:GetPlayerRankName(_PlayerID, Rank +1);
-        self:SetPlayerRank(_PlayerID, Rank +1);
-
         local Costs = Stronghold:CreateCostTable(unpack(self.Config.Ranks[Rank +1].Costs));
+        self:SetPlayerRank(_PlayerID, Rank +1);
         RemoveResourcesFromPlayer(_PlayerID, Costs);
-
-        local MsgText = "Erhebt Euch, " ..RankName.. "!";
+        local MsgText = string.format(
+            self.Config.UI.Promotion.Player[Language],
+            Stronghold:GetPlayerRankName(_PlayerID, Rank +1)
+        );
         if GUI.GetPlayerID() == _PlayerID then
             Sound.PlayGUISound(Sounds.OnKlick_Select_pilgrim, 100);
         else
-            local PlayerName = UserTool_GetPlayerName(_PlayerID);
-            local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
-            MsgText = PlayerColor.. " " ..PlayerName.. " @color:180,180,180 wurde "..
-                        "befördert und ist nun @color:255,255,255 " ..RankName;
+            MsgText = string.format(
+                self.Config.UI.Promotion.Other[Language],
+                UserTool_GetPlayerName(_PlayerID),
+                "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ","),
+                Stronghold:GetPlayerRankName(_PlayerID, Rank +1)
+            );
         end
         Message(MsgText);
     end

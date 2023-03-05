@@ -7,7 +7,14 @@ Stronghold = Stronghold or {};
 Stronghold.Recruitment = Stronghold.Recruitment or {
     SyncEvents = {},
     Data = {},
-    Config = {},
+    Config = {
+        UI = {
+            MilitaryLimit = {
+                de = "Euere Heeresstärke ist an ihrem Limit, Euer Hochwohlgeboren!",
+                en = "Your army strength is at its limit, Your Highness!",
+            },
+        }
+    },
 };
 
 function Stronghold.Recruitment:Install()
@@ -167,6 +174,7 @@ function Stronghold.Recruitment:BuyMilitaryUnitFromTavernAction(_UpgradeCategory
 end
 
 function Stronghold.Recruitment:BuyMilitaryUnitFromRecruiterAction(_UnitToRecruit, _Type)
+    local Language = GetLanguage();
     local GuiPlayer = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID = GUI.GetPlayerID();
@@ -187,7 +195,7 @@ function Stronghold.Recruitment:BuyMilitaryUnitFromRecruiterAction(_UnitToRecrui
             local Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Soldiers +1);
             if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, Places) then
                 Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
-                Message("Euer Heer ist bereits groß genug!");
+                Message(self.Config.UI.MilitaryLimit[Language]);
                 return true;
             end
             local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, Soldiers);
@@ -241,6 +249,7 @@ function Stronghold.Recruitment:OnStableSettlerUpgradeTechnologyClicked(_Technol
 end
 
 function Stronghold.Recruitment:OnRecruiterSettlerUpgradeTechnologyClicked(_UnitToRecruit, _Technology)
+    local Language = GetLanguage();
     local GuiPlayer = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
     local PlayerID = GUI.GetPlayerID();
@@ -261,7 +270,7 @@ function Stronghold.Recruitment:OnRecruiterSettlerUpgradeTechnologyClicked(_Unit
             local Places = Stronghold.Attraction:GetMilitarySpaceForUnitType(UnitType, Soldiers +1);
             if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, Places) then
                 Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
-                Message("Euer Heer ist bereits groß genug!");
+                Message(self.Config.UI.MilitaryLimit[Language]);
                 return true;
             end
             local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, Soldiers);

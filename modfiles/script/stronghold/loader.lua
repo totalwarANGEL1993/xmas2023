@@ -29,6 +29,7 @@ Lib.Require("module/mp/Syncer");
 Lib.Require("module/trigger/Job");
 Lib.Require("module/ui/BuyHero");
 Lib.Require("module/ui/Placeholder");
+Lib.Require("module/weather/WeatherMaker");
 
 -- ---------- --
 
