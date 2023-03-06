@@ -1,5 +1,10 @@
 --- 
 --- Spawner Script
+---
+--- Allows to define spawner buildings that can produce troops. The spawner can
+--- have a different player ID as the troops that will be spawned. Troops can
+--- be obtained when full and soldiers are refilled automatically. The spawned
+--- troops always have max experience.
 --- 
 
 Stronghold = Stronghold or {};
@@ -24,24 +29,35 @@ end
 
 -- -------------------------------------------------------------------------- --
 
+--- Defines an entity as troop spawner.
 function CreateTroopSpawner(_PlayerID, _ScriptName, _SpawnPosition, _SpawnMax, _RespawnTime, _DefArea, ...)
     return Stronghold.Spawner:CreateSpawner(_PlayerID, _ScriptName, _SpawnPosition, _SpawnMax, _RespawnTime, _DefArea, unpack(arg));
 end
 
+--- Destroys a spawner (not the entity).
 function DestroyTroopSpawner(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:DestroySpawner(_PlayerID, _SpawnerID);
 end
 
+--- Returns if all troops are spawned and full.
 function HasSpawnerFullStrength(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:HasFullStrength(_PlayerID, _SpawnerID);
 end
 
+--- Counts all leaders the spawner has produced.
 function CountTroopsBySpawner(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:CountTroops(_PlayerID, _SpawnerID);
 end
 
+--- Removes a troop from the spawner and returns it.
 function GetTroopFromSpawner(_PlayerID, _SpawnerID)
     return Stronghold.Spawner:GetTroop(_PlayerID, _SpawnerID);
+end
+
+--- Checks if the spawner is existing.
+function IsTroopSpawnerExisting(_PlayerID, _SpawnerID)
+    local Data = Stronghold.Spawner.Data[_PlayerID].Spawner[_SpawnerID];
+    return IsExisting(Data.ScriptName) == true;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -55,7 +71,7 @@ function Stronghold.Spawner:CreateSpawner(_PlayerID, _ScriptName, _SpawnPosition
         _SpawnPosition = {X= x, Y= y, Z= z};
     end
 
-    assert(_SpawnMax >= 2);
+    assert(_SpawnMax >= 1);
     assert(_RespawnTime >= 15);
     assert(_DefArea >= 1500);
 
@@ -72,6 +88,7 @@ function Stronghold.Spawner:CreateSpawner(_PlayerID, _ScriptName, _SpawnPosition
         MaxAmount = _SpawnMax,
         RespawnTime = _RespawnTime,
         Timer = 0,
+        IsDefeated = false,
     };
 
     local JobID = Job.Second(
@@ -98,7 +115,17 @@ end
 
 function Stronghold.Spawner:HasFullStrength(_PlayerID, _SpawnerID)
     if self.Data[_PlayerID].Spawner[_SpawnerID] then
-        return self:CountTroops(_PlayerID, _SpawnerID) >= self.Data[_PlayerID].Spawner[_SpawnerID].MaxAmount;
+        local MaxAmount = self.Data[_PlayerID].Spawner[_SpawnerID].MaxAmount;
+        local curAmount = table.getn(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops);
+        if MaxAmount == curAmount then
+            for i= curAmount, 1, -1 do
+                local ID = self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops[i];
+                if Logic.LeaderGetNumberOfSoldiers(ID) < Logic.LeaderGetMaxNumberOfSoldiers(ID) then
+                    return false;
+                end
+            end
+            return true;
+        end
     end
     return false;
 end
@@ -134,9 +161,9 @@ end
 function Stronghold.Spawner:GetNextEnemy(_PlayerID, _Position, _Area)
     local EnemiesInArea = GetEnemiesInArea(_PlayerID, _Position, _Area);
     table.sort(EnemiesInArea, function(a, b)
-        if not a then return false; end
-        if not b then return true; end
-        return GetDistance(a, _Position) < GetDistance(b, _Position);
+        if not a then return true; end
+        if not b then return false; end
+        return GetDistance(a, _Position) > GetDistance(b, _Position);
     end);
     return EnemiesInArea[1] or 0;
 end
@@ -149,7 +176,9 @@ function Stronghold.Spawner:ControlSpawner(_PlayerID, _SpawnerID)
 
         -- Check existing
         if not IsExisting(Data.ScriptName) then
-            self.Data[_PlayerID].Spawner[_SpawnerID] = nil;
+            self.Data[_PlayerID].Spawner[_SpawnerID].IsDefeated = true;
+        end
+        if Data.IsDefeated and table.getn(Data.SpawnedTroops) == 0 then
             return true;
         end
 
@@ -163,7 +192,7 @@ function Stronghold.Spawner:ControlSpawner(_PlayerID, _SpawnerID)
         end
 
         -- Spawn troops
-        if self:CountTroops(_PlayerID, _SpawnerID) < Data.MaxAmount then
+        if not Data.IsDefeated and self:CountTroops(_PlayerID, _SpawnerID) < Data.MaxAmount then
             self.Data[_PlayerID].Spawner[_SpawnerID].Timer = Data.Timer -1;
             if Data.Timer <= 0 then
                 self.Data[_PlayerID].Spawner[_SpawnerID].Timer = Data.RespawnTime;
@@ -172,30 +201,39 @@ function Stronghold.Spawner:ControlSpawner(_PlayerID, _SpawnerID)
         end
 
         -- Update troops
-        for i= table.getn(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops), 1, -1 do
-            if not IsExisting(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops[i]) then
-                table.remove(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops, i);
+        for i= table.getn(Data.SpawnedTroops), 1, -1 do
+            if not IsExisting(Data.SpawnedTroops[i]) then
+                table.remove(Data.SpawnedTroops, i);
             end
         end
 
-        -- Attack near enemies
+        -- Attack near enemies or refill soldiers
         local EnemyID =  self:GetNextEnemy(_PlayerID, Data.SpawnPosition, Data.DefendArea);
-        if EnemyID ~= 0 then
-            for i= table.getn(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops), 1, -1 do
-                local ID = self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops[i];
-                local Task = Logic.GetCurrentTaskList(ID);
-                if  (not Task or (not string.find(Task, "BATTLE") and not string.find(Task, "DIE")))
-                and Logic.IsEntityMoving(ID) == false then
+        for i= table.getn(Data.SpawnedTroops), 1, -1 do
+            local ID = Data.SpawnedTroops[i];
+            local Task = Logic.GetCurrentTaskList(ID);
+            if  (not Task or (not string.find(Task, "BATTLE") and not string.find(Task, "DIE"))) then
+                if EnemyID ~= 0 then
                     Logic.GroupAttack(ID, EnemyID);
+                else
+                    if  Logic.LeaderGetNumberOfSoldiers(ID) < Logic.LeaderGetMaxNumberOfSoldiers(ID)
+                    and GetDistance(ID, Data.SpawnPosition) <= Data.DefendArea / 2
+                    and not Data.IsDefeated then
+                        Tools.CreateSoldiersForLeader(ID, 1);
+                    end
                 end
             end
         end
 
         -- Check in defend area
-        for i= table.getn(self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops), 1, -1 do
-            local ID = self.Data[_PlayerID].Spawner[_SpawnerID].SpawnedTroops[i];
-            if GetDistance(ID, Data.SpawnPosition) > Data.DefendArea then
-                Logic.MoveSettler(ID, Data.SpawnPosition.X, Data.SpawnPosition.Y);
+        for i= table.getn(Data.SpawnedTroops), 1, -1 do
+            local Task = Logic.GetCurrentTaskList(ID);
+            local Distance = Data.DefendArea;
+            if Task and not string.find(Task, "BATTLE") then
+                Distance = Data.DefendArea / 2;
+            end
+            if GetDistance(Data.SpawnedTroops[i], Data.SpawnPosition) > Distance then
+                Logic.MoveSettler(Data.SpawnedTroops[i], Data.SpawnPosition.X, Data.SpawnPosition.Y);
             end
         end
     end

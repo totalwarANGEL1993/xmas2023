@@ -91,7 +91,7 @@
 	        <MinRange>0.0</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
-	        <HealingPoints>1</HealingPoints>
+	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>
@@ -118,11 +118,11 @@
 	        <Animation>CU_Evil_Queen_PoisonDart</Animation> 
 	        <Range>3000.0</Range>
 	        <MaxArcDegree>90</MaxArcDegree>
-	        <NumberShuriken>12</NumberShuriken>
+	        <NumberShuriken>10</NumberShuriken>
 	        <ProjectileType>FXKalaArrow</ProjectileType> 
 	        <ProjectileOffsetHeight>120.0</ProjectileOffsetHeight> 
 	        <DamageClass>DC_Hero</DamageClass>
-	        <DamageAmount>20</DamageAmount>
+	        <DamageAmount>45</DamageAmount>
 	    </Logic>
 	</Behavior>
 
@@ -133,7 +133,7 @@
 	        <TaskList>TL_BATTLE_SPECIAL</TaskList>
 	        <Animation>CU_Evil_Queen_PoisonAttack</Animation>
 	        <DamageClass>DC_Hero</DamageClass>
-	        <DamageAmount>75</DamageAmount>
+	        <DamageAmount>95</DamageAmount>
 	        <Range>1500.0</Range>
       		<Effect>FXKalaPoison</Effect>
 	    </Logic>

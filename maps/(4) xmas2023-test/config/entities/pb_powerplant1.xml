@@ -29,7 +29,7 @@
 		  
 		  <Upgrade>            
             <Category>PowerPlant</Category>
-        </Upgrade>>     
+        </Upgrade>
         <Worker>PU_Engineer</Worker>
         <MaxWorkers>4</MaxWorkers>
         <InitialMaxWorkers>4</InitialMaxWorkers>

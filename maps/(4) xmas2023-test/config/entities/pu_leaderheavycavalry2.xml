@@ -141,7 +141,7 @@
 
 	        <DamageClass>DC_Axe</DamageClass>
 	        <DamageAmount>28</DamageAmount>
-	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>8</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        

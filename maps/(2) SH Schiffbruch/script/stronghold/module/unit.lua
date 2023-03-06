@@ -12,6 +12,38 @@ Stronghold.Unit = {
     SyncEvents = {},
     Data = {},
     Config = {
+        UI = {
+            MilitaryLimit = {
+                de = "Euere Heeresstärke ist an ihrem Limit, Euer Hochwohlgeboren!",
+                en = "Your army strength is at its limit, Your Highness!",
+            },
+            ExpellSingle = {
+                de = "{grey}Einheit entlassen{white}{cr}Entlasst die "..
+                     "selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
+                     "Soldaten entlasst, geht der Hauptmann zuletzt.",
+                en = "{grey}Dismiss unit{white}{cr}Dismiss the unit from "..
+                     "their duties. The leader always goes last.",
+            },
+            ExpellAll = {
+                de = "{grey}Alle entlassen{white}{cr}Entlasst alle aktuell "..
+                     "selektierten Einheiten aus ihrem Dienst.",
+                en = "{grey}Dismiss all{white}{cr}Dismiss all units you "..
+                     " currently have selected at once.",
+            },
+            RecruitSingle = {
+                de = "{grey}Soldat rekrutieren{white}{cr}Heuert einen neuen "..
+                     "Soldaten für die Gruppe des Haupmannes an.",
+                en = "{grey}Buy soldier{white}{cr}Recruit a single soldier "..
+                     "for the group of the leader.",
+            },
+            RecruitAll = {
+                de = "{grey}Soldaten rekrutieren{white}{cr}Füllt die Gruppe "..
+                     "des Haupmannes mit so vielen Soldaten, wie möglich.",
+                en = "{grey}Buy soldiers{white}{cr}Refill the leader's group "..
+                     "as much as possible with new soldiers.",
+            },
+        },
+
         Units = {
             [Entities.PU_LeaderPoleArm1] = {
                 Costs = {
@@ -291,11 +323,10 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             end
             local Orientation = Logic.GetEntityOrientation(_BarracksID);
             local TypeName = Logic.GetEntityTypeName(_Type);
-            -- local Position = self:GetBarracksDoorPosition(_BarracksID);
-            local Position = self:GetBarracksRotatedDoorPosition(_BarracksID);
+            local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
             local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
-            local CostsLeader = self:GetLeaderCosts(_PlayerID, _Type, 0);
+            local CostsLeader = Stronghold.Recruitment:GetLeaderCosts(_PlayerID, _Type, 0);
 
             -- Passive ability: experienced troops
             local Experience = 0;
@@ -311,7 +342,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                         local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
                         for i= 1, MaxSoldiers do
                             local CostsSoldier = Stronghold.UnitConfig:GetConfig(_Type, _PlayerID).Costs[2];
-                            CostsSoldier = Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
+                            CostsSoldier = Stronghold.Recruitment:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
                             CostsSoldier[ResourceType.Honor] = 0;
                             if HasEnoughResources(_PlayerID, CostsSoldier) then
                                 RemoveResourcesFromPlayer(_PlayerID, CostsSoldier);
@@ -351,8 +382,7 @@ function Stronghold.Unit:RefillUnit(_PlayerID, _UnitID, _Amount, _Gold, _Clay, _
                     local Task = Logic.GetCurrentTaskList(_UnitID);
                     if not Task or (not string.find(Task, "DIE") and not string.find(Task, "BATTLE")) then
                         local BuildingID = Logic.LeaderGetNearbyBarracks(_UnitID);
-                        -- local Position = self:GetBarracksDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
-                        local Position = self:GetBarracksRotatedDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
+                        local Position = self:GetBarracksDoorPosition((BuildingID ~= 0 and BuildingID) or _UnitID);
 
                         local Costs = Stronghold:CreateCostTable(unpack({
                             0,
@@ -423,6 +453,7 @@ end
 -- Buy Unit (UI)
 
 function Stronghold.Unit:BuySoldierButtonAction()
+    local Language = GetLanguage();
     local GuiPlayer = GUI.GetPlayerID();
     local PlayerID = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
@@ -444,12 +475,12 @@ function Stronghold.Unit:BuySoldierButtonAction()
     end
     if not Stronghold.Attraction:HasPlayerSpaceForUnits(PlayerID, BuyAmount) then
         Sound.PlayQueuedFeedbackSound(Sounds.VoicesLeader_LEADER_NO_rnd_01, 127);
-        Message("Euer Heer ist bereits groß genug!");
+        Message(self.Config.UI.MilitaryLimit[Language]);
         return true;
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
+    local Costs = Stronghold.Recruitment:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
     if not HasPlayerEnoughResourcesFeedback(Costs) then
         return true;
@@ -477,6 +508,7 @@ function Stronghold.Unit:BuySoldierButtonAction()
 end
 
 function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _ShortCut)
+    local Language = GetLanguage();
     local GuiPlayer = GUI.GetPlayerID();
     local PlayerID = Stronghold:GetLocalPlayerID();
     local EntityID = GUI.GetSelectedEntity();
@@ -495,14 +527,11 @@ function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _Shor
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
+    local Costs = Stronghold.Recruitment:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
 
-    local Text = "@color:180,180,180 Soldat rekrutieren @color:255,255,255 @cr ";
-    if BuyAmount > 1 then
-        Text = "@color:180,180,180 Soldaten rekrutieren @color:255,255,255 @cr ";
-    end
-    Text = Text .. "Heuert Gruppenmitglieder an, um den Hauptmann zu verstärken.";
+    local Index = (BuyAmount > 1 and "All") or "Single";
+    local Text = Placeholder.Replace(self.Config.UI["Recruit" ..Index][Language]);
     local CostText = FormatCostString(PlayerID, Costs);
     if _KeyNormal == "MenuCommandsGeneric/Buy_Soldier" then
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
@@ -542,11 +571,11 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     if BarracksType == Entities.PB_Barracks1 or BarracksType == Entities.PB_Barracks2 then
         Position = GetCirclePosition(_BarracksID, 900, 180);
     elseif BarracksType == Entities.PB_Archery1 or BarracksType == Entities.PB_Archery2 then
-        Position = GetCirclePosition(_BarracksID, 900, 160);
+        Position = GetCirclePosition(_BarracksID, 850, 135);
     elseif BarracksType == Entities.PB_Stable1 or BarracksType == Entities.PB_Stable2 then
-        Position = GetCirclePosition(_BarracksID, 1100, 165);
+        Position = GetCirclePosition(_BarracksID, 1000, 165);
     elseif BarracksType == Entities.PB_Foundry1 or BarracksType == Entities.PB_Foundry2 then
-        Position = GetCirclePosition(_BarracksID, 800, 280);
+        Position = GetCirclePosition(_BarracksID, 1000, 280);
     elseif BarracksType == Entities.PB_Tavern1 or BarracksType == Entities.PB_Tavern2 then
         Position = GetCirclePosition(_BarracksID, 800, 220);
     elseif BarracksType == Entities.PB_VillageCenter1 or
@@ -558,81 +587,16 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     return Position;
 end
 
-function Stronghold.Unit:GetBarracksRotatedDoorPosition(_BarracksID)
-    local BarracksType = Logic.GetEntityType(_BarracksID);
-    local Rotation = Logic.GetEntityOrientation(_BarracksID);
-    local zx, zy, _ = Logic.EntityGetPos(_BarracksID);
-    local dx, dy = -700, -100;
-    if BarracksType == Entities.PB_Barracks1
-    or BarracksType == Entities.PB_Barracks2 then
-        dx, dy = -900, -600;
-    elseif BarracksType == Entities.PB_Archery1
-    or BarracksType == Entities.PB_Archery2 then
-        dx, dy = -670, 600;
-    elseif BarracksType == Entities.PB_Stable1
-    or BarracksType == Entities.PB_Stable2 then
-        dx, dy = -900, 400;
-    elseif BarracksType == Entities.PB_Foundry1
-    or BarracksType == Entities.PB_Foundry2 then
-        dx, dy = 660, -800;
-    elseif BarracksType == Entities.PB_Tavern1
-    or BarracksType == Entities.PB_Tavern2 then
-        dx, dy = -600, -500;
-    elseif BarracksType == Entities.PB_VillageCenter1 or
-           BarracksType == Entities.PB_VillageCenter2 or
-           BarracksType == Entities.PB_VillageCenter3 then
-        dx, dy = -500, -600;
-    end
-    return {
-        X= zx + dx * math.cos(math.rad(Rotation)),
-        Y= zy + dy * math.sin(math.rad(Rotation)),
-    };
-end
-
-function Stronghold.Unit:GetLeaderCosts(_PlayerID, _Type, _SoldierAmount)
-    local UnitConfig = Stronghold.UnitConfig:GetConfig(_Type, _PlayerID);
-    local Costs = {};
-    if UnitConfig then
-        Costs = CopyTable(UnitConfig.Costs[1]);
-        Costs = CreateCostTable(unpack(Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
-        if _SoldierAmount and _SoldierAmount > 0 then
-            local SoldierCosts = self:GetSoldierCostsByLeaderType(_PlayerID, _Type, _SoldierAmount);
-            Costs = MergeCostTable(Costs, SoldierCosts);
-        end
-    end
-    return Costs;
-end
-
-function Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, _Amount)
-    local UnitConfig = Stronghold.UnitConfig:GetConfig(_Type, _PlayerID);
-    local Costs = {};
-    if UnitConfig then
-        Costs = CopyTable(UnitConfig.Costs[2]);
-        for i= 2, 7 do
-            Costs[i] = Costs[i] * _Amount;
-        end
-        Costs = CreateCostTable(unpack(Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
-    end
-    return Costs;
-end
-
 -- -------------------------------------------------------------------------- --
 -- Expel
 
 function Stronghold.Unit:ExpelSettlerButtonTooltip(_Key)
+    local Language = GetLanguage();
     local PlayerID = Stronghold:GetLocalPlayerID();
     if Stronghold:IsPlayer(PlayerID) then
         if _Key == "MenuCommandsGeneric/expel" then
-            local Text = "@color:180,180,180 Einheit entlassen @color:255,255,255 @cr "..
-                            "Entlasst die selektierte Einheit aus ihrem Dienst. Wenn Ihr "..
-                            "Soldaten entlasst, geht der Hauptmann zuletzt.";
-            if XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 then
-                Text   = "@color:180,180,180 Alle entlassen @color:255,255,255 @cr "..
-                            "Entlasst alle selektierten Einheiten aus ihrem Dienst. Alle "..
-                            "Einheiten werden sofort entlassen!";
-            end
+            local Index = (XGUIEng.IsModifierPressed(Keys.ModifierShift) == 1 and "All") or "Single";
+            local Text = Placeholder.Replace(self.Config.UI["Expell" ..Index][Language]);
             XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text);
             return true;
         end

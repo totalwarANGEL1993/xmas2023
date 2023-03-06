@@ -135,9 +135,9 @@
 		<Logic classname="GGL::CAbilityScoutBinocularProps">
 			<Class>GGL::CAbilityScoutBinocular</Class>
 			<RechargeTimeSeconds>20</RechargeTimeSeconds>
-            <NumberOfExplorationEntities>12</NumberOfExplorationEntities>           
-            <SpacingOfExplorationEntities>1000</SpacingOfExplorationEntities>          
-            <ExplorationRangeOfExplorationEntities>16</ExplorationRangeOfExplorationEntities> <!-- In m, not cm!! -->
+            <NumberOfExplorationEntities>15</NumberOfExplorationEntities>           
+            <SpacingOfExplorationEntities>800</SpacingOfExplorationEntities>          
+            <ExplorationRangeOfExplorationEntities>8</ExplorationRangeOfExplorationEntities> <!-- In m, not cm!! -->
             <ExplorationEntityType>XD_ScriptEntity</ExplorationEntityType>                 
             <ExplorationTaskList>TL_EXPLORE_WITH_BINOCULARS</ExplorationTaskList>                   
 		</Logic>

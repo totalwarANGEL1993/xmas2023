@@ -100,7 +100,7 @@
 	        
 	        <BattleWaitUntil>2000</BattleWaitUntil>
 
-	        <HealingPoints>1</HealingPoints>
+	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>
@@ -115,11 +115,8 @@
 	        <AffectsOnlyMilitary>true</AffectsOnlyMilitary>
 	        <Range>1000.0</Range>
 	        <DurationInSeconds>60</DurationInSeconds>
-	        <DamageFactor>0.5</DamageFactor>
+	        <DamageFactor>0.25</DamageFactor><!--0.5-->
 	        <Effect>FXMaryDemoralize</Effect>
-	        
-<!--ArmorFactor>-0.8</ArmorFactor>
-	        <HealthRecoveryFactor>0.3</HealthRecoveryFactor-->
 	    </Logic>
 	</Behavior>
 	

@@ -142,7 +142,42 @@ Stronghold.Economy = {
                          "{none}___{grey}Special: %s",
                 },
             }
-        }
+        },
+
+        UI = {
+            FindView = {
+                Upkeep = {
+                    de = " @cr Unterhalt: @color:255,32,32 %d @color:255,255,255 Taler",
+                    en = " @cr Unterhalt: @color:255,32,32 %d @color:255,255,255 Gold",
+                }
+            },
+            Overview = {
+                Military = {
+                    de = "@color:180,180,180 Militär @color:255,255,255 @cr Zum "..
+                         "Militär zählen alle Soldaten und Kanonen. Baut Eure Burg "..
+                         "aus,  um mehr Truppen unterhalten zu können.",
+                    en = "",
+                },
+                Population = {
+                    de = "@color:180,180,180 Bevölkerung @color:255,255,255 @cr Zur "..
+                         "Bevölkerung zählen alle Arbeiter, Leibeigene, Kundschafter "..
+                         "und Diebe. Nehmt Dörfer ein, um mehr Volk anzulocken.",
+                    en = "",
+                },
+                TaxLeader = {
+                    de = "@color:180,180,180 Sold @color:255,255,255 @cr Am Zahltag "..
+                         "wird der Sold der Soldaten fällig. Soldaten könnt Ihr viele "..
+                         "haben, müsst sie aber bezahlen können.",
+                    en = "",
+                },
+                TaxWorker = {
+                    de = "@color:180,180,180 Steuern @color:255,255,255 @cr Jeder "..
+                         "Arbeiter entrichtet Euch zum Zahltag seine Steuer. Wägt "..
+                         "ab, ob Ihr sie schonen oder schröpfen wollt.",
+                    en = "",
+                },
+            }
+        },
     }
 };
 
@@ -450,10 +485,10 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
 
             -- Care for the settlers
             local NoFarm = Logic.GetNumberOfWorkerWithoutEatPlace(_PlayerID);
-            local NoFarmPenalty = 15 * ((1.0075 ^ NoFarm) -1);
+            local NoFarmPenalty = 15 * ((1.0080 ^ NoFarm) -1);
             self.Data[_PlayerID].ReputationDetails.Hunger = NoFarmPenalty;
             local NoHouse = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID);
-            local NoHousePenalty = 10 * ((1.0075 ^ NoHouse) -1);
+            local NoHousePenalty = 10 * ((1.0080 ^ NoHouse) -1);
             self.Data[_PlayerID].ReputationDetails.Homelessness = NoHousePenalty;
             Decrease = Decrease + NoFarmPenalty + NoHousePenalty;
 
@@ -473,7 +508,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local Rank = Stronghold.Players[_PlayerID].Rank;
             local TaxEffect = self.Config.Income.TaxEffect[_TaxtHeight].Reputation * -1;
-            Penalty = TaxEffect * (1 + ((WorkerCount/65) + (0.25 * (Rank -1))));
+            Penalty = TaxEffect * (1 + ((WorkerCount/65) + (0.30 * (Rank -1))));
         end
         return math.floor(Penalty);
     end
@@ -782,43 +817,24 @@ function Stronghold.Economy:OverrideTaxAndPayStatistics()
 end
 
 function Stronghold.Economy:PrintTooltipGenericForEcoGeneral(_PlayerID, _Key)
+    local Language = GetLanguage();
     if _Key == "MenuHeadquarter/TaxWorker" then
-        XGUIEng.SetText(
-            gvGUI_WidgetID.TooltipBottomText,
-            " @color:180,180,180 Steuern @color:255,255,255 @cr Jeder "..
-            " Arbeiter entrichtet Euch zum Zahltag seine Steuer. Wägt "..
-            " ab, ob Ihr sie schonen oder schröpfen wollt."
-        );
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, self.Config.UI.Overview.TaxWorker[Language]);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
         return true;
     elseif _Key == "MenuHeadquarter/TaxLeader" then
-        XGUIEng.SetText(
-            gvGUI_WidgetID.TooltipBottomText,
-            " @color:180,180,180 Sold @color:255,255,255 @cr Am Zahltag "..
-            " wird der Sold der Soldaten fällig. Ihr könnt so viele "..
-            " haben, wie ihr wollt, müsst sie aber bezahlen können."
-        );
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, self.Config.UI.Overview.TaxLeader[Language]);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
         return true;
     elseif _Key == "MenuResources/population" then
-        XGUIEng.SetText(
-            gvGUI_WidgetID.TooltipBottomText,
-            " @color:180,180,180 Bevölkerung @color:255,255,255 @cr Zur "..
-            "Bevölkerung zählen alle Arbeiter, Leibeigene, Kundschafter "..
-            "und Diebe. Nehmt Dörfer ein, um mehr Volk anzulocken."
-        );
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, self.Config.UI.Overview.Population[Language]);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
         return true;
     elseif _Key == "MenuResources/Motivation" then
-        XGUIEng.SetText(
-            gvGUI_WidgetID.TooltipBottomText,
-            " @color:180,180,180 Militär @color:255,255,255 @cr Zum "..
-            " Militär zählen alle Soldaten und Kanonen. Baut Eure Burg aus, "..
-            " um mehr Truppen unterhalten zu können."
-        );
+        XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, self.Config.UI.Overview.Military[Language]);
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
         XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
         return true;
@@ -828,6 +844,7 @@ function Stronghold.Economy:PrintTooltipGenericForEcoGeneral(_PlayerID, _Key)
 end
 
 function Stronghold.Economy:PrintTooltipGenericForFindView(_PlayerID, _Key)
+    local Language = GetLanguage();
     local Text = XGUIEng.GetStringTableText(_Key);
     local Upkeep = 0;
 
@@ -875,7 +892,8 @@ function Stronghold.Economy:PrintTooltipGenericForFindView(_PlayerID, _Key)
         return false;
     end
 
-    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text.. " @cr Unterhalt: @color:255,32,32 " ..Upkeep.. " @color:255,255,255 Taler");
+    local UpkeepText = self.Config.UI.FindView.Upkeep[Language];
+    XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Text .. UpkeepText);
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
     XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, "");
     return true;

@@ -93,7 +93,7 @@
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 
-	        <HealingPoints>1</HealingPoints>
+	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>
@@ -134,11 +134,7 @@
 	        <AffectsOnlyMilitary>true</AffectsOnlyMilitary>
 	        <Range>1000.0</Range>
 	        <DurationInSeconds>60</DurationInSeconds>
-	        
-<!--DamageFactor>5.0</DamageFactor-->
-	        <ArmorFactor>1.4</ArmorFactor>
-	        
-<!--HealthRecoveryFactor>0.3</HealthRecoveryFactor-->
+	        <ArmorFactor>2.0</ArmorFactor>
 	    </Logic>
 	</Behavior>
 

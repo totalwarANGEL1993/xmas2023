@@ -102,6 +102,7 @@ end
 -- Construction
 
 function Stronghold.Construction:PrintTooltipConstructionButton(_UpgradeCategory, _KeyNormal, _KeyDisabled, _Technology, _ShortCut)
+    local Language = GetLanguage();
     local PlayerID = Stronghold:GetLocalPlayerID();
     if not Stronghold:IsPlayer(PlayerID) then
         return false;
@@ -140,10 +141,10 @@ function Stronghold.Construction:PrintTooltipConstructionButton(_UpgradeCategory
         local Effects = Stronghold.Economy:GetStaticTypeConfiguration(Type);
         if Effects then
             if Effects.Reputation > 0 then
-                EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+                EffectText = EffectText.. "+" ..Effects.Reputation.. " " ..Stronghold.Config.UI.Reputation[Language] .. " ";
             end
             if Effects.Honor > 0 then
-                EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
+                EffectText = EffectText.. "+" ..Effects.Honor.. " " ..Stronghold.Config.UI.Honor[Language];
             end
             if EffectText ~= "" then
                 EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;
@@ -233,6 +234,7 @@ end
 -- Upgrade Button
 
 function Stronghold.Construction:PrintBuildingUpgradeButtonTooltip(_Type, _KeyDisabled, _KeyNormal, _Technology)
+    local Language = GetLanguage();
     local PlayerID = GUI.GetPlayerID();
     if not Stronghold:IsPlayer(PlayerID) then
         return false;
@@ -267,10 +269,10 @@ function Stronghold.Construction:PrintBuildingUpgradeButtonTooltip(_Type, _KeyDi
         local Effects = Stronghold.Economy:GetStaticTypeConfiguration(_Type +1);
         if Effects then
             if Effects.Reputation > 0 then
-                EffectText = EffectText.. "+" ..Effects.Reputation.. " Beliebtheit ";
+                EffectText = EffectText.. "+" ..Effects.Reputation.. " " ..Stronghold.Config.UI.Reputation[Language] .. " ";
             end
             if Effects.Honor > 0 then
-                EffectText = EffectText.. "+" ..Effects.Honor.." Ehre";
+                EffectText = EffectText.. "+" ..Effects.Honor.. " " ..Stronghold.Config.UI.Honor[Language];
             end
             if EffectText ~= "" then
                 EffectText = " @cr @color:244,184,0 bewirkt: @color:255,255,255 " ..EffectText;

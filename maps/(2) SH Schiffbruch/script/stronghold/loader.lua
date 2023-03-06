@@ -11,6 +11,7 @@ Lib.Require("comfort/GetAllWorker");
 Lib.Require("comfort/GetAllWorkplaces");
 Lib.Require("comfort/GetDistance");
 Lib.Require("comfort/GetEnemiesInArea");
+Lib.Require("comfort/GetGeometricCenter");
 Lib.Require("comfort/GetPlayerEntities");
 Lib.Require("comfort/GetLanguage");
 Lib.Require("comfort/GetSeparatedTooltipText");
@@ -28,6 +29,7 @@ Lib.Require("module/mp/Syncer");
 Lib.Require("module/trigger/Job");
 Lib.Require("module/ui/BuyHero");
 Lib.Require("module/ui/Placeholder");
+Lib.Require("module/weather/WeatherMaker");
 
 -- ---------- --
 
