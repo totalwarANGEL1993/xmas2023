@@ -71,7 +71,7 @@ function Stronghold.Spawner:CreateSpawner(_PlayerID, _ScriptName, _SpawnPosition
         _SpawnPosition = {X= x, Y= y, Z= z};
     end
 
-    assert(_SpawnMax >= 2);
+    assert(_SpawnMax >= 1);
     assert(_RespawnTime >= 15);
     assert(_DefArea >= 1500);
 

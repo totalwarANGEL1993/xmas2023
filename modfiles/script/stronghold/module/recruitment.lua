@@ -198,7 +198,7 @@ function Stronghold.Recruitment:BuyMilitaryUnitFromRecruiterAction(_UnitToRecrui
                 Message(self.Config.UI.MilitaryLimit[Language]);
                 return true;
             end
-            local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, Soldiers);
+            local Costs = Stronghold.Recruitment:GetLeaderCosts(PlayerID, UnitType, Soldiers);
             Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
             if HasPlayerEnoughResourcesFeedback(Costs) then
                 Stronghold.Players[PlayerID].BuyUnitLock = true;
@@ -273,7 +273,7 @@ function Stronghold.Recruitment:OnRecruiterSettlerUpgradeTechnologyClicked(_Unit
                 Message(self.Config.UI.MilitaryLimit[Language]);
                 return true;
             end
-            local Costs = Stronghold.Unit:GetLeaderCosts(PlayerID, UnitType, Soldiers);
+            local Costs = Stronghold.Recruitment:GetLeaderCosts(PlayerID, UnitType, Soldiers);
             Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
             if HasPlayerEnoughResourcesFeedback(Costs) then
                 Stronghold.Players[PlayerID].BuyUnitLock = true;
@@ -425,8 +425,8 @@ function Stronghold.Recruitment:UpdateRecruiterBuyUnitTooltip(_TextToPrint, _Pla
         if not Config.Allowed then
             Text = XGUIEng.GetStringTableText("MenuGeneric/UnitNotAvailable");
         else
-            local Soldiers = (Logic.IsAutoFillActive(EntityID) == 1 and 6) or 0;
-            local Costs = Stronghold.Unit:GetLeaderCosts(_PlayerID, UnitType, Soldiers);
+            local Soldiers = (Logic.IsAutoFillActive(EntityID) == 1 and Config.Soldiers) or 0;
+            local Costs = Stronghold.Recruitment:GetLeaderCosts(_PlayerID, UnitType, Soldiers);
             CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
             Text = Placeholder.Replace(Config.TextNormal[GetLanguage()]);
             if XGUIEng.IsButtonDisabled(WidgetID) == 1 then
@@ -491,8 +491,8 @@ function Stronghold.Recruitment:UpdateUpgradeSettlersRecruiterTooltip(_TextToPri
             Text = XGUIEng.GetStringTableText("MenuGeneric/UnitNotAvailable");
         else
             ShortcutText = XGUIEng.GetStringTableText("MenuGeneric/Key_name") .. _TextToPrint[_TextKey][2];
-            local Soldiers = (Logic.IsAutoFillActive(EntityID) == 1 and 6) or 0;
-            local Costs = Stronghold.Unit:GetLeaderCosts(_PlayerID, UnitType, Soldiers);
+            local Soldiers = (Logic.IsAutoFillActive(EntityID) == 1 and Config.Soldiers) or 0;
+            local Costs = Stronghold.Recruitment:GetLeaderCosts(_PlayerID, UnitType, Soldiers);
             CostsText = Stronghold:FormatCostString(_PlayerID, Costs);
             Text = Placeholder.Replace(Config.TextNormal[GetLanguage()]);
             if XGUIEng.IsButtonDisabled(WidgetID) == 1 then

@@ -130,7 +130,7 @@
 	        <HitAnim>PU_SoldierCavalry3_Hit</HitAnim> 
 	        
 	        <DamageClass>DC_Axe</DamageClass>
-	        <DamageAmount>24</DamageAmount>
+	        <DamageAmount>25</DamageAmount>
 	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>  			

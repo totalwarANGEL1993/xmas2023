@@ -326,7 +326,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             local Position = self:GetBarracksDoorPosition(_BarracksID);
             local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
             local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
-            local CostsLeader = self:GetLeaderCosts(_PlayerID, _Type, 0);
+            local CostsLeader = Stronghold.Recruitment:GetLeaderCosts(_PlayerID, _Type, 0);
 
             -- Passive ability: experienced troops
             local Experience = 0;
@@ -342,7 +342,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
                         local MaxSoldiers = Logic.LeaderGetMaxNumberOfSoldiers(ID);
                         for i= 1, MaxSoldiers do
                             local CostsSoldier = Stronghold.UnitConfig:GetConfig(_Type, _PlayerID).Costs[2];
-                            CostsSoldier = Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
+                            CostsSoldier = Stronghold.Recruitment:GetSoldierCostsByLeaderType(_PlayerID, _Type, 1);
                             CostsSoldier[ResourceType.Honor] = 0;
                             if HasEnoughResources(_PlayerID, CostsSoldier) then
                                 RemoveResourcesFromPlayer(_PlayerID, CostsSoldier);
@@ -480,7 +480,7 @@ function Stronghold.Unit:BuySoldierButtonAction()
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
+    local Costs = Stronghold.Recruitment:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
     if not HasPlayerEnoughResourcesFeedback(Costs) then
         return true;
@@ -527,7 +527,7 @@ function Stronghold.Unit:BuySoldierButtonTooltip(_KeyNormal, _KeyDisabled, _Shor
     end
 
     local Type = Logic.GetEntityType(EntityID);
-    local Costs = Stronghold.Unit:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
+    local Costs = Stronghold.Recruitment:GetSoldierCostsByLeaderType(PlayerID, Type, BuyAmount);
     Costs[ResourceType.Honor] = nil;
 
     local Index = (BuyAmount > 1 and "All") or "Single";
@@ -585,35 +585,6 @@ function Stronghold.Unit:GetBarracksDoorPosition(_BarracksID)
     -- TODO: Add more positions if needed
     end
     return Position;
-end
-
-function Stronghold.Unit:GetLeaderCosts(_PlayerID, _Type, _SoldierAmount)
-    local UnitConfig = Stronghold.UnitConfig:GetConfig(_Type, _PlayerID);
-    local Costs = {};
-    if UnitConfig then
-        Costs = CopyTable(UnitConfig.Costs[1]);
-        Costs = CreateCostTable(unpack(Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
-        if _SoldierAmount and _SoldierAmount > 0 then
-            local SoldierCosts = self:GetSoldierCostsByLeaderType(_PlayerID, _Type, _SoldierAmount);
-            Costs = MergeCostTable(Costs, SoldierCosts);
-        end
-    end
-    return Costs;
-end
-
-function Stronghold.Unit:GetSoldierCostsByLeaderType(_PlayerID, _Type, _Amount)
-    local UnitConfig = Stronghold.UnitConfig:GetConfig(_Type, _PlayerID);
-    local Costs = {};
-    if UnitConfig then
-        Costs = CopyTable(UnitConfig.Costs[2]);
-        for i= 2, 7 do
-            Costs[i] = Costs[i] * _Amount;
-        end
-        Costs = CreateCostTable(unpack(Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
-    end
-    return Costs;
 end
 
 -- -------------------------------------------------------------------------- --
