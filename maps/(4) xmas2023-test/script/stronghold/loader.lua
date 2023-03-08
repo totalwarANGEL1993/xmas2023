@@ -1,7 +1,7 @@
-local LibPath = "maps\\user\\cerberus\\loader.lua";
--- local LibPath = "maps\\externalmap\\cerberus\\loader.lua";
--- local LibPath = "cerberus\\loader.lua";
-Script.Load(LibPath);
+Script.Load("maps\\user\\cerberus\\loader.lua");
+if Lib == nil then
+    Script.Load("maps\\externalmap\\cerberus\\loader.lua");
+end
 assert(Lib ~= nil);
 
 Lib.Require("comfort/KeyOf");

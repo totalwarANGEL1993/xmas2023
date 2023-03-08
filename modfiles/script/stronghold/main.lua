@@ -531,7 +531,7 @@ function Stronghold:StartEntityHurtTrigger()
         if Attacker and Attacked then
             if Logic.GetEntityHealth(Attacked) > 0 then
                 if Stronghold.Players[AttackedPlayer] then
-                    Stronghold.Players[AttackedPlayer].AttackMemory[Attacked] = {4, Attacker};
+                    Stronghold.Players[AttackedPlayer].AttackMemory[Attacked] = {15, Attacker};
                 end
             end
         end
