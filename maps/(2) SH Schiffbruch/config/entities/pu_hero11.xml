@@ -98,7 +98,7 @@
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>1500</BattleWaitUntil>
 
 	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>

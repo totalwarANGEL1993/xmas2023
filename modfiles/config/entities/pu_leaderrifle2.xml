@@ -124,10 +124,10 @@
 	        <HitAnim>PU_LeaderRifle2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bullet</DamageClass>
-	        <DamageAmount>22</DamageAmount>
+	        <DamageAmount>30</DamageAmount>
 	        <MaxRandomDamageBonus>8</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>5800</BattleWaitUntil>
+	        <BattleWaitUntil>4500</BattleWaitUntil>
 	        
 	        <MissChance>5</MissChance>
 	        

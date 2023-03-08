@@ -33,8 +33,8 @@
         <Category>CavalryLight</Category>
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <Exploration>31</Exploration>
-		  <ArmorClass>ArmorClassIron</ArmorClass>
+		  <Exploration>30</Exploration>
+		  <ArmorClass>ArmorClassNone</ArmorClass>
 		  <ArmorAmount>3</ArmorAmount> 
 		  <DodgeChance>15</DodgeChance>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
@@ -115,17 +115,17 @@
 	        <HitAnim>PU_LeaderCavalry2_Hit</HitAnim>
 
             <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>20</DamageAmount>
+	        <DamageAmount>22</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>2500</BattleWaitUntil>
+	        <BattleWaitUntil>4000</BattleWaitUntil>
 	        
 	        <MissChance>12</MissChance>
 	        
 	        <ProjectileEffectID>FXCrossBowCavalryArrow</ProjectileEffectID>
-	        <MaxRange>3100</MaxRange>
+	        <MaxRange>3000</MaxRange>
 	        <MinRange>800.0f</MinRange>
-	        <AutoAttackRange>4200</AutoAttackRange>
+	        <AutoAttackRange>3200</AutoAttackRange>
 	        
 			<HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>

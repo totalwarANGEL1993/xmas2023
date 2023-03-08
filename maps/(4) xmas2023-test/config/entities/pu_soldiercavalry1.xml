@@ -31,8 +31,8 @@
         <Category>Soldier</Category>
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <Exploration>29</Exploration>
-		  <ArmorClass>ArmorClassIron</ArmorClass>
+		  <Exploration>28</Exploration>
+		  <ArmorClass>ArmorClassNone</ArmorClass>
 		  <ArmorAmount>1</ArmorAmount> 
 		  <DodgeChance>20</DodgeChance> 
         <Upgrade>
@@ -145,7 +145,7 @@
 	        <MissChance>12</MissChance>
 	        
 			<ProjectileEffectID>FXCavalryArrow</ProjectileEffectID> 
-	        <MaxRange>2900</MaxRange>
+	        <MaxRange>2800</MaxRange>
 	        <MinRange>800.0f</MinRange>
 		  </Logic>
 	</Behavior>

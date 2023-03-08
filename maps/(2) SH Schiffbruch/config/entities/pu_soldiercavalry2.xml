@@ -32,8 +32,8 @@
         <Category>Soldier</Category>
         <Category>LongRange</Category>
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
-		  <Exploration>31</Exploration>
-		  <ArmorClass>ArmorClassIron</ArmorClass>
+		  <Exploration>30</Exploration>
+		  <ArmorClass>ArmorClassNone</ArmorClass>
 		  <ArmorAmount>3</ArmorAmount> 
 		  <DodgeChance>15</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
@@ -131,15 +131,15 @@
 	        <HitAnim>PU_SoldierCavalry2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>20</DamageAmount>
+	        <DamageAmount>22</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>4200</BattleWaitUntil>
+	        <BattleWaitUntil>4000</BattleWaitUntil>
 	        
 	        <MissChance>12</MissChance>
 	        
 			<ProjectileEffectID>FXCrossBowCavalryArrow</ProjectileEffectID> 
-	        <MaxRange>3100</MaxRange>
+	        <MaxRange>3000</MaxRange>
 	        <MinRange>800.0f</MinRange>
 		  </Logic>
 	</Behavior>

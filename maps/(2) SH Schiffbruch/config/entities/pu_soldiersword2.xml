@@ -111,7 +111,7 @@
 	        <DamageClass>DC_Sword</DamageClass>
 	        <DamageAmount>16</DamageAmount>
 	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
-	        <BattleWaitUntil>1500</BattleWaitUntil>
+	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>
 		</Logic>
