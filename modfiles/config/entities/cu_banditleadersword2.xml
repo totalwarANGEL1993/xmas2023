@@ -105,9 +105,9 @@
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        
 	        <NormalAttackAnim1>CU_LeaderOutlaw1_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>CU_LeaderOutlaw1_Attack1</NormalAttackAnim2>
-	        <CounterAttackAnim>CU_LeaderOutlaw1_Attack1</CounterAttackAnim>
-	        <FinishingMoveAnim>CU_LeaderOutlaw1_Attack1</FinishingMoveAnim>
+	        <NormalAttackAnim2>CU_LeaderOutlaw1_Attack2</NormalAttackAnim2>
+	        <CounterAttackAnim>CU_LeaderOutlaw1_Finish</CounterAttackAnim>
+	        <FinishingMoveAnim>CU_LeaderOutlaw1_Finish</FinishingMoveAnim>
 	        <MissAttackAnim>CU_LeaderOutlaw1_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>CU_LeaderOutlaw1_IdleAttack1</BattleIdleAnim>
 	        <BattleWalkAnim>CU_LeaderOutlaw1_Run1</BattleWalkAnim>
@@ -115,7 +115,7 @@
 	        
             <!-- That is on purpose -->
 	        <DamageClass>DC_Axe</DamageClass>
-	        <DamageAmount>9</DamageAmount>	        
+	        <DamageAmount>7</DamageAmount>	        
 	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
 	        
 	        <MaxRange>200</MaxRange>

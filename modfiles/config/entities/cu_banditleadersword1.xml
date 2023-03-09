@@ -104,9 +104,9 @@
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        
 	        <NormalAttackAnim1>CU_LeaderOutlaw1_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>CU_LeaderOutlaw1_Attack1</NormalAttackAnim2>
-	        <CounterAttackAnim>CU_LeaderOutlaw1_Attack1</CounterAttackAnim>
-	        <FinishingMoveAnim>CU_LeaderOutlaw1_Attack1</FinishingMoveAnim>
+	        <NormalAttackAnim2>CU_LeaderOutlaw1_Attack2</NormalAttackAnim2>
+	        <CounterAttackAnim>CU_LeaderOutlaw1_Finish</CounterAttackAnim>
+	        <FinishingMoveAnim>CU_LeaderOutlaw1_Finish</FinishingMoveAnim>
 	        <MissAttackAnim>CU_LeaderOutlaw1_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>CU_LeaderOutlaw1_IdleAttack1</BattleIdleAnim>
 	        <BattleWalkAnim>CU_LeaderOutlaw1_Run1</BattleWalkAnim>
@@ -114,14 +114,14 @@
 	        
             <!-- That is on purpose -->
 	        <DamageClass>DC_Axe</DamageClass>
-	        <DamageAmount>16</DamageAmount>	        
+	        <DamageAmount>14</DamageAmount>	        
 	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2000</AutoAttackRange>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        
 	        <HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>

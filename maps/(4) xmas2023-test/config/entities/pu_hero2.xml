@@ -77,17 +77,17 @@
 			  <NormalAttackAnim1>PU_Hero2_Attack1</NormalAttackAnim1>
 	        <NormalAttackAnim2>PU_Hero2_Attack2</NormalAttackAnim2>
 	        <CounterAttackAnim>PU_Hero2_Attack1</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_Hero2_Finish</FinishingMoveAnim>
+	        <FinishingMoveAnim>PU_Hero2_Attack1</FinishingMoveAnim>
 	        <MissAttackAnim>PU_Hero2_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>PU_Hero2_Attack1</BattleIdleAnim>
 	        <BattleWalkAnim>PU_Hero2_Run1</BattleWalkAnim>
 	        <HitAnim>PU_Hero2_Hit</HitAnim>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>12</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
 	        
 	        <MaxRange>250.0f</MaxRange>
 	        <MinRange>0.0f</MinRange>

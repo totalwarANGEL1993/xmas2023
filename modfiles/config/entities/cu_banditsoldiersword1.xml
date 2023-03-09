@@ -107,8 +107,8 @@
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        <NormalAttackAnim1>CU_SoldierOutlaw1_Attack1</NormalAttackAnim1>
 	        <NormalAttackAnim2>CU_SoldierOutlaw1_Attack2</NormalAttackAnim2>
-	        <CounterAttackAnim>CU_SoldierOutlaw1_Attack2</CounterAttackAnim>
-	        <FinishingMoveAnim>CU_SoldierOutlaw1_Attack1</FinishingMoveAnim>
+	        <CounterAttackAnim>CU_SoldierOutlaw1_Finish</CounterAttackAnim>
+	        <FinishingMoveAnim>CU_SoldierOutlaw1_Finish</FinishingMoveAnim>
 	        <MissAttackAnim>CU_SoldierOutlaw1_Attack1</MissAttackAnim> 
 	        <BattleIdleAnim>CU_SoldierOutlaw1_Idle1</BattleIdleAnim>
 	        <BattleWalkAnim>CU_SoldierOutlaw1_Run1</BattleWalkAnim> 	        
@@ -116,14 +116,14 @@
 	        
             <!-- That is on purpose -->
 	        <DamageClass>DC_Axe</DamageClass>
-	        <DamageAmount>16</DamageAmount>
+	        <DamageAmount>14</DamageAmount>
 	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <MaxRange>200.0f</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>1500</AutoAttackRange>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2500</BattleWaitUntil>
 		</Logic>
 	</Behavior>
 	<Behavior>

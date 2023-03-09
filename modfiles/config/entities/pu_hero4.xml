@@ -74,10 +74,10 @@
 			
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        
-	        <NormalAttackAnim1>PU_Hero4_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>PU_Hero4_Attack2</NormalAttackAnim2>
-	        <CounterAttackAnim>PU_Hero4_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_Hero4_Finish</FinishingMoveAnim>
+	        <NormalAttackAnim1>PU_Hero4_Attack2</NormalAttackAnim1>
+	        <NormalAttackAnim2>PU_Hero4_Finish</NormalAttackAnim2>
+	        <CounterAttackAnim>PU_Hero4_Attack1</CounterAttackAnim>
+	        <FinishingMoveAnim>PU_Hero4_Attack2</FinishingMoveAnim>
 	        <MissAttackAnim>PU_Hero4_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>PU_Hero4_IdleAttack1</BattleIdleAnim>
 	        <BattleWalkAnim>PU_Hero4_Run1</BattleWalkAnim>
@@ -85,13 +85,13 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>12</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
 	        
 	        <MaxRange>250.0f</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 
 	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>

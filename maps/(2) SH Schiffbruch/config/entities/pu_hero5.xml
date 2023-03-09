@@ -83,7 +83,7 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>12</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        

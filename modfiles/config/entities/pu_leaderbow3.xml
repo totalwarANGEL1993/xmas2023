@@ -149,7 +149,7 @@
 	        <HitAnim>PU_LeaderBow3_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>22</DamageAmount>
+	        <DamageAmount>26</DamageAmount>
 	        <MaxRandomDamageBonus>3</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>4000</BattleWaitUntil>

@@ -110,7 +110,7 @@
 	        <NormalAttackAnim1>CU_Barbarian_SoldierClub1_Attack1</NormalAttackAnim1>
 	        <NormalAttackAnim2>CU_Barbarian_SoldierClub1_Attack2</NormalAttackAnim2>
 	        <CounterAttackAnim>CU_Barbarian_SoldierClub1_Finish</CounterAttackAnim> 
-	        <FinishingMoveAnim>CU_Barbarian_SoldierClub1_Attack1</FinishingMoveAnim>
+	        <FinishingMoveAnim>CU_Barbarian_SoldierClub1_Finish</FinishingMoveAnim>
 	        <MissAttackAnim>CU_Barbarian_SoldierClub1_Idle1</MissAttackAnim> 
 	        <BattleIdleAnim>CU_Barbarian_SoldierClub1_IdleAttack1</BattleIdleAnim>
 	        <BattleWalkAnim>CU_Barbarian_SoldierClub1_Run1</BattleWalkAnim> 
@@ -118,9 +118,9 @@
 	        
 	        <DamageClass>DC_Mace</DamageClass>
 	        <DamageAmount>16</DamageAmount>	        
-	        <MaxRandomDamageBonus>12</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>16</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>

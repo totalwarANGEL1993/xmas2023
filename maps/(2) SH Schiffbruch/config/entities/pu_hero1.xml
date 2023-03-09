@@ -79,10 +79,10 @@
 			  <SoldierType>PU_SoldierSword4</SoldierType>			
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>	
 	                
-			  <NormalAttackAnim1>PU_Hero1a_Attack1</NormalAttackAnim1>
+			<NormalAttackAnim1>PU_Hero1a_Attack1</NormalAttackAnim1>
 	        <NormalAttackAnim2>PU_Hero1a_Attack2</NormalAttackAnim2>
 	        <CounterAttackAnim>PU_Hero1a_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>PU_Hero1a_Finish</FinishingMoveAnim>
+	        <FinishingMoveAnim>PU_Hero1a_Attack2</FinishingMoveAnim>
 	        <MissAttackAnim>PU_Hero1a_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>PU_Hero1a_IdleAttack1</BattleIdleAnim>
 	        <BattleWalkAnim>PU_Hero1a_Run1</BattleWalkAnim>
@@ -90,16 +90,16 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>12</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
 	 
 	        
 	        <MaxRange>250.0f</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <HealingPoints>2</HealingPoints>
+	        <HealingPoints>4</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>

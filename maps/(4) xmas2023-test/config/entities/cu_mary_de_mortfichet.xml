@@ -80,10 +80,10 @@
 			  <SoldierType>PU_SoldierSword4</SoldierType>			
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        
-			  <NormalAttackAnim1>CU_Mary_de_Mortfichet_Attack1</NormalAttackAnim1>
-	        <NormalAttackAnim2>CU_Mary_de_Mortfichet_Attack2</NormalAttackAnim2>
+			<NormalAttackAnim1>CU_Mary_de_Mortfichet_Attack2</NormalAttackAnim1>
+	        <NormalAttackAnim2>CU_Mary_de_Mortfichet_Attack1</NormalAttackAnim2>
 	        <CounterAttackAnim>CU_Mary_de_Mortfichet_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>CU_Mary_de_Mortfichet_Finish</FinishingMoveAnim>
+	        <FinishingMoveAnim>CU_Mary_de_Mortfichet_Attack1</FinishingMoveAnim>
 	        <MissAttackAnim>CU_Mary_de_Mortfichet_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>CU_Mary_de_Mortfichet_IdleAttack1</BattleIdleAnim>
 	        <BattleWalkAnim>CU_Mary_de_Mortfichet_Run1</BattleWalkAnim>
@@ -91,16 +91,16 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>12</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
 	        
 	        
 	        <MaxRange>250.0f</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>1500</BattleWaitUntil>
 
-	        <HealingPoints>2</HealingPoints>
+	        <HealingPoints>4</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>

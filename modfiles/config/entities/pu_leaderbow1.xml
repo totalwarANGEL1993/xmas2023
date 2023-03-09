@@ -120,10 +120,10 @@
 	        <HitAnim>PU_LeaderBow1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>6</DamageAmount>
-	        <MaxRandomDamageBonus>1</MaxRandomDamageBonus>
+	        <DamageAmount>8</DamageAmount>
+	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>2500</BattleWaitUntil>
+	        <BattleWaitUntil>3500</BattleWaitUntil>
 	        
 	        <MissChance>15</MissChance>
 	        

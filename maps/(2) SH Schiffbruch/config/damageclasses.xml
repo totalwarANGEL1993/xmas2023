@@ -32,7 +32,7 @@
         <Logic classname="GGL::CDamageClassProps">
             <ArmorClassNoneFactor>1.5</ArmorClassNoneFactor>
             <ArmorClassJerkinFactor>1.5</ArmorClassJerkinFactor>
-            <ArmorClassLeatherFactor>1.5</ArmorClassLeatherFactor>
+            <ArmorClassLeatherFactor>1.0</ArmorClassLeatherFactor>
             <ArmorClassIronFactor>0.5</ArmorClassIronFactor>
             <ArmorClassFortificationFactor>1.0</ArmorClassFortificationFactor>
             <ArmorClassHeroFactor>1.0</ArmorClassHeroFactor>
@@ -43,8 +43,8 @@
     <DamageClass id="DC_Bow">
         <Logic classname="GGL::CDamageClassProps">
             <ArmorClassNoneFactor>1.0</ArmorClassNoneFactor>
-            <ArmorClassJerkinFactor>1.8</ArmorClassJerkinFactor>
-            <ArmorClassLeatherFactor>1.5</ArmorClassLeatherFactor>
+            <ArmorClassJerkinFactor>1.6</ArmorClassJerkinFactor>
+            <ArmorClassLeatherFactor>1.6</ArmorClassLeatherFactor>
             <ArmorClassIronFactor>0.5</ArmorClassIronFactor>
             <ArmorClassFortificationFactor>0.1</ArmorClassFortificationFactor>
             <ArmorClassHeroFactor>1.0</ArmorClassHeroFactor>
@@ -144,13 +144,13 @@
     <!-- All Riflemen -->
     <DamageClass id="DC_Bullet">
         <Logic classname="GGL::CDamageClassProps">
-            <ArmorClassNoneFactor>1.5</ArmorClassNoneFactor>
-            <ArmorClassJerkinFactor>1.8</ArmorClassJerkinFactor>
-            <ArmorClassLeatherFactor>1.0</ArmorClassLeatherFactor>
+            <ArmorClassNoneFactor>1.4</ArmorClassNoneFactor>
+            <ArmorClassJerkinFactor>1.4</ArmorClassJerkinFactor>
+            <ArmorClassLeatherFactor>1.8</ArmorClassLeatherFactor>
             <ArmorClassIronFactor>0.5</ArmorClassIronFactor>
             <ArmorClassFortificationFactor>0.1</ArmorClassFortificationFactor>
             <ArmorClassHeroFactor>1.0</ArmorClassHeroFactor>
-            <ArmorClassFurFactor>1.9</ArmorClassFurFactor>
+            <ArmorClassFurFactor>1.5</ArmorClassFurFactor>
         </Logic>
     </DamageClass>
     <!-- Bearmen -->

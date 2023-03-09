@@ -111,7 +111,7 @@
 	        <NormalAttackAnim1>CU_Barbarian_LeaderClub1_Attack1</NormalAttackAnim1>
 	        <NormalAttackAnim2>CU_Barbarian_LeaderClub1_Attack2</NormalAttackAnim2>
 	        <CounterAttackAnim>CU_Barbarian_LeaderClub1_Finish</CounterAttackAnim>
-	        <FinishingMoveAnim>CU_Barbarian_LeaderClub1_Attack1</FinishingMoveAnim>
+	        <FinishingMoveAnim>CU_Barbarian_LeaderClub1_Finish</FinishingMoveAnim>
 	        <MissAttackAnim>CU_Barbarian_LeaderClub1_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>CU_Barbarian_LeaderClub1_IdleAttack1</BattleIdleAnim>
 	        <BattleWalkAnim>CU_Barbarian_LeaderClub1_Run1</BattleWalkAnim>

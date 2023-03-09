@@ -132,7 +132,7 @@
 	        
 	        <DamageClass>DC_Bullet</DamageClass>
 	        <DamageAmount>24</DamageAmount>
-	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
 	        
 	        
 	        <BattleWaitUntil>4000</BattleWaitUntil>

@@ -131,8 +131,8 @@
 	        <HitAnim>PU_SoldierCavalry2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>22</DamageAmount>
-	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
+	        <DamageAmount>26</DamageAmount>
+	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>4000</BattleWaitUntil>
 	        
