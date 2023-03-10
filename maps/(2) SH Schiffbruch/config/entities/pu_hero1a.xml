@@ -91,10 +91,10 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>50</MaxRandomDamageBonus>
 	        
 	        
-	        <MaxRange>250.0f</MaxRange>
+	        <MaxRange>400</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        

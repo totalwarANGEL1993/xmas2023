@@ -83,7 +83,7 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>50</MaxRandomDamageBonus>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        
@@ -91,7 +91,7 @@
 	        <MinRange>800.0f</MinRange>
 	        <AutoAttackRange>2700</AutoAttackRange>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
 	        <MissChance>5</MissChance>
 
@@ -156,7 +156,7 @@
 	<Behavior>
 	    <Logic classname="GGL::CShurikenAbilityProps">
 	        <Class>GGL::CShurikenAbility</Class>
-	        <RechargeTimeSeconds>90</RechargeTimeSeconds>
+	        <RechargeTimeSeconds>60</RechargeTimeSeconds>
 	        <TaskList>TL_SHURIKEN_SPECIAL</TaskList>
 	        <Animation>PU_Hero5_Attack1</Animation> 
 	        <Range>3000.0</Range>

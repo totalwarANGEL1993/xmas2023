@@ -122,11 +122,11 @@
 	        
 	        <DamageClass>DC_Bow</DamageClass>
 	        <DamageAmount>10</DamageAmount>
-	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MissChance>10</MissChance>
+	        <MissChance>7</MissChance>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        <MaxRange>2500</MaxRange>

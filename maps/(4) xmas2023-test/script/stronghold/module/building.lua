@@ -249,12 +249,6 @@ function Stronghold.Building:Install()
         self.Data[i] = {};
     end
 
-    XGUIEng.TransferMaterials("BlessSettlers1", "Research_PickAxe");
-    XGUIEng.TransferMaterials("BlessSettlers2", "Research_LightBricks");
-    XGUIEng.TransferMaterials("BlessSettlers3", "Research_Taxation");
-    XGUIEng.TransferMaterials("BlessSettlers4", "Research_Debenture");
-    XGUIEng.TransferMaterials("BlessSettlers5", "Research_Scale");
-
     self:CreateBuildingButtonHandlers();
     self:OverrideMonasteryInterface()
     self:OverrideHeadquarterButtons();

@@ -82,7 +82,7 @@
 	        
 			<NormalAttackAnim1>CU_Mary_de_Mortfichet_Attack2</NormalAttackAnim1>
 	        <NormalAttackAnim2>CU_Mary_de_Mortfichet_Attack1</NormalAttackAnim2>
-	        <CounterAttackAnim>CU_Mary_de_Mortfichet_Finish</CounterAttackAnim>
+	        <CounterAttackAnim>CU_Mary_de_Mortfichet_Attack2</CounterAttackAnim>
 	        <FinishingMoveAnim>CU_Mary_de_Mortfichet_Attack1</FinishingMoveAnim>
 	        <MissAttackAnim>CU_Mary_de_Mortfichet_Attack1</MissAttackAnim>
 	        <BattleIdleAnim>CU_Mary_de_Mortfichet_IdleAttack1</BattleIdleAnim>
@@ -91,16 +91,16 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>50</MaxRandomDamageBonus>
 	        
 	        
 	        <MaxRange>250.0f</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
-	        <BattleWaitUntil>1500</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 
-	        <HealingPoints>4</HealingPoints>
+	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>
@@ -110,18 +110,30 @@
 	<Behavior>
 	    <Logic classname="GGL::CRangedEffectAbilityProps">
 	        <Class>GGL::CRangedEffectAbility</Class>
-	        <RechargeTimeSeconds>120</RechargeTimeSeconds><!--120-->
+	        <RechargeTimeSeconds>90</RechargeTimeSeconds><!--120-->
 	        <AffectsHostiles>true</AffectsHostiles>
 	        <AffectsOnlyMilitary>true</AffectsOnlyMilitary>
-	        <Range>1000.0</Range>
+	        <Range>2000.0</Range>
 	        <DurationInSeconds>60</DurationInSeconds>
-	        <DamageFactor>0.25</DamageFactor><!--0.5-->
+	        <DamageFactor>0.5</DamageFactor><!--0.5-->
 	        <Effect>FXMaryDemoralize</Effect>
+	    </Logic>
+	</Behavior>
+
+    <Behavior>
+	    <Logic classname="GGL::CCircularAttackProps">
+	        <Class>GGL::CCircularAttack</Class>
+	        <RechargeTimeSeconds>90</RechargeTimeSeconds>
+	        <TaskList>TL_BATTLE_SPECIAL</TaskList>
+	        <Animation>CU_Mary_de_Mortfichet_Finish</Animation>
+	        <DamageClass>DC_Hero</DamageClass>
+	        <DamageAmount>100</DamageAmount>
+	        <Range>300.0</Range>
 	    </Logic>
 	</Behavior>
 	
 	
-	<Behavior>
+	<!-- <Behavior>
 	    <Logic classname="GGL::CCircularAttackProps">
 	        <Class>GGL::CCircularAttack</Class>
 	        <RechargeTimeSeconds>120</RechargeTimeSeconds>
@@ -132,8 +144,7 @@
 	        <Range>1500.0</Range>
 	        <Effect>FXMaryPoison</Effect>
 	    </Logic>
-	</Behavior>
-
+	</Behavior> -->
 	
 	
 	<Behavior>

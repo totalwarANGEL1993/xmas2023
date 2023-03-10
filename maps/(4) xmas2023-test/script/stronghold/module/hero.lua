@@ -279,8 +279,8 @@ Stronghold.Hero = {
                          "Chance. " ..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
-                         "Alle Negative Effekte auf die Beliebtheit verringern sich "..
-                         "um 30%. Die maximale Beliebtheit sinkt auf 175. " ..
+                         "Kann eine persönliche Leibgarde anheuern. Malus auf die Beliebtheit "..
+                         "verringern sich um 30%. Die maximale Beliebtheit sinkt auf 175. " ..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann die Rüstung von nahestehenden Feinden brechen.",
@@ -292,8 +292,8 @@ Stronghold.Hero = {
                          "chance. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
-                         "All negative effects on the reputation are decreased by 30%. The "..
-                         "reputation maximum becomes 175. "..
+                         "Can employ personal bodyguards. Negative effects on reputation are "..
+                         "decreased by 30%. The reputation maximum becomes 175. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can break the armor of enemies.",
@@ -421,6 +421,7 @@ function Stronghold.Hero:Install()
     self:OverrideCalculationCallbacks();
     self:CreateHeroButtonHandlers();
     self:OverrideHero5AbilityArrowRain();
+    self:OverrideHero8AbilityMoralDamage();
     self:StartTriggers();
     self:OverrideGUI();
     -- DEPRECATED
@@ -544,6 +545,7 @@ function Stronghold.Hero:OnSelectLeader(_EntityID)
     XGUIEng.SetWidgetPosition("Command_Patrol", 106, 4);
     XGUIEng.SetWidgetPosition("Command_Guard", 140, 4);
     XGUIEng.SetWidgetPosition("Formation01", 4, 38);
+    XGUIEng.ShowWidget("Selection_MilitaryUnit", 1);
 
     XGUIEng.TransferMaterials("Research_Gilds", "Formation01");
     XGUIEng.ShowWidget("Selection_Leader", 1);
@@ -664,6 +666,8 @@ function Stronghold.Hero:OnSelectHero7(_EntityID)
         XGUIEng.SetWidgetPosition("Hero7_Madness", 4, 38);
         XGUIEng.ShowWidget("Hero7_RechargeInflictFear", 0);
         XGUIEng.ShowWidget("Hero7_InflictFear", 0);
+        XGUIEng.ShowWidget("Buy_Soldier", 1);
+        XGUIEng.ShowWidget("Buy_Soldier_Button", 1);
     end
 end
 
@@ -784,6 +788,10 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
             Stronghold:AddPlayerReputation(_PlayerID, 100);
             Stronghold:UpdateMotivationOfWorkers(_PlayerID);
         end
+        if _Type == Entities.CU_BlackKnight then
+            Tools.CreateSoldiersForLeader(_ID, 3);
+            Logic.LeaderChangeFormationType(_ID, 1);
+        end
         if _PlayerID == GUI.GetPlayerID() or GUI.GetPlayerID() == 17 then
             Stronghold.Building:OnHeadquarterSelected(GUI.GetSelectedEntity());
         end
@@ -875,6 +883,9 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                     -- Place hero
                     Logic.CreateEffect(GGL_Effects.FXDieHero, x, y, _PlayerID);
                     local ID = SetPosition(k, Stronghold.Players[_PlayerID].DoorPos);
+                    if Logic.GetEntityType(ID) == Entities.CU_BlackKnight then
+                        Logic.LeaderChangeFormationType(ID, 1);
+                    end
                     Logic.HurtEntity(ID, Logic.GetEntityHealth(ID));
                 end
             end
@@ -960,6 +971,14 @@ function Stronghold.Hero:OverrideHero5AbilityArrowRain()
             XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
         end
     end);
+end
+
+function Stronghold.Hero:OverrideHero8AbilityMoralDamage()
+    function GUIAction_Hero8MoraleDamage()
+        local HeroID = HeroSelection_GetCurrentSelectedHeroID();
+        GUI.SettlerAffectUnitsInArea(HeroID);
+        GUI.SettlerCircularAttack(HeroID);
+    end
 end
 
 -- -------------------------------------------------------------------------- --

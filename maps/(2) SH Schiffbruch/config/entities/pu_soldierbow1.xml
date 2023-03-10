@@ -118,7 +118,7 @@
 	        
 	        <BattleWaitUntil>3500</BattleWaitUntil>
 	        
-	        <MissChance>15</MissChance>
+	        <MissChance>12</MissChance>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        

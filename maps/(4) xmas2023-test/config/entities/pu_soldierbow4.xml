@@ -136,9 +136,9 @@
 	        <DamageAmount>30</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>4000</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MissChance>8</MissChance>
+	        <MissChance>5</MissChance>
 	        
 	        <ProjectileEffectID>FXCrossBowArrow</ProjectileEffectID>
 	        <MaxRange>2900</MaxRange>

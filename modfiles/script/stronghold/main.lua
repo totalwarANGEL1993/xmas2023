@@ -354,6 +354,11 @@ function Stronghold:LoadGUIDelayed(_PlayerID)
     if GUI.GetPlayerID() == _PlayerID then
         XGUIEng.SetMaterialTexture("BackGround_BottomLeft", 1, "graphics/textures/gui/bg_bottom_left2.png");
         XGUIEng.SetMaterialTexture("BackGround_BottomTexture", 0, "graphics/textures/gui/bg_bottom2.png");
+        XGUIEng.TransferMaterials("BlessSettlers1", "Research_PickAxe");
+        XGUIEng.TransferMaterials("BlessSettlers2", "Research_LightBricks");
+        XGUIEng.TransferMaterials("BlessSettlers3", "Research_Taxation");
+        XGUIEng.TransferMaterials("BlessSettlers4", "Research_Debenture");
+        XGUIEng.TransferMaterials("BlessSettlers5", "Research_Scale");
         Camera.ZoomSetFactorMax(2.0);
     end
 end

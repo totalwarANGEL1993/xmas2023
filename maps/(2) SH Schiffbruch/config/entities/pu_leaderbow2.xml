@@ -122,12 +122,12 @@
 	        <HitAnim>PU_LeaderBow2_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>10</DamageAmount>
+	        <DamageAmount>11</DamageAmount>
 	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MissChance>12</MissChance>
+	        <MissChance>10</MissChance>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        <MaxRange>2500</MaxRange>

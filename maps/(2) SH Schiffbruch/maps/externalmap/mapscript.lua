@@ -39,6 +39,7 @@ function OnMapStart()
     CreatePilesOfWood();
 
     SetHostile(1, 7);
+    SetHostile(2, 7);
     CreatePassiveBanditCamps();
     CreateAggressiveBanditCamps();
 end

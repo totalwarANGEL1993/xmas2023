@@ -117,10 +117,10 @@
 	</Behavior>
 	<Behavior>
 		  <Logic classname="GGL::CLeaderBehaviorProps">
-			  <Class>GGL::CLeaderBehavior</Class>
-			  <BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
+			<Class>GGL::CLeaderBehavior</Class>
+			<BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
             <HomeRadius>2000</HomeRadius>
-			  <SoldierType>PU_SoldierPoleArm3</SoldierType>
+			<SoldierType>PU_SoldierPoleArm3</SoldierType>
 			
 	        <BattleTaskList>TL_BATTLE_POLEARM</BattleTaskList>
 	        
@@ -143,7 +143,7 @@
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2000</AutoAttackRange>
 	        
-			  <HealingPoints>5</HealingPoints>
+			<HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>
 	        
 	        <UpkeepCost>20</UpkeepCost>

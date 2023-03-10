@@ -103,11 +103,11 @@
 	</Behavior>
 	<Behavior>
 		  <Logic classname="GGL::CLeaderBehaviorProps">
-			  <Class>GGL::CLeaderBehavior</Class>
-			  <BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
+			<Class>GGL::CLeaderBehavior</Class>
+			<BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
             <HomeRadius>1500</HomeRadius>
 			
-			  <SoldierType>CU_Barbarian_SoldierClub1</SoldierType>
+			<SoldierType>CU_Barbarian_SoldierClub1</SoldierType>
 			
 	        <BattleTaskList>TL_BATTLE_MACE</BattleTaskList>
 	        

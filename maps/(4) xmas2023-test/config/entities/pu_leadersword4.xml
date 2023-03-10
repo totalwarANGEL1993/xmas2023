@@ -134,13 +134,13 @@
 	        <DamageAmount>24</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>	
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>        
+	        <BattleWaitUntil>3000</BattleWaitUntil>        
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2000</AutoAttackRange>
 	        
-			  <HealingPoints>5</HealingPoints>
+			<HealingPoints>5</HealingPoints>
 	        <HealingSeconds>3</HealingSeconds>
 	        
 	        <UpkeepCost>20</UpkeepCost>

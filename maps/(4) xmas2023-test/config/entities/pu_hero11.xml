@@ -75,9 +75,9 @@
 	    </Logic>
 	</Behavior>
 	<Behavior>
-		  <Logic classname="GGL::CLeaderBehaviorProps">
-			  <Class>GGL::CLeaderBehavior</Class>
-			  <SoldierType>PU_SoldierSword4</SoldierType>			
+		<Logic classname="GGL::CLeaderBehaviorProps">
+			<Class>GGL::CLeaderBehavior</Class>
+			<SoldierType>PU_SoldierSword4</SoldierType>			
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        
 			<NormalAttackAnim1>PU_Hero11_Attack1</NormalAttackAnim1>
@@ -91,7 +91,8 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
+            <!-- She's a kung fu master afterall... -->
+	        <MaxRandomDamageBonus>150</MaxRandomDamageBonus>
 	        
 	        
 	        <MaxRange>250.0f</MaxRange>
@@ -100,7 +101,7 @@
 	        
 	        <BattleWaitUntil>1500</BattleWaitUntil>
 
-	        <HealingPoints>4</HealingPoints>
+	        <HealingPoints>6</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>

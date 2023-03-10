@@ -98,8 +98,10 @@
 	</Behavior>
 	<Behavior>
 		  <Logic classname="GGL::CLeaderBehaviorProps">
-			  <Class>GGL::CLeaderBehavior</Class>
-			  <SoldierType>CU_BanditSoldierSword1</SoldierType>
+            <Class>GGL::CLeaderBehavior</Class>
+            <SoldierType>CU_BanditSoldierSword1</SoldierType>
+            <BarrackUpgradeCategory>Barracks</BarrackUpgradeCategory>
+            <HomeRadius>1500</HomeRadius>
 			
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        

@@ -67,9 +67,10 @@
 	</Behavior>
 	<Behavior>
 		  <Logic classname="GGL::CLeaderBehaviorProps">
-			  <Class>GGL::CLeaderBehavior</Class>
-
-			  <SoldierType>CU_BlackKnight_SoldierSword3</SoldierType>
+			<Class>GGL::CLeaderBehavior</Class>
+            <BarrackUpgradeCategory>Headquarters</BarrackUpgradeCategory>
+            <HomeRadius>2000</HomeRadius>
+			<SoldierType>CU_BlackKnight_SoldierSword3</SoldierType>
 			
 	        <BattleTaskList>TL_BATTLE</BattleTaskList>
 	        
@@ -84,15 +85,15 @@
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>
-	        <MaxRandomDamageBonus>75</MaxRandomDamageBonus>
+	        <MaxRandomDamageBonus>50</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>1500</BattleWaitUntil>
+	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MaxRange>200.0</MaxRange>
+	        <MaxRange>400.0</MaxRange>
 	        <MinRange>0.0</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
-	        <HealingPoints>4</HealingPoints>
+	        <HealingPoints>2</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>
@@ -131,12 +132,20 @@
 	        <AffectsHostiles>true</AffectsHostiles>
 	        <AffectsOnlyMilitary>true</AffectsOnlyMilitary>
 	        <Range>1000.0</Range>
-	        <DurationInSeconds>60</DurationInSeconds>
+	        <DurationInSeconds>90</DurationInSeconds>
 	        <Effect>FXKerberosFear</Effect>
 	        <ArmorFactor>0</ArmorFactor><!--0.8-->
 	    </Logic>
 	</Behavior>
 
-
+    <Behavior>
+		  <Logic classname="GGL::CLimitedAttachmentBehaviorProperties">
+			  <Class>GGL::CLimitedAttachmentBehavior</Class>
+            <Attachment>
+                <Type>ATTACHMENT_LEADER_SOLDIER</Type>
+                <Limit>3</Limit>
+            </Attachment>
+		</Logic>
+	</Behavior>
 
 </root>

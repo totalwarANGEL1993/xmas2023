@@ -30,12 +30,7 @@
 			  <Iron>70</Iron>
 			  <Wood/>
         </Cost>
-       
 
-    
-
-    
-<!--Armor modifier-->
         <ModifyArmor>
         	<Technology>T_LeatherMailArmor</Technology>
         </ModifyArmor>
@@ -47,24 +42,14 @@
         <ModifyArmor>
         	<Technology>T_PlateMailArmor</Technology>
         </ModifyArmor>
-        
 
-    
-
-    
-<!-- Damage Modifier-->
          <ModifyDamage>
         	<Technology>T_MasterOfSmithery</Technology>
         </ModifyDamage>
          <ModifyDamage>
         	<Technology>T_IronCasting</Technology>
         </ModifyDamage>
-        
-        
 
-    
-
-    <!-- Speed Modifier-->
         <ModifySpeed>
         	<Technology>T_BetterTrainingBarracks</Technology>
         </ModifySpeed>
@@ -141,7 +126,7 @@
 	        <DamageAmount>20</DamageAmount>
 	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>2000</BattleWaitUntil>
+	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>

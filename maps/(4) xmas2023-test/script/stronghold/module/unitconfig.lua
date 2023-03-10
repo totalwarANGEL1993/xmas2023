@@ -762,5 +762,28 @@ Stronghold.UnitConfig.Units = {
         RecruiterBuilding = {Entities.PB_Headquarters1, Entities.PB_Headquarters2, Entities.PB_Headquarters3},
         ProviderBuilding  = {},
     },
+
+    -- Kerberos
+    [Entities.CU_BlackKnight]              = {
+        Button            = "Buy_LeaderSword",
+        TextNormal        = {
+            de = "{grey}ERROR{cr}{white}YOU SHOULD NEVER SEE THIS!{cr}",
+            en = "{grey}ERROR{cr}{white}YOU SHOULD NEVER SEE THIS!{cr}",
+        },
+        TextDisabled      = {
+            de = "{grey}ERROR{cr}{white}YOU SHOULD NEVER SEE THIS!{cr}",
+            en = "{grey}ERROR{cr}{white}YOU SHOULD NEVER SEE THIS!{cr}",
+        },
+        Soldiers          = 3,
+        Costs             = {
+            [1] = {0, 0, 0, 0, 0, 0, 0},
+            [2] = {15, 500, 0, 0, 0, 0, 0},
+        },
+        Rank              = 5,
+        Allowed           = true,
+        Upkeep            = 0,
+        RecruiterBuilding = {Entities.PB_Barracks2},
+        ProviderBuilding  = {Entities.PB_Blacksmith2, Entities.PB_Blacksmith3},
+    },
 };
 
