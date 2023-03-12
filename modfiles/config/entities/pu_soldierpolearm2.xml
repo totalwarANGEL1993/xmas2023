@@ -80,7 +80,7 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
-		  <ArmorAmount>2</ArmorAmount>
+		  <ArmorAmount>1</ArmorAmount>
 		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>15</ExperiencePoints>
@@ -131,7 +131,7 @@
 	        
 	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        
-	        <MaxRange>400</MaxRange>
+	        <MaxRange>350</MaxRange>
 	        <MinRange>0.0f</MinRange>
 		</Logic>
 	</Behavior>

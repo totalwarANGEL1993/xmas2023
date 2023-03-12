@@ -128,9 +128,9 @@
 
             <BattleWaitUntil>3000</BattleWaitUntil>
 
-            <MaxRange>300</MaxRange>
+            <MaxRange>350</MaxRange>
             <MinRange>0.0f</MinRange>
-            </Logic> </Behavior>
+            </Logic> </Behavior>                                  
 
   	<Behavior>
 		 		  <Logic classname="GGL::CFormationBehaviorProperties">

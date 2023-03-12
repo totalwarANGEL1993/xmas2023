@@ -42,36 +42,17 @@
     	<ExperiencePoints>40</ExperiencePoints>
     	<AttractionSlots>2</AttractionSlots>
     	
-    	
 
-    
-
-    
-
-    
-
-    <!--Armor modifier-->
         <ModifyArmor>
         	<Technology>T_LeatherMailArmor</Technology>
         </ModifyArmor>
-        
         <ModifyArmor>
         	<Technology>T_ChainMailArmor</Technology>
         </ModifyArmor>
-        
         <ModifyArmor>
         	<Technology>T_PlateMailArmor</Technology>
         </ModifyArmor>
         
-        
-
-    
-
-    
-
-    
-
-    <!-- Damage Modifier-->
          <ModifyDamage>
         	<Technology>T_MasterOfSmithery</Technology>
         </ModifyDamage>
@@ -79,19 +60,11 @@
         	<Technology>T_IronCasting</Technology>
         </ModifyDamage>
         
-        
-         
-
-    
-
-    
-
-    
-<!-- Speed Modifier-->
         <ModifySpeed>
         	<Technology>T_Shoeing</Technology>
         </ModifySpeed>
     	
+
 	</Logic>
 	<Behavior>
 		  <Logic classname="GGL::CGLAnimationBehaviorExProps">
@@ -140,7 +113,7 @@
 	        <HitAnim>PU_LeaderCavalry4_Hit</HitAnim>
 
 	        <DamageClass>DC_Axe</DamageClass>
-	        <DamageAmount>28</DamageAmount>
+	        <DamageAmount>26</DamageAmount>
 	        <MaxRandomDamageBonus>8</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>

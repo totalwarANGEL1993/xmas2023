@@ -534,7 +534,14 @@ function Stronghold:StartEntityHurtTrigger()
         local Attacked = Event.GetEntityID2();
         local AttackedPlayer = Logic.EntityGetPlayer(Attacked);
         if Attacker and Attacked then
-            if Logic.GetEntityHealth(Attacked) > 0 then
+            local ID = Attacked;
+            if Logic.IsEntityInCategory(ID, EntityCategories.Leader) == 1 then
+                local Soldiers = {Logic.GetSoldiersAttachedToLeader(ID)};
+                if Soldiers[1] > 0 then
+                    ID = Soldiers[Soldiers[1]+1];
+                end
+            end
+            if Logic.GetEntityHealth(ID) > 0 then
                 if Stronghold.Players[AttackedPlayer] then
                     Stronghold.Players[AttackedPlayer].AttackMemory[Attacked] = {15, Attacker};
                 end

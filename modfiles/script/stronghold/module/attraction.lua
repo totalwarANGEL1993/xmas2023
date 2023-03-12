@@ -37,15 +37,15 @@ Stronghold = Stronghold or {};
 Stronghold.Attraction = {
     Data = {},
     Config = {
+        HQMilitaryAttraction = {
+            [1] = 75,
+            [2] = 100,
+            [3] = 125
+        },
         HQCivilAttraction = {
             [1] = 76,
             [2] = 84,
             [3] = 92
-        },
-        HQMilitaryAttraction = {
-            [1] = 360,
-            [2] = 480,
-            [3] = 600
         },
         VCCivilAttraction = {
             [1] = 50,
@@ -490,6 +490,7 @@ function Stronghold.Attraction:GetPlayerMilitaryAttractionLimit(_PlayerID)
     local Limit = 0;
     if Stronghold:IsPlayer(_PlayerID) then
         local HeadquarterID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
+        local Rank = GetPlayerRank(_PlayerID);
 
         -- Attraction limit
         Limit = self.Config.HQMilitaryAttraction[1];
@@ -499,10 +500,11 @@ function Stronghold.Attraction:GetPlayerMilitaryAttractionLimit(_PlayerID)
         if Logic.GetEntityType(HeadquarterID) == Entities.PB_Headquarters3 then
             Limit = self.Config.HQMilitaryAttraction[3];
         end
+        Limit = Limit + (Limit * (Rank * 0.2));
         -- External
         Limit = GameCallback_Calculate_MilitaryAttrationLimit(_PlayerID, Limit);
     end
-    return Limit;
+    return math.ceil(Limit);
 end
 
 function Stronghold.Attraction:GetPlayerMilitaryAttractionUsage(_PlayerID)

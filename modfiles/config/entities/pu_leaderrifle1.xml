@@ -73,8 +73,8 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <MaxHealth>150</MaxHealth>
 		  <Exploration>28</Exploration>
-		  <ArmorClass>ArmorClassLeather</ArmorClass> 
-		  <ArmorAmount>1</ArmorAmount>
+		  <ArmorClass>ArmorClassNone</ArmorClass> 
+		  <ArmorAmount>2</ArmorAmount>
 		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>35</ExperiencePoints>
@@ -131,13 +131,13 @@
 	        <HitAnim>PU_LeaderRifle1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bullet</DamageClass>
-	        <DamageAmount>24</DamageAmount>
-	        <MaxRandomDamageBonus>2</MaxRandomDamageBonus>
+	        <DamageAmount>26</DamageAmount>
+	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
 	        
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>3500</BattleWaitUntil>
 	        
-	        <MissChance>15</MissChance>
+	        <MissChance>10</MissChance>
 	        
 	        <ProjectileEffectID>FXBulletRifleman</ProjectileEffectID>
 	        <MaxRange>2800</MaxRange>

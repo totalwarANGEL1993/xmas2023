@@ -62,7 +62,7 @@
 		  <MaxHealth>120</MaxHealth>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
-		  <ArmorAmount>1</ArmorAmount>
+		  <ArmorAmount>0</ArmorAmount>
 		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>25</ExperiencePoints>
@@ -125,7 +125,7 @@
 	        
 	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        
-	        <MaxRange>400</MaxRange>
+	        <MaxRange>350</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2000</AutoAttackRange>
 	        
