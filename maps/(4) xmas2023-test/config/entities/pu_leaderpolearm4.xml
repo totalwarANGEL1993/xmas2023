@@ -137,7 +137,7 @@
 	        
 	        <BattleWaitUntil>3500</BattleWaitUntil>
 	        
-	        <MaxRange>300</MaxRange>
+	        <MaxRange>350</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2000</AutoAttackRange>
 	        

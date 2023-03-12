@@ -17,7 +17,9 @@ Stronghold = Stronghold or {};
 
 Stronghold.Hero = {
     SyncEvents = {},
-    Data = {},
+    Data = {
+        ConvertBlacklist = {},
+    },
     Config = {
         Rule = {
             Lord = {
@@ -85,6 +87,10 @@ Stronghold.Hero = {
                 [Entities.PU_Hero5]              = {
                     de = "{grey}Pfeilhagel{cr}{white}Ari lässt einen Köcher voll Pfeile auf die Gegner herabregnen.",
                     en = "{grey}Pfeilhagel{cr}{white}Ari launches a quiver full of arrows on enemy troops.",
+                },
+                [Entities.CU_Mary_de_Mortfichet] = {
+                    de = "{grey}Demoralisieren{cr}{white}Mary greift alle Feinde um sie herum an, was Opfer fordert und so die Kampfmoral der Feinde schwächt.",
+                    en = "{grey}Demoralize{cr}{white}Mary attacks all enemies around her, which not only deals damage but also lowers the damage they can inflict.",
                 },
             },
             HeroCV = {
@@ -225,8 +231,8 @@ Stronghold.Hero = {
                          "erfreut er sich an den lieblichen Klängen der Chorknaben. " ..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
-                         "Helias nimmt Euren Arbeitern die Beichte ab. Dadurch werden sie seltener "..
-                         "das Gesetz brechen. "..
+                         "Durch Helias Beistand brechen Arbeter seltener das Gesetz. Außerdem "..
+                         "hat Helias eine geringe Chance, Feinde im Kampf zu bekehren. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Helias kann die Rüstung von verbündeten Einheiten verbessern.",
@@ -237,8 +243,8 @@ Stronghold.Hero = {
                          "the lovely sounds of the choirboys. "..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
-                         "Helias hears the confessions of your workers. This will make them less "..
-                         "likely to break the law. "..
+                         "Workers are less likely to become criminals. Additionally Helias has a "..
+                         "low chance to convert enemies while fighting them. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can bless the armor of allied troops.",
@@ -256,7 +262,8 @@ Stronghold.Hero = {
                          "Bevölkerungsplatz. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
-                         "Kann die Angriffskraft von nahestehenden Feinden senken.",
+                         "Ein Rundumschlag verletzt nahestehenden Feinde und senkt die "..
+                         "Angriffskraft der Überlebenden.",
                     en = "MARY, the snake "..
                          "@cr @cr @color:180,180,180 "..
                          "The Countess the Mortfichet is infamous as beeing a nefarious and "..
@@ -268,7 +275,8 @@ Stronghold.Hero = {
                          "population places. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
-                         "Can damage moral to lower enemies strength.",
+                         "Can inflict damage to close enemies and also lower the damage surviving "..
+                         " enemies inflict.",
                 },
                 [Entities.CU_BlackKnight]        = {
                     de = "KERBEROS, der schrecken "..
@@ -363,8 +371,8 @@ Stronghold.Hero = {
                          "Eigen nennt. " ..
                          "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
-                         "Yuki erhöht die maximale Beliebtheit auf 300. Außerdem "..
-                         "wird die Beliebtheit einmalig um 100 erhöht, sobald sie erscheint. "..
+                         "Die maximale Beliebtheit ist 300. Yuki gewährt einmalig 100 Beliebtheit, "..
+                         "sobald sie erscheint. Maximale Armeegröße wird um 10% erhöht. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
                          "Kann befreundete Arbeiter mit Feuerwerk motivieren.",
@@ -375,8 +383,8 @@ Stronghold.Hero = {
                          "searching for wealth. Now she claimed a castle. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
-                         "Yuki raises the reputation maximum to 300. The current reputation "..
-                         "is increased by 100 only once after she appears."..
+                         "The reputation limit is raised to 300. Yuki gives a one time bonus "..
+                         "of 100 reputation when selected. Max army size is increased by 10%. "..
                          "@cr @cr @color:255,255,255 "..
                          "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
                          "Can motivate workers with her pyrotechnics.",
@@ -454,6 +462,10 @@ function Stronghold.Hero:CreateHeroButtonHandlers()
             end
         end
     );
+end
+
+function Stronghold.Hero:SetEntityConvertable(_EntityID, _Flag)
+    self.Data.ConvertBlacklist[_EntityID] = _Flag == true;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -869,6 +881,25 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
                 end
             end
 
+            -- Helias converting
+            if Logic.GetEntityType(v[2]) == Entities.PU_Hero6 then
+                local HeliasPlayerID = Logic.EntityGetPlayer(v[2]);
+                local AttackerID = k;
+                if Logic.IsEntityInCategory(AttackerID, EntityCategories.Soldier) == 1 then
+                    AttackerID = SVLib.GetLeaderOfSoldier(AttackerID);
+                end
+                if not self.Data.ConvertBlacklist[AttackerID] then
+                    if Logic.GetEntityHealth(AttackerID) > 0 and Logic.IsHero(AttackerID) == 0 then
+                        if math.random(1, 1000) <= 3 and GetDistance(AttackerID, v[2]) <= 1000 then
+                            ChangePlayer(AttackerID, HeliasPlayerID);
+                            if GUI.GetPlayerID() == HeliasPlayerID then
+                                Sound.PlayFeedbackSound(Sounds.VoicesHero6_HERO6_ConvertSettler_rnd_01, 0);
+                            end
+                        end
+                    end
+                end
+            end
+
             -- Teleport to HQ
             if Logic.IsHero(k) == 1 then
                 if Logic.GetEntityHealth(k) == 0 then
@@ -976,15 +1007,30 @@ end
 function Stronghold.Hero:OverrideHero8AbilityMoralDamage()
     function GUIAction_Hero8MoraleDamage()
         local HeroID = HeroSelection_GetCurrentSelectedHeroID();
-        GUI.SettlerAffectUnitsInArea(HeroID);
         GUI.SettlerCircularAttack(HeroID);
+        GUI.SettlerAffectUnitsInArea(HeroID);
     end
+    Overwrite.CreateOverwrite("GUITooltip_NormalButton", function(_TextKey, _ShortCut)
+        Overwrite.CallOriginal();
+        if _TextKey == "MenuHero8/command_moraledamage" then
+            local Language = GetLanguage();
+            local Text = Stronghold.Hero.Config.UI.HeroSkill[Entities.CU_Mary_de_Mortfichet][Language];
+            ShortCutToolTip = XGUIEng.GetStringTableText("MenuGeneric/Key_name")..
+                ": [" .. XGUIEng.GetStringTableText(_ShortCut) .. "]";
+
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomText, Placeholder.Replace(Text));
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomCosts, "");
+            XGUIEng.SetText(gvGUI_WidgetID.TooltipBottomShortCut, ShortCutToolTip);
+        end
+    end);
 end
 
 -- -------------------------------------------------------------------------- --
 -- Passive Abilities
 
 function Stronghold.Hero:OverrideCalculationCallbacks()
+    -- Generic --
+
     self.Orig_GameCallback_GainedResources = GameCallback_GainedResources;
     GameCallback_GainedResources = function(_PlayerID, _ResourceType, _Amount)
         Stronghold.Hero.Orig_GameCallback_GainedResources(_PlayerID, _ResourceType, _Amount);
@@ -998,6 +1044,8 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
 		Stronghold.Hero.Orig_GameCallback_OnTechnologyResearched(_PlayerID, _Technology, _EntityID);
         Stronghold.Hero:ProduceHonorForTechnology(_PlayerID, _Technology, _EntityID);
 	end
+
+    -- Resource --
 
     self.Orig_GameCallback_Calculate_ReputationMax = GameCallback_Calculate_ReputationMax;
     GameCallback_Calculate_ReputationMax = function(_PlayerID, _CurrentAmount)
@@ -1040,6 +1088,8 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         return CurrentAmount;
     end
 
+    -- Money --
+
     self.Orig_GameCallback_Calculate_TotalPaydayIncome = GameCallback_Calculate_TotalPaydayIncome;
     GameCallback_Calculate_TotalPaydayIncome = function(_PlayerID, _CurrentAmount)
         local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_TotalPaydayIncome(_PlayerID, _CurrentAmount);
@@ -1061,19 +1111,37 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         return CurrentAmount;
     end
 
+    -- Attraction --
+
     self.Orig_GameCallback_Calculate_CivilAttrationLimit = GameCallback_Calculate_CivilAttrationLimit;
     GameCallback_Calculate_CivilAttrationLimit = function(_PlayerID, _CurrentAmount)
         local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_CivilAttrationLimit(_PlayerID, _CurrentAmount);
-        CurrentAmount = Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyMaxCivilAttractionPassiveAbility(_PlayerID, CurrentAmount);
         return CurrentAmount;
     end
 
     self.Orig_GameCallback_Calculate_CivilAttrationUsage = GameCallback_Calculate_CivilAttrationUsage;
     GameCallback_Calculate_CivilAttrationUsage = function(_PlayerID, _CurrentAmount)
         local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_CivilAttrationUsage(_PlayerID, _CurrentAmount);
-        CurrentAmount = Stronghold.Hero:ApplyAttractionPassiveAbility(_PlayerID, CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyCivilAttractionPassiveAbility(_PlayerID, CurrentAmount);
         return CurrentAmount;
     end
+
+    self.Orig_GameCallback_Calculate_MilitaryAttrationLimit = GameCallback_Calculate_MilitaryAttrationLimit;
+    GameCallback_Calculate_MilitaryAttrationLimit = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_MilitaryAttrationLimit(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyMaxMilitaryAttractionPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    self.Orig_GameCallback_Calculate_MilitaryAttrationUsage = GameCallback_Calculate_MilitaryAttrationUsage;
+    GameCallback_Calculate_MilitaryAttrationUsage = function(_PlayerID, _CurrentAmount)
+        local CurrentAmount = Stronghold.Hero.Orig_GameCallback_Calculate_MilitaryAttrationUsage(_PlayerID, _CurrentAmount);
+        CurrentAmount = Stronghold.Hero:ApplyMilitaryAttractionPassiveAbility(_PlayerID, CurrentAmount);
+        return CurrentAmount;
+    end
+
+    -- Measure --
 
     self.Orig_GameCallback_Calculate_MeasureIncrease = GameCallback_Calculate_MeasureIncrease;
     GameCallback_Calculate_MeasureIncrease = function(_PlayerID, _CurrentAmount)
@@ -1081,6 +1149,8 @@ function Stronghold.Hero:OverrideCalculationCallbacks()
         CurrentAmount = Stronghold.Hero:ApplyMeasurePointsPassiveAbility(_PlayerID, CurrentAmount);
         return CurrentAmount;
     end
+
+    -- Criminals --
 
     self.Orig_GameCallback_Calculate_CrimeRate = GameCallback_Calculate_CrimeRate;
     GameCallback_Calculate_CrimeRate = function(_PlayerID, _Rate)
@@ -1162,8 +1232,8 @@ function Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Costs)
     return Costs;
 end
 
--- Passive Ability: Increase of civil attraction
-function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
+-- Passive Ability: Increase of max civil attraction
+function Stronghold.Hero:ApplyMaxCivilAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
         Value = Value * 1.15;
@@ -1172,12 +1242,28 @@ function Stronghold.Hero:ApplyMaxAttractionPassiveAbility(_PlayerID, _Value)
 end
 
 -- Passive Ability: decrease of used civil attraction
-function Stronghold.Hero:ApplyAttractionPassiveAbility(_PlayerID, _Value)
+function Stronghold.Hero:ApplyCivilAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.CU_Mary_de_Mortfichet) then
         local ThiefCount = Logic.GetNumberOfEntitiesOfTypeOfPlayer(_PlayerID, Entities.PU_Thief);
         Value = Value - (ThiefCount * 3);
     end
+    return Value;
+end
+
+-- Passive Ability: Increase of max military attraction
+function Stronghold.Hero:ApplyMaxMilitaryAttractionPassiveAbility(_PlayerID, _Value)
+    local Value = _Value;
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero11) then
+        Value = Value * 1.10;
+    end
+    return Value;
+end
+
+-- Passive Ability: decrease of used military attraction
+function Stronghold.Hero:ApplyMilitaryAttractionPassiveAbility(_PlayerID, _Value)
+    local Value = _Value;
+    -- Do nothing
     return Value;
 end
 

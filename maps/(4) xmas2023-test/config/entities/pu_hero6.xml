@@ -83,7 +83,7 @@
 	        <BattleWalkAnim>PU_Hero6_Run1</BattleWalkAnim>
 	        <HitAnim>PU_Hero6_Hit</HitAnim>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>50</DamageAmount>

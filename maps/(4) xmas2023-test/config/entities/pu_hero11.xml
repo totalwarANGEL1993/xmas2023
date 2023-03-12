@@ -26,7 +26,7 @@
 		  <ForceNoPlayer>false</ForceNoPlayer>
         <Hat/>
         <Cost>
-			  <Money>1</Money>
+			<Money>1</Money>
         </Cost>
         <Convertible>false</Convertible>        
         <Category>Hero</Category>
@@ -89,19 +89,19 @@
 	        <BattleWalkAnim>PU_Hero11_Run1</BattleWalkAnim>
 	        <HitAnim>PU_Hero11_Hit</HitAnim>
 	        
-	        <DamageClass>DC_Hero</DamageClass>
-	        <DamageAmount>50</DamageAmount>
             <!-- She's a kung fu master afterall... -->
-	        <MaxRandomDamageBonus>150</MaxRandomDamageBonus>
+	        <DamageClass>DC_Yuki</DamageClass>
+	        <DamageAmount>50</DamageAmount>
+	        <MaxRandomDamageBonus>50</MaxRandomDamageBonus>
 	        
 	        
-	        <MaxRange>250.0f</MaxRange>
+	        <MaxRange>350</MaxRange>
 	        <MinRange>0.0f</MinRange>
 	        <AutoAttackRange>2200</AutoAttackRange>
 	        
 	        <BattleWaitUntil>1500</BattleWaitUntil>
 
-	        <HealingPoints>6</HealingPoints>
+	        <HealingPoints>9</HealingPoints>
 	        <HealingSeconds>1</HealingSeconds>
 		</Logic>
 	</Behavior>
@@ -125,7 +125,7 @@
 	 <Behavior>
         <Logic classname="GGL::CMotivateWorkersAbilityProps">
             <Class>GGL::CMotivateWorkersAbility</Class>
-            <RechargeTimeSeconds>120</RechargeTimeSeconds>
+            <RechargeTimeSeconds>90</RechargeTimeSeconds>
             <TaskList>TL_MOTIVATE_SPECIAL</TaskList>
             <Animation>PU_Hero11_PlaceRocket</Animation>
             <Range>2000.0</Range>

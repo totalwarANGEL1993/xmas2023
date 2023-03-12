@@ -21,7 +21,7 @@
 	<Logic classname="GGL::CGLSettlerProps">
 		  <Class>GGL::CSettler</Class>
 		  <AccessCategory>AccessCategorySettler</AccessCategory>		
-		  <MaxHealth>125</MaxHealth>
+		  <MaxHealth>150</MaxHealth>
 		  <DodgeChance>5</DodgeChance> 
 		  <NeedsPlayer>true</NeedsPlayer>
 		  <ForceNoPlayer>false</ForceNoPlayer>
@@ -33,36 +33,16 @@
         </Cost>
          
 
-    
-
-    
-
-    
-<!--Armor modifier-->
         <ModifyArmor>
         	<Technology>T_SoftArcherArmor</Technology>
         </ModifyArmor>
-        
         <ModifyArmor>
         	<Technology>T_PaddedArcherArmor</Technology>
         </ModifyArmor>
-        
         <ModifyArmor>
         	<Technology>T_LeatherArcherArmor</Technology>
         </ModifyArmor>
-        
-        
 
-    
-
-    
-
-    
-<!-- Damage Modifier-->
-          <!--ModifyDamage>
-        	<Technology>T_Fletching</Technology>
-        </ModifyDamage-->
-        
         <ModifyExploration>
         	<Technology>T_Fletching</Technology>
         </ModifyExploration>
@@ -73,17 +53,11 @@
          <ModifyDamage>
         	<Technology>T_BodkinArrow</Technology>
         </ModifyDamage>
-        
-        
 
-    
-
-    
-
-    <!-- Speed Modifier-->
         <ModifySpeed>
         	<Technology>T_BetterTrainingArchery</Technology>
         </ModifySpeed>
+
         
         <Category>Military</Category>
         <Category>Soldier</Category>
@@ -91,7 +65,7 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>29</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
-		  <ArmorAmount>3</ArmorAmount>
+		  <ArmorAmount>4</ArmorAmount>
 		  <DodgeChance>5</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>25</ExperiencePoints>
@@ -133,10 +107,10 @@
 	        <HitAnim>PU_SoldierBow4_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>30</DamageAmount>
-	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
+	        <DamageAmount>27</DamageAmount>
+	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2700</BattleWaitUntil>
 	        
 	        <MissChance>5</MissChance>
 	        
@@ -183,8 +157,6 @@
 		</Logic>
 	</Behavior>
 
-
-
 	<Behavior>
 	    <Logic classname="EGL::CGLEBehaviorProps">
 	        <Class>GGL::CSoldierEvadeBehavior</Class>
@@ -199,22 +171,11 @@
 	    </Logic>
 	</Behavior>
 
-
     <Behavior>
         <Logic classname="GGL::CReplaceableEntityBehaviorProperties">
             <Class>GGL::CReplaceableEntityBehavior</Class>
             <EntityType>XD_DroppedBow</EntityType>
         </Logic>
     </Behavior>
-
-
-
-
-
-
-
-
-
-
 
 </root>
