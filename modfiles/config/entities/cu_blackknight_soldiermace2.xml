@@ -66,7 +66,7 @@
         <Category>Melee</Category>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass>
-		  <ArmorAmount>5</ArmorAmount> 
+		  <ArmorAmount>3</ArmorAmount> 
 		  <DodgeChance>10</DodgeChance> 
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
@@ -114,10 +114,10 @@
 	        <HitAnim>CU_BlackKnight_SoldierMace1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Mace</DamageClass>
-	        <DamageAmount>8</DamageAmount>	        
-	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
+	        <DamageAmount>9</DamageAmount>	        
+	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>

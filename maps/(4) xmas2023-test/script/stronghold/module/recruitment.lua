@@ -31,6 +31,19 @@ end
 function Stronghold.Recruitment:OnSaveGameLoaded()
 end
 
+function Stronghold.Recruitment:CreateBuildingButtonHandlers()
+    self.SyncEvents = {
+        BuyUnit = 1,
+    };
+    self.NetworkCall = Syncer.CreateEvent(
+        function(_PlayerID, _Action, ...)
+            if _Action == Stronghold.Recruitment.SyncEvents.BuyUnit then
+                Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
+            end
+        end
+    );
+end
+
 function Stronghold.Recruitment:InitDefaultRoster(_PlayerID)
     self.Data[_PlayerID].Roster = {
         -- Barracks
@@ -57,19 +70,6 @@ function Stronghold.Recruitment:InitDefaultRoster(_PlayerID)
         ["Buy_Scout"] = Entities.PU_Scout,
         ["Buy_Thief"] = Entities.PU_Thief,
     };
-end
-
-function Stronghold.Recruitment:CreateBuildingButtonHandlers()
-    self.SyncEvents = {
-        BuyUnit = 1,
-    };
-    self.NetworkCall = Syncer.CreateEvent(
-        function(_PlayerID, _Action, ...)
-            if _Action == Stronghold.Recruitment.SyncEvents.BuyUnit then
-                Stronghold.Unit:BuyUnit(_PlayerID, arg[2], arg[1], arg[3]);
-            end
-        end
-    );
 end
 
 -- -------------------------------------------------------------------------- --
@@ -129,7 +129,7 @@ function Stronghold.Recruitment:GetLeaderCosts(_PlayerID, _Type, _SoldierAmount)
     if Config then
         Costs = CopyTable(Config.Costs[1]);
         Costs = CreateCostTable(unpack(Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Type, Costs);
         if _SoldierAmount and _SoldierAmount > 0 then
             local SoldierCosts = self:GetSoldierCostsByLeaderType(_PlayerID, _Type, _SoldierAmount);
             Costs = MergeCostTable(Costs, SoldierCosts);
@@ -147,7 +147,7 @@ function Stronghold.Recruitment:GetSoldierCostsByLeaderType(_PlayerID, _Type, _A
             Costs[i] = Costs[i] * _Amount;
         end
         Costs = CreateCostTable(unpack(Costs));
-        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, Costs);
+        Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Type, Costs);
     end
     return Costs;
 end
@@ -199,7 +199,7 @@ function Stronghold.Recruitment:BuyMilitaryUnitFromRecruiterAction(_UnitToRecrui
                 return true;
             end
             local Costs = Stronghold.Recruitment:GetLeaderCosts(PlayerID, UnitType, Soldiers);
-            Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
+            Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, UnitType, Costs);
             if HasPlayerEnoughResourcesFeedback(Costs) then
                 Stronghold.Players[PlayerID].BuyUnitLock = true;
                 if string.find(Button, "Cannon") then
@@ -274,7 +274,7 @@ function Stronghold.Recruitment:OnRecruiterSettlerUpgradeTechnologyClicked(_Unit
                 return true;
             end
             local Costs = Stronghold.Recruitment:GetLeaderCosts(PlayerID, UnitType, Soldiers);
-            Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, Costs);
+            Costs = Stronghold.Hero:ApplyUnitCostPassiveAbility(PlayerID, UnitType, Costs);
             if HasPlayerEnoughResourcesFeedback(Costs) then
                 Stronghold.Players[PlayerID].BuyUnitLock = true;
                 Syncer.InvokeEvent(
@@ -296,8 +296,8 @@ function Stronghold.Recruitment:OnBarracksSelected(_EntityID)
         ["Research_UpgradeSword2"] = {38, 4, 31, 31},
         ["Research_UpgradeSword3"] = {72, 4, 31, 31},
         ["Research_UpgradeSpear1"] = {106, 4, 31, 31},
-        ["Research_UpgradeSpear2"] = {174, 4, 31, 31},
-        ["Research_UpgradeSpear3"] = {208, 4, 31, 31},
+        ["Research_UpgradeSpear2"] = {140, 4, 31, 31},
+        ["Research_UpgradeSpear3"] = {174, 4, 31, 31},
     };
     local Type = Logic.GetEntityType(_EntityID);
     if Type ~= Entities.PB_Barracks1 and Type ~= Entities.PB_Barracks2 then

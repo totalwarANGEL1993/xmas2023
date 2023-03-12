@@ -65,7 +65,7 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass>
-		  <ArmorAmount>5</ArmorAmount> 
+		  <ArmorAmount>3</ArmorAmount> 
 		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>20</ExperiencePoints>
@@ -118,10 +118,10 @@
 	        <HitAnim>CU_BlackKnight_LeaderMace1_Hit</HitAnim>
 
 	        <DamageClass>DC_Mace</DamageClass>
-	        <DamageAmount>8</DamageAmount>	        
-	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
+	        <DamageAmount>9</DamageAmount>	        
+	        <MaxRandomDamageBonus>6</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2000</BattleWaitUntil>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>

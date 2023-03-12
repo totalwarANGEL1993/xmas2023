@@ -113,9 +113,9 @@
 	        <RechargeTimeSeconds>90</RechargeTimeSeconds><!--120-->
 	        <AffectsHostiles>true</AffectsHostiles>
 	        <AffectsOnlyMilitary>true</AffectsOnlyMilitary>
-	        <Range>2000.0</Range>
+	        <Range>1500.0</Range>
 	        <DurationInSeconds>60</DurationInSeconds>
-	        <DamageFactor>0.5</DamageFactor><!--0.5-->
+	        <DamageFactor>0.75</DamageFactor><!--0.5-->
 	        <Effect>FXMaryDemoralize</Effect>
 	    </Logic>
 	</Behavior>
@@ -128,7 +128,7 @@
 	        <Animation>CU_Mary_de_Mortfichet_Finish</Animation>
 	        <DamageClass>DC_Hero</DamageClass>
 	        <DamageAmount>100</DamageAmount>
-	        <Range>300.0</Range>
+	        <Range>400.0</Range>
 	    </Logic>
 	</Behavior>
 	

@@ -65,7 +65,7 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>20</Exploration>
 		  <ArmorClass>ArmorClassLeather</ArmorClass>
-		  <ArmorAmount>0</ArmorAmount> 
+		  <ArmorAmount>1</ArmorAmount> 
 		  <DodgeChance>10</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>20</ExperiencePoints>
@@ -117,11 +117,11 @@
 	        <BattleWalkAnim>CU_Barbarian_LeaderClub1_Run1</BattleWalkAnim>
 	        <HitAnim>CU_Barbarian_LeaderClub1_Hit</HitAnim>
 
-	        <DamageClass>DC_Mace</DamageClass>
-	        <DamageAmount>7</DamageAmount>	        
-	        <MaxRandomDamageBonus>14</MaxRandomDamageBonus>
+	        <DamageClass>DC_Club</DamageClass>
+	        <DamageAmount>6</DamageAmount>	        
+	        <MaxRandomDamageBonus>16</MaxRandomDamageBonus>
 	        
-	        <BattleWaitUntil>3000</BattleWaitUntil>
+	        <BattleWaitUntil>2500</BattleWaitUntil>
 	        
 	        <MaxRange>200</MaxRange>
 	        <MinRange>0.0f</MinRange>

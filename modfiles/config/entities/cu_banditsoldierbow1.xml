@@ -107,12 +107,12 @@
 	        <HitAnim>CU_BanditLeaderBow1_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>12</DamageAmount>
-	        <MaxRandomDamageBonus>4</MaxRandomDamageBonus>
+	        <DamageAmount>9</DamageAmount>
+	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>3000</BattleWaitUntil>
 	        
-	        <MissChance>7</MissChance>
+	        <MissChance>5</MissChance>
 	        
 	        <ProjectileEffectID>FXArrow</ProjectileEffectID>
 	        

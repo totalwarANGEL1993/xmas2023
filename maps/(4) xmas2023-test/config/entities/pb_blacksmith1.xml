@@ -45,9 +45,9 @@
             <Category>Blacksmith</Category>
             <Time>40.0</Time>  
             <Cost>
-			    <Clay>100</Clay>
+			    <Clay>200</Clay>
 			    <Wood/>
-				    <Stone>200</Stone>
+				    <Stone>100</Stone>
 				    <Gold/>
 				    <Iron/>
 				    <Sulfur/>
@@ -57,8 +57,8 @@
         <ConstructionInfo>
         	<Time>110</Time>
             <Cost>
-			    <Clay>400</Clay>
-			    <Wood>300</Wood>
+			    <Clay>300</Clay>
+			    <Wood>200</Wood>
 				    <Stone>0</Stone>
 				    <Gold/>
 				    <Iron/>

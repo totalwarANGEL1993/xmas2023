@@ -35,7 +35,7 @@
 		  <Exploration>22</Exploration>
 		  <ArmorClass>ArmorClassHero</ArmorClass>
 		  <ArmorAmount>6</ArmorAmount> 
-		  <DodgeChance>30</DodgeChance> 
+		  <DodgeChance>20</DodgeChance> 
         <IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
         <ExperiencePoints>20</ExperiencePoints>
 		<Fearless>true</Fearless>
@@ -131,7 +131,7 @@
 	        <RechargeTimeSeconds>120</RechargeTimeSeconds><!--120-->
 	        <AffectsHostiles>true</AffectsHostiles>
 	        <AffectsOnlyMilitary>true</AffectsOnlyMilitary>
-	        <Range>1000.0</Range>
+	        <Range>1500.0</Range>
 	        <DurationInSeconds>90</DurationInSeconds>
 	        <Effect>FXKerberosFear</Effect>
 	        <ArmorFactor>0</ArmorFactor><!--0.8-->

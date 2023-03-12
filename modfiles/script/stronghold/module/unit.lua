@@ -331,7 +331,7 @@ function Stronghold.Unit:BuyUnit(_PlayerID, _Type, _BarracksID, _AutoFill)
             -- Passive ability: experienced troops
             local Experience = 0;
             if IsLeader and not IsCannon and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-                CostsLeader = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CostsLeader);
+                CostsLeader = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Type, CostsLeader);
                 Experience = 3;
             end
             if not TypeName or not string.find(TypeName, "Cannon") then
@@ -368,7 +368,7 @@ function Stronghold.Unit:PayUnit(_PlayerID, _Type)
     local IsLeader = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Leader) == 1;
     local IsCannon = Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1;
     if IsLeader and not IsCannon and Stronghold.Hero:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
-        CostsLeader = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, CostsLeader);
+        CostsLeader = Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Type, CostsLeader);
     end
     RemoveResourcesFromPlayer(_PlayerID, CostsLeader);
 end

@@ -65,7 +65,7 @@
 		  <AdjustWalkAnimSpeed>true</AdjustWalkAnimSpeed>
 		  <Exploration>29</Exploration>
 		  <ArmorClass>ArmorClassJerkin</ArmorClass> 
-		  <ArmorAmount>4</ArmorAmount>
+		  <ArmorAmount>5</ArmorAmount>
 		  <DodgeChance>5</DodgeChance> 
     	<IdleTaskList>TL_MILITARY_IDLE</IdleTaskList>
     	<ExperiencePoints>25</ExperiencePoints>
@@ -107,7 +107,7 @@
 	        <HitAnim>PU_SoldierBow4_Hit</HitAnim>
 	        
 	        <DamageClass>DC_Bow</DamageClass>
-	        <DamageAmount>27</DamageAmount>
+	        <DamageAmount>30</DamageAmount>
 	        <MaxRandomDamageBonus>5</MaxRandomDamageBonus>
 	        
 	        <BattleWaitUntil>2700</BattleWaitUntil>

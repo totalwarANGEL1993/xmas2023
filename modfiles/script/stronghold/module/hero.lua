@@ -86,7 +86,7 @@ Stronghold.Hero = {
             HeroSkill = {
                 [Entities.PU_Hero5]              = {
                     de = "{grey}Pfeilhagel{cr}{white}Ari lässt einen Köcher voll Pfeile auf die Gegner herabregnen.",
-                    en = "{grey}Pfeilhagel{cr}{white}Ari launches a quiver full of arrows on enemy troops.",
+                    en = "{grey}Arrow Hail{cr}{white}Ari launches a quiver full of arrows on enemy troops.",
                 },
                 [Entities.CU_Mary_de_Mortfichet] = {
                     de = "{grey}Demoralisieren{cr}{white}Mary greift alle Feinde um sie herum an, was Opfer fordert und so die Kampfmoral der Feinde schwächt.",
@@ -98,51 +98,61 @@ Stronghold.Hero = {
                     de = "DARIO, der könig @cr @cr @color:180,180,180 "..
                          "Trotz seiner jungen Jahre obliegen die Geschicke des Reiches ihm. "..
                          "Früher wurde er oft dabei gesehen, wie er rosa Kleidchen trug. Die "..
-                         "tauschte er inzwischen gegen ein Schwert ein. Dennoch fragen sich "..
-                         "viele, ob er einen Vogel hat. "..
+                         "tauschte er inzwischen gegen ein Schwert ein. "..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Bastardschwertkämpfer, Hellebardiere "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Als König hat Dario die Autorität, schneller Maßnahmen zu "..
                          "ergreifen. Eure Maßnahmen sind 50% schneller wieder einsetzbar. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Feindliche Einheiten können verjagt werden (außer Nebelvolk).",
                     en = "DARIO, the king @cr @cr @color:180,180,180 "..
                          "Despite his young age Dario has a lot of responsibility on his "..
                          "shoulders. He is often seen wearing pink dresses. Sometimes he "..
                          "exchanges them for armor and sword. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special units: @color:255,255,255 "..
+                         "Bastardswordmen, Halberdiers "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "As king Dario has the autority to faster take measures when needed. "..
                          "Your measures are 50% faster usable. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can inflict fear to enemies (except the Shrouded).",
                 },
                 [Entities.PU_Hero2]              = {
                     de = "PILGRIM, der geologe @cr @cr @color:180,180,180 "..
                          "Pilgrim entstammt einer langen Linie von Bergmännern. Ein glückliches " ..
-                         "Schicksal verhalf ihm zu Geld und Würden. Dem Alkohol ist er stets "..
-                         "zugetan. Es fällt ihm oft schwer, seine Fahne vom Geruch des " ..
-                         "Sprengstoffs zu unterscheiden. "..
+                         "Schicksal verhalf ihm zu Geld und Würden. Es fällt ihm oft schwer, seine "..
+                         "Fahne vom Geruch des Sprengstoffs zu unterscheiden. "..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Arbaleastschützen, keine schweren Scharfschützen "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Jedes mal wenn in einer Mine Rohstoffe abbaut werden, werden "..
                          " zusätzliche veredelbare Rohstoffe erzeugt. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Legt eine Bombe, die Feinde schädigt und Schächte freisprengt.",
                     en = "PILGRIM, the geologist @cr @cr @color:180,180,180 "..
                          "Pilgrim descended from a long line of miners. Serendipity helped "..
                          "him to money and dignity. He is always fond of alcohol. He often "..
                          "has trouble distinguishing the smell of the explosives from the "..
                          "alcohol. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "Arbaleast archers but no heavy sharpshooters "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Every time when resources are gathered by miners an aditional "..
                          "resource is earned. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can place a bomb that damages foes and blast open resources.",
                 },
                 [Entities.PU_Hero3]              = {
@@ -151,23 +161,29 @@ Stronghold.Hero = {
                          "sei verrückt geworden und versuche in seinem Labor ein schwarzes Loch "..
                          "zu erschaffen und so die Vergangenheit zu verändern. " ..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255"..
-                         "@cr Wissen ist Macht! Wenn eine Technologie erforscht wird, "..
-                         "erhält Salim 5 Ehre. "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "- "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
+                         "Kanonen benötigen keine Ehre und die Kosten sind um 20% reduziert. "..
+                         "Wenn eine Technologie erforscht wird, erhält Salim 5 Ehre. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255"..
-                         "@cr Kann eine Falle verstecken, die explodiert, sobald der Feind "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
+                         "Kann eine Falle verstecken, die explodiert, sobald der Feind "..
                          "unvorsichtig an sie heran tritt.",
                     en = "SALIM, the scholar @cr @cr @color:180,180,180 "..
                          "A scholar from the east who decided to bring knowledge to the west. "..
                          "Some say he is crazy and tries to create a black hole inside his "..
                          "laboratory to alter time. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "- "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
-                         "Knowledge is power! Everytime a technology is researched Salim "..
-                         "receives 5 honor. "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
+                         "Cannons do not require honor and their costs are reduced by 20%. "..
+                         "Everytime a technology is researched Salim receives 5 honor. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can hide a trap that explodes when reckless enemies come to close.",
                 },
                 [Entities.PU_Hero4]              = {
@@ -177,23 +193,30 @@ Stronghold.Hero = {
                          "zieht er aus, seinen Ruhm zu mehren und Jungfrauen in Nöten beizustehen. " ..
                          "Seine Anwesenheit inspiriert die Truppen zu Höchsleistungen. " ..
                          "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Berittene Streitaxtkämpfer und berittene Armbrustschützen, keine schweren "..
+                         "Scharfschützen " ..
+                         "@cr @cr @color:255,255,255 " ..
                          "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
-                         "@cr Soldaten werden mit der maximalen Erfahrung rekrutiert, "..
-                         "dadurch steigen allerdings ihre Kosten um 30%. "..
+                         "Soldaten werden mit der maximalen Erfahrung rekrutiert, "..
+                         "dadurch steigen allerdings ihre Kosten um 20%. "..
                          "@cr @cr "..
                          "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
-                         "@cr Ein Rundumschlag verletzt alle nahestehenden Feinde.",
+                         "Ein Rundumschlag verletzt alle nahestehenden Feinde.",
                     en = "EREC, the knight "..
                          "@cr @cr @color:180,180,180 "..
                          "He is a true knight. From head to toe clad in shining armor he strifes "..
                          "to gather fame and safe damsels in distress. His presence inspires all "..
                          "soldiers under his command. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "Mounted axemen and mounted crossbowmen, no heavy sharpshooters "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Soldiers will be recruited with full experience. But their costs "..
-                         "are increased by 30%. "..
+                         "are increased by 20%. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can inflict high damage in a small area.",
                 },
                 [Entities.PU_Hero5]              = {
@@ -204,23 +227,29 @@ Stronghold.Hero = {
                          "Qualität, was sie jeden spüren lässt, der sich erdreistet, ihre Augen " ..
                          "eine Etage tiefer zu suchen. "..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Leichte und schwere Banditen, Banditenbogenschützen "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Als Banditenfürstin kennt sie alle Tricks, um an Gold zu "..
                          "kommen. Die Steuereinnahmen werden um 30% erhöht. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Kann einen Pfeilhagel auf Feinde hernieder gehen lassen.",
                     en = "ARI, the vagabund "..
                          "@cr @cr @color:180,180,180 "..
                          "As a little girl she was adopted by the outlaws. Since then she grew to "..
                          "be a breathtaking lady. Beauty is not her only quality. Anyone who dares "..
                          "to search her eyes one story to deep will regret it. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "Light and heavy bandits, bandit archers "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Her upbringing taught her where to search for money. The tax income is "..
                          "increased by 30%. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can unleash a hail of arrows on enemies.",
                 },
                 [Entities.PU_Hero6]              = {
@@ -230,11 +259,14 @@ Stronghold.Hero = {
                          "Herrn stärker. Wenn er nicht gerade Wasser predigt und Wein trinkt, "..
                          "erfreut er sich an den lieblichen Klängen der Chorknaben. " ..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "- "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Durch Helias Beistand brechen Arbeter seltener das Gesetz. Außerdem "..
                          "hat Helias eine geringe Chance, Feinde im Kampf zu bekehren. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Helias kann die Rüstung von verbündeten Einheiten verbessern.",
                     en = "HELIAS, the priest "..
                          "@cr @cr @color:180,180,180 "..
@@ -242,39 +274,47 @@ Stronghold.Hero = {
                          "stronger. When he is not preaching water and drinking wine he enjoys "..
                          "the lovely sounds of the choirboys. "..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "- "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Workers are less likely to become criminals. Additionally Helias has a "..
                          "low chance to convert enemies while fighting them. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can bless the armor of allied troops.",
                 },
                 [Entities.CU_Mary_de_Mortfichet] = {
                     de = "MARY, die schlange "..
                          "@cr @cr @color:180,180,180 "..
-                         "Die Countess de Mortfichet ist verrufen als ruchloses und ehrloses " ..
-                         "Miststück. Zeigt ihr Gegenüber eine Schwäche, so wird sie nicht zögern, " ..
-                         "sie auszunutzen. Ihr Motto: Ein gut platzierter Dolch erreicht mehr "..
-                         "als 1000 Schwerter. " ..
+                         "Die Countess de Mortfichet ist verrufen als ruchloses Miststück. Zeigt " ..
+                         "ihr Gegenüber eine Schwäche, zögert sie nicht, sie auszunutzen. Ihr Motto: " ..
+                         "Ein gut platzierter Dolch erreicht mehr als 1000 Schwerter. " ..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "- "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Diebe und Kundschafter verlangen keinen Sold. Diebe belegen weniger "..
                          "Bevölkerungsplatz. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Ein Rundumschlag verletzt nahestehenden Feinde und senkt die "..
                          "Angriffskraft der Überlebenden.",
                     en = "MARY, the snake "..
                          "@cr @cr @color:180,180,180 "..
-                         "The Countess the Mortfichet is infamous as beeing a nefarious and "..
-                         "dishonorable bitch. If her opponent has any weaknesses she will expoit "..
-                         "them without regrets. A good placed dagger is better than 1000 swords. "..
+                         "The Countess the Mortfichet is infamous as beeing a nefarious and bitch. "..
+                         "If her opponent has any weaknesses she will expoit it. A good placed "..
+                         "dagger is better than 1000 swords. "..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "- "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Scouts and thieves do not cost any upkeep. Thieves occupy less "..
                          "population places. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can inflict damage to close enemies and also lower the damage surviving "..
                          " enemies inflict.",
                 },
@@ -286,11 +326,14 @@ Stronghold.Hero = {
                          "Finsternis. Als Scherge eines bösen Königs wartet er auf seine "..
                          "Chance. " ..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Leichte und schwere schwarze Ritter "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Kann eine persönliche Leibgarde anheuern. Malus auf die Beliebtheit "..
                          "verringern sich um 30%. Die maximale Beliebtheit sinkt auf 175. " ..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Kann die Rüstung von nahestehenden Feinden brechen.",
                     en = "KERBEROS, the dread "..
                          "@cr @cr @color:180,180,180 "..
@@ -298,12 +341,15 @@ Stronghold.Hero = {
                          "came crashing down for Kerberos. Deprived of his inheritance he "..
                          "embraced the darkness. As minion of a evil king he awaits his "..
                          "chance. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Light and Heavy black knights "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Can employ personal bodyguards. Negative effects on reputation are "..
                          "decreased by 30%. The reputation maximum becomes 175. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can break the armor of enemies.",
                 },
                 [Entities.CU_Barbarian_Hero]     = {
@@ -311,28 +357,34 @@ Stronghold.Hero = {
                          "@cr @cr @color:180,180,180 "..
                          "Als Baby wurde Varg von einer Alphawölfin gesäugt. Als zwölfjähriger "..
                          "Junge besiegte er einen Eisbären im Zweikampf und wurde daraufhin zum " ..
-                         "Anführer aller Barbaren gekrönt."..
+                         "Anführer aller Barbaren gekrönt. "..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Leichte und schwere Barbarenkrieger "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Einen Sieg muss man zu feiern wissen! Die Effektivität "..
                          "von Tavernen wird um 50% verstärkt. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
-                         "Ruft Wölfe, die Ehre erzeugen, wenn sie Feinde töten. Ihre "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
+                         "Ruft Wölfe, die Ehre erzeugen, wenn sie gegen Feinde kämpfen. Ihre "..
                          "Stärke richtet sich nach dem Rang.",
                     en = "VARG, the beastblood "..
                          "@cr @cr @color:180,180,180 "..
                          "After he was suckled by a alpha wolf instead of a woman he grew to a "..
                          "strong boy who defeated a icebear after his twelth birthday. He was "..
                          "soon chosen as the sole leader of the Barbarians. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "Light and heavy barbarian warriors "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Barbarians know how to celebrate a victory. The efficiency of all "..
                          "taverns are increased by 50%. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
-                         "Summons wolves. They produce honor when they kill an enemy. Their "..
-                         "depends on Vargs rank.",
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
+                         "Summons wolves. They produce honor when they fight against an enemy. "..
+                         "Their depends on Vargs rank.",
                 },
                 [Entities.PU_Hero10]             = {
                     de = "DRAKE, der schakal "..
@@ -342,11 +394,14 @@ Stronghold.Hero = {
                          "kompensieren. Seine Mutter meint noch heute, er solle das Gewehr "..
                          "zuhause lassen. " ..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "- "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Durch effizientere Trainingsmethoden sinken die Kosten "..
                          "für den Unterhalt aller Scharfschützen um 50%. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Kann den Schaden von verbündeten Fernkämpfern verbessern. ",
                     en = "DRAKE, the jackal "..
                          "@cr @cr @color:180,180,180 "..
@@ -354,12 +409,15 @@ Stronghold.Hero = {
                          "anyone as \"the jackal\" who dare to say he is compensating for "..
                          "something. His mother says to this day that he should leave his "..
                          "gun at home. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "- "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "Through the efficient methods the costs of training riflemen "..
                          "are lowered by 50%. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can increase the damage of allied ranged troops.",
                 },
                 [Entities.PU_Hero11]             = {
@@ -370,11 +428,14 @@ Stronghold.Hero = {
                          "sie in den Westen, wo sie Reichtum erlangte und nun eine Burg ihr "..
                          "Eigen nennt. " ..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "- "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Die maximale Beliebtheit ist 300. Yuki gewährt einmalig 100 Beliebtheit, "..
                          "sobald sie erscheint. Maximale Armeegröße wird um 10% erhöht. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Kann befreundete Arbeiter mit Feuerwerk motivieren.",
                     en = "YUKI, the fist "..
                          "@cr @cr @color:180,180,180 "..
@@ -382,11 +443,14 @@ Stronghold.Hero = {
                          "with the 3 Chinese and their double bass she ended up in the west "..
                          "searching for wealth. Now she claimed a castle. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "- "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "The reputation limit is raised to 300. Yuki gives a one time bonus "..
                          "of 100 reputation when selected. Max army size is increased by 10%. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can motivate workers with her pyrotechnics.",
                 },
                 [Entities.CU_Evil_Queen]         = {
@@ -396,23 +460,29 @@ Stronghold.Hero = {
                          "Nebelvolk wird Kala wie eine Göttin verehrt. Böse Zungen behaupten, " ..
                          "sie hätte jeden Einzelnen ihrer Untertanen selbst zur Welt gebracht. " ..
                          "@cr @cr @color:255,255,255 " ..
-                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Spezialeinheiten: @color:255,255,255 "..
+                         "Bärenmenschen und Speerwerfer, keine Scharfschützen "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Passive Fähigkeit: @color:255,255,255 "..
                          "Die gesteigerte Geburtenrate sorgt für einen demographischen "..
-                         "Wandel. Euer Bevölkerungslimit wird um 15% erhöht. "..
+                         "Wandel. Euer Bevölkerungslimit wird um 20% erhöht. "..
                          "@cr @cr "..
-                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Aktive Fähigkeit: @color:255,255,255 "..
                          "Kann nahestehende Feinde mit Gift schädigen.",
                     en = "KALA, the witch "..
                          "@cr @cr @color:180,180,180 "..
                          "Many rumors clowding the trugh about her origin. The shrouded praise "..
                          "her like a godess. Envy tongues claim that she had birthed the entirty "..
                          "of the shrouded pepole herself. "..
+                         "@cr @cr @color:255,255,255 " ..
+                         "@color:55,145,155 Special ability: @color:255,255,255 "..
+                         "Bearmen and javelin throwers but no sharpshooters "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Passive Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Passive Ability: @color:255,255,255 "..
                          "The increased birth rate is causing demographic change. Your attraction "..
-                         "limit is increased by 15%. "..
+                         "limit is increased by 20%. "..
                          "@cr @cr @color:255,255,255 "..
-                         "@color:55,145,155 Active Ability: @color:255,255,255 @cr "..
+                         "@color:55,145,155 Active Ability: @color:255,255,255 "..
                          "Can inflict poison damage to enemies.",
                 },
             },
@@ -761,6 +831,7 @@ function Stronghold.Hero:ConfigureBuyHero()
         if Stronghold:IsPlayer(_PlayerID) then
             Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type);
             Stronghold.Hero:PlayFunnyComment(_PlayerID);
+            Stronghold.Hero:InitSpecialUnits(_PlayerID, _Type);
             return;
         end
         return Stronghold.Hero.Orig_GameCallback_Logic_BuyHero_OnHeroSelected(_PlayerID, _ID, _Type);
@@ -859,8 +930,62 @@ function Stronghold.Hero:PlayFunnyComment(_PlayerID)
     Sound.PlayQueuedFeedbackSound(FunnyComment, 127);
 end
 
+function Stronghold.Hero:InitSpecialUnits(_PlayerID, _Type)
+    Stronghold.Recruitment:InitDefaultRoster(_PlayerID);
+
+    if string.find(Logic.GetEntityTypeName(_Type), "PU_Hero1") then
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword2"] = Entities.PU_LeaderPoleArm4;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.PU_LeaderSword4;
+    elseif _Type == Entities.PU_Hero2 then
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeBow3"] = Entities.PU_LeaderBow4;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeRifle1"] = Entities.PU_LeaderRifle1;
+    elseif _Type == Entities.PU_Hero4 then
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeBow2"] = Entities.PU_LeaderBow2;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeBow3"] = Entities.PU_LeaderBow3;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeRifle1"] = Entities.PU_LeaderRifle1;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeCavalryHeavy1"] = Entities.PU_LeaderHeavyCavalry2;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeCavalryLight1"] = Entities.PU_LeaderCavalry2;
+    elseif _Type == Entities.PU_Hero5 then
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword3"] = Entities.CU_BanditLeaderSword2;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.CU_BanditLeaderSword1;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeBow1"] = Entities.CU_BanditLeaderBow1;
+    elseif _Type == Entities.CU_BlackKnight then
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword2"] = Entities.CU_BlackKnight_LeaderMace2;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.CU_BlackKnight_LeaderMace1;
+    elseif _Type == Entities.CU_Barbarian_Hero then
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword2"] = Entities.CU_Barbarian_LeaderClub2;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.CU_Barbarian_LeaderClub1;
+    elseif _Type == Entities.CU_Evil_Queen then
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword1"] = Entities.PU_LeaderPoleArm1;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword2"] = Entities.PU_LeaderPoleArm2;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword3"] = Entities.PU_LeaderSword1;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.CU_Evil_LeaderBearman1;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear2"] = Entities.PU_LeaderSword3;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeBow3"] = Entities.CU_Evil_LeaderSkirmisher1;
+        Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeRifle1"] = Entities.PU_LeaderBow3;
+    end
+end
+
 -- -------------------------------------------------------------------------- --
 -- Trigger
+
+function Stronghold.Hero:StartTriggers()
+    Job.Turn(function()
+        for i= 1, table.getn(Score.Player) do
+            Stronghold.Hero:EntityAttackedController(i);
+            Stronghold.Hero:HeliasConvertController(i);
+            Stronghold.Hero:VargWolvesController(i);
+        end
+    end);
+
+    Job.Create(function()
+        local EntityID = Event.GetEntityID();
+        local PlayerID = Logic.EntityGetPlayer(EntityID);
+        if Logic.IsSettler(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
+            Stronghold.Hero:ConfigurePlayersHeroPet(EntityID);
+        end
+    end);
+end
 
 function Stronghold.Hero:EntityAttackedController(_PlayerID)
     local Language = GetLanguage();
@@ -870,34 +995,6 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
             Stronghold.Players[_PlayerID].AttackMemory[k][1] = v[1] -1;
             if Stronghold.Players[_PlayerID].AttackMemory[k][1] <= 0 then
                 Stronghold.Players[_PlayerID].AttackMemory[k] = nil;
-            end
-
-            -- Hati und Skalli
-            if Logic.GetEntityType(v[2]) == Entities.CU_Barbarian_Hero_wolf then
-                if Logic.GetEntityHealth(k) == 0 then
-                    Stronghold.Players[_PlayerID].AttackMemory[k] = nil;
-                    local WolfPlayerID = Logic.EntityGetPlayer(v[2]);
-                    Stronghold.Economy:AddOneTimeHonor(WolfPlayerID, 1);
-                end
-            end
-
-            -- Helias converting
-            if Logic.GetEntityType(v[2]) == Entities.PU_Hero6 then
-                local HeliasPlayerID = Logic.EntityGetPlayer(v[2]);
-                local AttackerID = k;
-                if Logic.IsEntityInCategory(AttackerID, EntityCategories.Soldier) == 1 then
-                    AttackerID = SVLib.GetLeaderOfSoldier(AttackerID);
-                end
-                if not self.Data.ConvertBlacklist[AttackerID] then
-                    if Logic.GetEntityHealth(AttackerID) > 0 and Logic.IsHero(AttackerID) == 0 then
-                        if math.random(1, 1000) <= 3 and GetDistance(AttackerID, v[2]) <= 1000 then
-                            ChangePlayer(AttackerID, HeliasPlayerID);
-                            if GUI.GetPlayerID() == HeliasPlayerID then
-                                Sound.PlayFeedbackSound(Sounds.VoicesHero6_HERO6_ConvertSettler_rnd_01, 0);
-                            end
-                        end
-                    end
-                end
             end
 
             -- Teleport to HQ
@@ -928,20 +1025,41 @@ function Stronghold.Hero:EntityAttackedController(_PlayerID)
     end
 end
 
-function Stronghold.Hero:StartTriggers()
-    Job.Turn(function()
-        for i= 1, table.getn(Score.Player) do
-            Stronghold.Hero:EntityAttackedController(i);
+function Stronghold.Hero:HeliasConvertController(_PlayerID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        for k,v in pairs(Stronghold.Players[_PlayerID].AttackMemory) do
+            if Logic.GetEntityType(v[2]) == Entities.PU_Hero6 then
+                local HeliasPlayerID = Logic.EntityGetPlayer(v[2]);
+                local AttackerID = k;
+                if Logic.IsEntityInCategory(AttackerID, EntityCategories.Soldier) == 1 then
+                    AttackerID = SVLib.GetLeaderOfSoldier(AttackerID);
+                end
+                if not self.Data.ConvertBlacklist[AttackerID] then
+                    if Logic.GetEntityHealth(AttackerID) > 0 and Logic.IsHero(AttackerID) == 0 then
+                        if math.random(1, 1000) <= 3 and GetDistance(AttackerID, v[2]) <= 1000 then
+                            ChangePlayer(AttackerID, HeliasPlayerID);
+                            if GUI.GetPlayerID() == HeliasPlayerID then
+                                Sound.PlayFeedbackSound(Sounds.VoicesHero6_HERO6_ConvertSettler_rnd_01, 0);
+                            end
+                        end
+                    end
+                end
+            end
         end
-    end);
+    end
+end
 
-    Job.Create(function()
-        local EntityID = Event.GetEntityID();
-        local PlayerID = Logic.EntityGetPlayer(EntityID);
-        if Logic.IsSettler(EntityID) == 1 and GUI.GetPlayerID() == PlayerID then
-            Stronghold.Hero:ConfigurePlayersHeroPet(EntityID);
+function Stronghold.Hero:VargWolvesController(_PlayerID)
+    if Stronghold:IsPlayer(_PlayerID) then
+        local WolvesBatteling = 0;
+        for k,v in pairs(GetPlayerEntities(_PlayerID, Entities.CU_Barbarian_Hero_wolf)) do
+            local Task = Logic.GetCurrentTaskList(v);
+            if Task and string.find(Task, "BATTLE") then
+                WolvesBatteling = WolvesBatteling +1;
+            end
         end
-    end);
+        Stronghold.Economy:AddOneTimeHonor(_PlayerID, 0.005 * WolvesBatteling);
+    end
 end
 
 -- -------------------------------------------------------------------------- --
@@ -1207,26 +1325,35 @@ function Stronghold.Hero:ResourceProductionBonus(_PlayerID, _Type, _Amount)
 end
 
 -- Passive Ability: unit costs
-function Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Costs)
+function Stronghold.Hero:ApplyUnitCostPassiveAbility(_PlayerID, _Type, _Costs)
     local Costs = _Costs;
     if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero4) then
         if Costs[ResourceType.Gold] then
-            Costs[ResourceType.Gold] = math.ceil(Costs[ResourceType.Gold] * 1.30);
+            Costs[ResourceType.Gold] = math.ceil(Costs[ResourceType.Gold] * 1.2);
         end
         if Costs[ResourceType.Clay] then
-            Costs[ResourceType.Clay] = math.ceil(Costs[ResourceType.Clay] * 1.30);
+            Costs[ResourceType.Clay] = math.ceil(Costs[ResourceType.Clay] * 1.2);
         end
         if Costs[ResourceType.Wood] then
-            Costs[ResourceType.Wood] = math.ceil(Costs[ResourceType.Wood] * 1.30);
+            Costs[ResourceType.Wood] = math.ceil(Costs[ResourceType.Wood] * 1.2);
         end
         if Costs[ResourceType.Stone] then
-            Costs[ResourceType.Stone] = math.ceil(Costs[ResourceType.Stone] * 1.30);
+            Costs[ResourceType.Stone] = math.ceil(Costs[ResourceType.Stone] * 1.2);
         end
         if Costs[ResourceType.Iron] then
-            Costs[ResourceType.Iron] = math.ceil(Costs[ResourceType.Iron] * 1.30);
+            Costs[ResourceType.Iron] = math.ceil(Costs[ResourceType.Iron] * 1.2);
         end
         if Costs[ResourceType.Sulfur] then
-            Costs[ResourceType.Sulfur] = math.ceil(Costs[ResourceType.Sulfur] * 1.30);
+            Costs[ResourceType.Sulfur] = math.ceil(Costs[ResourceType.Sulfur] * 1.2);
+        end
+    end
+    if self:HasValidHeroOfType(_PlayerID, Entities.PU_Hero3) then
+        if Logic.IsEntityTypeInCategory(_Type, EntityCategories.Cannon) == 1 then
+            Costs[ResourceType.Honor] = nil;
+            Costs[ResourceType.Gold] = math.ceil(Costs[ResourceType.Gold] * 0.8);
+            Costs[ResourceType.Wood] = math.ceil(Costs[ResourceType.Wood] * 0.8);
+            Costs[ResourceType.Iron] = math.ceil(Costs[ResourceType.Iron] * 0.8);
+            Costs[ResourceType.Sulfur] = math.ceil(Costs[ResourceType.Sulfur] * 0.8);
         end
     end
     return Costs;
@@ -1236,7 +1363,7 @@ end
 function Stronghold.Hero:ApplyMaxCivilAttractionPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, Entities.CU_Evil_Queen) then
-        Value = Value * 1.15;
+        Value = Value * 1.2;
     end
     return Value;
 end
