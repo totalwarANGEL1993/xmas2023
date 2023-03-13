@@ -20,7 +20,7 @@ Stronghold.Building = Stronghold.Building or {
                 Honor = 10,
             },
             [BlessCategories.Weapons] = {
-                Reputation = 100,
+                Reputation = 150,
                 Honor = 0,
             },
             [BlessCategories.Financial] = {
@@ -96,11 +96,11 @@ Stronghold.Building = Stronghold.Building or {
                 [BlessCategories.Weapons] = {
                     [1] = {
                         de = "{grey}Willkommenskultur{white}{cr}Eure Migrationspolitik wird "..
-                             "Neuankömmlinge sehr zufrieden machen, bis die Realität des "..
-                             "ersten Zahltags sie einholt...",
+                             "Neuankömmlinge sehr zufrieden machen, aber die Einheimischen "..
+                             "werden dies nicht gut heißen...",
                         en = "{grey}Welcome Culture{white}{cr}Your migration policies will keep "..
-                             "newcomers very content until the reality of first payday catches "..
-                             "up with them...",
+                             "newcomers very content but will also cause the locals to get very "..
+                             "mad because of those \"guests\"...",
                     },
                     [2] = {
                         de = "Eure Migrationspolitik wird von den zugezogenen Siedlern begrüßt.",
@@ -526,12 +526,10 @@ function Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, _BlessCategory
         local WorkerList = GetAllWorker(_PlayerID, 0);
         table.sort(WorkerList, function(a, b) return a > b; end);
         for i= 1, table.getn(WorkerList) do
-            local MotivationBonus = 100 - ((i-1) * 3);
-            if MotivationBonus <= 0 then
-                break;
-            end
-            local Motivation = Logic.GetSettlersMotivation(WorkerList[i]);
-            CEntity.SetMotivation(WorkerList[i], Motivation + (MotivationBonus/100));
+            local MotivationBonus = 150 - ((i-1) * 3);
+            local OldMotivation = Logic.GetSettlersMotivation(WorkerList[i]) * 100;
+            local NewMotivation = math.max(OldMotivation - MotivationBonus, 35);
+            CEntity.SetMotivation(WorkerList[i], NewMotivation / 100);
         end
 
     elseif _BlessCategory == BlessCategories.Financial then

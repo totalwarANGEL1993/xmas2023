@@ -703,8 +703,8 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
 
         -- Reputation
         local OldReputation = self:GetPlayerReputation(_PlayerID);
-        local Reputation = Stronghold.Economy.Data[_PlayerID].IncomeReputation;
-        self.Players[_PlayerID].Reputation = OldReputation + Reputation;
+        local ReputationIncome = Stronghold.Economy.Data[_PlayerID].IncomeReputation;
+        self.Players[_PlayerID].Reputation = OldReputation + ReputationIncome;
         if self.Players[_PlayerID].Reputation > self.Players[_PlayerID].ReputationLimit then
             self.Players[_PlayerID].Reputation = self.Players[_PlayerID].ReputationLimit;
         end
@@ -721,7 +721,7 @@ function Stronghold:OnPlayerPayday(_PlayerID, _FixGold)
 
         -- Motivation
         self:AddDelayedAction(1, function()
-            Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+            Stronghold:UpdateMotivationOfPlayersWorkers(_PlayerID, ReputationIncome);
             Stronghold:ControlReputationAttractionPenalty(_PlayerID);
         end);
 
@@ -879,15 +879,24 @@ function Stronghold:GetPlayerReputation(_PlayerID)
     return 100;
 end
 
-function Stronghold:UpdateMotivationOfWorkers(_PlayerID, _Amount)
-    if self:IsPlayer(_PlayerID) then
-        _Amount = _Amount or self:GetPlayerReputation(_PlayerID);
-        _Amount = math.min(_Amount, self.Players[_PlayerID].ReputationLimit);
-        _Amount = math.max(_Amount, 30);
+-- > CUtil.AddToPlayersMotivationSoftcap
+-- <Function, defined in Game Engine at 0x2BEE2D0>
+-- > CUtil.GetPlayersMotivationSoftcap
+-- <Function, defined in Game Engine at 0x2BEE420>
 
-        local WorkerList = GetAllWorker(_PlayerID);
-        for i= 1, table.getn(WorkerList) do
-            CEntity.SetMotivation(WorkerList[i], _Amount / 100);
+function Stronghold:UpdateMotivationOfPlayersWorkers(_PlayerID, _Amount)
+    if self:IsPlayer(_PlayerID) then
+        for k,v in pairs(GetAllWorker(_PlayerID)) do
+            local WorkplaceID = Logic.GetSettlersWorkBuilding(v);
+            if  (WorkplaceID ~= nil and WorkplaceID ~= 0)
+            and Logic.IsOvertimeActiveAtBuilding(WorkplaceID) == 0
+            and Logic.IsAlarmModeActive(WorkplaceID) ~= true then
+                local OldMoti = Logic.GetSettlersMotivation(v);
+                local NewMoti = math.floor((OldMoti * 100) + 0.5) + _Amount;
+                NewMoti = math.min(NewMoti, self.Players[_PlayerID].ReputationLimit);
+                NewMoti = math.max(NewMoti, 30);
+                CEntity.SetMotivation(v, NewMoti / 100);
+            end
         end
     end
 end

@@ -868,8 +868,12 @@ end
 
 function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
     if Stronghold:IsPlayer(_PlayerID) then
+        -- Get motivation cap
+        local ExpectedSoftCap = 2;
+        local CurrentSoftCap = CUtil.GetPlayersMotivationSoftcap(_PlayerID);
+        -- Set name of lord
         Logic.SetEntityName(_ID, Stronghold.Players[_PlayerID].LordScriptName);
-
+        -- Display info message
         local Language = GetLanguage();
         local PlayerColor = "@color:"..table.concat({GUI.GetPlayerColor(_PlayerID)}, ",");
         local TypeName = Logic.GetEntityTypeName(_Type);
@@ -877,13 +881,22 @@ function Stronghold.Hero:BuyHeroCreateLord(_PlayerID, _ID, _Type)
         Message(string.format(self.Config.UI.Player[1][Language], PlayerColor, Name));
 
         if _Type == Entities.PU_Hero11 then
+            -- Update motivation soft cap
+            ExpectedSoftCap = 3;
+            -- Give motivation for Yuki
             Stronghold:AddPlayerReputation(_PlayerID, 100);
-            Stronghold:UpdateMotivationOfWorkers(_PlayerID);
+            Stronghold:UpdateMotivationOfPlayersWorkers(_PlayerID, 100);
         end
         if _Type == Entities.CU_BlackKnight then
+            -- Update motivation soft cap
+            ExpectedSoftCap = 1.75;
+            -- Create guard for Kerberos
             Tools.CreateSoldiersForLeader(_ID, 3);
             Logic.LeaderChangeFormationType(_ID, 1);
         end
+
+        -- Call hero selected callbacks
+        CUtil.AddToPlayersMotivationSoftcap(_PlayerID, ExpectedSoftCap - CurrentSoftCap);
         if _PlayerID == GUI.GetPlayerID() or GUI.GetPlayerID() == 17 then
             Stronghold.Building:OnHeadquarterSelected(GUI.GetSelectedEntity());
         end
