@@ -69,14 +69,14 @@ Stronghold.Economy = {
             },
 
             Dynamic = {
-                [Entities.PB_Farm2]      = {Honor = 0.12, Reputation = 0.03,},
-                [Entities.PB_Farm3]      = {Honor = 0.18, Reputation = 0.06,},
+                [Entities.PB_Farm2]      = {Honor = 0.15, Reputation = 0.06,},
+                [Entities.PB_Farm3]      = {Honor = 0.21, Reputation = 0.09,},
                 ---
-                [Entities.PB_Residence2] = {Honor = 0.03, Reputation = 0.12,},
-                [Entities.PB_Residence3] = {Honor = 0.06, Reputation = 0.18,},
+                [Entities.PB_Residence2] = {Honor = 0.06, Reputation = 0.15,},
+                [Entities.PB_Residence3] = {Honor = 0.09, Reputation = 0.21,},
                 ---
-                [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.35,},
-                [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.45,},
+                [Entities.PB_Tavern1]    = {Honor = 0, Reputation = 0.40,},
+                [Entities.PB_Tavern2]    = {Honor = 0, Reputation = 0.50,},
             },
             Static = {
                 [Entities.PB_Beautification04] = {Honor = 1, Reputation = 1,},
@@ -98,8 +98,8 @@ Stronghold.Economy = {
                 [Entities.PB_Headquarters2]    = {Honor =  6, Reputation = 0,},
                 [Entities.PB_Headquarters3]    = {Honor = 12, Reputation = 0,},
                 ---
-                [Entities.PB_VillageCenter2]   = {Honor = 0, Reputation = 3,},
-                [Entities.PB_VillageCenter3]   = {Honor = 0, Reputation = 6,},
+                [Entities.PB_VillageCenter2]   = {Honor = 0, Reputation = 4,},
+                [Entities.PB_VillageCenter3]   = {Honor = 0, Reputation = 8,},
                 ---
                 [Entities.PB_Monastery1]       = {Honor = 0, Reputation = 6,},
                 [Entities.PB_Monastery2]       = {Honor = 0, Reputation = 9,},
@@ -461,7 +461,10 @@ function Stronghold.Economy:CalculateReputationIncrease(_PlayerID)
             -- External calculations
             local Special = GameCallback_Calculate_ReputationIncreaseExternal(_PlayerID);
             local ReputationOneshot = self.Data[_PlayerID].IncomeReputationSingle;
-            self.Data[_PlayerID].ReputationDetails.OtherBonus = Special + ReputationOneshot;
+            if ReputationOneshot > 0 then
+                Special = Special + ReputationOneshot;
+            end
+            self.Data[_PlayerID].ReputationDetails.OtherBonus = Special;
         end
     end
 end
@@ -488,7 +491,7 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
             local NoFarmPenalty = 15 * ((1.0080 ^ NoFarm) -1);
             self.Data[_PlayerID].ReputationDetails.Hunger = NoFarmPenalty;
             local NoHouse = Logic.GetNumberOfWorkerWithoutSleepPlace(_PlayerID);
-            local NoHousePenalty = 10 * ((1.0080 ^ NoHouse) -1);
+            local NoHousePenalty = 10 * ((1.0075 ^ NoHouse) -1);
             self.Data[_PlayerID].ReputationDetails.Homelessness = NoHousePenalty;
             Decrease = Decrease + NoFarmPenalty + NoHousePenalty;
 
@@ -497,6 +500,11 @@ function Stronghold.Economy:CalculateReputationDecrease(_PlayerID)
             local Criminals = Stronghold.Attraction:GetReputationLossByCriminals(_PlayerID);
             self.Data[_PlayerID].ReputationDetails.Criminals = Criminals;
             self.Data[_PlayerID].ReputationDetails.OtherMalus = Special - Criminals;
+            local ReputationOneshot = self.Data[_PlayerID].IncomeReputationSingle;
+            if ReputationOneshot < 0 then
+                Special = Special + ((-1) * ReputationOneshot);
+            end
+            self.Data[_PlayerID].ReputationDetails.OtherMalus = Special;
         end
     end
 end
@@ -508,7 +516,7 @@ function Stronghold.Economy:CalculateReputationTaxPenaltyAmount(_PlayerID, _Taxt
         if _TaxtHeight > 1 then
             local Rank = Stronghold.Players[_PlayerID].Rank;
             local TaxEffect = self.Config.Income.TaxEffect[_TaxtHeight].Reputation * -1;
-            Penalty = TaxEffect * (1 + ((WorkerCount/65) + (0.30 * (Rank -1))));
+            Penalty = TaxEffect * (1 + ((WorkerCount/95) + (0.42 * (Rank -1))));
         end
         return math.floor(Penalty);
     end
@@ -676,7 +684,7 @@ function Stronghold.Economy:GainMeasurePoints(_PlayerID)
         local MeasurePoints = 0;
         for k, v in pairs(GetAllWorker(_PlayerID, 0)) do
             if Logic.IsSettlerAtWork(v) == 1 then
-                MeasurePoints = MeasurePoints + 0.5;
+                MeasurePoints = MeasurePoints + (math.random(5, 10) * 0.1);
             end
         end
         MeasurePoints = GameCallback_Calculate_MeasureIncrease(_PlayerID, MeasurePoints);

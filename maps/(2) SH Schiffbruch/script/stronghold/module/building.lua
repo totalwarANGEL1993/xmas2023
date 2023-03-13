@@ -11,16 +11,13 @@ Stronghold.Building = Stronghold.Building or {
     Data = {},
     Config = {
         Headquarters = {
-            Health = {3500, 4500, 5500},
-            Armor  = {10, 12, 14},
-
             [BlessCategories.Construction] = {
-                Reputation = 5,
-                Honor = 10,
+                Reputation = -10,
+                Honor = 0,
             },
             [BlessCategories.Research] = {
-                Reputation = -18,
-                Honor = 0,
+                Reputation = 5,
+                Honor = 10,
             },
             [BlessCategories.Weapons] = {
                 Reputation = 100,
@@ -31,31 +28,31 @@ Stronghold.Building = Stronghold.Building or {
                 Honor = 0,
             },
             [BlessCategories.Canonisation] = {
-                Reputation = -40,
-                Honor = 100,
+                Reputation = -30,
+                Honor = 150,
             },
         },
 
         Monastery = {
             [BlessCategories.Construction] = {
-                Reputation = 8,
+                Reputation = 9,
                 Honor = 0,
             },
             [BlessCategories.Research] = {
                 Reputation = 0,
-                Honor = 8,
+                Honor = 9,
             },
             [BlessCategories.Weapons] = {
-                Reputation = 16,
+                Reputation = 18,
                 Honor = 0,
             },
             [BlessCategories.Financial] = {
                 Reputation = 0,
-                Honor = 16,
+                Honor = 18,
             },
             [BlessCategories.Canonisation] = {
-                Reputation = 12,
-                Honor = 12,
+                Reputation = 15,
+                Honor = 15,
             },
         },
 
@@ -71,6 +68,19 @@ Stronghold.Building = Stronghold.Building or {
             Measure = {
                 [BlessCategories.Construction] = {
                     [1] = {
+                        de = "{grey}Zwangsabgabe{white}{cr}Treibt eine Sondersteuer von Eurem "..
+                             "Volke ein. Ihren Ertrag vermag jedoch niemand vorherzusehen!",
+                        en = "{grey}Levy Duty{white}{cr}Collect a special tax from your people. "..
+                             "However, no one can predict your yield!",
+                    },
+                    [2] = {
+                        de = "Die Siedler werden zur Kasse gebeten, was sie sehr verärgert!",
+                        en = "The settlers are asked to pay, which upsets them greatly!",
+                    },
+                    [3] = {de = "#Rank# ", en = "#Rank# ",},
+                },
+                [BlessCategories.Research] = {
+                    [1] = {
                         de = "{grey}Öffentlicher Prozess{white}{cr}Haltet einen öffentlichen "..
                              "Schaupozess ab. Recht und Ordnung steigert die Zufriedenheit "..
                              "des Pöbel.",
@@ -80,19 +90,6 @@ Stronghold.Building = Stronghold.Building or {
                     [2] = {
                         de = "Ihr sprecht Recht und bestraft Kriminelle. Das Volk begrüßt dies!",
                         en = "You administer justice and punish criminals. The people welcome this!",
-                    },
-                    [3] = {de = "#Rank# ", en = "#Rank# ",},
-                },
-                [BlessCategories.Research] = {
-                    [1] = {
-                        de = "{grey}Zwangsabgabe{white}{cr}Treibt eine Sondersteuer von Eurem "..
-                             "Volke ein. Ihren Ertrag vermag jedoch niemand vorherzusehen!",
-                        en = "{grey}Levy Duty{white}{cr}Collect a special tax from your people. "..
-                             "However, no one can predict your yield!",
-                    },
-                    [2] = {
-                        de = "Die Siedler werden zur Kasse gebeten, was sie sehr verärgert!",
-                        en = "The settlers are asked to pay, which upsets them greatly!",
                     },
                     [3] = {de = "#Rank# ", en = "#Rank# ",},
                 },
@@ -511,10 +508,6 @@ function Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, _BlessCategory
 
     local Effects = Stronghold.Building.Config.Headquarters[_BlessCategory];
     if _BlessCategory == BlessCategories.Construction then
-        Stronghold.Economy:AddOneTimeReputation(_PlayerID, Effects.Reputation);
-        Stronghold.Economy:AddOneTimeHonor(_PlayerID, Effects.Honor);
-
-    elseif _BlessCategory == BlessCategories.Research then
         local RandomTax = 0;
         for i= 1, Logic.GetNumberOfAttractedWorker(_PlayerID) do
             RandomTax = RandomTax + math.random(1, 5);
@@ -524,6 +517,11 @@ function Stronghold.Building:HeadquartersBlessSettlers(_PlayerID, _BlessCategory
         Message(string.format(self.Config.UI.MeasureRandomTax[Language], RandomTax));
         Sound.PlayGUISound(Sounds.LevyTaxes, 100);
         AddGold(_PlayerID, RandomTax);
+
+    elseif _BlessCategory == BlessCategories.Research then
+        Stronghold.Economy:AddOneTimeReputation(_PlayerID, Effects.Reputation);
+        Stronghold.Economy:AddOneTimeHonor(_PlayerID, Effects.Honor);
+
     elseif _BlessCategory == BlessCategories.Weapons then
         local WorkerList = GetAllWorker(_PlayerID, 0);
         table.sort(WorkerList, function(a, b) return a > b; end);
@@ -580,7 +578,7 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(_PlayerID, _Ent
             RequireText = string.gsub(
                 self.Config.UI.Require[Language] ..
                 self.Config.UI.Measure[BlessCategories.Construction][3][Language],
-                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 2)
+                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 1)
             );
         end
         Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Construction];
@@ -590,7 +588,7 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(_PlayerID, _Ent
             RequireText = string.gsub(
                 self.Config.UI.Require[Language] ..
                 self.Config.UI.Measure[BlessCategories.Research][3][Language],
-                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 3)
+                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 2)
             );
         end
         Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Research];
@@ -600,7 +598,7 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(_PlayerID, _Ent
             RequireText = string.gsub(
                 self.Config.UI.Require[Language] ..
                 self.Config.UI.Measure[BlessCategories.Weapons][3][Language],
-                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 4)
+                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 3)
             );
         end
         Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Weapons];
@@ -610,7 +608,7 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(_PlayerID, _Ent
             RequireText = string.gsub(
                 self.Config.UI.Require[Language] ..
                 self.Config.UI.Measure[BlessCategories.Financial][3][Language],
-                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 5)
+                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 3)
             );
         end
         Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Financial];
@@ -620,7 +618,7 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiTooltip(_PlayerID, _Ent
             RequireText = string.gsub(
                 self.Config.UI.Require[Language] ..
                 self.Config.UI.Measure[BlessCategories.Canonisation][3][Language],
-                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 7)
+                "#Rank#", Stronghold:GetPlayerRankName(_PlayerID, 6)
             );
         end
         Effects = Stronghold.Building.Config.Headquarters[BlessCategories.Canonisation];
@@ -653,15 +651,15 @@ function Stronghold.Building:HeadquartersBlessSettlersGuiUpdate(_PlayerID, _Enti
     local Rank = Stronghold:GetPlayerRank(_PlayerID);
     local ButtonDisabled = 0;
     if _Button == "BlessSettlers1" then
-        ButtonDisabled = (Rank < 2 and 1) or 0;
+        ButtonDisabled = (Rank < 1 and 1) or 0;
     elseif _Button == "BlessSettlers2" then
-        ButtonDisabled = (Rank < 3 and 1) or 0;
+        ButtonDisabled = (Rank < 2 and 1) or 0;
     elseif _Button == "BlessSettlers3" then
-        ButtonDisabled = ((Rank < 4 or Level < 1) and 1) or 0;
+        ButtonDisabled = ((Rank < 3 or Level < 1) and 1) or 0;
     elseif _Button == "BlessSettlers4" then
-        ButtonDisabled = ((Rank < 5 or Level < 1) and 1) or 0;
+        ButtonDisabled = ((Rank < 3 or Level < 1) and 1) or 0;
     elseif _Button == "BlessSettlers5" then
-        ButtonDisabled = ((Rank < 7 or Level < 2) and 1) or 0;
+        ButtonDisabled = ((Rank < 6 or Level < 2) and 1) or 0;
     end
     XGUIEng.DisableButton(_Button, ButtonDisabled);
     return true;
@@ -686,8 +684,8 @@ function Stronghold.Building:HeadquartersShowMonasteryControls(_PlayerID, _Entit
     XGUIEng.ShowWidget("Upgrade_Monastery1", 0);
     XGUIEng.ShowWidget("Upgrade_Monastery2", 0);
 
-    XGUIEng.TransferMaterials("Research_Laws", "BlessSettlers1");
-    XGUIEng.TransferMaterials("Levy_Duties", "BlessSettlers2");
+    XGUIEng.TransferMaterials("Levy_Duties", "BlessSettlers1");
+    XGUIEng.TransferMaterials("Research_Laws", "BlessSettlers2");
     XGUIEng.TransferMaterials("Statistics_SubSettlers_Worker", "BlessSettlers3");
     XGUIEng.TransferMaterials("Statistics_SubSettlers_Motivation", "BlessSettlers4");
     XGUIEng.TransferMaterials("Build_Tavern", "BlessSettlers5");

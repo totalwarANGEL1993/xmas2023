@@ -646,7 +646,7 @@ function Stronghold.Hero:OnSelectLeader(_EntityID)
     for i= 1, 4 do
         XGUIEng.ShowWidget("Formation0" ..i, 1);
         if XGUIEng.IsButtonDisabled("Formation0" ..i) == 1 then
-            if Logic.IsTechnologyResearched(_EntityID, Technologies.GT_StandingArmy) == 1 then
+            if Logic.IsTechnologyResearched(PlayerID, Technologies.GT_StandingArmy) == 1 then
                 XGUIEng.DisableButton("Formation0" ..i, 0);
             end
         end
@@ -942,7 +942,7 @@ end
 function Stronghold.Hero:InitSpecialUnits(_PlayerID, _Type)
     Stronghold.Recruitment:InitDefaultRoster(_PlayerID);
 
-    local Recruiter = {Entities.PB_Tavern2};
+    local ThiefRecruiter = {Entities.PB_Tavern2};
     if string.find(Logic.GetEntityTypeName(_Type), "PU_Hero1") then
         Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword2"] = Entities.PU_LeaderPoleArm4;
         Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.PU_LeaderSword4;
@@ -964,7 +964,7 @@ function Stronghold.Hero:InitSpecialUnits(_PlayerID, _Type)
         Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.CU_BlackKnight_LeaderMace1;
     elseif _Type == Entities.CU_Mary_de_Mortfichet then
         ResearchTechnology(Technologies.T_ThiefSabotage, _PlayerID);
-        Recruiter = {Entities.PB_Tavern1, Entities.PB_Tavern2};
+        ThiefRecruiter = {Entities.PB_Tavern1, Entities.PB_Tavern2};
     elseif _Type == Entities.CU_Barbarian_Hero then
         Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSword2"] = Entities.CU_Barbarian_LeaderClub2;
         Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeSpear1"] = Entities.CU_Barbarian_LeaderClub1;
@@ -977,7 +977,7 @@ function Stronghold.Hero:InitSpecialUnits(_PlayerID, _Type)
         Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeBow3"] = Entities.CU_Evil_LeaderSkirmisher1;
         Stronghold.Recruitment.Data[_PlayerID].Roster["Research_UpgradeRifle1"] = Entities.PU_LeaderBow3;
     end
-    Stronghold.Recruitment.Data[_PlayerID].Config[Entities.PU_Thief].RecruiterBuilding = Recruiter;
+    Stronghold.Recruitment.Data[_PlayerID].Config[Entities.PU_Thief].RecruiterBuilding = ThiefRecruiter;
 end
 
 -- -------------------------------------------------------------------------- --
@@ -1503,7 +1503,7 @@ end
 function Stronghold.Hero:ApplyMeasurePointsPassiveAbility(_PlayerID, _Value)
     local Value = _Value;
     if self:HasValidHeroOfType(_PlayerID, "^PU_Hero1[abc]+$") then
-        Value = Value * 1.5;
+        Value = Value * 2.0;
     end
     return Value;
 end

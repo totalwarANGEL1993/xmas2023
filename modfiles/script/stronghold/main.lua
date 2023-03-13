@@ -62,10 +62,12 @@ Stronghold = {
                     en = "Trading, Fortress"
                 },
                 Condition = function(_PlayerID)
-                    local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
-                    if Logic.GetEntityType(CastleID) == Entities.PB_Headquarters2
-                    or Logic.GetEntityType(CastleID) == Entities.PB_Headquarters3 then
-                        return true;
+                    if Logic.IsTechnologyResearched(_PlayerID, Technologies.GT_Trading) == 1 then
+                        local CastleID = GetID(Stronghold.Players[_PlayerID].HQScriptName);
+                        if Logic.GetEntityType(CastleID) == Entities.PB_Headquarters2
+                        or Logic.GetEntityType(CastleID) == Entities.PB_Headquarters3 then
+                            return true;
+                        end
                     end
                     return false;
                 end,
